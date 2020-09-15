@@ -8,3 +8,5 @@ Team members:
 5. Maunica Toletti
 6. Rashida Kapadia  kapadi46     1004312219      rashida.kapadia@mail.utoronto.ca.    Discord and messenger is best, email is ok too
 7. Zhi Hua Lim
+
+https://discord.gg/afz58v
