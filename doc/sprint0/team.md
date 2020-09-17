@@ -1,7 +1,7 @@
 Team members:
    Full Name        UTORID      Student ID      Email (utoronto only)                 Best way to contact
    =============    ======      ========        =================                     ===========
-1. Anmole Bajwa
+1. Anmole Bajwa     bajwaan5    1003898552      anmoleb.bajwa@mail.utoronto.ca        Discord or email
 2. Arina Momajjed
 3. Devanshi Parekh  parekhd1
 4. Hui Yi Quach
