@@ -5,7 +5,7 @@ Team members:
 2. Arina Momajjed
 3. Devanshi Parekh  parekhd1     1004267474     devanshi.parekh@mail.utoronto.ca      Discord, messenger and email works
 4. Hui Yi Quach     quachje2     1004269962     jenny.quach@mail.utoronto.ca          Messenger or email jennyquach.99@hotmail.com 
-5. Maunica Toletti
+5. Maunica Toleti   toletima     1004323172     maunica.toleti@mail.utoronto.ca       Messenger (best), Discord or email
 6. Rashida Kapadia  kapadi46     1004312219     rashida.kapadia@mail.utoronto.ca.     Discord and messenger is best, email is ok too
 7. Zhi Hua Lim      limzhi       1002183362     zhihua.lim@mail.utoronto.ca           Messenger preferred, but discord and email works too
 
