@@ -7,6 +7,6 @@ Team members:
 4. Hui Yi Quach
 5. Maunica Toletti
 6. Rashida Kapadia  kapadi46     1004312219      rashida.kapadia@mail.utoronto.ca.    Discord and messenger is best, email is ok too
-7. Zhi Hua Lim
+7. Zhi Hua Lim      limzhi       1002183362     zhihua.lim@mail.utoronto.ca           Messenger preferred, but discord and email works too
 
 https://discord.gg/afz58v
