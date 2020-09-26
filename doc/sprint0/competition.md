@@ -20,7 +20,7 @@ Our app provides sports fans with a platform to socialize with other fans while 
 
 7.	Sportsnet - https://www.sportsnet.ca/sn-apps/
 
-8.	Basketball redditl - https://www.reddit.com/r/Basketball/ 
+8.	Basketball reddit - https://www.reddit.com/r/Basketball/ 
 
 The above apps and websites have some features that are similar to our app, however, our app contains all these elements along with some unique features that have never been seen on the market before. For example, theScore and 365Scores both allow users to personalize their dashboards according to their favourite sports, view sports scores and updates, and engage in conversations with other users regarding game outcomes, sports news or announcements. On the other hand, the websites and forums above allow users to stay updated on sports news and statistics and engage in sports related discussions. However, none of the aforementioned apps provide a feature to help improve the fans’ ability to predict and analyze scores. The lack of this feature leads to them making potentially false claims about the scores or the game itself. 
 
