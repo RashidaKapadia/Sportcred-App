@@ -1,16 +1,16 @@
 Our app provides sports fans with a platform to socialize with other fans while improving their ability to predict and analyze scores. There currently exist the following apps that try to solve a similar problem:
 
 1.	theScore (Cross-platform app) - https://www.thescore.com/news/1636785
-	a.Live updates about the scores and news of current, previous and upcoming games. It also allows the users to personalize their app to focus on the feeds of their favourite sports.
-	b.Provides a social messaging platform for the users to discuss the scores and predict outcomes of the game. 
+	- Live updates about the scores and news of current, previous and upcoming games. It also allows the users to personalize their app to focus on the feeds of their favourite sports.
+	- Provides a social messaging platform for the users to discuss the scores and predict outcomes of the game. 
 
 2.	365Scores (Cross-platform app) - https://www.365scores.com/
-	a. Live updates on scores for 10 different sports including Football, Basketball, Tennis and Hockey
-	b. Allows users to personalize dashboards by selecting the sports and games they want to follow
+	- Live updates on scores for 10 different sports including Football, Basketball, Tennis and Hockey
+	- Allows users to personalize dashboards by selecting the sports and games they want to follow
 
 3.	BETMINES - https://betmines.com
-	a. Allows users to test their strategies by creating virtual bets, challenging other users, and following best users
-	b. Live updates on football matches with livescore, etc.
+	- Allows users to test their strategies by creating virtual bets, challenging other users, and following best users
+	- Live updates on football matches with livescore, etc.
 
 4.	Basketball Forum - https://www.basketballforum.com/ 
 
