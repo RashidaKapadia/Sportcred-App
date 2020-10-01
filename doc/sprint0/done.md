@@ -1,4 +1,6 @@
-The whole team agreed upon the following criteria to determine what  ”done” means before each story is broken down into tasks. 
+# Done
+
+The whole team agreed upon the following criteria to determine what ”done” means before each story is broken down into tasks. 
 
 When the key features are complete and we all agree that it is a feature that we can implement within a sprint.
 
