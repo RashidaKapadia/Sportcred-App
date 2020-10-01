@@ -1,3 +1,5 @@
+# Competition
+
 Our app provides sports fans with a platform to socialize with other fans while improving their ability to predict and analyze scores. There currently exist the following apps that try to solve a similar problem:
 
 1.	theScore (Cross-platform app) - https://www.thescore.com/news/1636785
