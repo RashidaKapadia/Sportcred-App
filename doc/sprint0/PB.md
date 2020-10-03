@@ -74,11 +74,11 @@ __** 6: As a user, I want to be able to browse and create basketball posts in th
 
 Tech needed: frontend, API, DB update
 
-Given a registered user, when the user enters the open court, then they will be able to see a list from most recent to least recent posts. In addition, there will be a button for the user to add their own post, when the user submits their post, the post should be publicly shown with other recent posts.__
+Given a registered user, when the user enters the open court, then they will be able to see a list from most recent to least recent posts. In addition, there will be a button for the user to add their own post, when the user submits their post, the post should be publicly shown with other recent posts
 
 __\* 10: As a user, I want to share my favourite posts on other social media platforms so that I can share them with my friends and family.__
 
-Tech needed: ???????
+Tech needed: frontend, API, DB update
 
 Given that the user is looking at a post when the user presses the share button on the post, a dialog will pop up for the user to select what social media platform to share the post on (ie twitter) and the post will be shown on the other social media platform
 
