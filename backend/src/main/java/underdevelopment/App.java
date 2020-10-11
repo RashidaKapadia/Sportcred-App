@@ -4,12 +4,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpServer;
 
-// How to find pid consuming this port 
-// >> Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess
-
-// Kill the process
-// >> kill <pid>
-
 public class App 
 {
     static int PORT = 8080;
