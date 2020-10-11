@@ -7,7 +7,7 @@
 3. git commit -a -m [message] (commit all tracked file changes)
 3. git push 
 
-## Occasionally, good check repo for updates and update your branch if needed
+## Occasionally, good to check repo for updates and update your branch if needed
 
 1. git fetch (get all changes on git repo)
 2. git pull (update branch if behind)
@@ -109,7 +109,7 @@ See git history on branch
 
     git log
 
-See modifications see last commit
+See modifications since the last commit
 
     git diff
 
