@@ -24,6 +24,8 @@ public class App
         // Test routes
         server.createContext("/api/test/authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), true));
+        server.createContext("/api/test/non-authorized-route", 
+            new HttpRequestHandler("POST", LoginHandler.testNonAuthorizedRoute(), false));
 
         // Start Server
         server.start();

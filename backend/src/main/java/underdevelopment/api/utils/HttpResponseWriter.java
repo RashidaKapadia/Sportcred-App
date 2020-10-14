@@ -6,6 +6,11 @@ import com.sun.net.httpserver.HttpExchange;
 public class HttpResponseWriter {
     
     public static boolean writeReponse (HttpExchange r, int status, String response) {
+        
+        if (response == null) {
+            return sendStatus (r, status);
+        }
+        
         try {
             r.sendResponseHeaders(status, response.length());
             OutputStream os = r.getResponseBody();
@@ -18,7 +23,7 @@ public class HttpResponseWriter {
         }
     }
 
-    public static boolean sendStatus (HttpExchange r, int status){
+    public static boolean sendStatus (HttpExchange r, int status) {
         try {
             r.sendResponseHeaders(status, -1);
             return true;
