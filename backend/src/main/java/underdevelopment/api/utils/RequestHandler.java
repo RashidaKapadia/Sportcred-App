@@ -12,7 +12,25 @@ import java.util.HashMap;
 */
 public class RequestHandler implements HttpHandler {
 
-    HashMap<String, HttpHandler> requestHandlers;
+    private class HandlerSpecs {
+        private HttpHandler handler;
+        private boolean authenticate;
+    
+        HandlerSpecs(HttpHandler handler, boolean authenticate) {
+            this.handler = handler;
+            this.authenticate = authenticate;
+        }
+    
+        public boolean isAuthenticate() {
+            return authenticate;
+        }
+    
+        public HttpHandler getHandler() {
+            return handler;
+        }
+    }
+
+    HashMap<String, HandlerSpecs> requestHandlers;
 
     /**
      * Creates a requestHandler that handles multiple request types,
@@ -20,10 +38,11 @@ public class RequestHandler implements HttpHandler {
      * 
      * @param requestType the request type GET | POST | PUT | UPDATE | DELETE | ...
      * @param handler the corresponding handler to be called when the reques is made
+     * @param authenticate determines whether this route will impose token authentication
      */
-    public RequestHandler(String requestType, HttpHandler handler) {
-        requestHandlers = new HashMap<String, HttpHandler>();
-        requestHandlers.put(requestType, handler);
+    public RequestHandler(String requestType, HttpHandler handler, boolean authenticate) {
+        requestHandlers = new HashMap<String, HandlerSpecs>();
+        requestHandlers.put(requestType, new HandlerSpecs(handler, authenticate));
     }
 
     /**
@@ -32,17 +51,17 @@ public class RequestHandler implements HttpHandler {
      * @param requestType the request type GET | POST | PUT | UPDATE | DELETE | ...
      * @param handler the corresponding handler to be called when the reques is made
      */
-    public RequestHandler addHandler (String requestType, HttpHandler handler) {
-        requestHandlers.put(requestType, handler);
+    public RequestHandler addHandler (String requestType, HttpHandler handler, boolean authenticate) {
+        requestHandlers.put(requestType, new HandlerSpecs(handler, authenticate));
         return this;
     }
 
     @Override
 	final public void handle(HttpExchange exchange) throws IOException {
         String requestType = exchange.getRequestMethod();
-        HttpHandler handler = requestHandlers.get(requestType);
+        HttpHandler handler = requestHandlers.get(requestType).getHandler();
         if (handler != null) {
             handler.handle(exchange);
         }
-	}
+    }
 }

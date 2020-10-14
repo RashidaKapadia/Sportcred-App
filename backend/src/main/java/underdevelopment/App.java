@@ -15,10 +15,12 @@ public class App
         // Config server to localhost and port
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", PORT), 0);
         
-        server.createContext("/api/login", new RequestHandler("POST", LoginHandler.validateLogin())
-                                                  .addHandler("PUT", LoginHandler.createSession()));
-        server.createContext("/api/check-session", new RequestHandler("POST", LoginHandler.verifySession()));
+        server.createContext("/api/login", new RequestHandler("POST", LoginHandler.createSession(), false));
+        server.createContext("/api/check-session", new RequestHandler("POST", LoginHandler.verifySession(), false));
         
+        
+
+
         // Start Server
         server.start();
         System.out.printf("Server started on port %d...\n", PORT);
