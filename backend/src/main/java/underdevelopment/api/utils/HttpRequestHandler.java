@@ -10,7 +10,7 @@ import java.util.HashMap;
     This is a high level HttpHandler that manages multiple handlers for different 
     request types and calls them accordingly
 */
-public class RequestHandler implements HttpHandler {
+public class HttpRequestHandler implements HttpHandler {
 
     private class HandlerSpecs {
         private HttpHandler handler;
@@ -37,10 +37,10 @@ public class RequestHandler implements HttpHandler {
      * a minimum of one request type must be given
      * 
      * @param requestType the request type GET | POST | PUT | UPDATE | DELETE | ...
-     * @param handler the corresponding handler to be called when the reques is made
+     * @param handler the corresponding handler to be called when the request is made
      * @param authenticate determines whether this route will impose token authentication
      */
-    public RequestHandler(String requestType, HttpHandler handler, boolean authenticate) {
+    public HttpRequestHandler(String requestType, HttpHandler handler, boolean authenticate) {
         requestHandlers = new HashMap<String, HandlerSpecs>();
         requestHandlers.put(requestType, new HandlerSpecs(handler, authenticate));
     }
@@ -51,17 +51,24 @@ public class RequestHandler implements HttpHandler {
      * @param requestType the request type GET | POST | PUT | UPDATE | DELETE | ...
      * @param handler the corresponding handler to be called when the reques is made
      */
-    public RequestHandler addHandler (String requestType, HttpHandler handler, boolean authenticate) {
+    public HttpRequestHandler addHandler (String requestType, HttpHandler handler, boolean authenticate) {
         requestHandlers.put(requestType, new HandlerSpecs(handler, authenticate));
         return this;
     }
 
     @Override
-	final public void handle(HttpExchange exchange) throws IOException {
-        String requestType = exchange.getRequestMethod();
+	final public void handle(HttpExchange r) throws IOException {
+        String requestType = r.getRequestMethod();
         HttpHandler handler = requestHandlers.get(requestType).getHandler();
+
+        if (requestHandlers.get(requestType).isAuthenticate()) {
+            
+        }
+
         if (handler != null) {
-            handler.handle(exchange);
+            handler.handle(r);
+        } else {
+            HttpResponseWriter.sendStatus(r, Status.NOT_IMPLEMENTED);
         }
     }
 }

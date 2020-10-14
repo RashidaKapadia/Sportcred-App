@@ -3,7 +3,7 @@ package underdevelopment.api.utils;
 import java.io.OutputStream;
 import com.sun.net.httpserver.HttpExchange;
 
-public class ResponseWriter {
+public class HttpResponseWriter {
     
     public static boolean writeReponse (HttpExchange r, int status, String response) {
         try {

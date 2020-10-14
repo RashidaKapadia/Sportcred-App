@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import underdevelopment.Utils;
 import underdevelopment.api.utils.JWTSessionManager;
-import underdevelopment.api.utils.ResponseWriter;
+import underdevelopment.api.utils.HttpResponseWriter;
 import underdevelopment.api.utils.Status;
 
 public class LoginHandler {
@@ -20,7 +20,7 @@ public class LoginHandler {
     public static HttpHandler createSession() {
 
         return (HttpExchange r) -> {
-            System.out.println("(Debug) login user");
+            System.out.println("(debug) login user");
 
             String username, password;
 
@@ -30,13 +30,13 @@ public class LoginHandler {
                 username = deserialized.getString("username");
                 password = deserialized.getString("password");
             } catch (Exception e) {
-                ResponseWriter.sendStatus(r, Status.BADREQUEST);
+                HttpResponseWriter.sendStatus(r, Status.BADREQUEST);
                 return;
             }
 
             // TODO: Check creditials
             if (!validCredentials(username, password)) {
-                ResponseWriter.sendStatus(r, Status.FORBIDDEN);
+                HttpResponseWriter.sendStatus(r, Status.FORBIDDEN);
                 return;
             }
 
@@ -46,19 +46,13 @@ public class LoginHandler {
                 String response = new JSONObject()
                     .put("token", sessionToken)
                     .toString();
-                ResponseWriter.writeReponse(r, Status.OK, response);
+                HttpResponseWriter.writeReponse(r, Status.OK, response);
             } catch (JSONException e) {
                 e.printStackTrace();
-                ResponseWriter.sendStatus(r, Status.SERVERERROR);
+                HttpResponseWriter.sendStatus(r, Status.SERVERERROR);
             }
         };
     }
-
-    // public static HttpHandler validateLogin() {
-    //     return (HttpExchange r) -> {
-    //         System.out.println("TODO validate login");
-    //     };
-    // }
 
     public static HttpHandler verifySession() {
         return (HttpExchange r) -> {
@@ -68,7 +62,7 @@ public class LoginHandler {
                 JSONObject deserialized = new JSONObject(Utils.convert(r.getRequestBody()));
                 sessionToken = deserialized.getString("token");
             } catch (Exception e) {
-                ResponseWriter.sendStatus(r, Status.BADREQUEST);
+                HttpResponseWriter.sendStatus(r, Status.BADREQUEST);
                 return;
             }
 
@@ -77,11 +71,17 @@ public class LoginHandler {
                 String response = new JSONObject()
                     .put("success", JWTSessionManager.validateToken(sessionToken))
                     .toString();
-                ResponseWriter.writeReponse(r, Status.OK, response);
+                HttpResponseWriter.writeReponse(r, Status.OK, response);
             } catch (JSONException e) {
                 e.printStackTrace();
-                ResponseWriter.sendStatus(r, Status.SERVERERROR);
+                HttpResponseWriter.sendStatus(r, Status.SERVERERROR);
             }
+        };
+    }
+
+    public static HttpHandler testAuthorizedRoute() {
+        return (HttpExchange r) -> {
+            HttpResponseWriter.sendStatus(r, Status.OK);
         };
     }
 }
