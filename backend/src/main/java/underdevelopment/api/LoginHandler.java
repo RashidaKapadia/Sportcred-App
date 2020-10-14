@@ -1,14 +1,11 @@
 package underdevelopment.api;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import underdevelopment.Utils;
 import underdevelopment.api.utils.JWTSessionManager;
-import underdevelopment.api.utils.ResponseWriter;
+import underdevelopment.api.utils.JsonHttpReponse;
+import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.Status;
 
 public class LoginHandler {
@@ -17,27 +14,22 @@ public class LoginHandler {
         return username.equals("test") && password.equals("test");
     }
 
-    public static HttpHandler createSession() {
-
-        return (HttpExchange r) -> {
-            System.out.println("(Debug) login user");
+    public static JsonRequestHandler createSession() {
+        return (JSONObject jsonObj) -> {
 
             String username, password;
 
             // Get and validate input
             try {
-                JSONObject deserialized = new JSONObject(Utils.convert(r.getRequestBody()));
-                username = deserialized.getString("username");
-                password = deserialized.getString("password");
+                username = jsonObj.getString("username");
+                password = jsonObj.getString("password");
             } catch (Exception e) {
-                ResponseWriter.sendStatus(r, Status.BADREQUEST);
-                return;
+                return new JsonHttpReponse(Status.BADREQUEST);
             }
 
-            // TODO: Check creditials
+            // Check creditials
             if (!validCredentials(username, password)) {
-                ResponseWriter.sendStatus(r, Status.FORBIDDEN);
-                return;
+                return new JsonHttpReponse(Status.FORBIDDEN);
             }
 
             // Return a session token
@@ -46,42 +38,45 @@ public class LoginHandler {
                 String response = new JSONObject()
                     .put("token", sessionToken)
                     .toString();
-                ResponseWriter.writeReponse(r, Status.OK, response);
+                return new JsonHttpReponse(Status.OK, response);
             } catch (JSONException e) {
                 e.printStackTrace();
-                ResponseWriter.sendStatus(r, Status.SERVERERROR);
+                return new JsonHttpReponse(Status.SERVERERROR);
             }
         };
     }
 
-    // public static HttpHandler validateLogin() {
-    //     return (HttpExchange r) -> {
-    //         System.out.println("TODO validate login");
-    //     };
-    // }
-
-    public static HttpHandler verifySession() {
-        return (HttpExchange r) -> {
-            System.out.println("TODO verify session");
+    public static JsonRequestHandler verifySession() {
+        return (JSONObject jsonObj) -> {
+            
             String sessionToken;
             try {
-                JSONObject deserialized = new JSONObject(Utils.convert(r.getRequestBody()));
-                sessionToken = deserialized.getString("token");
+                sessionToken = jsonObj.getString("token");
             } catch (Exception e) {
-                ResponseWriter.sendStatus(r, Status.BADREQUEST);
-                return;
+                return new JsonHttpReponse(Status.BADREQUEST);
             }
 
-            // Return a session token
             try {
                 String response = new JSONObject()
                     .put("success", JWTSessionManager.validateToken(sessionToken))
                     .toString();
-                ResponseWriter.writeReponse(r, Status.OK, response);
+                return new JsonHttpReponse(Status.OK, response);
             } catch (JSONException e) {
                 e.printStackTrace();
-                ResponseWriter.sendStatus(r, Status.SERVERERROR);
+                return new JsonHttpReponse(Status.SERVERERROR);
             }
+        };
+    }
+
+    public static JsonRequestHandler testAuthorizedRoute() {
+        return (JSONObject jsonObj) -> {
+            return new JsonHttpReponse(Status.OK);
+        };
+    }
+
+    public static JsonRequestHandler testNonAuthorizedRoute() {
+        return (JSONObject jsonObj) -> {
+            return new JsonHttpReponse(Status.OK);
         };
     }
 }
