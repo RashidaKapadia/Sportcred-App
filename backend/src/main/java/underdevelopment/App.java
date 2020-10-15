@@ -7,6 +7,13 @@ import com.sun.net.httpserver.HttpServer;
 
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
+import underdevelopment.api.SignUpHandler;
+
+//How to find pid consuming this port 
+//>> Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess
+
+//Kill the process
+//>> kill <pid>
 
 public class App 
 {
@@ -15,11 +22,17 @@ public class App
     {
         // Config server to localhost and port
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", PORT), 0);
-
+        
+        
+        // Login
         server.createContext("/api/login", 
             new HttpRequestHandler("POST", LoginHandler.createSession(), false));
         server.createContext("/api/check-session", 
             new HttpRequestHandler("POST", LoginHandler.verifySession(), false));
+        
+        //
+        server.createContext("/api/signup", 
+                new HttpRequestHandler("POST", SignUpHandler.handleSignUp(), false));
         
         // Test routes
         server.createContext("/api/test/authorized-route", 
