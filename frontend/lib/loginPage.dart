@@ -89,7 +89,6 @@ class _State_Of_Login_Page extends State<loginPage> {
                           color: Color(0xFFFF8F00),
                           shape: RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(18.0)),
-                          //side: BorderSide(color: Colors.black)),
                           child: Text(
                             'Login',
                             style: TextStyle(fontSize: 18),
@@ -97,6 +96,11 @@ class _State_Of_Login_Page extends State<loginPage> {
                           onPressed: () {
                             print(nameController.text);
                             print(passwordController.text);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        loginPage())); // to be changed to HomePage
                           },
                         )),
                     Container(
@@ -111,6 +115,11 @@ class _State_Of_Login_Page extends State<loginPage> {
                           ),
                           onPressed: () {
                             //signup screen
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        loginPage())); // to be changed to SignUpPage
                           },
                         )
                       ],
@@ -118,5 +127,6 @@ class _State_Of_Login_Page extends State<loginPage> {
                     ))
                   ],
                 ))));
+    // _loginKey yet to be used....
   }
 }
