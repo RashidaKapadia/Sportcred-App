@@ -126,12 +126,12 @@ class _State_Of_Login_Page extends State<loginPage> {
                             style: TextStyle(fontSize: 20),
                           ),
                           onPressed: () {
-                            if (_loginKey.currentState.validate()) {
-                              _loginKey.currentState.save();
+                            //if (_loginKey.currentState.validate()) {
+                            //_loginKey.currentState.save();
 
-                              // the model object at this point can be POSTed
-                              // to an API or persisted for further use
-                            }
+                            // the model object at this point can be POSTed
+                            // to an API or persisted for further use
+
                             //signup screen
                             Navigator.push(
                                 context,
