@@ -17,19 +17,16 @@ class _State_Of_Login_Page extends State<loginPage> {
 
 // loginKey is the formKey here
   final _loginKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+// holds the user information on logon page for access later on
+  String username = "";
+  String password = "";
+  //TextEditingController nameController = TextEditingController();
+  //TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return MaterialApp(
         home: Scaffold(
-            // appBar: AppBar(
-            //title: Text('Sample App'),
-            //   ),
             body: Padding(
                 padding: EdgeInsets.all(10),
                 child: ListView(
@@ -49,37 +46,54 @@ class _State_Of_Login_Page extends State<loginPage> {
                           style:
                               TextStyle(fontSize: 17, color: Color(0xFF9E9E9E)),
                         )),
-                    Container(
-                        padding: EdgeInsets.all(5),
-                        child: TextField(
-                          controller: nameController,
-                          decoration: InputDecoration(
-                            //border: OutlineInputBorder(),
-                            icon: Icon(Icons.person),
-                            labelText: 'User Name',
-                            // enabledBorder: UnderlineInputBorder(
-                            //borderSide: BorderSide(color: Color(0xFFFFA000)),
-                            // ),
-                          ),
-                        )),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      child: TextField(
-                        obscureText: true,
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          //border: OutlineInputBorder(),
-                          icon: Icon(Icons.lock),
-                          labelText: 'Password',
-                        ),
+                    TextFormField(
+                      //padding: EdgeInsets.all(5),
+                      //child: TextField(
+                      //controller: nameController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Enter your username';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        icon: Icon(Icons.person),
+                        labelText: 'User Name',
                       ),
+                      onChanged: (value) {
+                        setState(() {
+                          this.username = value;
+                        });
+                      },
+                    ),
+                    TextFormField(
+                      //padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      //child: TextField(
+                      obscureText: true,
+                      //controller: passwordController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Enter your password';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        //border: OutlineInputBorder(),
+                        icon: Icon(Icons.lock),
+                        labelText: 'Password',
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          this.password = value;
+                        });
+                      },
                     ),
                     FlatButton(
-                      onPressed: () {
-                        //forgot password screen
-                      },
                       textColor: Color(0xFFFF8F00),
                       child: Text('Forgot Password'),
+                      onPressed: () {
+                        //Move to forgot password screen, to be implemented after
+                      },
                     ),
                     Container(
                         height: 50,
@@ -94,8 +108,6 @@ class _State_Of_Login_Page extends State<loginPage> {
                             style: TextStyle(fontSize: 18),
                           ),
                           onPressed: () {
-                            print(nameController.text);
-                            print(passwordController.text);
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -114,6 +126,12 @@ class _State_Of_Login_Page extends State<loginPage> {
                             style: TextStyle(fontSize: 20),
                           ),
                           onPressed: () {
+                            if (_loginKey.currentState.validate()) {
+                              _loginKey.currentState.save();
+
+                              // the model object at this point can be POSTed
+                              // to an API or persisted for further use
+                            }
                             //signup screen
                             Navigator.push(
                                 context,
