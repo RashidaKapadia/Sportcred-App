@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import './signup_page.dart';
+import './welcome_page.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: 'SportCred',
-    home: SportCredApp(),
-  ));
+      theme: ThemeData(
+          accentColor: Colors.orangeAccent, primaryColor: Colors.orangeAccent),
+      title: 'SportCred',
+      home: SportCredApp(),
+      routes: {
+        '/signup': (context) => SignUpPage(),
+        '/welcome': (context) => WelcomePage()
+      }));
 }
 
 class SportCredApp extends StatefulWidget {
