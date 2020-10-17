@@ -17,7 +17,7 @@ Future<LoginStatus> login(String username, String password) async {
   // Make the request and store the response
   final http.Response response = await http.post(
     // new Uri.http("localhost:8080", "/api/login"),
-    'http://localhost:8080/api/login',
+    'http://127.0.0.1:8080/api/login',
     headers: <String, String>{
       'Content-Type': 'text/json; charset=UTF-8',
     },

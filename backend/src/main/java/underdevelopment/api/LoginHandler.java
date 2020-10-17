@@ -17,6 +17,7 @@ public class LoginHandler {
     public static JsonRequestHandler createSession() {
         return (JSONObject jsonObj) -> {
 
+            System.out.println("Calling login handler");
             String username, password;
 
             // Get and validate input
