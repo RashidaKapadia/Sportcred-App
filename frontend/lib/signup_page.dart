@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import './welcome_page.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -18,6 +17,7 @@ class _SignUpPageState extends State<SignUpPage> {
   String _sportLevel = "";
   String _sportToLearn = "";
   String _favTeam = "";
+  int age;
 
   List<String> _sportLevels = [
     'No history',
@@ -28,7 +28,7 @@ class _SignUpPageState extends State<SignUpPage> {
   ];
   List<DropdownMenuItem<String>> _dropDownItems = List();
 
-  int age;
+  
 
   @override
   void initState() {
@@ -46,11 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(
-            accentColor: Colors.orangeAccent,
-            primaryColor: Colors.orangeAccent),
-        home: Scaffold(
+    return Scaffold(
           body: Container(
               padding: EdgeInsets.all(10),
               child: Form(
@@ -290,10 +286,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           print(_sportToLearn);
                           print(_favTeam);
 
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => WelcomePage()));
+                          Navigator.of(context).pushNamed("/welcome");
                           // if (_formKey.currentState.validate()){
                           // Data processing
 
@@ -302,6 +295,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   ],
                 ),
               )),
-        ));
+        );
   }
 }
