@@ -13,7 +13,8 @@ void main() {
       routes: {
         '/signup': (context) => SignUpPage(),
         '/welcome': (context) => WelcomePage(),
-        '/login': (context) => loginPage()
+        '/login': (context) => LoginPage(),
+        "/test": (context) => HTTPRequestExample()
       }));
 }
 
@@ -27,6 +28,5 @@ class _SportCredAppState extends State<SportCredApp> {
   @override
   Widget build(BuildContext context) {
     return LoginPage();
-    // return HTTPRequestExample();
   }
 }

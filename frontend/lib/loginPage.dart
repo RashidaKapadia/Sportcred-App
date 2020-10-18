@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,48 +16,28 @@ class LoginStatus {
 // Http post request to login
 Future<LoginStatus> login(String username, String password) async {
   // Make the request and store the response
+  final http.Response response = await http.post(
+    // new Uri.http("localhost:8080", "/api/login"),
+    'http://localhost:8080/api/login',
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Accept': 'text/plain; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: jsonEncode(
+        <String, String>{'username': username, 'password': password}),
+  );
 
-  var client = new http.Client();
-  try {
-    var uri = Uri.https('quotes.rest', '/qod', {'language': 'en'});
-
-    print(await client.get(
-      uri,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'quotes.rest',
-        'Access-Control-Allow-Headers': 'x-requested-with, content-type',
-        // "Access-Control-Allow-Methods": "POST, GET, PUT, OPTIONS, DELETE",
-        // 'Access-Control-Request-Headers': "x-requested-with, content-type",
-        'With-Credentials': 'true',
-      },
-    ));
-  } finally {
-    client.close();
+  if (response.statusCode == 200) {
+    // Store the session token
+    String token = jsonDecode(response.body)['token'];
+    await FlutterSession().set('token', token);
+    return LoginStatus(true, "Login successful!");
+  } else if (response.statusCode == 403) {
+    return LoginStatus(false, "Your username or password is incorrect.");
+  } else {
+    return LoginStatus(false, "Login failed, please contact your admin.");
   }
-
-  // final http.Response response = await http.post(
-  //   // new Uri.http("localhost:8080", "/api/login"),
-  //   'http://localhost:8080/api/login',
-  //   headers: {
-  //     'Content-Type': 'text/plain; charset=utf-8',
-  //     'Accept': 'text/plain; charset=utf-8',
-  //     'Access-Control-Allow-Origin': '*',
-  //   },
-  //   body: jsonEncode(
-  //       <String, String>{'username': username, 'password': password}),
-  // );
-
-  // if (response.statusCode == 200) {
-  //   // Store the session token
-  //   // String token = jsonDecode(response.body)['token'];
-  //   return LoginStatus(true, "Login successful!");
-  // } else if (response.statusCode == 403) {
-  //   return LoginStatus(false, "Your username or password is incorrect.");
-  // } else {
-  //   return LoginStatus(false, "Login failed, please contact your admin.");
-  // }
 
   return null;
 }
@@ -137,7 +117,9 @@ class _State_Of_Login_Page extends State<LoginPage> {
                           style:
                               TextStyle(fontSize: 17, color: Color(0xFF9E9E9E)),
                         )),
-                    loginStatus(),
+                    (_futureLoginStatus != null)
+                        ? loginStatus()
+                        : Text("Enter your information below:"),
                     // Username field
                     TextFormField(
                       //padding: EdgeInsets.all(5),
@@ -204,8 +186,11 @@ class _State_Of_Login_Page extends State<LoginPage> {
                             style: TextStyle(fontSize: 18),
                           ),
                           onPressed: () {
-                            _futureLoginStatus = login(
-                                nameController.text, passwordController.text);
+                            setState(() {
+                              // Call the HTTP request to make an album
+                              _futureLoginStatus = login(
+                                  nameController.text, passwordController.text);
+                            });
                             // Navigator.push(
                             //     context,
                             //     MaterialPageRoute(
