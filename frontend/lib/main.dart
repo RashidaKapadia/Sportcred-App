@@ -3,6 +3,7 @@ import './signup_page.dart';
 import './welcome_page.dart';
 import './loginPage.dart';
 import './HTTPRequestExample.dart';
+import './profile_page.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -14,7 +15,8 @@ void main() {
         '/signup': (context) => SignUpPage(),
         '/welcome': (context) => WelcomePage(),
         '/login': (context) => LoginPage(),
-        "/test": (context) => HTTPRequestExample()
+        '/test': (context) => HTTPRequestExample(),
+        '/profile': (context) => ProfilePage()
       }));
 }
 
