@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import './formFields.dart';
 import './fieldStyles.dart';
 
+
 class SignUpPage extends StatefulWidget {
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -31,6 +32,7 @@ class _SignUpPageState extends State<SignUpPage> {
     'Professional'
   ];
   List<DropdownMenuItem<String>> _dropDownItems = List();
+
 
   @override
   void initState() {
