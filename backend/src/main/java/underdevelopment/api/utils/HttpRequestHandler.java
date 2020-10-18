@@ -60,43 +60,53 @@ public class HttpRequestHandler implements HttpHandler {
         return this;
     }
 
+    private void optionsHandler (HttpExchange r) {
+        HttpResponseWriter.sendStatus(r, Status.OK);
+    }
+
     @Override
 	final public void handle(HttpExchange r) throws IOException {
 
         String requestType = r.getRequestMethod();
-        JsonRequestHandler handler = requestHandlers.get(requestType).getHandler();
-        JSONObject jsonObj;
 
-        // Read the json body
-        try {
-            jsonObj = new JSONObject(Utils.convert(r.getRequestBody()));
-        } catch (Exception e) {
-            HttpResponseWriter.sendStatus(r, Status.BADREQUEST);
-            e.printStackTrace();
-            return;
-        }
-
-        // Check the session token if authentication is required
-        if (requestHandlers.get(requestType).isAuthenticate()) {
-            String sessionToken = "";
+        // Separately handle preflight requests
+        if (requestType.equals("OPTIONS")) {
+            optionsHandler(r);
+        } else {
+            JsonRequestHandler handler = requestHandlers.get(requestType).getHandler();
+            JSONObject jsonObj;
+    
+            // Read the json body
             try {
-                sessionToken = jsonObj.getString("token");
+                jsonObj = new JSONObject(Utils.convert(r.getRequestBody()));
             } catch (Exception e) {
+                HttpResponseWriter.sendStatus(r, Status.BADREQUEST);
                 e.printStackTrace();
-            } finally {
-                if (!JWTSessionManager.validateToken(sessionToken)) {
-                    HttpResponseWriter.sendStatus(r, Status.FORBIDDEN);
-                    return;
+                return;
+            }
+    
+            // Check the session token if authentication is required
+            if (requestHandlers.get(requestType).isAuthenticate()) {
+                String sessionToken = "";
+                try {
+                    sessionToken = jsonObj.getString("token");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (!JWTSessionManager.validateToken(sessionToken)) {
+                        HttpResponseWriter.sendStatus(r, Status.FORBIDDEN);
+                        return;
+                    }
                 }
             }
-        }
-
-        // Call the endpoint's handler
-        if (handler != null) {
-            JsonHttpReponse response = handler.handle(jsonObj);
-            HttpResponseWriter.writeReponse(r, response.getStatus(), response.getJsonString());
-        } else {
-            HttpResponseWriter.sendStatus(r, Status.NOT_IMPLEMENTED);
+    
+            // Call the endpoint's handler
+            if (handler != null) {
+                JsonHttpReponse response = handler.handle(jsonObj);
+                HttpResponseWriter.writeReponse(r, response.getStatus(), response.getJsonString());
+            } else {
+                HttpResponseWriter.sendStatus(r, Status.NOT_IMPLEMENTED);
+            }
         }
     }
 }
