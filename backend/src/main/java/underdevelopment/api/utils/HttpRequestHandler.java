@@ -82,6 +82,7 @@ public class HttpRequestHandler implements HttpHandler {
             try {
                 sessionToken = jsonObj.getString("token");
             } catch (Exception e) {
+                e.printStackTrace();
             } finally {
                 if (!JWTSessionManager.validateToken(sessionToken)) {
                     HttpResponseWriter.sendStatus(r, Status.FORBIDDEN);

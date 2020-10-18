@@ -1,6 +1,9 @@
 package underdevelopment.api.utils;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sun.net.httpserver.HttpExchange;
 
 public class HttpResponseWriter {
@@ -12,6 +15,16 @@ public class HttpResponseWriter {
         }
         
         try {
+            List<String> a;
+            
+            a = new ArrayList<String>();
+            a.add("text/plain; charset=utf-8");
+            r.getResponseHeaders().put("Content-Type", a);
+
+            a = new ArrayList<String>();
+            a.add("*");
+            r.getResponseHeaders().put("Access-Control-Allow-Origin", a);
+
             r.sendResponseHeaders(status, response.length());
             OutputStream os = r.getResponseBody();
             os.write(response.getBytes());
