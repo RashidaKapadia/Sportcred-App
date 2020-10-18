@@ -24,7 +24,10 @@ public class LoginHandler {
             try {
                 username = jsonObj.getString("username");
                 password = jsonObj.getString("password");
+                System.out.println(username);
+                System.out.println(password);
             } catch (Exception e) {
+                e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
@@ -39,6 +42,7 @@ public class LoginHandler {
                 String response = new JSONObject()
                     .put("token", sessionToken)
                     .toString();
+                System.out.println(response);
                 return new JsonHttpReponse(Status.OK, response);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -78,6 +82,20 @@ public class LoginHandler {
     public static JsonRequestHandler testNonAuthorizedRoute() {
         return (JSONObject jsonObj) -> {
             return new JsonHttpReponse(Status.OK);
+        };
+    }
+
+    public static JsonRequestHandler testGet() {
+        return (JSONObject jsonObj) -> {
+            try {
+                String response = new JSONObject()
+                    .put("message", "Hello world!!!!")
+                    .toString();
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
         };
     }
 }

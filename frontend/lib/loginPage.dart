@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -15,15 +16,38 @@ class LoginStatus {
 // Http post request to login
 Future<LoginStatus> login(String username, String password) async {
   // Make the request and store the response
-  final http.Response response = await http.post(
-    // new Uri.http("localhost:8080", "/api/login"),
-    'http://127.0.0.1:8080/api/login',
-    headers: <String, String>{
-      'Content-Type': 'text/json; charset=UTF-8',
-    },
-    body: jsonEncode(
-        <String, String>{'username': username, 'password': password}),
-  );
+
+  var client = new http.Client();
+  try {
+    var uri = Uri.https('quotes.rest', '/qod', {'language': 'en'});
+
+    print(await client.get(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'quotes.rest',
+        'Access-Control-Allow-Headers': 'x-requested-with, content-type',
+        // "Access-Control-Allow-Methods": "POST, GET, PUT, OPTIONS, DELETE",
+        // 'Access-Control-Request-Headers': "x-requested-with, content-type",
+        'With-Credentials': 'true',
+      },
+    ));
+  } finally {
+    client.close();
+  }
+
+  // final http.Response response = await http.post(
+  //   // new Uri.http("localhost:8080", "/api/login"),
+  //   'http://localhost:8080/api/login',
+  //   headers: {
+  //     'Content-Type': 'text/plain; charset=utf-8',
+  //     'Accept': 'text/plain; charset=utf-8',
+  //     'Access-Control-Allow-Origin': '*',
+  //   },
+  //   body: jsonEncode(
+  //       <String, String>{'username': username, 'password': password}),
+  // );
 
   // if (response.statusCode == 200) {
   //   // Store the session token
