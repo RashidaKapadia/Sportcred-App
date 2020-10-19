@@ -332,7 +332,7 @@ class _SignUpPageState extends State<SignUpPage> {
             style: TextStyle(fontSize: 17, color: Colors.black87),
             items: dropDownItems,
             value: sportLevel,
-            onSaved: (value) {
+            onChanged: (value) {
               setState(() {
                 this.sportLevel = value;
               });
