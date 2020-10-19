@@ -13,15 +13,9 @@ import underdevelopment.db.DBLogin;
 public class LoginHandler {
 
     public static boolean validCredentials (String username, String password) {
-        // DBLogin methods
-        DBLogin dbLogin  = new DBLogin();
-        boolean returnValue = dbLogin.verifyUser(username, password);
-        if (returnValue == false){
-            return false;
-        }
-        else{
-            return true;
-        }
+        // TODO: remove test user
+        return (new DBLogin().verifyUser(username, password) 
+            || (username.equals("test") && password.equals("test"))); 
     }
 
     public static JsonRequestHandler createSession() {
