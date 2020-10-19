@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
+import './loginPage.dart';
+import './HTTPRequestExample.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -10,7 +12,9 @@ void main() {
       home: SportCredApp(),
       routes: {
         '/signup': (context) => SignUpPage(),
-        '/welcome': (context) => WelcomePage()
+        '/welcome': (context) => WelcomePage(),
+        '/login': (context) => LoginPage(),
+        "/test": (context) => HTTPRequestExample()
       }));
 }
 
@@ -23,6 +27,6 @@ class _SportCredAppState extends State<SportCredApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return SignUpPage();
+    return LoginPage();
   }
 }
