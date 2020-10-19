@@ -217,11 +217,7 @@ class _State_Of_Login_Page extends State<LoginPage> {
                             // to an API or persisted for further use
 
                             //signup screen
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        LoginPage())); // to be changed to SignUpPage
+                            Navigator.of(context).pushNamed("/signup"); 
                           },
                         )
                       ],
