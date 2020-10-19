@@ -7,11 +7,15 @@ import underdevelopment.api.utils.JWTSessionManager;
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.Status;
+import underdevelopment.db.DBLogin;
+
 
 public class LoginHandler {
 
-    private static boolean validCredentials (String username, String password) {
-        return username.equals("test") && password.equals("test");
+    public static boolean validCredentials (String username, String password) {
+        // TODO: remove test user
+        return (new DBLogin().verifyUser(username, password) 
+            || (username.equals("test") && password.equals("test"))); 
     }
 
     public static JsonRequestHandler createSession() {
