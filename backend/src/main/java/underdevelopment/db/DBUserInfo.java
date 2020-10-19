@@ -2,6 +2,9 @@ package underdevelopment.db;
 
 import java.util.Date;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
 import org.neo4j.driver.GraphDatabase;
 
 public class DBUserInfo {
@@ -31,7 +34,7 @@ public class DBUserInfo {
         this.dob = dob;
 
         // Create a user node in DB for the user with the provided data
-        try (Session session = DBConnect.driver.session()) {
+        try (Session session = Connect.driver.session()) {
             session.writeTransaction(tx -> tx.run(
                     "MERGE (a:user {username: $usr, password: $pwd, phoneNumber: $phoneNum, "
                             + "favouriteSport: $favSport, sportLevel: $sportLevel, sportToLearn: $sportToLearn, "
