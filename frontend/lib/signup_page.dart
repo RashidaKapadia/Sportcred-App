@@ -1,7 +1,67 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 import './formFields.dart';
 import './fieldStyles.dart';
+
+import 'package:flutter_session/flutter_session.dart';
+
+import 'package:http/http.dart' as http;
+
+class SignUpStatus {
+  final bool success;
+  final String message;
+  SignUpStatus(this.success, this.message);
+}
+
+// Http post request to login
+Future<SignUpStatus> login(
+    String username,
+    String email,
+    String password,
+    String phoneNum,
+    String favSport,
+    String sportLevel,
+    String sportToLearn,
+    String favTeam,
+    DateTime dob) async {
+  // Make the request and store the response
+  final http.Response response = await http.post(
+    // new Uri.http("localhost:8080", "/api/login"),
+    'http://localhost:8080/api/signup',
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Accept': 'text/plain; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: jsonEncode(<String, Object>{
+      'username': username,
+      'email': email,
+      'password': password,
+      'phoneNumber': phoneNum,
+      'favSport': favSport,
+      'sportLevel': sportLevel,
+      'sportToLearn': sportToLearn,
+      'favTeam': favTeam,
+      'dob': dob
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    // Store the session token
+    String token = jsonDecode(response.body)['token'];
+    await FlutterSession().set('token', token);
+    return SignUpStatus(true, "SignUp successful!");
+  } else if (response.statusCode == 403) {
+    return SignUpStatus(false, "Your username or password is incorrect.");
+  } else {
+    return SignUpStatus(false, "Login failed, please contact your admin.");
+  }
+
+  return null;
+}
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -12,36 +72,36 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
 
   String email = "";
-  String username = "";
+  String username = ""; 
   String password1 = "";
   String password2 = "";
   String phoneNumber = "";
   String favSport = "";
-  String _sportLevel = "";
-  String _sportToLearn = "";
-  String _favTeam = "";
-  DateTime _dob;
-  DateFormat _dateFormatter = new DateFormat('yyyy-MM-dd');
+  String sportLevel = "";
+  String sportToLearn = "";
+  String favTeam = "";
+  DateTime dob;
+  DateFormat dateFormatter = new DateFormat('yyyy-MM-dd');
 
-  List<String> _sportLevels = [
+  List<String> sportLevels = [
     'No history',
     'Recreational',
     'High School',
     'University',
     'Professional'
   ];
-  List<DropdownMenuItem<String>> _dropDownItems = List();
+  List<DropdownMenuItem<String>> dropDownItems = List();
 
   @override
   void initState() {
     createDropdownItems();
-    _sportLevel = _dropDownItems[0].value;
+    sportLevel = dropDownItems[0].value;
     super.initState();
   }
 
   void createDropdownItems() {
-    for (String item in _sportLevels) {
-      _dropDownItems.add(DropdownMenuItem(value: item, child: Text(item)));
+    for (String item in sportLevels) {
+      dropDownItems.add(DropdownMenuItem(value: item, child: Text(item)));
     }
   }
 
@@ -64,9 +124,9 @@ class _SignUpPageState extends State<SignUpPage> {
           );
         });
 
-    if (dateSelect != null && dateSelect != _dob) {
+    if (dateSelect != null && dateSelect != dob) {
       setState(() {
-        this._dob = dateSelect;
+        this.dob = dateSelect;
       });
     }
   }
@@ -202,9 +262,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      _dob == null
+                                      dob == null
                                           ? 'Please select a date'
-                                          : '${_dateFormatter.format(this._dob)}',
+                                          : '${dateFormatter.format(this.dob)}',
                                       style: TextStyle(
                                           fontSize: 17, color: Colors.black54),
                                     ),
@@ -237,11 +297,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       prefixIcon: Icon(Icons.leaderboard),
                     ),
                     style: TextStyle(fontSize: 17, color: Colors.black87),
-                    items: _dropDownItems,
-                    value: _sportLevel,
+                    items: dropDownItems,
+                    value: sportLevel,
                     onChanged: (value) {
                       setState(() {
-                        this._sportLevel = value;
+                        this.sportLevel = value;
                       });
                     }),
                 SizedBox(height: 20.0),
@@ -251,7 +311,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   validator: (value) => checkInput(value, "answer"),
                   onChanged: (value) {
                     setState(() {
-                      this._sportToLearn = value;
+                      this.sportToLearn = value;
                     });
                   },
                 ),
@@ -262,7 +322,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   validator: (value) => checkInput(value, "answer"),
                   onChanged: (value) {
                     setState(() {
-                      this._favTeam = value;
+                      this.favTeam = value;
                     });
                   },
                 ),
@@ -276,14 +336,14 @@ class _SignUpPageState extends State<SignUpPage> {
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     onPressed: () {
-                      print(username);
+                      /* print(username);
                       print(email);
                       print(password1);
                       print(password2);
                       print(favSport);
                       print(_sportLevel);
                       print(_sportToLearn);
-                      print(_favTeam);
+                      print(_favTeam); */
 
                       Navigator.of(context).pushNamed("/welcome");
                       // if (_formKey.currentState.validate()){
