@@ -9,7 +9,7 @@ public class DBLogin{
     
     // verify the user credentials
     public boolean verifyUser(String username, String password){
-         try (Session session = Connect.driver.session()) {
+        try (Session session = Connect.driver.session()) {
         	 Result result = session.run("MATCH (u:user) WHERE u.username = $x AND u.password = $y RETURN u IS NOT NULL",
              parameters("x",  username, "y", password));
         		if (result.hasNext()) {
@@ -19,7 +19,7 @@ public class DBLogin{
         	return false; 
         }
         catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return false;// server error probably
         }
 }
