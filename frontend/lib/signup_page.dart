@@ -17,16 +17,16 @@ class SignUpStatus {
 }
 
 // Http post request to login
-Future<SignUpStatus> login(
+Future<SignUpStatus> signUp(
     String username,
     String email,
-    String password,
+    String password1,
     String phoneNum,
     String favSport,
     String sportLevel,
     String sportToLearn,
     String favTeam,
-    DateTime dob) async {
+    String dob) async {
   // Make the request and store the response
   final http.Response response = await http.post(
     // new Uri.http("localhost:8080", "/api/login"),
@@ -36,10 +36,10 @@ Future<SignUpStatus> login(
       'Accept': 'text/plain; charset=utf-8',
       'Access-Control-Allow-Origin': '*',
     },
-    body: jsonEncode(<String, Object>{
+    body: jsonEncode(<String, String>{
       'username': username,
       'email': email,
-      'password': password,
+      'password1': password1,
       'phoneNumber': phoneNum,
       'favSport': favSport,
       'sportLevel': sportLevel,
@@ -49,17 +49,18 @@ Future<SignUpStatus> login(
     }),
   );
 
+  // Store the session token
+  String token = jsonDecode(response.body)['token'];
+  await FlutterSession().set('token', token);
+  // Check the type of response received from backend
   if (response.statusCode == 200) {
-    // Store the session token
-    String token = jsonDecode(response.body)['token'];
-    await FlutterSession().set('token', token);
     return SignUpStatus(true, "SignUp successful!");
-  } else if (response.statusCode == 403) {
-    return SignUpStatus(false, "Your username or password is incorrect.");
+  } else if (response.statusCode == 409) {
+    return SignUpStatus(
+        false, "Username or email already exists.");
   } else {
-    return SignUpStatus(false, "Login failed, please contact your admin.");
+    return SignUpStatus(false, "Sign up failed, please contact your admin.");
   }
-
   return null;
 }
 
@@ -71,8 +72,9 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
 
+// Signup fields
   String email = "";
-  String username = ""; 
+  String username = "";
   String password1 = "";
   String password2 = "";
   String phoneNumber = "";
@@ -92,6 +94,18 @@ class _SignUpPageState extends State<SignUpPage> {
   ];
   List<DropdownMenuItem<String>> dropDownItems = List();
 
+  Future<SignUpStatus> _futureSignUpStatus;
+
+  //TextEditingController emailController = TextEditingController();
+  //TextEditingController usernameController = TextEditingController();
+  TextEditingController password1Controller = TextEditingController(); // needed to check that passwords match
+  TextEditingController password2Controller = TextEditingController();
+  //TextEditingController phoneNumberController = TextEditingController();
+  //TextEditingController favSportController = TextEditingController();
+  //TextEditingController sportLevelController = TextEditingController();
+  //TextEditingController sportToLearnController = TextEditingController();
+  //TextEditingController favTeamController = TextEditingController();
+  
   @override
   void initState() {
     createDropdownItems();
@@ -99,12 +113,37 @@ class _SignUpPageState extends State<SignUpPage> {
     super.initState();
   }
 
+/// Indicates signup status based on the response
+  Widget signupStatus() {
+    return FutureBuilder<SignUpStatus>(
+      future: _futureSignUpStatus,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          //Navigator.of(context).pushNamed("/welcome");
+          return Text(snapshot.data.message);
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        } else {
+          return Container(
+              alignment: Alignment.center,
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ));
+        }
+      },
+    );
+  }
+
+///Creates the dropdownitems for drop down field
   void createDropdownItems() {
     for (String item in sportLevels) {
       dropDownItems.add(DropdownMenuItem(value: item, child: Text(item)));
     }
   }
 
+  /// Date picker
   Future<Null> _pickDate(BuildContext context) async {
     final dateSelect = await showDatePicker(
         context: context,
@@ -131,13 +170,221 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  // This widget is the root of your application.
+  Widget getUsername() {
+    return TextFormField(
+      // controller: usernameController,
+      cursorColor: mainColour,
+      validator: (value) => checkInput(value, "Username"),
+      decoration: inputDecorator(
+        'Username',
+        Icon(Icons.person),
+      ),
+      onSaved: (value) {
+        setState(() {
+          this.username = value;
+        });
+      },
+    );
+  }
+
+  Widget getEmail() {
+    return TextFormField(
+      //   controller: emailController,
+      cursorColor: mainColour,
+      validator: (value) => checkInput(value, "Email"),
+      decoration: inputDecorator(
+        'Email',
+        Icon(Icons.email),
+      ),
+      onSaved: (value) {
+        setState(() {
+          this.email = value;
+        });
+      },
+    );
+  }
+
+  Widget getPassword1() {
+    return TextFormField(
+      controller: password1Controller,
+      cursorColor: mainColour,
+      validator: (value) {
+        if (value.isEmpty) {
+          return "Please enter your password!";
+        } else if (value.length < 8) {
+          return "Your password must have at least 8 characters.";
+        } else {
+          return null;
+        }
+      },
+      obscureText: true,
+      decoration: inputDecorator(
+        'Password',
+        Icon(Icons.lock),
+      ),
+      onSaved: (value) {
+        setState(() {
+          this.password1 = value;
+        });
+      },
+    );
+  }
+
+  Widget getPassword2() {
+    return TextFormField(
+      controller: password2Controller,
+      cursorColor: mainColour,
+      validator: (value) {
+        if (password1Controller.value.text != value) {
+          return "Passwords don't match!";
+        } else {
+          return null;
+        }
+      },
+      obscureText: true,
+      decoration: inputDecorator(
+        'Password',
+        Icon(Icons.lock),
+      ),
+      onSaved: (value) {
+        setState(() {
+          this.password2 = value;
+        });
+      },
+    );
+  }
+
+  Widget getPhoneNumber() {
+    return TextFormField(
+      cursorColor: mainColour,
+      validator: (value) => checkInput(value, "Phone number"),
+      decoration: inputDecorator(
+        'Phone number',
+        Icon(Icons.phone),
+      ),
+      onSaved: (value) {
+        setState(() {
+          this.phoneNumber = value;
+        });
+      },
+    );
+  }
+
+  Widget getDateOfBirth() {
+    return Container(
+        decoration: BoxDecoration(
+            border:
+                Border(bottom: BorderSide(color: Colors.black26, width: 2.0))),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            SizedBox(width: 12.0),
+            Icon(Icons.calendar_view_day, color: Colors.black45),
+            Text('  Date of Birth: ',
+                style: TextStyle(fontSize: 17, color: Colors.black54)),
+            SizedBox(width: 20.0),
+          ]),
+          FlatButton(
+              onPressed: () {
+                setState(() {
+                  _pickDate(context);
+                });
+              },
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      dob == null
+                          ? 'Please select a date'
+                          : '${dateFormatter.format(this.dob)}',
+                      style: TextStyle(fontSize: 17, color: Colors.black54),
+                    ),
+                    SizedBox(width: 20.0),
+                    Icon(Icons.date_range_rounded, color: Colors.black45),
+                  ]))
+        ]));
+  }
+
+  Widget getFavouriteSport() {
+    return TextFormField(
+      //  controller: favSportController,
+      cursorColor: mainColour,
+      validator: (value) => checkInput(value, "Favourite Sport"),
+      decoration: inputDecorator(
+        'Favourite sport',
+        Icon(Icons.sports_basketball),
+      ),
+      onSaved: (value) {
+        this.favSport = value;
+      },
+    );
+  }
+
+  Widget getHighestSportLevel() {
+    return Column(
+      children: [
+        Text('What is your highest level of sport play?',
+            style: TextStyle(fontSize: 18, color: Colors.black54)),
+        DropdownButtonFormField(
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.leaderboard),
+            ),
+            style: TextStyle(fontSize: 17, color: Colors.black87),
+            items: dropDownItems,
+            value: sportLevel,
+            onSaved: (value) {
+              setState(() {
+                this.sportLevel = value;
+              });
+            }),
+      ],
+    );
+  }
+
+  Widget getSportToLearn() {
+    return Column(
+      children: [
+        txtField('What sport would you like to know or learn about?'),
+        TextFormField(
+          // controller: sportToLearnController,
+          cursorColor: mainColour,
+          validator: (value) => checkInput(value, "answer"),
+          onSaved: (value) {
+            setState(() {
+              this.sportToLearn = value;
+            });
+          },
+        )
+      ],
+    );
+  }
+
+  Widget getFavouriteTeam() {
+    return Column(
+      children: [
+        txtField('What is your favourite sports team?'),
+        TextFormField(
+          // controller: favTeamController,
+          cursorColor: mainColour,
+          validator: (value) => checkInput(value, "answer"),
+          onSaved: (value) {
+            setState(() {
+              this.favTeam = value;
+            });
+          },
+        )
+      ],
+    );
+  }
+
+  /// This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
           padding: EdgeInsets.all(10),
           child: Form(
+            key: _formKey,
             child: ListView(
               children: [
                 SizedBox(height: 20.0),
@@ -151,206 +398,78 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   textAlign: TextAlign.center,
                 ),
+                (_futureSignUpStatus != null)
+                    ? signupStatus()
+                    : Text("Enter your information below:"),
                 SizedBox(height: 20.0),
-                TextFormField(
-                  cursorColor: mainColour,
-                  validator: (value) => checkInput(value, "Username"),
-                  decoration: inputDecorator(
-                    'Username',
-                    Icon(Icons.person),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      this.username = value;
-                    });
-                  },
-                ),
+                getUsername(),
                 SizedBox(height: 20.0),
-                TextFormField(
-                  cursorColor: mainColour,
-                  validator: (value) => checkInput(value, "Email"),
-                  decoration: inputDecorator(
-                    'Email',
-                    Icon(Icons.email),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      this.email = value;
-                    });
-                  },
-                ),
+                getEmail(),
                 SizedBox(
                   height: 20.0,
                 ),
-                TextFormField(
-                  cursorColor: mainColour,
-                  validator: (value) => checkInput(value, "Password"),
-                  obscureText: true,
-                  decoration: inputDecorator(
-                    'Password',
-                    Icon(Icons.lock),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      this.password1 = value;
-                    });
-                  },
-                ),
+                getPassword1(),
                 SizedBox(
                   height: 20.0,
                 ),
-                TextFormField(
-                  cursorColor: mainColour,
-                  validator: (value) => checkInput(value, "Password"),
-                  obscureText: true,
-                  decoration: inputDecorator(
-                    'Confirm password',
-                    Icon(Icons.lock),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      this.password2 = value; // Set password2 to the value
-                    });
-                  },
-                ),
+                getPassword2(),
                 SizedBox(
                   height: 20.0,
                 ),
-                TextFormField(
-                  cursorColor: mainColour,
-                  validator: (value) => checkInput(value, "Phone number"),
-                  decoration: inputDecorator(
-                    'Phone number',
-                    Icon(Icons.phone),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      this.phoneNumber = value;
-                    });
-                  },
-                ),
+                getPhoneNumber(),
                 SizedBox(
                   height: 20.0,
                 ),
-                Container(
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom:
-                                BorderSide(color: Colors.black26, width: 2.0))),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(width: 12.0),
-                                Icon(Icons.calendar_view_day,
-                                    color: Colors.black45),
-                                Text('  Date of Birth: ',
-                                    style: TextStyle(
-                                        fontSize: 17, color: Colors.black54)),
-                                SizedBox(width: 20.0),
-                              ]),
-                          FlatButton(
-                              onPressed: () {
-                                setState(() {
-                                  _pickDate(context);
-                                });
-                              },
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      dob == null
-                                          ? 'Please select a date'
-                                          : '${dateFormatter.format(this.dob)}',
-                                      style: TextStyle(
-                                          fontSize: 17, color: Colors.black54),
-                                    ),
-                                    SizedBox(width: 20.0),
-                                    Icon(Icons.date_range_rounded,
-                                        color: Colors.black45),
-                                  ]))
-                        ])),
+                getDateOfBirth(),
                 SizedBox(
                   height: 20.0,
                 ),
-                TextFormField(
-                  cursorColor: mainColour,
-                  validator: (value) => checkInput(value, "Favourite Sport"),
-                  decoration: inputDecorator(
-                    'Favourite sport',
-                    Icon(Icons.sports_basketball),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      this.favSport = value;
-                    });
-                  },
-                ),
+                getFavouriteSport(),
                 SizedBox(height: 20.0),
-                Text('What is your highest level of sport play?',
-                    style: TextStyle(fontSize: 18, color: Colors.black54)),
-                DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.leaderboard),
-                    ),
-                    style: TextStyle(fontSize: 17, color: Colors.black87),
-                    items: dropDownItems,
-                    value: sportLevel,
-                    onChanged: (value) {
-                      setState(() {
-                        this.sportLevel = value;
-                      });
-                    }),
+                getHighestSportLevel(),
                 SizedBox(height: 20.0),
-                txtField('What sport would you like to know or learn about?'),
-                TextFormField(
-                  cursorColor: mainColour,
-                  validator: (value) => checkInput(value, "answer"),
-                  onChanged: (value) {
-                    setState(() {
-                      this.sportToLearn = value;
-                    });
-                  },
-                ),
+                getSportToLearn(),
                 SizedBox(height: 20.0),
-                txtField('What is your favourite sports team?'),
-                TextFormField(
-                  cursorColor: mainColour,
-                  validator: (value) => checkInput(value, "answer"),
-                  onChanged: (value) {
-                    setState(() {
-                      this.favTeam = value;
-                    });
-                  },
-                ),
+                getFavouriteTeam(),
                 SizedBox(height: 20.0),
                 RaisedButton(
-                    color: mainColour,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                    onPressed: () {
-                      /* print(username);
-                      print(email);
-                      print(password1);
-                      print(password2);
-                      print(favSport);
-                      print(_sportLevel);
-                      print(_sportToLearn);
-                      print(_favTeam); */
+                  color: mainColour,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: Text(
+                    "Sign Up",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (_formKey.currentState.validate()) {
+                        print("Sign up was successful!");
 
-                      Navigator.of(context).pushNamed("/welcome");
-                      // if (_formKey.currentState.validate()){
-                      // Data processing
+                        _formKey.currentState.save();
 
-                      // }
-                    }),
+                        // Call the HTTP request
+                        _futureSignUpStatus = signUp(
+                            username,
+                            email,
+                            password1,
+                            phoneNumber,
+                            favSport,
+                            sportLevel,
+                            sportToLearn,
+                            favTeam,
+                            dob.toString());
+
+                      //  if (_futureSignUpStatus != null) {}
+                      }
+                    });
+
+                    //Navigator.of(context).pushNamed("/welcome");
+                    // if (_formKey.currentState.validate()){
+                    // Data processing
+
+                    // }
+                  },
+                ),
               ],
             ),
           )),
