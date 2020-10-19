@@ -12,7 +12,7 @@ import underdevelopment.db.DBLogin;
 
 public class LoginHandler {
 
-    private static boolean validCredentials (String username, String password) {
+    public static boolean validCredentials (String username, String password) {
         // DBLogin methods
         DBLogin dbLogin  = new DBLogin();
         boolean returnValue = dbLogin.verifyUser(username, password);
