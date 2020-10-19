@@ -6,6 +6,7 @@ import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpServer;
 
 import underdevelopment.api.LoginHandler;
+import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
 
 public class App 
@@ -15,12 +16,17 @@ public class App
     {
         // Config server to localhost and port
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", PORT), 0);
-
+ 
         server.createContext("/api/login", 
             new HttpRequestHandler("POST", LoginHandler.createSession(), false));
         server.createContext("/api/check-session", 
             new HttpRequestHandler("POST", LoginHandler.verifySession(), false));
         
+        // Sign Up API
+        server.createContext("/api/signup", 
+                new HttpRequestHandler("POST", SignUpHandler.handleSignUp(), false));
+        
+       
         // Test routes
         server.createContext("/api/test/authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), true)

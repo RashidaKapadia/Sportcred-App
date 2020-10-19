@@ -39,7 +39,7 @@ Future<SignUpStatus> login(
     body: jsonEncode(<String, Object>{
       'username': username,
       'email': email,
-      'password': password,
+      'password1': password,
       'phoneNumber': phoneNum,
       'favSport': favSport,
       'sportLevel': sportLevel,
