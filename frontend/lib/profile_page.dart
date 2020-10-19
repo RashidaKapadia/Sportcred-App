@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './navbar.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -36,6 +37,7 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        bottomNavigationBar: NavBar(),
         body: Container(
       color: Colors.white,
       child: new ListView(
