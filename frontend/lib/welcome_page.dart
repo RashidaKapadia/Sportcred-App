@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import './loginPage.dart';
 
 class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Welcome!", style: TextStyle(color: Colors.white),),
+        title: Text(
+          "Welcome!",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.orange,
       ),
       body: Center(
@@ -31,8 +35,8 @@ class WelcomePage extends StatelessWidget {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
             onPressed: () {
-              Navigator.of(context).pushNamed('/signup');
-                   // Need to change to login page
+              Navigator.of(context).pushNamed('/login');
+              // Need to change to login page
             }),
       ])),
     );
