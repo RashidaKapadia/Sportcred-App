@@ -29,7 +29,7 @@ public class LoginHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
-            // Check creditials
+            // Check credentials
             if (!validCredentials(username, password)) {
                 return new JsonHttpReponse(Status.FORBIDDEN);
             }
