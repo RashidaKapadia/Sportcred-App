@@ -17,10 +17,11 @@ class SignUpStatus {
 }
 
 // Http post request to login
-Future<SignUpStatus> signUp(
+
+Future<SignUpStatus> login(
     String username,
     String email,
-    String password1,
+    String password,
     String phoneNum,
     String favSport,
     String sportLevel,
@@ -36,10 +37,10 @@ Future<SignUpStatus> signUp(
       'Accept': 'text/plain; charset=utf-8',
       'Access-Control-Allow-Origin': '*',
     },
-    body: jsonEncode(<String, String>{
+    body: jsonEncode(<String, Object>{
       'username': username,
       'email': email,
-      'password1': password1,
+      'password': password,
       'phoneNumber': phoneNum,
       'favSport': favSport,
       'sportLevel': sportLevel,
@@ -61,6 +62,7 @@ Future<SignUpStatus> signUp(
   } else {
     return SignUpStatus(false, "Sign up failed, please contact your admin.");
   }
+      
   return null;
 }
 
@@ -74,7 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
 // Signup fields
   String email = "";
-  String username = "";
+  String username = ""; 
   String password1 = "";
   String password2 = "";
   String phoneNumber = "";
@@ -470,6 +472,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     // }
                   },
                 ),
+
               ],
             ),
           )),
