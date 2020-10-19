@@ -7,13 +7,6 @@ import org.neo4j.driver.Session;
 
 public class DBLogin{
     
-    //private static Driver driver;
-    
-    //constructor
-    /*public DBLogin(){
-        driver = Connect.getDriver(); 
-    }
-    */
     // verify the user credentials
     public boolean verifyUser(String username, String password){
          try (Session session = Connect.driver.session()) {
