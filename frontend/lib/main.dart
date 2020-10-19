@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
 import './loginPage.dart';
+import './homepage.dart';
 import './HTTPRequestExample.dart';
 
 void main() {
@@ -14,6 +15,7 @@ void main() {
         '/signup': (context) => SignUpPage(),
         '/welcome': (context) => WelcomePage(),
         '/login': (context) => LoginPage(),
+        '/homepage': (context) => HomePage(),
         "/test": (context) => HTTPRequestExample()
       }));
 }
