@@ -1,4 +1,8 @@
+package underdevelopment.db;
+
 import java.util.Date;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
 
 public class DBUserInfo {
     // Variables to store user data from the signup form
