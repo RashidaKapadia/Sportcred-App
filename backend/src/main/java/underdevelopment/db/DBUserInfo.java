@@ -3,34 +3,30 @@ package underdevelopment.db;
 import java.util.Date;
 
 import static org.neo4j.driver.Values.parameters;
+import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import org.neo4j.driver.Transaction;
 
 
 public class DBUserInfo {
-  // Variables to store user data from the signup form
-  String email = "";
-  String username = "";
-  String password = "";
-  String phoneNumber = "";
-  String favSport = "";
-  String sportLevel = "";
-  String sportToLearn = "";
-  String favTeam = "";
-  Date dob;
-  int acs = 100; // ACS initial value is 100
+ 
 
-  public DBUserInfo(String email, String username, String password, String phoneNumber,
+  /**
+   * Given the different fields, create a user node with those fields and values in the DB.
+   * @param email
+   * @param username
+   * @param password
+   * @param phoneNumber
+   * @param favSport
+   * @param sportLevel
+   * @param sportToLearn
+   * @param favTeam
+   * @param dob
+   */
+  public static void addUser(String email, String username, String password, String phoneNumber,
       String favSport, String sportLevel, String sportToLearn, String favTeam, Date dob) {
     // set the values for the instance variables
-    this.email = email;
-    this.username = username;
-    this.password = password;
-    this.phoneNumber = phoneNumber;
-    this.favSport = favSport;
-    this.sportLevel = sportLevel;
-    this.sportToLearn = sportToLearn;
-    this.favTeam = favTeam;
-    this.dob = dob;
+    
 
     // Create a user node in DB for the user with the provided data
     try (Session session = Connect.driver.session()) {
@@ -38,189 +34,59 @@ public class DBUserInfo {
           "MERGE (a:user {username: $usr, email: $email, password: $pwd, phoneNumber: $phoneNum, "
               + "favouriteSport: $favSport, sportLevel: $sportLevel, sportToLearn: $sportToLearn, "
               + "favouriteTeam: $favTeam, dateOfBirth: $dob, acs: $acs}",
-          parameters("usr", this.username, "email", this.email, "pwd", this.password, "phoneNum",
-              this.phoneNumber, "favSport", this.favSport, "sportLevel", this.sportLevel,
-              "sportToLearn", this.sportToLearn, "favTeam", this.favTeam, "dob", this.dob, "acs",
-              this.acs)));
+          parameters("usr",username, "email", email, "pwd", password, "phoneNum",
+              phoneNumber, "favSport", favSport, "sportLevel", sportLevel,
+              "sportToLearn", sportToLearn, "favTeam", favTeam, "dob", dob, "acs",
+              100)));
       session.close();
     }
 
   }
 
   /**
-   * Return the username
-   * 
-   * @return username
+   * Return true if and only if a user with the given username already exists
+   * @param username
+   * @return bool
    */
-  public String getUsername() {
-    return this.username;
+  public static Boolean checkUsernameExists(String username) {
+    // Run query to check if a user with given username already exists
+    try (Session session = Connect.driver.session()) {
+      try (Transaction tx = session.beginTransaction()) {
+        Result node_bool = tx.run("MATCH (u:user {username: $x}) RETURN u", parameters("x", username));
+
+        // If any results have been returned, it means user exists already
+        if (node_bool.hasNext()) {
+          return true;
+        }
+      }
+    }
+    
+    // Return false if user with given username does not exist
+    return false;
+    
   }
+  
 
   /**
-   * Return email
-   * 
-   * @return email
-   */
-  public String getEmail() {
-    return this.email;
-  }
-
-  /**
-   * Return sport level
-   * 
-   * @return sport level
-   */
-  public String getSportLevel() {
-    return this.sportLevel;
-  }
-
-  /**
-   * Return password
-   * 
-   * @return password
-   */
-  public String getPassword() {
-    return this.password;
-  }
-
-  /**
-   * Return phone number
-   * 
-   * @return phone number
-   */
-  public String getPhoneNumber() {
-    return this.phoneNumber;
-  }
-
-  /**
-   * Return favourite sport
-   * 
-   * @return favourite sport
-   */
-  public String getFavouriteSport() {
-    return this.favSport;
-  }
-
-  /**
-   * Return sport to learn
-   * 
-   * @return sport to learn
-   */
-  public String getSportToLearn() {
-    return this.favSport;
-  }
-
-  /**
-   * Return favourite team
-   * 
-   * @return favourite team
-   */
-  public String getFavouriteTeam() {
-    return this.favTeam;
-  }
-
-  /**
-   * Return the date of birth
-   * 
-   * @return dob
-   */
-  public Date getDateOfBirth() {
-    return this.dob;
-  }
-
-  /**
-   * Return ACS
-   * 
-   * @return ACS
-   */
-  public int getACS() {
-    return this.acs;
-  }
-
-  /**
-   * Set the username to the new value
-   * 
-   * @param value
-   */
-  public void setUsername(String value) {
-    this.username = value;
-  }
-
-  /**
-   * Set the email to the new value
-   * 
+   * Return true if and only if a user with the given email already exists
    * @param email
+   * @return bool
    */
-  public void setEmail(String value) {
-    this.email = value;
+  public static Boolean checkEmailExists(String email) {
+    // Run query to check if a user with given email already exists
+    try (Session session = Connect.driver.session()) {
+      try (Transaction tx = session.beginTransaction()) {
+        Result node_bool = tx.run("MATCH (u:user {email: $x}) RETURN u", parameters("x", email));
+
+        // If any results have been returned, it means user exists already
+        if (node_bool.hasNext()) {
+          return true;
+        }
+      }
+    }
+    
+    // Return false if user with given username does not exist
+    return false;
+    
   }
-
-  public void setSportLevel(String value) {
-    this.sportLevel = value;
-  }
-
-  /**
-   * Set the password to the new value
-   * 
-   * @param value
-   */
-  public void setPassword(String value) {
-    this.password = value;
-  }
-
-  /**
-   * Set the phone number to the new value
-   * 
-   * @param value
-   */
-  public void setPhoneNumber(String value) {
-    this.phoneNumber = value;
-  }
-
-  /**
-   * Set the favourite sport to the new value
-   * 
-   * @param value
-   */
-  public void setFavouriteSport(String value) {
-    this.favSport = value;
-  }
-
-  /**
-   * Set the sport to learn to the new value
-   * 
-   * @param value
-   */
-  public void setSportToLearn(String value) {
-    this.favSport = value;
-  }
-
-  /**
-   * Set the favourite team to the new value
-   * 
-   * @param value
-   */
-  public void setFavouriteTeam(String value) {
-    this.favTeam = value;
-  }
-
-  /**
-   * Set the date of birth to the new value
-   * 
-   * @param value
-   */
-  public void setDateOfBirth(Date value) {
-    this.dob = value;
-  }
-
-  /**
-   * Set the acs to the new value
-   * 
-   * @param value
-   */
-  public void setACS(int value) {
-    this.acs = value;
-  }
-
-
 }
