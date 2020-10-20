@@ -7,16 +7,21 @@ import underdevelopment.api.utils.JWTSessionManager;
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.Status;
+import underdevelopment.db.DBLogin;
+
 
 public class LoginHandler {
 
-    private static boolean validCredentials (String username, String password) {
-        return username.equals("test") && password.equals("test");
+    public static boolean validCredentials (String username, String password) {
+        // TODO: remove test user
+        return (new DBLogin().verifyUser(username, password) 
+            || (username.equals("test") && password.equals("test"))); 
     }
 
     public static JsonRequestHandler createSession() {
         return (JSONObject jsonObj) -> {
 
+            System.out.println("Calling login handler");
             String username, password;
 
             // Get and validate input
@@ -24,10 +29,11 @@ public class LoginHandler {
                 username = jsonObj.getString("username");
                 password = jsonObj.getString("password");
             } catch (Exception e) {
+                e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
-            // Check creditials
+            // Check credentials
             if (!validCredentials(username, password)) {
                 return new JsonHttpReponse(Status.FORBIDDEN);
             }
@@ -77,6 +83,20 @@ public class LoginHandler {
     public static JsonRequestHandler testNonAuthorizedRoute() {
         return (JSONObject jsonObj) -> {
             return new JsonHttpReponse(Status.OK);
+        };
+    }
+
+    public static JsonRequestHandler testGet() {
+        return (JSONObject jsonObj) -> {
+            try {
+                String response = new JSONObject()
+                    .put("message", "Hello world!!!!")
+                    .toString();
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
         };
     }
 }

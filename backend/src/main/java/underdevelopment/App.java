@@ -7,7 +7,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.ProfileHandler;
-
+import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
 
 public class App 
@@ -17,7 +17,7 @@ public class App
     {
         // Config server to localhost and port
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", PORT), 0);
-
+ 
         server.createContext("/api/login", 
             new HttpRequestHandler("POST", LoginHandler.createSession(), false));
         server.createContext("/api/check-session", 
@@ -29,11 +29,18 @@ public class App
         server.createContext("/api/getUserInfo",
             new HttpRequestHandler("GET", ProfileHandler.getUserInfo(), false));
         
+        // Sign Up API
+        server.createContext("/api/signup", 
+                new HttpRequestHandler("POST", SignUpHandler.handleSignUp(), false));
+        
+       
         // Test routes
         server.createContext("/api/test/authorized-route", 
-            new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), true));
+            new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), true)
+                .addHandler("GET", LoginHandler.testGet(), true));
         server.createContext("/api/test/non-authorized-route", 
-            new HttpRequestHandler("POST", LoginHandler.testNonAuthorizedRoute(), false));
+            new HttpRequestHandler("POST", LoginHandler.testNonAuthorizedRoute(), false)
+                .addHandler("GET", LoginHandler.testGet(), false));
 
         // Start Server
         server.start();
