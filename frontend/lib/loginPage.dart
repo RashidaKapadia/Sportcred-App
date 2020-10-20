@@ -32,14 +32,13 @@ Future<LoginStatus> login(String username, String password) async {
     // Store the session token
     String token = jsonDecode(response.body)['token'];
     await FlutterSession().set('token', token);
+    await FlutterSession().set('username', username);
     return LoginStatus(true, "Login successful!");
   } else if (response.statusCode == 403) {
     return LoginStatus(false, "Your username or password is incorrect.");
   } else {
     return LoginStatus(false, "Login failed, please contact your admin.");
   }
-
-  return null;
 }
 
 // -- Widget --
@@ -191,11 +190,7 @@ class _State_Of_Login_Page extends State<LoginPage> {
                               _futureLoginStatus = login(
                                   nameController.text, passwordController.text);
                             });
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             LoginPage())); // to be changed to HomePage
+                            Navigator.of(context).pushNamed("/homepage");
                           },
                         )),
                     // Sign up Link
@@ -217,7 +212,7 @@ class _State_Of_Login_Page extends State<LoginPage> {
                             // to an API or persisted for further use
 
                             //signup screen
-                            Navigator.of(context).pushNamed("/signup"); 
+                            Navigator.of(context).pushNamed("/signup");
                           },
                         )
                       ],
