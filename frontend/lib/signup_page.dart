@@ -233,8 +233,10 @@ class _SignUpPageState extends State<SignUpPage> {
       controller: password2Controller,
       cursorColor: mainColour,
       validator: (value) {
-        if (password1Controller.value.text != value) {
-          return "Passwords don't match!";
+        if (value.isEmpty) {
+          return "Please reenter your password!";
+        } else if ((password1Controller.value.text != value)) {
+          return "Your passwords don't match!.";
         } else {
           return null;
         }
