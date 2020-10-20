@@ -467,12 +467,6 @@ class _SignUpPageState extends State<SignUpPage> {
                          }
                       }
                     });
-
-                    //Navigator.of(context).pushNamed("/welcome");
-                    // if (_formKey.currentState.validate()){
-                    // Data processing
-
-                    // }
                   },
                 ),
               ],
