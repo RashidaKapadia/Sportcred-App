@@ -18,7 +18,7 @@ class SignUpStatus {
 
 // Http post request to login
 
-Future<SignUpStatus> login(
+Future<SignUpStatus> signUp(
     String username,
     String email,
     String password,
