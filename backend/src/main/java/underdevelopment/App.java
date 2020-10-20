@@ -6,6 +6,7 @@ import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpServer;
 
 import underdevelopment.api.LoginHandler;
+import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
 
@@ -21,6 +22,12 @@ public class App
             new HttpRequestHandler("POST", LoginHandler.createSession(), false));
         server.createContext("/api/check-session", 
             new HttpRequestHandler("POST", LoginHandler.verifySession(), false));
+
+        // Profile APIs
+        server.createContext("/api/updateUserInfo",
+            new HttpRequestHandler("PUT", ProfileHandler.updateUserInfo(), false));
+        server.createContext("/api/getUserInfo",
+            new HttpRequestHandler("GET", ProfileHandler.getUserInfo(), false));
         
         // Sign Up API
         server.createContext("/api/signup", 
