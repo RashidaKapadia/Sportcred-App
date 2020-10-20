@@ -246,7 +246,7 @@ class _SignUpPageState extends State<SignUpPage> {
           .validateMatch(val, password1Controller.value.text),
       obscureText: true,
       decoration: inputDecorator(
-        'Password',
+        'Confirm Password',
         Icon(Icons.lock),
       ),
       onSaved: (value) {
