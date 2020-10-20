@@ -9,7 +9,7 @@ InputDecoration inputDecorator(String label, Icon icon) {
 
 String checkInput(String value, String field) {
   if (value.isEmpty) {
-    return "Please enter your $field!";
+    return "Please provide your $field!";
   }
   return null;
 }
