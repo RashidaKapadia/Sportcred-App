@@ -21,7 +21,7 @@ public class ProfileHandler {
         return (JSONObject jsonObj) -> {
 
             String username, status, email, dob, about, tier;
-            int acs;
+            String acs;
 
             // Get input
             try {
@@ -31,7 +31,7 @@ public class ProfileHandler {
                 dob = jsonObj.getString("dob");
                 about = jsonObj.getString("about");
                 tier = jsonObj.getString("tier");
-                acs = jsonObj.getInt("acs");
+                acs = jsonObj.getString("acs");
             } catch (Exception e) {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }

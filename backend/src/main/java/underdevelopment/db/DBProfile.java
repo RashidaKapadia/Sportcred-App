@@ -19,7 +19,7 @@ public class DBProfile{
 
     // DB command for upadting user status
     public static Boolean updateUserInfo(String username, String status, String email, 
-                                    String about, String dob, int acs, String tier){
+                                    String about, String dob, String acs, String tier){
         
         try (Session session = Connect.driver.session()) {
             session.writeTransaction(tx -> tx.run(
@@ -41,7 +41,7 @@ public class DBProfile{
 
         try (Session session = Connect.driver.session()) {
             Result node_result = session.writeTransaction(tx -> tx.run(
-                "MATCH (u:user) WHERE u.username = $username WITH u RETURN apoc.meta.cypher.types(u)",
+                "MATCH (u:user) WHERE u.username = $username WITH u RETURN properties(u)",
                 parameters("username", username)));
             session.close();
             return node_result;

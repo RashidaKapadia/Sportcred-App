@@ -42,7 +42,7 @@ Future<UserInfo> profile_get(String username) async {
 
 // Http post request to update user info
 Future<UserInfo> profile_update(String username, String email, String status,
-    String about, String dob, String tier, int acs) async {
+    String about, String dob, String tier, String acs) async {
   // Make the request and store the response
   final http.Response response = await http.post(
     // new Uri.http("localhost:8080", "/api/getUserInfo"),
