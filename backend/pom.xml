@@ -63,7 +63,7 @@
               </execution>
           </executions>
           <configuration>
-              <mainClass>underdevelopment.sportcred.App</mainClass>
+              <mainClass>underdevelopment.App</mainClass>
           </configuration>
         </plugin>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->

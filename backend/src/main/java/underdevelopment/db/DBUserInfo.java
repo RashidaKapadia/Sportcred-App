@@ -1,7 +1,5 @@
 package underdevelopment.db;
 
-import java.util.Date;
-
 import static org.neo4j.driver.Values.parameters;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
