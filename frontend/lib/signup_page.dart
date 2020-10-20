@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import './formFields.dart';
 import './fieldStyles.dart';
 
-import 'package:flutter_session/flutter_session.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -37,7 +37,7 @@ Future<SignUpStatus> signUp(
       'Accept': 'text/plain; charset=utf-8',
       'Access-Control-Allow-Origin': '*',
     },
-    body: jsonEncode(<String, Object>{
+    body: jsonEncode(<String, String>{
       'username': username,
       'email': email,
       'password': password,
@@ -51,8 +51,8 @@ Future<SignUpStatus> signUp(
   );
 
   // Store the session token
-  String token = jsonDecode(response.body)['token'];
-  await FlutterSession().set('token', token);
+  // String token = jsonDecode(response.body)['token'];
+//  await FlutterSession().set('token', token);
   // Check the type of response received from backend
   if (response.statusCode == 200) {
     return SignUpStatus(true, "SignUp successful!");
@@ -61,7 +61,7 @@ Future<SignUpStatus> signUp(
   } else {
     return SignUpStatus(false, "Sign up failed, please contact your admin.");
   }
-      
+
   return null;
 }
 
@@ -75,7 +75,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
 // Signup fields
   String email = "";
-  String username = ""; 
+  String username = "";
   String password1 = "";
   String password2 = "";
   String phoneNumber = "";
@@ -97,10 +97,25 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<SignUpStatus> _futureSignUpStatus;
 
-  
-  TextEditingController password1Controller = TextEditingController(); // needed to check that passwords match
+  TextEditingController password1Controller =
+      TextEditingController(); // needed to check that passwords match
   TextEditingController password2Controller = TextEditingController();
- TextEditingController dobController = TextEditingController();
+  TextEditingController dobController = TextEditingController();
+
+// FielR
+  final requiredValidator =
+      RequiredValidator(errorText: 'Required');
+  final passwordValidator = MultiValidator([
+    RequiredValidator(errorText: 'Required'),
+    MinLengthValidator(8,
+        errorText: 'Password must have at least 8 characters'),
+    //PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'Passwords must have at least one special character')
+  ]);
+
+  final emailValidator = MultiValidator([
+    RequiredValidator(errorText: 'Required'),
+    EmailValidator(errorText: "Enter a valid email address."),
+  ]);
 
   @override
   void initState() {
@@ -115,9 +130,11 @@ class _SignUpPageState extends State<SignUpPage> {
       future: _futureSignUpStatus,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data.success){
-            Navigator.of(context).pushNamed("/welcome");
-          }     
+          if (snapshot.data.success) {
+            print("SUCCESS");
+            //Navigator.of(context).pushNamed("/welcome");
+            return Text(snapshot.data.message);
+          }
           return Text(snapshot.data.message);
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
@@ -165,7 +182,6 @@ class _SignUpPageState extends State<SignUpPage> {
       setState(() {
         this.dob = dateSelect;
         dobController.text = '${dateFormatter.format(this.dob)}';
-
       });
     }
   }
@@ -174,7 +190,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return TextFormField(
       // controller: usernameController,
       cursorColor: mainColour,
-      validator: (value) => checkInput(value, "Username"),
+      validator: requiredValidator,
       decoration: inputDecorator(
         'Username',
         Icon(Icons.person),
@@ -191,7 +207,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return TextFormField(
       //   controller: emailController,
       cursorColor: mainColour,
-      validator: (value) => checkInput(value, "Email"),
+      validator: emailValidator,
       decoration: inputDecorator(
         'Email',
         Icon(Icons.email),
@@ -208,15 +224,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return TextFormField(
       controller: password1Controller,
       cursorColor: mainColour,
-      validator: (value) {
-        if (value.isEmpty) {
-          return "Please enter your password!";
-        } else if (value.length < 8) {
-          return "Your password must have at least 8 characters.";
-        } else {
-          return null;
-        }
-      },
+      validator: passwordValidator,
       obscureText: true,
       decoration: inputDecorator(
         'Password',
@@ -234,15 +242,8 @@ class _SignUpPageState extends State<SignUpPage> {
     return TextFormField(
       controller: password2Controller,
       cursorColor: mainColour,
-      validator: (value) {
-        if (value.isEmpty) {
-          return "Please reenter your password!";
-        } else if ((password1Controller.value.text != value)) {
-          return "Your passwords don't match!.";
-        } else {
-          return null;
-        }
-      },
+      validator: (val) => MatchValidator(errorText: 'Passwords do not match',)
+          .validateMatch(val, password1Controller.value.text),
       obscureText: true,
       decoration: inputDecorator(
         'Password',
@@ -259,7 +260,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget getPhoneNumber() {
     return TextFormField(
       cursorColor: mainColour,
-      validator: (value) => checkInput(value, "Phone number"),
+      validator: requiredValidator,
       decoration: inputDecorator(
         'Phone number',
         Icon(Icons.phone),
@@ -281,7 +282,7 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
         TextFormField(
           cursorColor: mainColour,
-          validator: (value) => checkInput(value, "date of birth"),
+          //validator: (value) => checkInput(value, "date of birth"),
           onTap: () {
             setState(() {
               _pickDate(context);
@@ -302,7 +303,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return TextFormField(
       //  controller: favSportController,
       cursorColor: mainColour,
-      validator: (value) => checkInput(value, "Favourite Sport"),
+      validator: requiredValidator,
       decoration: inputDecorator(
         'Favourite sport',
         Icon(Icons.sports_basketball),
@@ -345,7 +346,8 @@ class _SignUpPageState extends State<SignUpPage> {
         TextFormField(
           // controller: sportToLearnController,
           cursorColor: mainColour,
-          validator: (value) => checkInput(value, "answer"),
+          validator: requiredValidator,
+          decoration: InputDecoration(prefixIcon: Icon(Icons.question_answer)),
           onSaved: (value) {
             setState(() {
               this.sportToLearn = value;
@@ -365,7 +367,8 @@ class _SignUpPageState extends State<SignUpPage> {
         TextFormField(
           // controller: favTeamController,
           cursorColor: mainColour,
-          validator: (value) => checkInput(value, "answer"),
+          validator: requiredValidator,
+          decoration: InputDecoration(prefixIcon: Icon(Icons.question_answer)),
           onSaved: (value) {
             setState(() {
               this.favTeam = value;
@@ -397,9 +400,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                  (_futureSignUpStatus != null)
+                (_futureSignUpStatus != null)
                     ? signupStatus()
-                  : Text("Enter your information below:"),
+                    : Text("Enter your information below:"),
                 SizedBox(height: 20.0),
                 getUsername(),
                 SizedBox(height: 20.0),
@@ -457,7 +460,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         print('${dateFormatter.format(this.dob)}');
 
                         // Call the HTTP request
-                          _futureSignUpStatus = signUp(
+                        _futureSignUpStatus = signUp(
                             username,
                             email,
                             password1,
@@ -468,14 +471,13 @@ class _SignUpPageState extends State<SignUpPage> {
                             favTeam,
                             '${dateFormatter.format(this.dob)}');
 
-                         if (_futureSignUpStatus != null) {
-                           return signupStatus();
-                         }
+                        if (_futureSignUpStatus != null) {
+                          return signupStatus();
+                        }
                       }
                     });
                   },
                 ),
-
               ],
             ),
           )),
