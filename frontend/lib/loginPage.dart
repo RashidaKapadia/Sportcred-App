@@ -191,11 +191,7 @@ class _State_Of_Login_Page extends State<LoginPage> {
                               _futureLoginStatus = login(
                                   nameController.text, passwordController.text);
                             });
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             LoginPage())); // to be changed to HomePage
+                            Navigator.of(context).pushNamed("/homepage");
                           },
                         )),
                     // Sign up Link
@@ -217,7 +213,7 @@ class _State_Of_Login_Page extends State<LoginPage> {
                             // to an API or persisted for further use
 
                             //signup screen
-                            Navigator.of(context).pushNamed("/signup"); 
+                            Navigator.of(context).pushNamed("/signup");
                           },
                         )
                       ],
