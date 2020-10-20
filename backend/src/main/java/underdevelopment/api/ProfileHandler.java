@@ -87,7 +87,7 @@ public class ProfileHandler {
 
                 String string_respone = response.toString();
 
-                return new JsonHttpReponse(Status.OK);
+                return new JsonHttpReponse(Status.OK, string_respone);
             } catch (Exception e) {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.SERVERERROR);
