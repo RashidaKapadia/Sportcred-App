@@ -1,10 +1,44 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_session/flutter_session.dart';
 import './navbar.dart';
+import 'package:http/http.dart' as http;
 
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
+
+class ProfileStatus {
+  final bool success;
+  final String message;
+  ProfileStatus(this.success, this.message);
+}
+
+// Http post request to login
+// Future<ProfileStatus> profile_get(String username) async {
+//   // Make the request and store the response
+//   final http.Response response = await http.get(
+//     // new Uri.http("localhost:8080", "/api/getUserInfoe"),
+//     'http://localhost:8080/api/getUserInfo',
+//     headers: {
+//       'Content-Type': 'text/plain; charset=utf-8',
+//       'Accept': 'text/plain; charset=utf-8',
+//       'Access-Control-Allow-Origin': '*',
+//     },
+//     body: jsonEncode(<String, Object>{'username': username}),
+//   );
+
+//   if (response.statusCode == 200) {
+//     // Store the session token
+//     String token = jsonDecode(response.body)['token'];
+//     await FlutterSession().set('token', token);
+//     return ProfileStatus(true, "Profile info fetched successfully");
+//   } else {
+//     return ProfileStatus(false, "Error retrieving profile info");
+//   }
+// }
 
 class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
@@ -39,285 +73,289 @@ class _ProfilePageState extends State<ProfilePage>
     return Scaffold(
         bottomNavigationBar: NavBar(),
         body: Container(
-      color: Colors.white,
-      child: new ListView(
-        children: <Widget>[
-          Column(
+          color: Colors.white,
+          child: new ListView(
             children: <Widget>[
-              new Container(
-                color: Colors.white,
-                child: new Column(
-                  children: <Widget>[
-                    Padding(
-                        padding: EdgeInsets.only(left: 20.0, top: 20.0),
-                        child: new Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            new Icon(
-                              Icons.arrow_back_ios,
-                              color: Colors.black,
-                              size: 22.0,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 500.0),
-                              child: new Text('PROFILE',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 28.0,
-                                      fontFamily: 'sans-serif-light',
-                                      color: Colors.black)),
-                            ),
-                          ],
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(left: 450.0, top: 50.0),
-                        child: new Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                child: new Text(
-                                  'ACS:' + '  ' + acs + '  [' + tier + ']',
-                                  style: TextStyle(
-                                      fontSize: 22.0,
-                                      color: Colors.green[300],
-                                      fontWeight: FontWeight.bold),
+              Column(
+                children: <Widget>[
+                  new Container(
+                    color: Colors.white,
+                    child: new Column(
+                      children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.only(left: 20.0, top: 20.0),
+                            child: new Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                new Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.black,
+                                  size: 22.0,
                                 ),
-                              ),
-                              flex: 2,
-                            ),
-                          ],
-                        )),
-                    Padding(
-                      padding: EdgeInsets.only(top: 20.0),
-                      child: new Stack(fit: StackFit.loose, children: <Widget>[
-                        // new Row(
-                        //   crossAxisAlignment: CrossAxisAlignment.center,
-                        //   mainAxisAlignment: MainAxisAlignment.center,
-                        //   children: <Widget>[
-                        //     SizedBox(height: 20.0),
-                        Image.asset('Jerry_King.jpg',
-                            width: 250, height: 325, fit: BoxFit.cover),
-                        //   ],
-                        // ),
-                      ]),
-                    )
-                  ],
-                ),
-              ),
-              new Container(
-                color: Color(0xffFFFFFF),
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 15.0),
-                  child: new Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                          padding:
-                              EdgeInsets.only(left: 50.0, right: 50, top: 15.0),
-                          child: new Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisSize: MainAxisSize.max,
-                            children: <Widget>[
-                              new Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
+                                Padding(
+                                  padding: EdgeInsets.only(left: 500.0),
+                                  child: new Text('PROFILE',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 28.0,
+                                          fontFamily: 'sans-serif-light',
+                                          color: Colors.black)),
+                                ),
+                              ],
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(left: 450.0, top: 50.0),
+                            child: new Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    child: new Text(
+                                      'ACS:' + '  ' + acs + '  [' + tier + ']',
+                                      style: TextStyle(
+                                          fontSize: 22.0,
+                                          color: Colors.green[300],
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  flex: 2,
+                                ),
+                              ],
+                            )),
+                        Padding(
+                          padding: EdgeInsets.only(top: 20.0),
+                          child:
+                              new Stack(fit: StackFit.loose, children: <Widget>[
+                            // new Row(
+                            //   crossAxisAlignment: CrossAxisAlignment.center,
+                            //   mainAxisAlignment: MainAxisAlignment.center,
+                            //   children: <Widget>[
+                            //     SizedBox(height: 20.0),
+                            Image.asset('Jerry_King.jpg',
+                                width: 250, height: 325, fit: BoxFit.cover),
+                            //   ],
+                            // ),
+                          ]),
+                        )
+                      ],
+                    ),
+                  ),
+                  new Container(
+                    color: Color(0xffFFFFFF),
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 15.0),
+                      child: new Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 50.0, right: 50, top: 15.0),
+                              child: new Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
                                 children: <Widget>[
-                                  new Text(
-                                    'Status:',
-                                    style: TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.bold),
+                                  new Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      new Text(
+                                        'Status:',
+                                        style: TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  new Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      _status
+                                          ? _getEditIcon()
+                                          : new Container(),
+                                    ],
                                   ),
                                 ],
+                              )),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 50.0, right: 25.0, top: 50.0),
+                            child: Container(
+                              child: new TextField(
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Add status here',
+                                ),
+                                // onChanged: (text) {
+                                //   setState(() {
+                                //     _statusController =
+                                //         TextEditingController(text: text);
+                                //     //you can access nameController in its scope to get
+                                //     // the value of text entered as shown below
+                                //     //fullName = nameController.text;
+                                //   });
+                                // },
+                                style: TextStyle(fontSize: 16.0),
+                                enabled: !_status,
+                                autofocus: !_status,
+                                controller: _statusController,
                               ),
-                              new Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  _status ? _getEditIcon() : new Container(),
-                                ],
-                              ),
-                            ],
-                          )),
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: 50.0, right: 25.0, top: 50.0),
-                        child: Container(
-                          child: new TextField(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Add status here',
                             ),
-                            // onChanged: (text) {
-                            //   setState(() {
-                            //     _statusController =
-                            //         TextEditingController(text: text);
-                            //     //you can access nameController in its scope to get
-                            //     // the value of text entered as shown below
-                            //     //fullName = nameController.text;
-                            //   });
-                            // },
-                            style: TextStyle(fontSize: 16.0),
-                            enabled: !_status,
-                            autofocus: !_status,
-                            controller: _statusController,
                           ),
-                        ),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(left: 50.0, top: 15.0),
-                          child: new Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  alignment: Alignment.topLeft,
-                                  child: new Text(
-                                    'Username:',
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold),
+                          Padding(
+                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      alignment: Alignment.topLeft,
+                                      child: new Text(
+                                        'Username:',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    flex: 2,
                                   ),
-                                ),
-                                flex: 2,
-                              ),
-                              Expanded(
-                                child: Container(
-                                    alignment: Alignment.topLeft,
-                                    child: new Column(children: <Widget>[
-                                      new TextField(
+                                  Expanded(
+                                    child: Container(
+                                        alignment: Alignment.topLeft,
+                                        child: new Column(children: <Widget>[
+                                          new TextField(
+                                            // onChanged: (text) {
+                                            //   setState(() {
+                                            //     username = text;
+                                            //   });
+                                            // },
+                                            style: TextStyle(fontSize: 16.0),
+                                            enabled: !_status,
+                                            autofocus: !_status,
+                                            controller: _usernameController,
+                                          ),
+                                        ])),
+                                  ),
+                                ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      child: new Text(
+                                        'About:',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    flex: 2,
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      child: new TextField(
                                         // onChanged: (text) {
                                         //   setState(() {
-                                        //     username = text;
+                                        //     _aboutController =
+                                        //         TextEditingController(text: text);
                                         //   });
                                         // },
                                         style: TextStyle(fontSize: 16.0),
                                         enabled: !_status,
                                         autofocus: !_status,
-                                        controller: _usernameController,
+                                        controller: _aboutController,
                                       ),
-                                    ])),
-                              ),
-                            ],
-                          )),
-                      Padding(
-                          padding: EdgeInsets.only(left: 50.0, top: 15.0),
-                          child: new Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  child: new Text(
-                                    'About:',
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                ),
-                                flex: 2,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  child: new TextField(
-                                    // onChanged: (text) {
-                                    //   setState(() {
-                                    //     _aboutController =
-                                    //         TextEditingController(text: text);
-                                    //   });
-                                    // },
-                                    style: TextStyle(fontSize: 16.0),
-                                    enabled: !_status,
-                                    autofocus: !_status,
-                                    controller: _aboutController,
+                                ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      child: new Text(
+                                        'Email:',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    flex: 2,
                                   ),
-                                ),
-                              ),
-                            ],
-                          )),
-                      Padding(
-                          padding: EdgeInsets.only(left: 50.0, top: 15.0),
-                          child: new Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  child: new Text(
-                                    'Email:',
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold),
+                                  Expanded(
+                                    child: Container(
+                                      child: new TextField(
+                                        // onChanged: (text) {
+                                        //   setState(() {
+                                        //     _emailController =
+                                        //         TextEditingController(text: text);
+                                        //   });
+                                        // },
+                                        style: TextStyle(fontSize: 16.0),
+                                        enabled: !_status,
+                                        autofocus: !_status,
+                                        controller: _emailController,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                flex: 2,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  child: new TextField(
-                                    // onChanged: (text) {
-                                    //   setState(() {
-                                    //     _emailController =
-                                    //         TextEditingController(text: text);
-                                    //   });
-                                    // },
-                                    style: TextStyle(fontSize: 16.0),
-                                    enabled: !_status,
-                                    autofocus: !_status,
-                                    controller: _emailController,
+                                ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      child: new Text(
+                                        'Birthday:',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    flex: 2,
                                   ),
-                                ),
-                              ),
-                            ],
-                          )),
-                      Padding(
-                          padding: EdgeInsets.only(left: 50.0, top: 15.0),
-                          child: new Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  child: new Text(
-                                    'Birthday:',
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold),
+                                  Expanded(
+                                    child: Container(
+                                      child: new TextField(
+                                        // onChanged: (text) {
+                                        //   setState(() {
+                                        //     _birthdayController =
+                                        //         TextEditingController(text: text);
+                                        //   });
+                                        // },
+                                        style: TextStyle(fontSize: 16.0),
+                                        enabled: !_status,
+                                        autofocus: !_status,
+                                        controller: _birthdayController,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                flex: 2,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  child: new TextField(
-                                    // onChanged: (text) {
-                                    //   setState(() {
-                                    //     _birthdayController =
-                                    //         TextEditingController(text: text);
-                                    //   });
-                                    // },
-                                    style: TextStyle(fontSize: 16.0),
-                                    enabled: !_status,
-                                    autofocus: !_status,
-                                    controller: _birthdayController,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )),
-                      !_status ? _getActionButtons() : new Container(),
-                    ],
-                  ),
-                ),
-              )
+                                ],
+                              )),
+                          !_status ? _getActionButtons() : new Container(),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 
   @override

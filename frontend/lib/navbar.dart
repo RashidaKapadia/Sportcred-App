@@ -50,13 +50,13 @@ class NavBarState extends State<NavBar> {
       ],
       onTap: (index) {
         setState(() {
-          if(index == 0){
-            //Navigator.of(context).pushNamed("/home");
-          }else if(index ==1){
+          if (index == 0) {
+            Navigator.of(context).pushNamed("/homepage");
+          } else if (index == 1) {
             // Navigator stuff
-          }else if(index == 2){
+          } else if (index == 2) {
             Navigator.of(context).pushNamed("/profile");
-          }else if(index == 3){
+          } else if (index == 3) {
             //Navigator.of(context).pushNamed("/settings");
           }
           _currentIndex = index;
