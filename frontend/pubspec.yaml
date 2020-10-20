@@ -25,6 +25,8 @@ dependencies:
     sdk: flutter
   http: ^0.12.2
   flutter_session: ^0.1.1
+  form_field_validator: ^1.0.1
+  date_time_picker: "^1.0.2"
 
 
   # The following adds the Cupertino Icons font to your application.
