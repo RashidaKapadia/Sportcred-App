@@ -1,4 +1,10 @@
+package underdevelopment.db;
+
 import java.lang.reflect.Parameter;
+import static org.neo4j.driver.Values.parameters;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.Transaction;
 
 public class DBProfile{
 
@@ -7,114 +13,44 @@ public class DBProfile{
     String phoneNumber = "";
     String about = "";
     String status = "";
-    Date dob;
+    String dob = "";
     int acs = 100;
+    String tier = "";
 
     // DB command for upadting user status
-    public DBUserStatus(String username, String status){
-        this.username = username;
-        this.status = status;
+    public static Boolean updateUserInfo(String username, String status, String email, 
+                                    String about, String dob, int acs, String tier){
         
-        try (Session session = DBConnect.driver.session()) {
+        try (Session session = Connect.driver.session()) {
             session.writeTransaction(tx -> tx.run(
-                "MATCH (a:user {username: $username}) SET a.status = $status RETURN a",
-                parameters("username",this.username, "status", this.status)));
+                "MATCH (a:user {username: $username}) SET a.status = $status AND a.email = $email AND a.about = $about AND a.dob = $dob AND a.acs = $acs AND a.tier = $tier RETURN a",
+                parameters("username", username, "status", status, "email", email, "about", about, "dob", dob, "acs", acs, "tier", tier)));
             
             session.close();
+            return true;
         }
         catch (Exception e){
             // FOR DEBUG
             e.printStackTrace();
+            return false;
         }
     }
 
-    // DB command for upadting user acs
-    public DBUserACS(String username, String acs){
-        this.username = username;
-        this.acs = acs;
-        
-        try (Session session = DBConnect.driver.session()) {
-            session.writeTransaction(tx -> tx.run(
-                "MATCH (a:user {username: $username}) SET a.acs = $acs RETURN a",
-                parameters("username",this.username, "acs", this.acs)));
-            
-            session.close();
-        }
-        catch (Exception e){
-            // FOR DEBUG
-            e.printStackTrace();
-        }
-    }
+    // DB command for getting user status
+    public static Boolean getUserInfo(String username){
 
-    // DB command for upadting user date of birth
-    public DBUserDOB(String username, Date dob){
-        this.username = username;
-        this.dob = dob;
-        
-        try (Session session = DBConnect.driver.session()) {
+        try (Session session = Connect.driver.session()) {
             session.writeTransaction(tx -> tx.run(
-                "MATCH (a:user {username: $username}) SET a.dob = $dob RETURN a",
-                parameters("username",this.username, "dob", this.dob)));
+                "MATCH (a:user {username: $username}) RETURN a",
+                parameters("username", username)));
             
             session.close();
+            return true;
         }
         catch (Exception e){
             // FOR DEBUG
             e.printStackTrace();
-        }
-    }
-
-    // DB command for upadting user's about section
-    public DBUserAbout(String username, String about){
-        this.username = username;
-        this.about = about;
-        
-        try (Session session = DBConnect.driver.session()) {
-            session.writeTransaction(tx -> tx.run(
-                "MATCH (a:user {username: $username}) SET a.about = $about RETURN a",
-                parameters("username",this.username, "about", this.about)));
-            
-            session.close();
-        }
-        catch (Exception e){
-            // FOR DEBUG
-            e.printStackTrace();
-        }
-    }
-
-    // DB command for upadting user's phone number
-    public DBUserPhoneNumber(String username, String phoneNumber){
-        this.username = username;
-        this.phoneNumber = phoneNumber;
-        
-        try (Session session = DBConnect.driver.session()) {
-            session.writeTransaction(tx -> tx.run(
-                "MATCH (a:user {username: $username}) SET a.phoneNumber = $phoneNumber RETURN a",
-                parameters("username",this.username, "phoneNumber", this.phoneNumber)));
-            
-            session.close();
-        }
-        catch (Exception e){
-            // FOR DEBUG
-            e.printStackTrace();
-        }
-    }
-
-    // DB command for upadting user's email
-    public DBUserEmail(String username, String email){
-        this.username = username;
-        this.email = email;
-        
-        try (Session session = DBConnect.driver.session()) {
-            session.writeTransaction(tx -> tx.run(
-                "MATCH (a:user {username: $username}) SET a.email = $email RETURN a",
-                parameters("username",this.username, "email", this.email)));
-            
-            session.close();
-        }
-        catch (Exception e){
-            // FOR DEBUG
-            e.printStackTrace();
+            return false;
         }
     }
 }

@@ -24,10 +24,6 @@ public class App
             new HttpRequestHandler("POST", LoginHandler.verifySession(), false));
 
         // Profile APIs
-        server.createContext("/api/updateStatus",
-            new HttpRequestHandler("PUT", ProfileHandler.updateStatus(), false));
-        server.createContext("/api/getStatus",
-            new HttpRequestHandler("GET", ProfileHandler.getStatus(), false));
         server.createContext("/api/updateUserInfo",
             new HttpRequestHandler("PUT", ProfileHandler.updateUserInfo(), false));
         server.createContext("/api/getUserInfo",
