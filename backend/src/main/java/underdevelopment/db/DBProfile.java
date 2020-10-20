@@ -23,7 +23,7 @@ public class DBProfile{
         
         try (Session session = Connect.driver.session()) {
             session.writeTransaction(tx -> tx.run(
-                "MATCH (a:user {username: $username}) SET a.status = $status AND a.email = $email AND a.about = $about AND a.dob = $dob AND a.acs = $acs AND a.tier = $tier RETURN a",
+                "MATCH (u:user) WHERE u.username = $username SET u.status = $status, u.email = $email, u.about = $about, u.dob = $dob, u.acs = $acs, u.tier = $tier",
                 parameters("username", username, "status", status, "email", email, "about", about, "dob", dob, "acs", acs, "tier", tier)));
             
             session.close();
@@ -37,20 +37,19 @@ public class DBProfile{
     }
 
     // DB command for getting user status
-    public static Boolean getUserInfo(String username){
+    public static Result getUserInfo(String username){
 
         try (Session session = Connect.driver.session()) {
-            session.writeTransaction(tx -> tx.run(
-                "MATCH (a:user {username: $username}) RETURN a",
+            Result node_result = session.writeTransaction(tx -> tx.run(
+                "MATCH (u:user) WHERE u.username = $username WITH u RETURN apoc.meta.cypher.types(u)",
                 parameters("username", username)));
-            
             session.close();
-            return true;
+            return node_result;
         }
         catch (Exception e){
             // FOR DEBUG
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 }

@@ -5,6 +5,9 @@ import java.io.OutputStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
+
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.Status;
@@ -48,7 +51,7 @@ public class ProfileHandler {
         return (JSONObject jsonObj) -> {
 
             String username;
-            String response;
+            // String response;
 
             // Get input
             try {
@@ -59,8 +62,31 @@ public class ProfileHandler {
 
             // Run DB command
             try {
-                boolean success = DBProfile.getUserInfo(username);
-                System.out.println(success);
+                Result node_result = DBProfile.getUserInfo(username);
+                if (node_result.hasNext() == false) {
+                    return new JsonHttpReponse(Status.NOTFOUND);
+                } 
+                Record r = node_result.next();
+                // Set up response in a JSON format
+                String usrname = r.get("username").asString();
+                String status = r.get("status").asString();
+                String email = r.get("email").asString();
+                String dob = r.get("dob").asString();
+                String about = r.get("about").asString();
+                String tier = r.get("tier").asString();
+                int acs = r.get("acs").asInt();
+
+                JSONObject response = new JSONObject();
+                response.put("username", usrname);
+                response.put("status", status);
+                response.put("email", email);
+                response.put("dob", dob);
+                response.put("about", about);
+                response.put("tier", tier);
+                response.put("acs", acs);
+
+                String string_respone = response.toString();
+
                 return new JsonHttpReponse(Status.OK);
             } catch (Exception e) {
                 e.printStackTrace();
