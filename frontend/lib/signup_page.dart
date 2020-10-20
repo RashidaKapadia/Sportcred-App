@@ -100,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
   
   TextEditingController password1Controller = TextEditingController(); // needed to check that passwords match
   TextEditingController password2Controller = TextEditingController();
- 
+ TextEditingController dobController = TextEditingController();
 
   @override
   void initState() {
@@ -164,6 +164,8 @@ class _SignUpPageState extends State<SignUpPage> {
     if (dateSelect != null && dateSelect != dob) {
       setState(() {
         this.dob = dateSelect;
+        dobController.text = '${dateFormatter.format(this.dob)}';
+
       });
     }
   }
