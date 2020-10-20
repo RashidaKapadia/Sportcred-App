@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http/http.dart' as http;
 
 // -- HTTP Request ---
@@ -60,13 +61,19 @@ class _State_Of_Login_Page extends State<LoginPage> {
 // Form widget and allows validation of the form.
 
 // loginKey is the formKey here
-  final _loginKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 // holds the user information on logon page for access later on
   String username = "";
   String password = "";
   Future<LoginStatus> _futureLoginStatus;
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  final usernameValidator = RequiredValidator(errorText: "Incorrect Username");
+  final passwordValidator = MultiValidator([
+    RequiredValidator(errorText: "Incorrect Password"),
+    //MinLengthValidator(8, errorText: "Password must have at least 8 characters")
+  ]);
 
   // Can pull out to generalize
   Widget logoTitle() {
@@ -80,14 +87,21 @@ class _State_Of_Login_Page extends State<LoginPage> {
   }
 
   Widget loginStatus() {
+    print("I am here");
     return FutureBuilder<LoginStatus>(
       future: _futureLoginStatus,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          /*if (snapshot.data.success) {
+            print("SUCCESS");
+            Navigator.of(context).pushNamed("/homepage");
+            return Text(snapshot.data.message);
+          }*/
           return Text(snapshot.data.message);
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         } else {
+          print("I was here");
           return Container(
               alignment: Alignment.center,
               child: SizedBox(
@@ -106,121 +120,121 @@ class _State_Of_Login_Page extends State<LoginPage> {
         home: Scaffold(
             body: Padding(
                 padding: EdgeInsets.all(10),
-                child: ListView(
-                  children: <Widget>[
-                    logoTitle(),
-                    Container(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                        child: Text(
-                          'Welcome, Sign in!',
-                          style:
-                              TextStyle(fontSize: 17, color: Color(0xFF9E9E9E)),
-                        )),
-                    (_futureLoginStatus != null)
-                        ? loginStatus()
-                        : Text("Enter your information below:"),
-                    // Username field
-                    TextFormField(
-                      //padding: EdgeInsets.all(5),
-                      //child: TextField(
-                      controller: nameController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Enter your username';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.person),
-                        labelText: 'User Name',
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          this.username = value;
-                        });
-                      },
-                    ),
-                    // Pasword field
-                    TextFormField(
-                      //padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      //child: TextField(
-                      obscureText: true,
-                      controller: passwordController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Enter your password';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        //border: OutlineInputBorder(),
-                        icon: Icon(Icons.lock),
-                        labelText: 'Password',
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          this.password = value;
-                        });
-                      },
-                    ),
-                    // Forgot Password Link
-                    FlatButton(
-                      textColor: Color(0xFFFF8F00),
-                      child: Text('Forgot Password'),
-                      onPressed: () {
-                        //Move to forgot password screen, to be implemented after
-                      },
-                    ),
-                    // Login button
-                    Container(
-                        height: 50,
-                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        child: RaisedButton(
-                          textColor: Colors.white,
-                          color: Color(0xFFFF8F00),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(18.0)),
-                          child: Text(
-                            'Login',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              // Call the HTTP request to make an album
-                              _futureLoginStatus = login(
-                                  nameController.text, passwordController.text);
-                            });
-                            Navigator.of(context).pushNamed("/homepage");
-                          },
-                        )),
-                    // Sign up Link
-                    Container(
-                        child: Row(
+                child: Form(
+                    key: _formKey,
+                    child: ListView(
                       children: <Widget>[
-                        Text('Not a member yet?'),
+                        logoTitle(),
+                        Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            child: Text(
+                              'Welcome, Sign in!',
+                              style: TextStyle(
+                                  fontSize: 17, color: Color(0xFF9E9E9E)),
+                            )),
+                        (_futureLoginStatus != null)
+                            ? loginStatus()
+                            : Text("Enter your information below:"),
+                        // Username field
+                        TextFormField(
+                          controller: nameController,
+                          validator: usernameValidator,
+                          decoration: InputDecoration(
+                            icon: Icon(Icons.person),
+                            labelText: 'User Name',
+                          ),
+                          onSaved: (value) {
+                            setState(() {
+                              this.username = value;
+                            });
+                          },
+                        ),
+                        // Pasword field
+                        TextFormField(
+                          //padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                          //child: TextField(
+                          obscureText: true,
+                          controller: passwordController,
+                          validator: passwordValidator,
+                          decoration: InputDecoration(
+                            //border: OutlineInputBorder(),
+                            icon: Icon(Icons.lock),
+                            labelText: 'Password',
+                          ),
+                          onSaved: (value) {
+                            setState(() {
+                              this.password = value;
+                            });
+                          },
+                        ),
+                        // Forgot Password Link
                         FlatButton(
                           textColor: Color(0xFFFF8F00),
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyle(fontSize: 20),
-                          ),
+                          child: Text('Forgot Password'),
                           onPressed: () {
-                            //if (_loginKey.currentState.validate()) {
-                            //_loginKey.currentState.save();
-
-                            // the model object at this point can be POSTed
-                            // to an API or persisted for further use
-
-                            //signup screen
-                            Navigator.of(context).pushNamed("/signup");
+                            //Move to forgot password screen, to be implemented after
                           },
-                        )
+                        ),
+                        // Login button
+                        Container(
+                          height: 50,
+                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: RaisedButton(
+                            textColor: Colors.white,
+                            color: Color(0xFFFF8F00),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(18.0)),
+                            child: Text(
+                              'Login',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                if (_formKey.currentState.validate()) {
+                                  print("LogIn was successful!");
+
+                                  _formKey.currentState.save();
+
+                                  print(username);
+                                  print(password);
+
+                                  // Call the HTTP request to make an album
+                                  _futureLoginStatus = login(
+                                      nameController.text,
+                                      passwordController.text);
+
+                                  Navigator.of(context).pushNamed("/homepage");
+
+                                  if (_futureLoginStatus != null) {
+                                    return loginStatus();
+                                  }
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                        // Sign up Link
+                        Container(
+                            child: Row(
+                          children: <Widget>[
+                            Text('Not a member yet?'),
+                            FlatButton(
+                              textColor: Color(0xFFFF8F00),
+                              child: Text(
+                                'Sign Up',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              onPressed: () {
+                                //signup screen
+                                Navigator.of(context).pushNamed("/signup");
+                              },
+                            )
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.center,
+                        ))
                       ],
-                      mainAxisAlignment: MainAxisAlignment.center,
-                    ))
-                  ],
-                ))));
+                    )))));
     // _loginKey yet to be used....
   }
 }
