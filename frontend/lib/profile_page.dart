@@ -16,29 +16,94 @@ class ProfileStatus {
   ProfileStatus(this.success, this.message);
 }
 
-// Http post request to login
-// Future<ProfileStatus> profile_get(String username) async {
-//   // Make the request and store the response
-//   final http.Response response = await http.get(
-//     // new Uri.http("localhost:8080", "/api/getUserInfoe"),
-//     'http://localhost:8080/api/getUserInfo',
-//     headers: {
-//       'Content-Type': 'text/plain; charset=utf-8',
-//       'Accept': 'text/plain; charset=utf-8',
-//       'Access-Control-Allow-Origin': '*',
-//     },
-//     body: jsonEncode(<String, Object>{'username': username}),
-//   );
+// Http post request to get user info
+Future<UserInfo> profile_get(String username) async {
+  // Make the request and store the response
+  final http.Response response = await http.post(
+    // new Uri.http("localhost:8080", "/api/getUserInfoe"),
+    'http://localhost:8080/api/getUserInfo',
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Accept': 'text/plain; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: jsonEncode(<String, String>{'username': username}),
+  );
 
-//   if (response.statusCode == 200) {
-//     // Store the session token
-//     String token = jsonDecode(response.body)['token'];
-//     await FlutterSession().set('token', token);
-//     return ProfileStatus(true, "Profile info fetched successfully");
-//   } else {
-//     return ProfileStatus(false, "Error retrieving profile info");
-//   }
-// }
+  if (response.statusCode == 200) {
+    // Store the session token
+    // String user_info = jsonDecode(response.body)['string_respone'];
+    return UserInfo.fromJson(jsonDecode(response.body));
+    // return ProfileStatus(true, "Profile info fetched successfully");
+  } else {
+    throw Exception('Failed to create album.');
+  }
+}
+
+// Http post request to update user info
+Future<UserInfo> profile_update(String username, String email, String status,
+    String about, String dob, String tier, int acs) async {
+  // Make the request and store the response
+  final http.Response response = await http.post(
+    // new Uri.http("localhost:8080", "/api/getUserInfo"),
+    'http://localhost:8080/api/updateUserInfo',
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Accept': 'text/plain; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: jsonEncode(<String, String>{
+      'username': username,
+      'email': email,
+      'status': status,
+      'about': about,
+      'dob': dob,
+      'acs': acs,
+      'tier': tier
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    // Store the session token
+    // String user_info = jsonDecode(response.body)['string_respone'];
+    return UserInfo.fromJson(jsonDecode(response.body));
+    // return ProfileStatus(true, "Profile info fetched successfully");
+  } else {
+    throw Exception('Failed to create album.');
+  }
+}
+
+class UserInfo {
+  final int acs;
+  final String username;
+  final String status;
+  final String email;
+  final String dob;
+  final String about;
+  final String tier;
+
+  UserInfo(
+      {this.acs,
+      this.username,
+      this.status,
+      this.email,
+      this.dob,
+      this.about,
+      this.tier});
+
+  // converts json to UserInfo object
+  factory UserInfo.fromJson(Map<String, dynamic> json) {
+    return UserInfo(
+      username: json['username'],
+      status: json['status'],
+      email: json['email'],
+      dob: json['dob'],
+      about: json['about'],
+      tier: json['tier'],
+      acs: json['acs'],
+    );
+  }
+}
 
 class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {

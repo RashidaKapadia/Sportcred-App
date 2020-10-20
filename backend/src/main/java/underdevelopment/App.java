@@ -25,9 +25,9 @@ public class App
 
         // Profile APIs
         server.createContext("/api/updateUserInfo",
-            new HttpRequestHandler("PUT", ProfileHandler.updateUserInfo(), false));
+            new HttpRequestHandler("POST", ProfileHandler.updateUserInfo(), false));
         server.createContext("/api/getUserInfo",
-            new HttpRequestHandler("GET", ProfileHandler.getUserInfo(), false));
+            new HttpRequestHandler("POST", ProfileHandler.getUserInfo(), false));
         
         // Sign Up API
         server.createContext("/api/signup", 
