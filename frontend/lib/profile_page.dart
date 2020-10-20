@@ -58,7 +58,7 @@ Future<UserInfo> profile_update(String username, String email, String status,
       'status': status,
       'about': about,
       'dob': dob,
-      'acs': acs,
+      'acs': acs.toString(),
       'tier': tier
     }),
   );
