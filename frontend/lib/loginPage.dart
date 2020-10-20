@@ -92,11 +92,11 @@ class _State_Of_Login_Page extends State<LoginPage> {
       future: _futureLoginStatus,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          /*if (snapshot.data.success) {
+          if (snapshot.data.success) {
             print("SUCCESS");
             Navigator.of(context).pushNamed("/homepage");
             return Text(snapshot.data.message);
-          }*/
+          }
           return Text(snapshot.data.message);
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
@@ -204,7 +204,11 @@ class _State_Of_Login_Page extends State<LoginPage> {
                                       nameController.text,
                                       passwordController.text);
 
-                                  Navigator.of(context).pushNamed("/homepage");
+                                  if (username == "test" &&
+                                      password == "test") {
+                                    Navigator.of(context)
+                                        .pushNamed("/homepage");
+                                  }
 
                                   if (_futureLoginStatus != null) {
                                     return loginStatus();
