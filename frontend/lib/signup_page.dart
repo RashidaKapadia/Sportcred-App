@@ -56,8 +56,7 @@ Future<SignUpStatus> signUp(
   if (response.statusCode == 200) {
     return SignUpStatus(true, "SignUp successful!");
   } else if (response.statusCode == 409) {
-    return SignUpStatus(
-        false, "Username or email already exists.");
+    return SignUpStatus(false, "Username or email already exists.");
   } else {
     return SignUpStatus(false, "Sign up failed, please contact your admin.");
   }
@@ -96,16 +95,11 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<SignUpStatus> _futureSignUpStatus;
 
-  //TextEditingController emailController = TextEditingController();
-  //TextEditingController usernameController = TextEditingController();
+  
   TextEditingController password1Controller = TextEditingController(); // needed to check that passwords match
   TextEditingController password2Controller = TextEditingController();
-  //TextEditingController phoneNumberController = TextEditingController();
-  //TextEditingController favSportController = TextEditingController();
-  //TextEditingController sportLevelController = TextEditingController();
-  //TextEditingController sportToLearnController = TextEditingController();
-  //TextEditingController favTeamController = TextEditingController();
-  
+ 
+
   @override
   void initState() {
     createDropdownItems();
@@ -113,13 +107,15 @@ class _SignUpPageState extends State<SignUpPage> {
     super.initState();
   }
 
-/// Indicates signup status based on the response
+  /// Indicates signup status based on the response
   Widget signupStatus() {
     return FutureBuilder<SignUpStatus>(
       future: _futureSignUpStatus,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          //Navigator.of(context).pushNamed("/welcome");
+          if (snapshot.data.success){
+            Navigator.of(context).pushNamed("/welcome");
+          }     
           return Text(snapshot.data.message);
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
@@ -136,7 +132,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-///Creates the dropdownitems for drop down field
+  ///Creates the dropdownitems for drop down field
   void createDropdownItems() {
     for (String item in sportLevels) {
       dropDownItems.add(DropdownMenuItem(value: item, child: Text(item)));
@@ -271,38 +267,29 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget getDateOfBirth() {
-    return Container(
-        decoration: BoxDecoration(
-            border:
-                Border(bottom: BorderSide(color: Colors.black26, width: 2.0))),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            SizedBox(width: 12.0),
-            Icon(Icons.calendar_view_day, color: Colors.black45),
-            Text('  Date of Birth: ',
-                style: TextStyle(fontSize: 17, color: Colors.black54)),
-            SizedBox(width: 20.0),
-          ]),
-          FlatButton(
-              onPressed: () {
-                setState(() {
-                  _pickDate(context);
-                });
-              },
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      dob == null
-                          ? 'Please select a date'
-                          : '${dateFormatter.format(this.dob)}',
-                      style: TextStyle(fontSize: 17, color: Colors.black54),
-                    ),
-                    SizedBox(width: 20.0),
-                    Icon(Icons.date_range_rounded, color: Colors.black45),
-                  ]))
-        ]));
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: txtField("Date of Birth:"),
+        ),
+        TextFormField(
+          cursorColor: mainColour,
+          validator: (value) => checkInput(value, "date of birth"),
+          onTap: () {
+            setState(() {
+              _pickDate(context);
+            });
+          },
+          decoration: InputDecoration(
+              hintText: dob == null
+                  ? 'YYYY-MM-DD'
+                  : '${dateFormatter.format(this.dob)}',
+              prefixIcon: Icon(Icons.calendar_view_day),
+              suffixIcon: Icon(Icons.date_range_outlined)),
+        ),
+      ],
+    );
   }
 
   Widget getFavouriteSport() {
@@ -323,8 +310,9 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget getHighestSportLevel() {
     return Column(
       children: [
-        Text('What is your highest level of sport play?',
-            style: TextStyle(fontSize: 18, color: Colors.black54)),
+        Align(
+            alignment: Alignment.centerLeft,
+            child: txtField('What is your highest level of sport play?')),
         DropdownButtonFormField(
             decoration: InputDecoration(
               prefixIcon: Icon(Icons.leaderboard),
@@ -344,7 +332,10 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget getSportToLearn() {
     return Column(
       children: [
-        txtField('What sport would you like to know or learn about?'),
+        Align(
+            alignment: Alignment.centerLeft,
+            child:
+                txtField('What sport would you like to know or learn about?')),
         TextFormField(
           // controller: sportToLearnController,
           cursorColor: mainColour,
@@ -362,7 +353,9 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget getFavouriteTeam() {
     return Column(
       children: [
-        txtField('What is your favourite sports team?'),
+        Align(
+            alignment: Alignment.centerLeft,
+            child: txtField('What is your favourite sports team?')),
         TextFormField(
           // controller: favTeamController,
           cursorColor: mainColour,
@@ -398,9 +391,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                (_futureSignUpStatus != null)
+                  (_futureSignUpStatus != null)
                     ? signupStatus()
-                    : Text("Enter your information below:"),
+                  : Text("Enter your information below:"),
                 SizedBox(height: 20.0),
                 getUsername(),
                 SizedBox(height: 20.0),
@@ -447,8 +440,18 @@ class _SignUpPageState extends State<SignUpPage> {
 
                         _formKey.currentState.save();
 
+                        print(username);
+                        print(password1);
+                        print(email);
+                        print(phoneNumber);
+                        print(favSport);
+                        print(sportLevel);
+                        print(sportToLearn);
+                        print(favTeam);
+                        print('${dateFormatter.format(this.dob)}');
+
                         // Call the HTTP request
-                        _futureSignUpStatus = signUp(
+                          _futureSignUpStatus = signUp(
                             username,
                             email,
                             password1,
@@ -457,9 +460,11 @@ class _SignUpPageState extends State<SignUpPage> {
                             sportLevel,
                             sportToLearn,
                             favTeam,
-                            dob.toString());
+                            '${dateFormatter.format(this.dob)}');
 
-                      //  if (_futureSignUpStatus != null) {}
+                         if (_futureSignUpStatus != null) {
+                           return signupStatus();
+                         }
                       }
                     });
 
