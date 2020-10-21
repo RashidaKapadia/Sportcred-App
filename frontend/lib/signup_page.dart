@@ -15,52 +15,6 @@ class SignUpStatus {
   SignUpStatus(this.success, this.message);
 }
 
-// Http post request to login
-
-Future<SignUpStatus> signUp(
-    String username,
-    String email,
-    String password,
-    String phoneNum,
-    String favSport,
-    String sportLevel,
-    String sportToLearn,
-    String favTeam,
-    String dob) async {
-  // Make the request and store the response
-  final http.Response response = await http.post(
-    // new Uri.http("localhost:8080", "/api/login"),
-    'http://localhost:8080/api/signup',
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'Accept': 'text/plain; charset=utf-8',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: jsonEncode(<String, Object>{
-      'username': username,
-      'email': email,
-      'password': password,
-      'phoneNumber': phoneNum,
-      'favSport': favSport,
-      'sportLevel': sportLevel,
-      'sportToLearn': sportToLearn,
-      'favTeam': favTeam,
-      'dob': dob
-    }),
-  );
-
-  // Check the type of response received from backend
-  if (response.statusCode == 200) {
-    return SignUpStatus(true, "SignUp successful!");
-  } else if (response.statusCode == 409) {
-    return SignUpStatus(false, "Username or email already exists.");
-  } else {
-    return SignUpStatus(false, "Sign up failed, please contact your admin.");
-  }
-
-  return null;
-}
-
 class SignUpPage extends StatefulWidget {
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -89,20 +43,60 @@ class _SignUpPageState extends State<SignUpPage> {
     'University',
     'Professional'
   ];
+  // Initialize dropdown items
   List<DropdownMenuItem<String>> dropDownItems = List();
 
   Future<SignUpStatus> _futureSignUpStatus;
 
   TextEditingController password1Controller = TextEditingController();
-  TextEditingController password2Controller = TextEditingController();
 
   bool signupSuccess = false;
 
-  @override
-  void initState() {
-    createDropdownItems();
-    sportLevel = dropDownItems[0].value;
-    super.initState();
+// Http post request to signup
+  Future<SignUpStatus> signUp(
+      String username,
+      String email,
+      String password,
+      String phoneNum,
+      String favSport,
+      String sportLevel,
+      String sportToLearn,
+      String favTeam,
+      String dob) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      // new Uri.http("localhost:8080", "/api/login"),
+      'http://localhost:8080/api/signup',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, Object>{
+        'username': username,
+        'email': email,
+        'password': password,
+        'phoneNumber': phoneNum,
+        'favSport': favSport,
+        'sportLevel': sportLevel,
+        'sportToLearn': sportToLearn,
+        'favTeam': favTeam,
+        'dob': dob
+      }),
+    );
+
+    // Check the type of response received from backend
+    if (response.statusCode == 200) {
+      // Go to the welcome page if sign up was successful
+      Navigator.of(context).pushNamed('/welcome');
+      return SignUpStatus(true, "SignUp successful!");
+    } else if (response.statusCode == 409) {
+      return SignUpStatus(false, "Username or email already exists.");
+    } else {
+      return SignUpStatus(false, "Sign up failed, please contact your admin.");
+    }
+
+    return null;
   }
 
   /// Indicates signup status based on the response
@@ -111,6 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
       future: _futureSignUpStatus,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          // DEBUGGING
           if (snapshot.data.success) {
             print('SUCCESS');
           }
@@ -128,6 +123,13 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       },
     );
+  }
+
+  @override
+  void initState() {
+    createDropdownItems();
+    sportLevel = dropDownItems[0].value;
+    super.initState();
   }
 
   ///Creates the dropdownitems for drop down field
@@ -166,7 +168,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget getUsername() {
     return TextFormField(
-      // controller: usernameController,
       cursorColor: mainColour,
       validator: requiredValidator,
       decoration: inputDecorator(
@@ -183,7 +184,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget getEmail() {
     return TextFormField(
-      //   controller: emailController,
       cursorColor: mainColour,
       validator: emailValidator,
       decoration: inputDecorator(
@@ -218,7 +218,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget getPassword2() {
     return TextFormField(
-      controller: password2Controller,
       cursorColor: mainColour,
       validator: (val) => MatchValidator(
         errorText: 'Passwords do not match',
@@ -261,7 +260,6 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
         TextFormField(
           cursorColor: mainColour,
-          //validator: (value) => checkInput(value, "date of birth"),
           onTap: () {
             setState(() {
               _pickDate(context);
@@ -280,7 +278,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget getFavouriteSport() {
     return TextFormField(
-      //  controller: favSportController,
       cursorColor: mainColour,
       validator: requiredValidator,
       decoration: inputDecorator(
@@ -313,7 +310,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget getSportToLearn() {
     return TextFormField(
-      // controller: sportToLearnController,
       cursorColor: mainColour,
       validator: requiredValidator,
       decoration: InputDecoration(
@@ -330,7 +326,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget getFavouriteTeam() {
     return TextFormField(
-      // controller: favTeamController,
       cursorColor: mainColour,
       validator: requiredValidator,
       decoration: InputDecoration(
@@ -415,6 +410,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                         _formKey.currentState.save();
 
+                        // For debugging
                         print(username);
                         print(password1);
                         print(email);
@@ -427,19 +423,16 @@ class _SignUpPageState extends State<SignUpPage> {
 
                         // Call the HTTP request
                         _futureSignUpStatus = signUp(
-                            username,
-                            email,
-                            password1,
-                            phoneNumber,
-                            favSport,
-                            sportLevel,
-                            sportToLearn,
-                            favTeam,
-                            '${dateFormatter.format(this.dob)}');
-
-                        if (_futureSignUpStatus != null) {
-                          return signupStatus();
-                        }
+                          username,
+                          email,
+                          password1,
+                          phoneNumber,
+                          favSport,
+                          sportLevel,
+                          sportToLearn,
+                          favTeam,
+                          '${dateFormatter.format(this.dob)}',
+                        );
                       }
                     }),
               ],
