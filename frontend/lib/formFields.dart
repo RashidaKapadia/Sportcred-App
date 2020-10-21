@@ -1,19 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
-InputDecoration inputDecorator(String label, Icon icon) {
+
+
+// Form field Validators
+  final requiredValidator = RequiredValidator(errorText: 'Required');
+
+  final passwordValidator = MultiValidator([
+    RequiredValidator(errorText: 'Required'),
+    MinLengthValidator(8,
+        errorText: 'Password must have at least 8 characters'),
+    //PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'Passwords must have at least one special character')
+  ]);
+
+  final matchedValidator = (value1, value2) => MatchValidator(
+        errorText: 'Passwords do not match',
+      ).validateMatch(value1, value2);
+
+  final emailValidator = MultiValidator([
+    RequiredValidator(errorText: 'Required'),
+    EmailValidator(errorText: "Enter a valid email address."),
+  ]);
+
+
+  InputDecoration inputDecorator(String label, Icon icon) {
   return InputDecoration(
     labelText: label,
     prefixIcon: icon,
   );
 }
 
+Text txtField(String value) {
+  return Text(value, style: TextStyle(fontSize: 17, color: Colors.black54));
+}
+
 String checkInput(String value, String field) {
   if (value.isEmpty) {
-    return "Please provide your $field!";
+    return "Please enter your $field!";
   }
   return null;
 }
 
-Text txtField(String value) {
-  return Text(value, style: TextStyle(fontSize: 17, color: Colors.black54));
-}
