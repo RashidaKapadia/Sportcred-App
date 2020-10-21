@@ -145,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage>
           centerTitle: true,
           backgroundColor: Colors.red,
         ),
-        bottomNavigationBar: NavBar(),
+        bottomNavigationBar: NavBar(2),
         body: Container(
           color: Colors.white,
           child: new ListView(
