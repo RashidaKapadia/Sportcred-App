@@ -33,7 +33,7 @@ public class DBUserInfo {
           "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\"," +
           "favTeam: \"%s\", dob: \"%s\", tier: \"%s\", about: \"%s\", status: \"%s\"})",
           email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob, "FANALYST", "N/A",
-          "Online")));
+          "Hungry for basketball")));
       // System.out.println("finished adding the user");
       session.close();
       return true;
