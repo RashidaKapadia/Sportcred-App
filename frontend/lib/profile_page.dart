@@ -133,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage>
   TextEditingController _aboutController = TextEditingController()
     ..text = 'A history professor who is keen on basketball';
 
-  // This widget is the root of your application.
+  // This widget is the root of your application
   @override
   Widget build(BuildContext context) {
     return Scaffold(
