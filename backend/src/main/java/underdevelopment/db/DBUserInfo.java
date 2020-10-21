@@ -31,8 +31,8 @@ public class DBUserInfo {
       session.writeTransaction(tx -> tx.run(String.format(
           "MERGE (a:user {email: \"%s\", username: \"%s\", password: \"%s\", " +
           "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\"," +
-          "favTeam: \"%s\", dob: \"%s\", tier: \"%s\", about: \"%s\", status: \"%s\"})",
-          email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob, "FANALYST", "N/A",
+          "favTeam: \"%s\", dob: \"%s\", acs: \"%s\", about: \"%s\", status: \"%s\"})",
+          email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob,100, "N/A",
           "Hungry for basketball")));
       // System.out.println("finished adding the user");
       session.close();
