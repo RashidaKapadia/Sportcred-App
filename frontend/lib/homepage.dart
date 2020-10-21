@@ -12,7 +12,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: NavBar(),
+        bottomNavigationBar: NavBar(0),
         body: new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           Expanded(child: Image.asset('assets/Logo.png')),
           Expanded(

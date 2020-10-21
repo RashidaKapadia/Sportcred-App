@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 
 class NavBar extends StatefulWidget {
+  int defaultIndex = 0;
   @override
   State<NavBar> createState() {
     return NavBarState();
   }
+
+  NavBar(int startingIndex){
+    defaultIndex = startingIndex;
+  }
+
 }
 
+
 class NavBarState extends State<NavBar> {
-  int _currentIndex = 0;
+
+
   List<BottomNavigationBarItem> items;
   final tabs = [
     Center(child: Text("Home")),
@@ -25,7 +33,8 @@ class NavBarState extends State<NavBar> {
       iconSize: 20,
       //selectedFontSize: 25,
       backgroundColor: Colors.blue,
-      currentIndex: _currentIndex,
+      currentIndex: widget.defaultIndex,
+      selectedItemColor: Colors.grey,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -59,7 +68,6 @@ class NavBarState extends State<NavBar> {
           } else if (index == 3) {
             //Navigator.of(context).pushNamed("/settings");
           }
-          _currentIndex = index;
         });
       },
     ); // This trailing comma makes auto-formatting nicer for build methods.
