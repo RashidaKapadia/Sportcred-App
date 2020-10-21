@@ -294,7 +294,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return DropdownButtonFormField(
       decoration: InputDecoration(
         labelText: 'What is your highest level of sport play?',
-        labelStyle: TextStyle(fontSize: 17),
+        labelStyle: TextStyle(fontSize: 21),
         prefixIcon: Icon(Icons.leaderboard),
       ),
       style: TextStyle(fontSize: 17, color: Colors.black87),
