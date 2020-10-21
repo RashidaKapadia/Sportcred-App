@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:frontend/homepage.dart';
 import 'package:http/http.dart' as http;
 
 // -- HTTP Request ---
@@ -93,7 +94,15 @@ class _State_Of_Login_Page extends State<LoginPage> {
         if (snapshot.hasData) {
           if (snapshot.data.success) {
             print("SUCCESS");
-            Navigator.of(context).pushNamed("/homepage");
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
+            //);
+            //Navigator.push(
+            //context,
+            //MaterialPageRoute(builder: (context) => HomePage()),
+            //);
+            //Navigator.pushNamed(context, "/homepage");
+            //Navigator.of(context).pushNamed("/homepage");
             return Text(snapshot.data.message);
           }
           return Text(snapshot.data.message);
@@ -202,6 +211,9 @@ class _State_Of_Login_Page extends State<LoginPage> {
                                   _futureLoginStatus = login(
                                       nameController.text,
                                       passwordController.text);
+
+                                  print(username);
+                                  print(password);
 
                                   if (username == "test" &&
                                       password == "test") {
