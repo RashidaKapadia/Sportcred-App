@@ -36,7 +36,7 @@ Future<UserInfo> profile_get(String username) async {
     return UserInfo.fromJson(jsonDecode(response.body));
     // return ProfileStatus(true, "Profile info fetched successfully");
   } else {
-    throw Exception('Failed to create album.');
+    throw Exception('Failed to get profile.');
   }
 }
 
@@ -69,7 +69,7 @@ Future<UserInfo> profile_update(String username, String email, String status,
     return UserInfo.fromJson(jsonDecode(response.body));
     // return ProfileStatus(true, "Profile info fetched successfully");
   } else {
-    throw Exception('Failed to create album.');
+    throw Exception('Failed to update profile.');
   }
 }
 
@@ -112,15 +112,16 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   void initState() {
-    // TODO: implement initState
+    Future<UserInfo> _futureUserInfo;
+    _futureUserInfo = profile_get(username);
+
+    if (_futureUserInfo != null) {}
     super.initState();
   }
 
-  String username;
-
   String acs = '314';
   String tier = 'FANANALYST';
-
+  String username = 'JerryKing';
   TextEditingController _usernameController = TextEditingController()
     ..text = 'jking';
   TextEditingController _statusController = TextEditingController()
@@ -136,6 +137,14 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          leading: BackButton(
+              color: Colors.black,
+              onPressed: () => Navigator.of(context).pushNamed("/homepage")),
+          title: Text("Profile"),
+          centerTitle: true,
+          backgroundColor: Colors.red,
+        ),
         bottomNavigationBar: NavBar(),
         body: Container(
           color: Colors.white,
@@ -147,46 +156,27 @@ class _ProfilePageState extends State<ProfilePage>
                     color: Colors.white,
                     child: new Column(
                       children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(left: 20.0, top: 20.0),
-                            child: new Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                new Icon(
-                                  Icons.arrow_back_ios,
-                                  color: Colors.black,
-                                  size: 22.0,
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                child: new Text(
+                                  'ACS:' + '  ' + acs + '  [' + tier + ']',
+                                  style: TextStyle(
+                                      fontSize: 22.0,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 500.0),
-                                  child: new Text('PROFILE',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 28.0,
-                                          fontFamily: 'sans-serif-light',
-                                          color: Colors.black)),
-                                ),
-                              ],
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(left: 450.0, top: 50.0),
-                            child: new Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Expanded(
-                                  child: Container(
-                                    child: new Text(
-                                      'ACS:' + '  ' + acs + '  [' + tier + ']',
-                                      style: TextStyle(
-                                          fontSize: 22.0,
-                                          color: Colors.green[300],
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  flex: 2,
-                                ),
-                              ],
-                            )),
+                              ),
+                              flex: 2,
+                            ),
+                          ],
+                        ),
                         Padding(
                           padding: EdgeInsets.only(top: 20.0),
                           child:
@@ -253,6 +243,8 @@ class _ProfilePageState extends State<ProfilePage>
                                   border: OutlineInputBorder(),
                                   hintText: 'Add status here',
                                 ),
+                                keyboardType: TextInputType.multiline,
+                                maxLines: null,
                                 // onChanged: (text) {
                                 //   setState(() {
                                 //     _statusController =
@@ -272,38 +264,37 @@ class _ProfilePageState extends State<ProfilePage>
                           Padding(
                               padding: EdgeInsets.only(left: 50.0, top: 15.0),
                               child: new Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   Expanded(
-                                    child: Container(
-                                      alignment: Alignment.topLeft,
-                                      child: new Text(
-                                        'Username:',
-                                        style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      child: Container(
+                                    alignment: Alignment.topLeft,
+                                    child: new Text(
+                                      'Username:',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    flex: 2,
-                                  ),
+                                  )),
                                   Expanded(
-                                    child: Container(
-                                        alignment: Alignment.topLeft,
-                                        child: new Column(children: <Widget>[
-                                          new TextField(
-                                            // onChanged: (text) {
-                                            //   setState(() {
-                                            //     username = text;
-                                            //   });
-                                            // },
-                                            style: TextStyle(fontSize: 16.0),
-                                            enabled: !_status,
-                                            autofocus: !_status,
-                                            controller: _usernameController,
-                                          ),
-                                        ])),
-                                  ),
+                                      child: Container(
+                                          alignment: Alignment.topLeft,
+                                          child: new Column(children: <Widget>[
+                                            new TextField(
+                                              // onChanged: (text) {
+                                              //   setState(() {
+                                              //     username = text;
+                                              //   });
+                                              // },
+                                              style: TextStyle(fontSize: 16.0),
+                                              keyboardType:
+                                                  TextInputType.multiline,
+                                              maxLines: null,
+                                              enabled: !_status,
+                                              autofocus: !_status,
+                                              controller: _usernameController,
+                                            ),
+                                          ])),
+                                      flex: 2),
                                 ],
                               )),
                           Padding(
@@ -313,19 +304,17 @@ class _ProfilePageState extends State<ProfilePage>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   Expanded(
-                                    child: Container(
-                                      child: new Text(
-                                        'About:',
-                                        style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      child: Container(
+                                    child: new Text(
+                                      'About:',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    flex: 2,
-                                  ),
+                                  )),
                                   Expanded(
-                                    child: Container(
-                                      child: new TextField(
+                                      child: Container(
+                                          child: new TextField(
                                         // onChanged: (text) {
                                         //   setState(() {
                                         //     _aboutController =
@@ -333,12 +322,13 @@ class _ProfilePageState extends State<ProfilePage>
                                         //   });
                                         // },
                                         style: TextStyle(fontSize: 16.0),
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: null,
                                         enabled: !_status,
                                         autofocus: !_status,
                                         controller: _aboutController,
-                                      ),
-                                    ),
-                                  ),
+                                      )),
+                                      flex: 2),
                                 ],
                               )),
                           Padding(
@@ -348,32 +338,32 @@ class _ProfilePageState extends State<ProfilePage>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   Expanded(
-                                    child: Container(
-                                      child: new Text(
-                                        'Email:',
-                                        style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      child: Container(
+                                    child: new Text(
+                                      'Email:',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    flex: 2,
-                                  ),
+                                  )),
                                   Expanded(
-                                    child: Container(
-                                      child: new TextField(
-                                        // onChanged: (text) {
-                                        //   setState(() {
-                                        //     _emailController =
-                                        //         TextEditingController(text: text);
-                                        //   });
-                                        // },
-                                        style: TextStyle(fontSize: 16.0),
-                                        enabled: !_status,
-                                        autofocus: !_status,
-                                        controller: _emailController,
+                                      child: Container(
+                                        child: new TextField(
+                                          // onChanged: (text) {
+                                          //   setState(() {
+                                          //     _emailController =
+                                          //         TextEditingController(text: text);
+                                          //   });
+                                          // },
+                                          style: TextStyle(fontSize: 16.0),
+                                          keyboardType: TextInputType.multiline,
+                                          maxLines: null,
+                                          enabled: !_status,
+                                          autofocus: !_status,
+                                          controller: _emailController,
+                                        ),
                                       ),
-                                    ),
-                                  ),
+                                      flex: 2),
                                 ],
                               )),
                           Padding(
@@ -383,32 +373,32 @@ class _ProfilePageState extends State<ProfilePage>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   Expanded(
-                                    child: Container(
-                                      child: new Text(
-                                        'Birthday:',
-                                        style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      child: Container(
+                                    child: new Text(
+                                      'Birthday:',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    flex: 2,
-                                  ),
+                                  )),
                                   Expanded(
-                                    child: Container(
-                                      child: new TextField(
-                                        // onChanged: (text) {
-                                        //   setState(() {
-                                        //     _birthdayController =
-                                        //         TextEditingController(text: text);
-                                        //   });
-                                        // },
-                                        style: TextStyle(fontSize: 16.0),
-                                        enabled: !_status,
-                                        autofocus: !_status,
-                                        controller: _birthdayController,
+                                      child: Container(
+                                        child: new TextField(
+                                          // onChanged: (text) {
+                                          //   setState(() {
+                                          //     _birthdayController =
+                                          //         TextEditingController(text: text);
+                                          //   });
+                                          // },
+                                          style: TextStyle(fontSize: 16.0),
+                                          keyboardType: TextInputType.multiline,
+                                          maxLines: null,
+                                          enabled: !_status,
+                                          autofocus: !_status,
+                                          controller: _birthdayController,
+                                        ),
                                       ),
-                                    ),
-                                  ),
+                                      flex: 2),
                                 ],
                               )),
                           !_status ? _getActionButtons() : new Container(),
