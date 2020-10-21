@@ -8,15 +8,6 @@ import org.neo4j.driver.Transaction;
 
 public class DBProfile{
 
-    String username = "";
-    String email = "";
-    String phoneNumber = "";
-    String about = "";
-    String status = "";
-    String dob = "";
-    int acs = 100;
-    String tier = "";
-
     // DB command for upadting user status
     public static Boolean updateUserInfo(String username, String status, String email, 
                                     String about, String dob, String acs, String tier){
