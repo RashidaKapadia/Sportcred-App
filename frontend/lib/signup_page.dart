@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import './formFields.dart';
 import './fieldStyles.dart';
-
 import 'package:form_field_validator/form_field_validator.dart';
 
 import 'package:http/http.dart' as http;
@@ -37,10 +36,10 @@ Future<SignUpStatus> signUp(
       'Accept': 'text/plain; charset=utf-8',
       'Access-Control-Allow-Origin': '*',
     },
-    body: jsonEncode(<String, String>{
+    body: jsonEncode(<String, Object>{
       'username': username,
       'email': email,
-      'password1': password,
+      'password': password,
       'phoneNumber': phoneNum,
       'favSport': favSport,
       'sportLevel': sportLevel,
@@ -50,9 +49,6 @@ Future<SignUpStatus> signUp(
     }),
   );
 
-  // Store the session token
-  // String token = jsonDecode(response.body)['token'];
-//  await FlutterSession().set('token', token);
   // Check the type of response received from backend
   if (response.statusCode == 200) {
     return SignUpStatus(true, "SignUp successful!");
@@ -97,25 +93,10 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<SignUpStatus> _futureSignUpStatus;
 
-  TextEditingController password1Controller =
-      TextEditingController(); // needed to check that passwords match
+  TextEditingController password1Controller = TextEditingController();
   TextEditingController password2Controller = TextEditingController();
-  TextEditingController dobController = TextEditingController();
 
-// FielR
-  final requiredValidator =
-      RequiredValidator(errorText: 'Required');
-  final passwordValidator = MultiValidator([
-    RequiredValidator(errorText: 'Required'),
-    MinLengthValidator(8,
-        errorText: 'Password must have at least 8 characters'),
-    //PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'Passwords must have at least one special character')
-  ]);
-
-  final emailValidator = MultiValidator([
-    RequiredValidator(errorText: 'Required'),
-    EmailValidator(errorText: "Enter a valid email address."),
-  ]);
+  bool signupSuccess = false;
 
   @override
   void initState() {
@@ -131,9 +112,7 @@ class _SignUpPageState extends State<SignUpPage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data.success) {
-            print("SUCCESS");
-            //Navigator.of(context).pushNamed("/welcome");
-            return Text(snapshot.data.message);
+            print('SUCCESS');
           }
           return Text(snapshot.data.message);
         } else if (snapshot.hasError) {
@@ -181,7 +160,6 @@ class _SignUpPageState extends State<SignUpPage> {
     if (dateSelect != null && dateSelect != dob) {
       setState(() {
         this.dob = dateSelect;
-        dobController.text = '${dateFormatter.format(this.dob)}';
       });
     }
   }
@@ -242,8 +220,9 @@ class _SignUpPageState extends State<SignUpPage> {
     return TextFormField(
       controller: password2Controller,
       cursorColor: mainColour,
-      validator: (val) => MatchValidator(errorText: 'Passwords do not match',)
-          .validateMatch(val, password1Controller.value.text),
+      validator: (val) => MatchValidator(
+        errorText: 'Passwords do not match',
+      ).validateMatch(val, password1Controller.value.text),
       obscureText: true,
       decoration: inputDecorator(
         'Confirm Password',
@@ -315,67 +294,55 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget getHighestSportLevel() {
-    return Column(
-      children: [
-        Align(
-            alignment: Alignment.centerLeft,
-            child: txtField('What is your highest level of sport play?')),
-        DropdownButtonFormField(
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.leaderboard),
-            ),
-            style: TextStyle(fontSize: 17, color: Colors.black87),
-            items: dropDownItems,
-            value: sportLevel,
-            onChanged: (value) {
-              setState(() {
-                this.sportLevel = value;
-              });
-            }),
-      ],
+    return DropdownButtonFormField(
+      decoration: InputDecoration(
+        labelText: 'What is your highest level of sport play?',
+        labelStyle: TextStyle(fontSize: 17),
+        prefixIcon: Icon(Icons.leaderboard),
+      ),
+      style: TextStyle(fontSize: 17, color: Colors.black87),
+      items: dropDownItems,
+      value: sportLevel,
+      onChanged: (value) {
+        setState(() {
+          this.sportLevel = value;
+        });
+      },
     );
   }
 
   Widget getSportToLearn() {
-    return Column(
-      children: [
-        Align(
-            alignment: Alignment.centerLeft,
-            child:
-                txtField('What sport would you like to know or learn about?')),
-        TextFormField(
-          // controller: sportToLearnController,
-          cursorColor: mainColour,
-          validator: requiredValidator,
-          decoration: InputDecoration(prefixIcon: Icon(Icons.question_answer)),
-          onSaved: (value) {
-            setState(() {
-              this.sportToLearn = value;
-            });
-          },
-        )
-      ],
+    return TextFormField(
+      // controller: sportToLearnController,
+      cursorColor: mainColour,
+      validator: requiredValidator,
+      decoration: InputDecoration(
+          prefixIcon: Icon(Icons.question_answer),
+          labelText: 'What sport would you like to know or learn about?',
+          hintText: 'Enter your answer'),
+      onSaved: (value) {
+        setState(() {
+          this.sportToLearn = value;
+        });
+      },
     );
   }
 
   Widget getFavouriteTeam() {
-    return Column(
-      children: [
-        Align(
-            alignment: Alignment.centerLeft,
-            child: txtField('What is your favourite sports team?')),
-        TextFormField(
-          // controller: favTeamController,
-          cursorColor: mainColour,
-          validator: requiredValidator,
-          decoration: InputDecoration(prefixIcon: Icon(Icons.question_answer)),
-          onSaved: (value) {
-            setState(() {
-              this.favTeam = value;
-            });
-          },
-        )
-      ],
+    return TextFormField(
+      // controller: favTeamController,
+      cursorColor: mainColour,
+      validator: requiredValidator,
+      decoration: InputDecoration(
+        prefixIcon: Icon(Icons.question_answer),
+        labelText: 'What is your favourite sports team?',
+        hintText: 'Enter your answer',
+      ),
+      onSaved: (value) {
+        setState(() {
+          this.favTeam = value;
+        });
+      },
     );
   }
 
@@ -435,15 +402,14 @@ class _SignUpPageState extends State<SignUpPage> {
                 getFavouriteTeam(),
                 SizedBox(height: 20.0),
                 RaisedButton(
-                  color: mainColour,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: Text(
-                    "Sign Up",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  onPressed: () {
-                    setState(() {
+                    color: mainColour,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: Text(
+                      "Sign Up",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    onPressed: () {
                       if (_formKey.currentState.validate()) {
                         print("Sign up was successful!");
 
@@ -475,9 +441,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           return signupStatus();
                         }
                       }
-                    });
-                  },
-                ),
+                    }),
               ],
             ),
           )),
