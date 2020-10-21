@@ -23,7 +23,7 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
 
-// Signup fields
+  // Signup fields
   String email = "";
   String username = "";
   String password1 = "";
@@ -49,6 +49,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Future<SignUpStatus> _futureSignUpStatus;
 
   TextEditingController password1Controller = TextEditingController();
+  TextEditingController dobController = TextEditingController();
 
   bool signupSuccess = false;
 
@@ -72,7 +73,7 @@ class _SignUpPageState extends State<SignUpPage> {
         'Accept': 'text/plain; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
-      body: jsonEncode(<String, Object>{
+      body: jsonEncode(<String, String>{
         'username': username,
         'email': email,
         'password': password,
@@ -162,6 +163,7 @@ class _SignUpPageState extends State<SignUpPage> {
     if (dateSelect != null && dateSelect != dob) {
       setState(() {
         this.dob = dateSelect;
+        dobController..text = '${dateFormatter.format(this.dob)}';
       });
     }
   }
@@ -259,6 +261,9 @@ class _SignUpPageState extends State<SignUpPage> {
           child: txtField("Date of Birth:"),
         ),
         TextFormField(
+          readOnly: true,
+          controller: dobController,
+          validator: requiredValidator,
           cursorColor: mainColour,
           onTap: () {
             setState(() {

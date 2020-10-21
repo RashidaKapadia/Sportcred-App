@@ -14,8 +14,8 @@ public class LoginHandler {
 
     public static boolean validCredentials (String username, String password) {
         // TODO: remove test user
-        return (new DBLogin().verifyUser(username, password) 
-            || (username.equals("test") && password.equals("test"))); 
+        return ((username.equals("test") && password.equals("test")) 
+            || new DBLogin().verifyUser(username, password)); 
     }
 
     public static JsonRequestHandler createSession() {

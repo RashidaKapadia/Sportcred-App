@@ -5,12 +5,12 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
 
-
 public class DBUserInfo {
- 
 
   /**
-   * Given the different fields, create a user node with those fields and values in the DB.
+   * Given the different fields, create a user node with those fields and values
+   * in the DB.
+   * 
    * @param email
    * @param username
    * @param password
@@ -21,38 +21,31 @@ public class DBUserInfo {
    * @param favTeam
    * @param dob
    */
-  public static boolean addUser(String email, String username, String password, String phoneNumber,
-      String favSport, String sportLevel, String sportToLearn, String favTeam, String dob) {
+  public static boolean addUser(String email, String username, String password, String phoneNumber, String favSport,
+      String sportLevel, String sportToLearn, String favTeam, String dob) {
     // set the values for the instance variables
-      System.out.println("adding the user: " + username);
-
+    System.out.println("adding the user: " + username);
 
     // Create a user node in DB for the user with the provided data
     try (Session session = Connect.driver.session()) {
-     /*session.writeTransaction(tx -> tx.run(
-          "MERGE (a:user {username: $usr, email: $email, password: $pwd, phoneNumber: $phoneNum, "
-              + "favouriteSport: $favSport, sportLevel: $sportLevel, sportToLearn: $sportToLearn, "
-              + "favouriteTeam: $favTeam, dateOfBirth: $dob, acs: $acs}",
-          parameters("usr",username, "email", email, "pwd", password, "phoneNum",
-              phoneNumber, "favSport", favSport, "sportLevel", sportLevel,
-              "sportToLearn", sportToLearn, "favTeam", favTeam, "dob", dob, "acs",
-              100)));
-             */
-
-      session.writeTransaction(
-				tx -> tx.run(String.format("MERGE (a:user {email: \"%s\", username: \"%s\", password: \"%s\", phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\", favTeam: \"%s\", dob: \"%s\"})", email, 
-						username, password, phoneNumber,favSport , sportLevel, sportToLearn,favTeam,  dob )));
-     // System.out.println("finished adding the user");
+      session.writeTransaction(tx -> tx.run(String.format(
+          "MERGE (a:user {email: \"%s\", username: \"%s\", password: \"%s\", " +
+          "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\"," +
+          "favTeam: \"%s\", dob: \"%s\", tier: \"%s\", about: \"%s\", status: \"%s\"})",
+          email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob, "FANALYST", "N/A",
+          "Hungry for basketball")));
+      // System.out.println("finished adding the user");
       session.close();
       return true;
-    }catch (Exception e) {
-    	return false;
+    } catch (Exception e) {
+      return false;
     }
 
   }
 
   /**
    * Return true if and only if a user with the given username already exists
+   * 
    * @param username
    * @return bool
    */
@@ -68,15 +61,15 @@ public class DBUserInfo {
         }
       }
     }
-    
+
     // Return false if user with given username does not exist
     return false;
-    
+
   }
-  
 
   /**
    * Return true if and only if a user with the given email already exists
+   * 
    * @param email
    * @return bool
    */
@@ -92,9 +85,9 @@ public class DBUserInfo {
         }
       }
     }
-    
+
     // Return false if user with given username does not exist
     return false;
-    
+
   }
 }
