@@ -13,33 +13,7 @@ class LoginStatus {
   LoginStatus(this.success, this.message);
 }
 
-// Http post request to login
-Future<LoginStatus> login(String username, String password) async {
-  // Make the request and store the response
-  final http.Response response = await http.post(
-    // new Uri.http("localhost:8080", "/api/login"),
-    'http://localhost:8080/api/login',
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'Accept': 'text/plain; charset=utf-8',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: jsonEncode(
-        <String, String>{'username': username, 'password': password}),
-  );
 
-  if (response.statusCode == 200) {
-    // Store the session token
-    String token = jsonDecode(response.body)['token'];
-    await FlutterSession().set('token', token);
-    await FlutterSession().set('username', username);
-    return LoginStatus(true, "Login successful!");
-  } else if (response.statusCode == 403) {
-    return LoginStatus(false, "Your username or password is incorrect.");
-  } else {
-    return LoginStatus(false, "Login failed, please contact your admin.");
-  }
-}
 
 // -- Widget --
 
@@ -77,6 +51,36 @@ class _State_Of_Login_Page extends State<LoginPage> {
           width: 100,
         ));
   }
+
+// Http post request to login
+Future<LoginStatus> login(String username, String password) async {
+  // Make the request and store the response
+  final http.Response response = await http.post(
+    // new Uri.http("localhost:8080", "/api/login"),
+    'http://localhost:8080/api/login',
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Accept': 'text/plain; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: jsonEncode(
+        <String, String>{'username': username, 'password': password}),
+  );
+
+  if (response.statusCode == 200) {
+    // Store the session token
+    String token = jsonDecode(response.body)['token'];
+    await FlutterSession().set('token', token);
+    await FlutterSession().set('username', username);
+    // Go to the homepage if login is successful
+     Navigator.of(context).pushNamed("/homepage");
+    return LoginStatus(true, "Login successful!");
+  } else if (response.statusCode == 403) {
+    return LoginStatus(false, "Your username or password is incorrect.");
+  } else {
+    return LoginStatus(false, "Login failed, please contact your admin.");
+  }
+}
 
   Widget loginStatus() {
     return FutureBuilder<LoginStatus>(
@@ -190,7 +194,7 @@ class _State_Of_Login_Page extends State<LoginPage> {
                               _futureLoginStatus = login(
                                   nameController.text, passwordController.text);
                             });
-                            Navigator.of(context).pushNamed("/homepage");
+                           
                           },
                         )),
                     // Sign up Link
