@@ -7,16 +7,12 @@ class NavBar extends StatefulWidget {
     return NavBarState();
   }
 
-  NavBar(int startingIndex){
+  NavBar(int startingIndex) {
     defaultIndex = startingIndex;
   }
-
 }
 
-
 class NavBarState extends State<NavBar> {
-
-
   List<BottomNavigationBarItem> items;
   final tabs = [
     Center(child: Text("Home")),
@@ -28,13 +24,14 @@ class NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      unselectedItemColor: Colors.black,
-      //type: BottomNavigationBarType.fixed,
+      unselectedItemColor: Colors.black45,
+      // type: BottomNavigationBarType.fixed,
+      type: BottomNavigationBarType.shifting,
       iconSize: 20,
       //selectedFontSize: 25,
       backgroundColor: Colors.blue,
       currentIndex: widget.defaultIndex,
-      selectedItemColor: Colors.grey,
+      selectedItemColor: Colors.black,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
