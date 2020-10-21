@@ -16,63 +16,6 @@ class ProfileStatus {
   ProfileStatus(this.success, this.message);
 }
 
-// Http post request to get user info
-Future<UserInfo> profile_get(String username) async {
-  // Make the request and store the response
-  final http.Response response = await http.post(
-    // new Uri.http("localhost:8080", "/api/getUserInfoe"),
-    'http://localhost:8080/api/getUserInfo',
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'Accept': 'text/plain; charset=utf-8',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: jsonEncode(<String, String>{'username': username}),
-  );
-
-  if (response.statusCode == 200) {
-    // Store the session token
-    // String user_info = jsonDecode(response.body)['string_respone'];
-    return UserInfo.fromJson(jsonDecode(response.body));
-    // return ProfileStatus(true, "Profile info fetched successfully");
-  } else {
-    throw Exception('Failed to get profile.');
-  }
-}
-
-// Http post request to update user info
-Future<UserInfo> profile_update(String username, String email, String status,
-    String about, String dob, String tier, String acs) async {
-  // Make the request and store the response
-  final http.Response response = await http.post(
-    // new Uri.http("localhost:8080", "/api/getUserInfo"),
-    'http://localhost:8080/api/updateUserInfo',
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'Accept': 'text/plain; charset=utf-8',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: jsonEncode(<String, String>{
-      'username': username,
-      'email': email,
-      'status': status,
-      'about': about,
-      'dob': dob,
-      'acs': acs.toString(),
-      'tier': tier
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    // Store the session token
-    // String user_info = jsonDecode(response.body)['string_respone'];
-    return UserInfo.fromJson(jsonDecode(response.body));
-    // return ProfileStatus(true, "Profile info fetched successfully");
-  } else {
-    throw Exception('Failed to update profile.');
-  }
-}
-
 class UserInfo {
   final int acs;
   final String username;
@@ -105,6 +48,19 @@ class UserInfo {
   }
 }
 
+String acs = '314';
+String tier = 'FANANALYST';
+TextEditingController _usernameController = TextEditingController()
+  ..text = 'jking';
+TextEditingController _statusController = TextEditingController()
+  ..text = 'Hungry for some basketball';
+TextEditingController _emailController = TextEditingController()
+  ..text = 'jerry_king@gmail.com';
+TextEditingController _birthdayController = TextEditingController()
+  ..text = '23 March 1975';
+TextEditingController _aboutController = TextEditingController()
+  ..text = 'A history professor who is keen on basketball';
+
 class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   bool _status = true;
@@ -113,26 +69,18 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   void initState() {
     Future<UserInfo> _futureUserInfo;
-    _futureUserInfo = profile_get(username);
+    //_futureUserInfo = profile_get(username);
 
     if (_futureUserInfo != null) {}
     super.initState();
   }
 
-  String acs = '314';
-  String tier = 'FANANALYST';
-  String username = 'JerryKing';
-  TextEditingController _usernameController = TextEditingController()
-    ..text = 'jking';
-  TextEditingController _statusController = TextEditingController()
-    ..text = 'Hungry for some basketball';
-  TextEditingController _emailController = TextEditingController()
-    ..text = 'jerry_king@gmail.com';
-  TextEditingController _birthdayController = TextEditingController()
-    ..text = '23 March 1975';
-  TextEditingController _aboutController = TextEditingController()
-    ..text = 'A history professor who is keen on basketball';
-
+  String new_username, new_status, new_email, new_birthday, new_about;
+  String old_username = _usernameController.text;
+  String old_status = _statusController.text;
+  String old_email = _emailController.text;
+  String old_birthday = _birthdayController.text;
+  String old_about = _aboutController.text;
   // This widget is the root of your application
   @override
   Widget build(BuildContext context) {
@@ -280,19 +228,20 @@ class _ProfilePageState extends State<ProfilePage>
                                           alignment: Alignment.topLeft,
                                           child: new Column(children: <Widget>[
                                             new TextField(
-                                              // onChanged: (text) {
-                                              //   setState(() {
-                                              //     username = text;
-                                              //   });
-                                              // },
-                                              style: TextStyle(fontSize: 16.0),
-                                              keyboardType:
-                                                  TextInputType.multiline,
-                                              maxLines: null,
-                                              enabled: !_status,
-                                              autofocus: !_status,
-                                              controller: _usernameController,
-                                            ),
+                                                onChanged: (text) {
+                                                  setState(() {
+                                                    new_username = text;
+                                                  });
+                                                },
+                                                style:
+                                                    TextStyle(fontSize: 16.0),
+                                                keyboardType:
+                                                    TextInputType.multiline,
+                                                maxLines: null,
+                                                enabled: !_status,
+                                                autofocus: !_status,
+                                                controller:
+                                                    _usernameController),
                                           ])),
                                       flex: 2),
                                 ],
@@ -417,6 +366,11 @@ class _ProfilePageState extends State<ProfilePage>
   void dispose() {
     // Clean up the controller when the Widget is disposed
     myFocusNode.dispose();
+    _usernameController.dispose();
+    _statusController.dispose();
+    _aboutController.dispose();
+    _emailController.dispose();
+    _birthdayController.dispose();
     super.dispose();
   }
 
@@ -438,7 +392,6 @@ class _ProfilePageState extends State<ProfilePage>
                 onPressed: () {
                   setState(() {
                     _status = true;
-                    _usernameController = TextEditingController(text: username);
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                 },
@@ -459,7 +412,18 @@ class _ProfilePageState extends State<ProfilePage>
                 onPressed: () {
                   setState(() {
                     _status = true;
-                    //username = '';
+
+                    _statusController = TextEditingController(text: old_status);
+
+                    _usernameController =
+                        TextEditingController(text: old_username);
+
+                    _aboutController = TextEditingController(text: old_about);
+
+                    _emailController = TextEditingController(text: old_email);
+
+                    _birthdayController =
+                        TextEditingController(text: old_birthday);
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                 },
