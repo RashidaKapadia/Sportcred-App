@@ -24,14 +24,14 @@ class NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      unselectedItemColor: Colors.black45,
+      unselectedItemColor: Colors.white,
       // type: BottomNavigationBarType.fixed,
       type: BottomNavigationBarType.shifting,
       iconSize: 20,
       //selectedFontSize: 25,
       backgroundColor: Colors.blue,
       currentIndex: widget.defaultIndex,
-      selectedItemColor: Colors.black,
+      selectedItemColor: Colors.grey,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -46,7 +46,7 @@ class NavBarState extends State<NavBar> {
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
           title: Text('Profile'),
-          backgroundColor: Colors.lightGreen,
+          backgroundColor: Colors.black,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),

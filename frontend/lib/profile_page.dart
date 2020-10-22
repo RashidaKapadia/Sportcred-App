@@ -6,6 +6,13 @@ import './navbar.dart';
 import 'package:http/http.dart' as http;
 import './loginPage.dart';
 
+String old_username, old_status, old_email, old_birthday, old_about;
+TextEditingController _usernameController = TextEditingController()..text = '';
+TextEditingController _statusController = TextEditingController()..text = '';
+TextEditingController _emailController = TextEditingController()..text = '';
+TextEditingController _birthdayController = TextEditingController()..text = '';
+TextEditingController _aboutController = TextEditingController()..text = '';
+
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -58,6 +65,14 @@ class UserInfo {
   }
 }
 
+void storePrevValues() {
+  old_username = _usernameController.text;
+  old_status = _statusController.text;
+  old_birthday = _birthdayController.text;
+  old_about = _aboutController.text;
+  old_email = _emailController.text;
+}
+
 class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   bool _status = true;
@@ -67,14 +82,6 @@ class _ProfilePageState extends State<ProfilePage>
   String acs = "";
   String tier = "";
   String username = "";
-
-  TextEditingController _usernameController = TextEditingController()
-    ..text = '';
-  TextEditingController _statusController = TextEditingController()..text = '';
-  TextEditingController _emailController = TextEditingController()..text = '';
-  TextEditingController _birthdayController = TextEditingController()
-    ..text = '';
-  TextEditingController _aboutController = TextEditingController()..text = '';
 
   Future<UserInfo> _futureUserInfo;
 
@@ -99,11 +106,14 @@ class _ProfilePageState extends State<ProfilePage>
 
       setState(() {
         this.username = userData.username;
+
         _usernameController..text = this.username;
         _statusController..text = userData.status;
         _birthdayController..text = userData.dob;
         _aboutController..text = userData.about;
         _emailController..text = userData.email;
+
+        storePrevValues();
 
         print('DEBUGGING: PROFILE GET');
         print(username);
@@ -175,13 +185,12 @@ class _ProfilePageState extends State<ProfilePage>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leading: BackButton(
-              color: Colors.black,
-              onPressed: () => Navigator.of(context).pushNamed("/homepage")),
-          title: Text("Profile"),
-          centerTitle: true,
-          backgroundColor: Colors.red,
-        ),
+            leading: BackButton(
+                color: Colors.white,
+                onPressed: () => Navigator.of(context).pushNamed("/homepage")),
+            title: Text("Profile", style: TextStyle(color: Colors.white)),
+            centerTitle: true,
+            backgroundColor: Colors.black),
         bottomNavigationBar: NavBar(2),
         body: Container(
           color: Colors.white,
@@ -199,6 +208,18 @@ class _ProfilePageState extends State<ProfilePage>
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
+                            Expanded(
+                                child: Container(
+                                  child: new Text(
+                                    _usernameController.text,
+                                    style: TextStyle(
+                                        fontSize: 22.0,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                flex: 2),
                             Expanded(
                               child: Container(
                                 child: new Text(
@@ -220,7 +241,7 @@ class _ProfilePageState extends State<ProfilePage>
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsets.only(top: 20.0),
+                          padding: EdgeInsets.only(top: 30.0),
                           child:
                               new Stack(fit: StackFit.loose, children: <Widget>[
                             // new Row(
@@ -228,8 +249,8 @@ class _ProfilePageState extends State<ProfilePage>
                             //   mainAxisAlignment: MainAxisAlignment.center,
                             //   children: <Widget>[
                             //     SizedBox(height: 20.0),
-                            Image.asset('Jerry_King.jpg',
-                                width: 250, height: 325, fit: BoxFit.cover),
+                            Image.asset('profile_icon.png',
+                                width: 150, height: 125, fit: BoxFit.fitWidth),
                             //   ],
                             // ),
                           ]),
@@ -278,7 +299,7 @@ class _ProfilePageState extends State<ProfilePage>
                               )),
                           Padding(
                             padding: EdgeInsets.only(
-                                left: 50.0, right: 25.0, top: 50.0),
+                                left: 50.0, right: 25.0, top: 30.0),
                             child: Container(
                               child: new TextField(
                                 decoration: const InputDecoration(
@@ -303,42 +324,42 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                             ),
                           ),
-                          Padding(
-                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
-                              child: new Row(
-                                children: <Widget>[
-                                  Expanded(
-                                      child: Container(
-                                    alignment: Alignment.topLeft,
-                                    child: new Text(
-                                      'Username:',
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  )),
-                                  Expanded(
-                                      child: Container(
-                                          alignment: Alignment.topLeft,
-                                          child: new Column(children: <Widget>[
-                                            new TextField(
-                                              // onChanged: (text) {
-                                              //   setState(() {
-                                              //     username = text;
-                                              //   });
-                                              // },
-                                              style: TextStyle(fontSize: 16.0),
-                                              keyboardType:
-                                                  TextInputType.multiline,
-                                              maxLines: null,
-                                              enabled: !_status,
-                                              autofocus: !_status,
-                                              controller: _usernameController,
-                                            ),
-                                          ])),
-                                      flex: 2),
-                                ],
-                              )),
+                          // Padding(
+                          //     padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                          //     child: new Row(
+                          //       children: <Widget>[
+                          //         Expanded(
+                          //             child: Container(
+                          //           alignment: Alignment.topLeft,
+                          //           child: new Text(
+                          //             'Username:',
+                          //             style: TextStyle(
+                          //                 fontSize: 16.0,
+                          //                 fontWeight: FontWeight.bold),
+                          //           ),
+                          //         )),
+                          //         Expanded(
+                          //             child: Container(
+                          //                 alignment: Alignment.topLeft,
+                          //                 child: new Column(children: <Widget>[
+                          //                   new TextField(
+                          //                     // onChanged: (text) {
+                          //                     //   setState(() {
+                          //                     //     username = text;
+                          //                     //   });
+                          //                     // },
+                          //                     style: TextStyle(fontSize: 16.0),
+                          //                     keyboardType:
+                          //                         TextInputType.multiline,
+                          //                     maxLines: null,
+                          //                     enabled: !_status,
+                          //                     autofocus: !_status,
+                          //                     controller: _usernameController,
+                          //                   ),
+                          //                 ])),
+                          //             flex: 2),
+                          //       ],
+                          //     )),
                           Padding(
                               padding: EdgeInsets.only(left: 50.0, top: 15.0),
                               child: new Row(
@@ -480,8 +501,7 @@ class _ProfilePageState extends State<ProfilePage>
                 onPressed: () {
                   setState(() {
                     _status = true;
-                    _usernameController = TextEditingController(text: username);
-
+                    storePrevValues();
                     // HTTP request to update profile
                     profileUpdate(
                         this.username,
@@ -513,7 +533,18 @@ class _ProfilePageState extends State<ProfilePage>
                 onPressed: () {
                   setState(() {
                     _status = true;
-                    //username = '';
+                    _statusController = TextEditingController(text: old_status);
+
+                    _usernameController =
+                        TextEditingController(text: old_username);
+
+                    _aboutController = TextEditingController(text: old_about);
+
+                    _emailController = TextEditingController(text: old_email);
+
+                    _birthdayController =
+                        TextEditingController(text: old_birthday);
+
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                 },
