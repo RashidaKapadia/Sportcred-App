@@ -62,35 +62,21 @@ class _ProfilePageState extends State<ProfilePage>
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
 
-  String acs; // = '314';
-  String tier; // = 'FANANALYST';
-  String username; // = 'JerryKing';
-  //String status;
-  //String email;
-  //String birthday;
-  //String about;
-
-  /* TextEditingController _usernameController = TextEditingController()
-    ..text = 'jking';
+// Initialize values
+  String acs = ""; 
+  String tier = ""; 
+  String username = "";
+ 
+  TextEditingController _usernameController = TextEditingController()
+   ..text = '';
   TextEditingController _statusController = TextEditingController()
-    ..text = 'Hungry for some basketball';
+    ..text = '';
   TextEditingController _emailController = TextEditingController()
-    ..text = 'jerry_king@gmail.com';
+    ..text = '';
   TextEditingController _birthdayController = TextEditingController()
-    ..text = '23 March 1975';
+   ..text = '';
   TextEditingController _aboutController = TextEditingController()
-    ..text = 'A history professor who is keen on basketball';*/
-
-  TextEditingController _usernameController = TextEditingController();
-  // ..text = 'jking';
-  TextEditingController _statusController = TextEditingController();
-  //  ..text = 'Hungry for some basketball';
-  TextEditingController _emailController = TextEditingController();
-  //  ..text = 'jerry_king@gmail.com';
-  TextEditingController _birthdayController = TextEditingController();
-  //  ..text = '23 March 1975';
-  TextEditingController _aboutController = TextEditingController();
-  //  ..text = 'A history professor who is keen on basketball';
+    ..text = '';
 
   Future<UserInfo> _futureUserInfo;
 
@@ -98,7 +84,6 @@ class _ProfilePageState extends State<ProfilePage>
   Future<UserInfo> profileGet(String username) async {
     // Make the request and store the response
     final http.Response response = await http.post(
-      // new Uri.http("localhost:8080", "/api/getUserInfoe"),
       'http://localhost:8080/api/getUserInfo',
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
@@ -110,12 +95,11 @@ class _ProfilePageState extends State<ProfilePage>
 
     if (response.statusCode == 200) {
       // Store the session token
-      // String user_info = jsonDecode(response.body)['string_respone'];
-      print("RESPONSE:" + response.body.toString());
+      print("PROFILE GET -> RESPONSE:" + response.body.toString());
 
       UserInfo userData = UserInfo.fromJson(true, jsonDecode(response.body));
 
-      /* setState(() {
+      setState(() {
         this.username = userData.username;
         _usernameController..text = this.username;
         _statusController..text = userData.status;
@@ -123,38 +107,21 @@ class _ProfilePageState extends State<ProfilePage>
         _aboutController..text = userData.about;
         _emailController..text = userData.email;
 
-        print('DEBUGGING');
+        print('DEBUGGING: PROFILE GET');
         print(username);
         print(_statusController..text);
 
         this.acs = userData.acs;
         this.tier = userData.tier;
-      }); */
+      });
 
       return userData;
-      // return ProfileStatus(true, "Profile info fetched successfully");
     } else {
       return UserInfo(reqStatus: false);
     }
     return null;
   }
 
-/*   /// Sets the fields to the data received from backend
-  void setProfileFields() async {
-    _futureUserInfo.then((data) => {
-          setState(() {
-            this.username = data.username;
-            _usernameController..text = this.username;
-            _statusController..text = data.status;
-            _birthdayController..text = data.dob;
-            _aboutController..text = data.about;
-            _emailController..text = data.email;
-
-            this.acs = data.acs.toString();
-            this.tier = data.tier;
-          })
-        });
-  } */
 
 // Http post request to update user info
   Future<UserInfo> profileUpdate(String username, String email, String status,
@@ -179,11 +146,8 @@ class _ProfilePageState extends State<ProfilePage>
     );
 
     if (response.statusCode == 200) {
-      // Store the session token
-      // String user_info = jsonDecode(response.body)['string_respone'];
-      // _futureUserInfo = UserInfo(reqStatus: true);
+
       return UserInfo(reqStatus: true);
-      // return ProfileStatus(true, "Profile info fetched successfully");
     } else {
       return UserInfo(reqStatus: false);
     }
@@ -191,36 +155,38 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   void initState() {
-    super.initState();
-
-    //  var currUsername = (await getUsername()).toString();
 
     print('INITIALIZING......');
-    // print(currUsername);
+
 
     setState(() {
-      //this.username = currUsername;
       _futureUserInfo = profileGet('mauni');
-
-      print('GOT DATA FROM BACKEND');
-
-      if (_futureUserInfo != null) {
-        setFields();
-
-        print('INIT FUNCTION:');
-        print(username);
-        print(tier);
-        print(acs);
-        print(_statusController.value.text);
-
-      }
-      print("DONE INITIALIZING");
     });
+
+
+    print('GOT DATA FROM BACKEND');
+
+    if (_futureUserInfo != null) {
+      print('INIT FUNCTION:');
+      print(username);
+      print(tier);
+      print(acs);
+    }
+    print("DONE INITIALIZING");
+
+
+    super.initState();
   }
 
   void setFields() async {
-      UserInfo userData =  await _futureUserInfo;
-        setState(() {
+    setState(() {
+      _futureUserInfo = profileGet('mauni');
+    });
+
+    if (_futureUserInfo != null) {
+      UserInfo userData = await _futureUserInfo;
+
+      setState(() {
         this.username = userData.username;
         _usernameController..text = this.username;
         _statusController..text = userData.status;
@@ -235,74 +201,7 @@ class _ProfilePageState extends State<ProfilePage>
         this.acs = userData.acs;
         this.tier = userData.tier;
       });
-    
-  }
-
-  /// Indicates signup status based on the response
-  /* Widget profileStatus() {
-    return FutureBuilder<UserInfo>(
-      future: _futureUserInfo,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          // DEBUGGING
-          if (snapshot.data.success) {
-            print('HELLOOO');
-            print(snapshot.data.userInfo);
-            print(snapshot.data.userInfo.username);
-            print(snapshot.data.userInfo.status);
-            print(snapshot.data.userInfo.dob);
-            print(snapshot.data.userInfo.about);
-            print(snapshot.data.userInfo.email);
-            print(snapshot.data.userInfo.acs);
-            print(snapshot.data.userInfo.tier);
-            setData(
-              snapshot.data.userInfo.username,
-              snapshot.data.userInfo.status,
-              snapshot.data.userInfo.dob,
-              snapshot.data.userInfo.about,
-              snapshot.data.userInfo.email,
-              snapshot.data.userInfo.acs,
-              snapshot.data.userInfo.tier,
-            );
-
-            print('SUCCESS');
-          }
-          return Text(snapshot.data.success.toString());
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        } else {
-          return Container(
-              alignment: Alignment.center,
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(),
-              ));
-        }
-      },
-    );
-  } */
-
-  void setData() async {
-    setState(() {
-      _futureUserInfo.then((profile) {
-        this.username = profile.username;
-        _usernameController..text = this.username;
-        _statusController..text = profile.status;
-        _birthdayController..text = profile.dob;
-        _aboutController..text = profile.about;
-        _emailController..text = profile.email;
-
-        print('DEBUGGING');
-        print(username);
-        print(_statusController..text);
-
-        this.acs = profile.acs;
-        this.tier = profile.tier;
-
-        print(tier);
-      });
-    });
+    }
   }
 
   dynamic getUsername() async {
