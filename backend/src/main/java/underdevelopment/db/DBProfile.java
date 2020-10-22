@@ -31,7 +31,7 @@ public class DBProfile{
     public static Record getUserInfo(String username){
         try (Session session = Connect.driver.session()) {
             try (Transaction tx = session.beginTransaction()) {
-              Result node_result = tx.run("MATCH (u:user) WHERE u.username = $username WITH u RETURN u",
+              Result node_result = tx.run("MATCH (u:user) WHERE u.username = $username WITH u RETURN u.username as username, u.email as email, u.dob as dob, u.about as about, u.status as status, toInteger(u.acs) as acs ",
               parameters("username", username));
       
               // If any results have been returned, return the record

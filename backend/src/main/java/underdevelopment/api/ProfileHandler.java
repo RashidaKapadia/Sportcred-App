@@ -84,8 +84,10 @@ public class ProfileHandler {
 
                 // Debugging
                 System.out.println(r);
-                System.out.println(r.get("username").asString());
-                System.out.println("ACS: " + r.get("acs"));
+                // Map<String, Object> r = re.get("properties").asMap();
+
+                System.out.println(r.get("username"));
+                System.out.println("ACS: " + r.get("acs").asInt());
                 
                 // Set up response in a JSON format
                 String usrname = r.get("username").asString();
@@ -109,8 +111,10 @@ public class ProfileHandler {
                 response.put("acs", Integer.toString(acs));
 
                 String string_response = response.toString();
+                System.out.println(string_response);
 
                 return new JsonHttpReponse(Status.OK, string_response);
+                // return new JsonHttpReponse(Status.OK);
             } catch (Exception e) {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.SERVERERROR);
