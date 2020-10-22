@@ -162,6 +162,7 @@ class _ProfilePageState extends State<ProfilePage>
     setState(() {
       //this.username = currUsername;
       _futureUserInfo = profileGet('maunica');
+    });
 
 
     print('GOT DATA FROM BACKEND');
