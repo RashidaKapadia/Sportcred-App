@@ -12,18 +12,19 @@ class ProfilePage extends StatefulWidget {
 
 class ProfileStatus {
   final bool success;
-  final String message;
-  ProfileStatus(this.success, this.message);
+  final UserInfo userInfo;
+  ProfileStatus(this.success, this.userInfo);
 }
 
 class UserInfo {
-  final int acs;
+  final String acs;
   final String username;
   final String status;
   final String email;
   final String dob;
   final String about;
   final String tier;
+  final bool reqStatus;
 
   UserInfo(
       {this.acs,
@@ -32,11 +33,19 @@ class UserInfo {
       this.email,
       this.dob,
       this.about,
-      this.tier});
+      this.tier,
+      @required this.reqStatus});
 
   // converts json to UserInfo object
-  factory UserInfo.fromJson(Map<String, dynamic> json) {
+  factory UserInfo.fromJson(bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return UserInfo(
+        reqStatus: status,
+      );
+    }
+
     return UserInfo(
+      reqStatus: status,
       username: json['username'],
       status: json['status'],
       email: json['email'],
@@ -48,39 +57,258 @@ class UserInfo {
   }
 }
 
-String acs = '314';
-String tier = 'FANANALYST';
-TextEditingController _usernameController = TextEditingController()
-  ..text = 'jking';
-TextEditingController _statusController = TextEditingController()
-  ..text = 'Hungry for some basketball';
-TextEditingController _emailController = TextEditingController()
-  ..text = 'jerry_king@gmail.com';
-TextEditingController _birthdayController = TextEditingController()
-  ..text = '23 March 1975';
-TextEditingController _aboutController = TextEditingController()
-  ..text = 'A history professor who is keen on basketball';
-
 class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
 
-  @override
-  void initState() {
-    Future<UserInfo> _futureUserInfo;
-    //_futureUserInfo = profile_get(username);
+  String acs; // = '314';
+  String tier; // = 'FANANALYST';
+  String username; // = 'JerryKing';
+  //String status;
+  //String email;
+  //String birthday;
+  //String about;
 
-    if (_futureUserInfo != null) {}
-    super.initState();
+  /* TextEditingController _usernameController = TextEditingController()
+    ..text = 'jking';
+  TextEditingController _statusController = TextEditingController()
+    ..text = 'Hungry for some basketball';
+  TextEditingController _emailController = TextEditingController()
+    ..text = 'jerry_king@gmail.com';
+  TextEditingController _birthdayController = TextEditingController()
+    ..text = '23 March 1975';
+  TextEditingController _aboutController = TextEditingController()
+    ..text = 'A history professor who is keen on basketball';*/
+
+  TextEditingController _usernameController = TextEditingController();
+  // ..text = 'jking';
+  TextEditingController _statusController = TextEditingController();
+  //  ..text = 'Hungry for some basketball';
+  TextEditingController _emailController = TextEditingController();
+  //  ..text = 'jerry_king@gmail.com';
+  TextEditingController _birthdayController = TextEditingController();
+  //  ..text = '23 March 1975';
+  TextEditingController _aboutController = TextEditingController();
+  //  ..text = 'A history professor who is keen on basketball';
+
+  Future<UserInfo> _futureUserInfo;
+
+  // Http post request to get user info
+  Future<UserInfo> profileGet(String username) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      // new Uri.http("localhost:8080", "/api/getUserInfoe"),
+      'http://localhost:8080/api/getUserInfo',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{'username': username}),
+    );
+
+    if (response.statusCode == 200) {
+      // Store the session token
+      // String user_info = jsonDecode(response.body)['string_respone'];
+      print("RESPONSE:" + response.body.toString());
+
+      UserInfo userData = UserInfo.fromJson(true, jsonDecode(response.body));
+
+      /* setState(() {
+        this.username = userData.username;
+        _usernameController..text = this.username;
+        _statusController..text = userData.status;
+        _birthdayController..text = userData.dob;
+        _aboutController..text = userData.about;
+        _emailController..text = userData.email;
+
+        print('DEBUGGING');
+        print(username);
+        print(_statusController..text);
+
+        this.acs = userData.acs;
+        this.tier = userData.tier;
+      }); */
+
+      return userData;
+      // return ProfileStatus(true, "Profile info fetched successfully");
+    } else {
+      return UserInfo(reqStatus: false);
+    }
+    return null;
   }
 
-  String new_username, new_status, new_email, new_birthday, new_about;
-  String old_username = _usernameController.text;
-  String old_status = _statusController.text;
-  String old_email = _emailController.text;
-  String old_birthday = _birthdayController.text;
-  String old_about = _aboutController.text;
+/*   /// Sets the fields to the data received from backend
+  void setProfileFields() async {
+    _futureUserInfo.then((data) => {
+          setState(() {
+            this.username = data.username;
+            _usernameController..text = this.username;
+            _statusController..text = data.status;
+            _birthdayController..text = data.dob;
+            _aboutController..text = data.about;
+            _emailController..text = data.email;
+
+            this.acs = data.acs.toString();
+            this.tier = data.tier;
+          })
+        });
+  } */
+
+// Http post request to update user info
+  Future<UserInfo> profileUpdate(String username, String email, String status,
+      String about, String dob, String acs) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      // new Uri.http("localhost:8080", "/api/getUserInfo"),
+      'http://localhost:8080/api/updateUserInfo',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{
+        'username': username,
+        'email': email,
+        'status': status,
+        'about': about,
+        'dob': dob,
+        'acs': acs,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Store the session token
+      // String user_info = jsonDecode(response.body)['string_respone'];
+      // _futureUserInfo = UserInfo(reqStatus: true);
+      return UserInfo(reqStatus: true);
+      // return ProfileStatus(true, "Profile info fetched successfully");
+    } else {
+      return UserInfo(reqStatus: false);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    //  var currUsername = (await getUsername()).toString();
+
+    print('INITIALIZING......');
+    // print(currUsername);
+
+    setState(() {
+      //this.username = currUsername;
+      _futureUserInfo = profileGet('mauni');
+
+      print('GOT DATA FROM BACKEND');
+
+      if (_futureUserInfo != null) {
+        setFields();
+
+        print('INIT FUNCTION:');
+        print(username);
+        print(tier);
+        print(acs);
+        print(_statusController.value.text);
+
+      }
+      print("DONE INITIALIZING");
+    });
+  }
+
+  void setFields() async {
+      UserInfo userData =  await _futureUserInfo;
+        setState(() {
+        this.username = userData.username;
+        _usernameController..text = this.username;
+        _statusController..text = userData.status;
+        _birthdayController..text = userData.dob;
+        _aboutController..text = userData.about;
+        _emailController..text = userData.email;
+
+        print('DEBUGGING: setFuture function');
+        print(username);
+        print(_statusController..text);
+
+        this.acs = userData.acs;
+        this.tier = userData.tier;
+      });
+    
+  }
+
+  /// Indicates signup status based on the response
+  /* Widget profileStatus() {
+    return FutureBuilder<UserInfo>(
+      future: _futureUserInfo,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          // DEBUGGING
+          if (snapshot.data.success) {
+            print('HELLOOO');
+            print(snapshot.data.userInfo);
+            print(snapshot.data.userInfo.username);
+            print(snapshot.data.userInfo.status);
+            print(snapshot.data.userInfo.dob);
+            print(snapshot.data.userInfo.about);
+            print(snapshot.data.userInfo.email);
+            print(snapshot.data.userInfo.acs);
+            print(snapshot.data.userInfo.tier);
+            setData(
+              snapshot.data.userInfo.username,
+              snapshot.data.userInfo.status,
+              snapshot.data.userInfo.dob,
+              snapshot.data.userInfo.about,
+              snapshot.data.userInfo.email,
+              snapshot.data.userInfo.acs,
+              snapshot.data.userInfo.tier,
+            );
+
+            print('SUCCESS');
+          }
+          return Text(snapshot.data.success.toString());
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        } else {
+          return Container(
+              alignment: Alignment.center,
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ));
+        }
+      },
+    );
+  } */
+
+  void setData() async {
+    setState(() {
+      _futureUserInfo.then((profile) {
+        this.username = profile.username;
+        _usernameController..text = this.username;
+        _statusController..text = profile.status;
+        _birthdayController..text = profile.dob;
+        _aboutController..text = profile.about;
+        _emailController..text = profile.email;
+
+        print('DEBUGGING');
+        print(username);
+        print(_statusController..text);
+
+        this.acs = profile.acs;
+        this.tier = profile.tier;
+
+        print(tier);
+      });
+    });
+  }
+
+  dynamic getUsername() async {
+    return await FlutterSession().get('username');
+  }
+
   // This widget is the root of your application
   @override
   Widget build(BuildContext context) {
@@ -113,7 +341,12 @@ class _ProfilePageState extends State<ProfilePage>
                             Expanded(
                               child: Container(
                                 child: new Text(
-                                  'ACS:' + '  ' + acs + '  [' + tier + ']',
+                                  'ACS:' +
+                                      '  ' +
+                                      this.acs +
+                                      '  [' +
+                                      this.tier +
+                                      ']',
                                   style: TextStyle(
                                       fontSize: 22.0,
                                       color: Colors.black,
@@ -228,20 +461,19 @@ class _ProfilePageState extends State<ProfilePage>
                                           alignment: Alignment.topLeft,
                                           child: new Column(children: <Widget>[
                                             new TextField(
-                                                onChanged: (text) {
-                                                  setState(() {
-                                                    new_username = text;
-                                                  });
-                                                },
-                                                style:
-                                                    TextStyle(fontSize: 16.0),
-                                                keyboardType:
-                                                    TextInputType.multiline,
-                                                maxLines: null,
-                                                enabled: !_status,
-                                                autofocus: !_status,
-                                                controller:
-                                                    _usernameController),
+                                              // onChanged: (text) {
+                                              //   setState(() {
+                                              //     username = text;
+                                              //   });
+                                              // },
+                                              style: TextStyle(fontSize: 16.0),
+                                              keyboardType:
+                                                  TextInputType.multiline,
+                                              maxLines: null,
+                                              enabled: !_status,
+                                              autofocus: !_status,
+                                              controller: _usernameController,
+                                            ),
                                           ])),
                                       flex: 2),
                                 ],
@@ -366,11 +598,6 @@ class _ProfilePageState extends State<ProfilePage>
   void dispose() {
     // Clean up the controller when the Widget is disposed
     myFocusNode.dispose();
-    _usernameController.dispose();
-    _statusController.dispose();
-    _aboutController.dispose();
-    _emailController.dispose();
-    _birthdayController.dispose();
     super.dispose();
   }
 
@@ -392,6 +619,19 @@ class _ProfilePageState extends State<ProfilePage>
                 onPressed: () {
                   setState(() {
                     _status = true;
+                    _usernameController = TextEditingController(text: username);
+
+                    // HTTP request to update profile
+                    profileUpdate(
+                        this.username,
+                        _emailController.value.text,
+                        _statusController.value.text,
+                        _aboutController.value.text,
+                        _birthdayController.value.text,
+                        this.acs.toString());
+
+                    print('SUCCESSS1!!!');
+
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                 },
@@ -412,18 +652,7 @@ class _ProfilePageState extends State<ProfilePage>
                 onPressed: () {
                   setState(() {
                     _status = true;
-
-                    _statusController = TextEditingController(text: old_status);
-
-                    _usernameController =
-                        TextEditingController(text: old_username);
-
-                    _aboutController = TextEditingController(text: old_about);
-
-                    _emailController = TextEditingController(text: old_email);
-
-                    _birthdayController =
-                        TextEditingController(text: old_birthday);
+                    //username = '';
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                 },
