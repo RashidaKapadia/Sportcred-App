@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import './navbar.dart';
 import 'package:http/http.dart' as http;
+import './loginPage.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -63,20 +64,17 @@ class _ProfilePageState extends State<ProfilePage>
   final FocusNode myFocusNode = FocusNode();
 
 // Initialize values
-  String acs = ""; 
-  String tier = ""; 
+  String acs = "";
+  String tier = "";
   String username = "";
- 
+
   TextEditingController _usernameController = TextEditingController()
-   ..text = '';
-  TextEditingController _statusController = TextEditingController()
     ..text = '';
-  TextEditingController _emailController = TextEditingController()
-    ..text = '';
+  TextEditingController _statusController = TextEditingController()..text = '';
+  TextEditingController _emailController = TextEditingController()..text = '';
   TextEditingController _birthdayController = TextEditingController()
-   ..text = '';
-  TextEditingController _aboutController = TextEditingController()
     ..text = '';
+  TextEditingController _aboutController = TextEditingController()..text = '';
 
   Future<UserInfo> _futureUserInfo;
 
@@ -122,7 +120,6 @@ class _ProfilePageState extends State<ProfilePage>
     return null;
   }
 
-
 // Http post request to update user info
   Future<UserInfo> profileUpdate(String username, String email, String status,
       String about, String dob, String acs) async {
@@ -146,7 +143,6 @@ class _ProfilePageState extends State<ProfilePage>
     );
 
     if (response.statusCode == 200) {
-
       return UserInfo(reqStatus: true);
     } else {
       return UserInfo(reqStatus: false);
@@ -155,19 +151,11 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   void initState() {
-
     print('INITIALIZING......');
 
-
     setState(() {
-<<<<<<< HEAD
-      _futureUserInfo = profileGet('mauni');
+      _futureUserInfo = profileGet(currUser);
     });
-=======
-      //this.username = currUsername;
-      _futureUserInfo = profileGet('maunica');
->>>>>>> 1e2fa8798898e53ff1aa14ad5aef642b62620340
-
 
     print('GOT DATA FROM BACKEND');
 
@@ -179,38 +167,7 @@ class _ProfilePageState extends State<ProfilePage>
     }
     print("DONE INITIALIZING");
 
-
     super.initState();
-  }
-
-  void setFields() async {
-    setState(() {
-      _futureUserInfo = profileGet('mauni');
-    });
-
-    if (_futureUserInfo != null) {
-      UserInfo userData = await _futureUserInfo;
-
-      setState(() {
-        this.username = userData.username;
-        _usernameController..text = this.username;
-        _statusController..text = userData.status;
-        _birthdayController..text = userData.dob;
-        _aboutController..text = userData.about;
-        _emailController..text = userData.email;
-
-        print('DEBUGGING: setFuture function');
-        print(username);
-        print(_statusController..text);
-
-        this.acs = userData.acs;
-        this.tier = userData.tier;
-      });
-    }
-  }
-
-  dynamic getUsername() async {
-    return await FlutterSession().get('username');
   }
 
   // This widget is the root of your application
