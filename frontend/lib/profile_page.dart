@@ -160,13 +160,8 @@ class _ProfilePageState extends State<ProfilePage>
 
 
     setState(() {
-<<<<<<< HEAD
-      _futureUserInfo = profileGet('mauni');
-    });
-=======
       //this.username = currUsername;
       _futureUserInfo = profileGet('maunica');
->>>>>>> 1e2fa8798898e53ff1aa14ad5aef642b62620340
 
 
     print('GOT DATA FROM BACKEND');
