@@ -5,11 +5,16 @@ import java.net.InetSocketAddress;
 
 import com.sun.net.httpserver.HttpServer;
 
+import underdevelopment.api.ACSHandler;
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
+//How to find pid consuming this port 
+//>> Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess
 
+//Kill the process
+//>> kill <pid>
 public class App 
 {
     static int PORT = 8080;
@@ -32,8 +37,11 @@ public class App
         // Sign Up API
         server.createContext("/api/signup", 
                 new HttpRequestHandler("POST", SignUpHandler.handleSignUp(), false));
+              
+        // ACS API (mostly for testing)
+        server.createContext("/api/acs", 
+                new HttpRequestHandler("POST", ACSHandler.handleACS(), false));
         
-       
         // Test routes
         server.createContext("/api/test/authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), true)

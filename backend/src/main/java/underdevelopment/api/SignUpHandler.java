@@ -39,7 +39,6 @@ public class SignUpHandler {
      */
     public static JsonRequestHandler handleSignUp() {
         return (JSONObject jsonObj) -> {
-        	System.out.println("Running the signup handler.");
             String email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam;
             //Date dob;
             String dob;
@@ -64,21 +63,6 @@ public class SignUpHandler {
             } catch (Exception e) {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
-            /*
-            // Make sure they passwords are different
-            if (!matchingPassword(password1, password2)) {
-            	  try {
-                      response = new JSONObject()
-                          .put("Error", "Passwords do not match")
-                          .toString();
-                      	return new JsonHttpReponse(Status.CONFLICT, response);
-                  } catch (JSONException e) {
-                      e.printStackTrace();
-                      return new JsonHttpReponse(Status.SERVERERROR);
-                  }
-               
-            }
-            */
             // Check if the username exists
             if ( DBUserInfo.checkUsernameExists(username) ) {
           	  try {
@@ -91,7 +75,6 @@ public class SignUpHandler {
                   return new JsonHttpReponse(Status.SERVERERROR);
               }
             }
-        	System.out.println("i am  the signup handler.");
 
             if( DBUserInfo.checkEmailExists(email)) {
           	  try {
@@ -105,19 +88,11 @@ public class SignUpHandler {
               }
             }
                        
-            // Run the database command (currently a placeholder)
-           // String textResponse = placeHolderDB(email, username, phoneNumber);
-          // DBUserInfo.addUser(email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, );
-           //DBUserInfo.addUser(email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob);
-           // System.out.println("ending");
-          // return new JsonHttpReponse(Status.OK,);
-           // Date formattedDob;
-			
+            // Run the database command 			
             try {
             	//formattedDob = formatter.parse(dob);
             	//System.out.println("formatted dob is: ");           
             	//System.out.println(formattedDob);
-            	System.out.println("dob is: " + dob);
             	boolean success = DBUserInfo.addUser(email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob);
                 response = new JSONObject()
                     .put("Response", "Added " + username + " to the database")
@@ -128,12 +103,7 @@ public class SignUpHandler {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.SERVERERROR);
                 
-            } /*catch (ParseException e) {
-				// TODO Auto-generated catch block
-            	System.out.println("bad date...");
-				e.printStackTrace();
-				return new JsonHttpReponse(Status.BADREQUEST);
-			}       */   
+            } 
         };
     }
 
