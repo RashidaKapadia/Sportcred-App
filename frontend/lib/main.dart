@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/TriviaPage.dart';
+import 'package:frontend/SoloTriviaPage.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
 import './loginPage.dart';
