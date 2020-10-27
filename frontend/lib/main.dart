@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/TriviaPage.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
 import './loginPage.dart';
@@ -18,7 +19,8 @@ void main() {
         '/login': (context) => LoginPage(),
         '/profile': (context) => ProfilePage(),
         '/homepage': (context) => HomePage(),
-        "/test": (context) => HTTPRequestExample()
+        "/test": (context) => HTTPRequestExample(),
+        '/trivia': (context) => TriviaPage()
       }));
 }
 
