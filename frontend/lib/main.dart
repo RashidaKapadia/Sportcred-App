@@ -20,7 +20,7 @@ void main() {
         '/profile': (context) => ProfilePage(),
         '/homepage': (context) => HomePage(),
         "/test": (context) => HTTPRequestExample(),
-        '/trivia': (context) => TriviaPage()
+        '/SoloTrivia': (context) => SoloTriviaPage()
       }));
 }
 
