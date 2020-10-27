@@ -1,12 +1,7 @@
 package underdevelopment.api;
 
-import java.io.OutputStream;
-
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import org.neo4j.driver.Record;
-import org.neo4j.driver.Result;
 
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;

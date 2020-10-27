@@ -8,7 +8,6 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import underdevelopment.api.utils.JWTSessionManager;
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.Status;
