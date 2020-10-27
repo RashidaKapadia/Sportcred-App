@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import './navbar.dart';
+import 'dart:async';
 
 class SoloTriviaPage extends StatefulWidget {
   @override
@@ -16,10 +17,69 @@ class _TriviaState extends State<SoloTriviaPage> {
     'Basketball': '/homepage'
   };
 
-  Future<Widget> DialogBox(BuildContext context, String val) async {
+  Timer _timer;
+
+  Future<Widget> DialogBox(BuildContext context) async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        //color: Color.black,
+        builder: (BuildContext context) {
+          _timer = Timer(Duration(seconds: 3), () {
+            Navigator.of(context).pop();
+          });
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            elevation: 0.0,
+            backgroundColor: Colors.grey,
+            child: Container(
+              height: 150,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Power up your game by answering all 10 questions!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: CircularProgressIndicator()),
+                    ]),
+                /*return AlertDialog(
+            // child: Column(
+            //height: 200,
+            content: Text('You will have 10 questions to solve, and 10' +
+                'seconds for each question.' +
+                'Time to prove what you know!',
+                 ),
+            actions: [CircularProgressIndicator()],
+           */
+                //width: MediaQuery.of(context).size.width,
+                //margin: EdgeInsets.symmetric(horizontal: 5.0),
+                //decoration: BoxDecoration(
+                //  color: Colors.lightGreen[900],
+                // borderRadius: BorderRadius.circular(25)),
+                //child: Text('You will have 10 questions to solve, and 10' +
+                //'seconds for each question.' +
+                //'Time to prove what you know!'),
+              ),
+            ),
+          );
+        });
+  }
+
+  /*Future<Widget> DialogBox(BuildContext context, String val) async {
     return await showDialog(
         context: context,
-        barrierDismissible: true,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return Container(
             child: Column(
@@ -40,7 +100,7 @@ class _TriviaState extends State<SoloTriviaPage> {
                   ),
                   //shape: RoundedRectangleBorder(
                   //borderRadius: new BorderRadius.circular(25.0)),
-                  shape: StadiumBorder(),
+                  shape: CircleBorder(),
                   onPressed: () {
                     Navigator.of(context).pushNamed(categories[val]);
                   },
@@ -70,7 +130,7 @@ class _TriviaState extends State<SoloTriviaPage> {
             ),
           );
         });
-  }
+  }*/
 
   Widget build(BuildContext context) {
     Widget category_carousel = new Container(
@@ -115,8 +175,16 @@ class _TriviaState extends State<SoloTriviaPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(18.0)),
                         onPressed: () {
-                          DialogBox(context, i);
-                          //Navigator.of(context).pushNamed(categories[i]);
+                          DialogBox(context);
+                          /*showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Hello"),
+                                );
+                              });*/
+                          Navigator.of(context).pushNamed('./homepage');
                         },
                       ),
                     ],
