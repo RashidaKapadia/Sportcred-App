@@ -1,6 +1,5 @@
 package underdevelopment.db;
 
-import java.lang.reflect.Parameter;
 import static org.neo4j.driver.Values.parameters;
 
 import org.neo4j.driver.Record;
