@@ -1,0 +1,25 @@
+//// fist pass
+
+// remove newlines first
+
+//// second pass
+
+// draft
+((?<=\s)?\d+(?=\.))(\*)?([^\?]+\?)( Answers?\: )(.+?)(;?\sOther[:;]\s)(.+?(?=\s\d+\.))?
+
+// match
+\s?((?<=\s)?\d+(?=\.)).\s(\*)?([^\?]+\?)( Answers?\:? )(.+?)(;?\s[Oo]ther[:;][\s\n])
+
+// replace
+"\n},\n{\n "questionId": $1,\n "star": "$2",\n "question": "$3",\n "answer": "$5",\n "options": "
+
+/// third pass
+
+// match
+(?<="options":)(")(.*)(")
+
+// replace
+
+//// 4th pass - manual
+
+fix options into an array
