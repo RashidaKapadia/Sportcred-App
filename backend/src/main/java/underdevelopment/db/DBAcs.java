@@ -26,21 +26,25 @@ public class DBAcs {
 	 */
 	 public static int editACS(String username, int ammount) {
 		 System.out.println("editing ACS");
+		 Record record;
 		 Record data = null;
+		 int newACS;
 		    try (Session session = Connect.driver.session()) {
 		    	try (Transaction tx = session.beginTransaction()) {
 					Result result = tx.run(String.format("MATCH (n { username: '%s' }) SET n.acs = %d  RETURN n.username as username, n.acs as acs", username, ammount));
-					Record record;
-					record = result.next();
-	
-					System.out.println("new acis is gonna be: " + record.get("acs"));
-					session.close();
-					return record.get("acs").asInt();
+					//Result result = tx.run("MATCH (n { username: 'banana420' }) SET n.acs = 5556  RETURN n.username as username, n.acs as acs");
+		    		record = result.next();
+		    		newACS = record.get("acs").asInt();
+					System.out.println("new acs is is gonna be: " + newACS);
+					tx.commit();
+					tx.close();
 				}
+		    	
+		    	session.close();
+				return newACS;
 		      } catch (Exception e) {
 		        return -1;
 		      }
-
 	 }
 	 
 	 /*
