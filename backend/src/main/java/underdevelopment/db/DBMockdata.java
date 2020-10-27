@@ -24,6 +24,7 @@ public class DBMockdata {
         // Check version
         if (currentVersion >= VERSION_TIMESTAMP) {
             System.out.println("up to date");
+            return;
         }
 
         // Ask to update if needed
