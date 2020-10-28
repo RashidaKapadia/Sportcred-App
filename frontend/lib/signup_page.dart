@@ -26,6 +26,8 @@ class _SignUpPageState extends State<SignUpPage> {
   // Signup fields
   String email = "";
   String username = "";
+  String firstname = "";
+  String lastname = "";
   String password1 = "";
   String password2 = "";
   String phoneNumber = "";
@@ -55,6 +57,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
 // Http post request to signup
   Future<SignUpStatus> signUp(
+      String firstname,
+      String lastname,
       String username,
       String email,
       String password,
@@ -74,6 +78,8 @@ class _SignUpPageState extends State<SignUpPage> {
         'Access-Control-Allow-Origin': '*',
       },
       body: jsonEncode(<String, String>{
+        'firstname': firstname,
+        'lastname': lastname,
         'username': username,
         'email': email,
         'password': password,
@@ -166,6 +172,38 @@ class _SignUpPageState extends State<SignUpPage> {
         dobController..text = '${dateFormatter.format(this.dob)}';
       });
     }
+  }
+
+  Widget getFirstname() {
+    return TextFormField(
+      cursorColor: mainColour,
+      validator: requiredValidator,
+      decoration: inputDecorator(
+        'First name',
+        Icon(Icons.person_pin),
+      ),
+      onSaved: (value) {
+        setState(() {
+          this.firstname = value;
+        });
+      },
+    );
+  }
+
+  Widget getLastname() {
+    return TextFormField(
+      cursorColor: mainColour,
+      validator: requiredValidator,
+      decoration: inputDecorator(
+        'Last name',
+        Icon(Icons.person_pin),
+      ),
+      onSaved: (value) {
+        setState(() {
+          this.lastname = value;
+        });
+      },
+    );
   }
 
   Widget getUsername() {
@@ -371,28 +409,22 @@ class _SignUpPageState extends State<SignUpPage> {
                     ? signupStatus()
                     : Text("Enter your information below:"),
                 SizedBox(height: 20.0),
+                getFirstname(),
+                SizedBox(height: 20.0),
+                getLastname(),
+                SizedBox(height: 20.0),
                 getUsername(),
                 SizedBox(height: 20.0),
                 getEmail(),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 getPassword1(),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 getPassword2(),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 getPhoneNumber(),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 getDateOfBirth(),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 getFavouriteSport(),
                 SizedBox(height: 20.0),
                 getHighestSportLevel(),
@@ -411,7 +443,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        print("Sign up was successful!");
+                        print("Fields validated successfully!");
 
                         _formKey.currentState.save();
 
@@ -428,6 +460,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
                         // Call the HTTP request
                         _futureSignUpStatus = signUp(
+                          firstname,
+                          lastname,
                           username,
                           email,
                           password1,
