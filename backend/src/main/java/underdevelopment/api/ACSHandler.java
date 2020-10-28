@@ -17,17 +17,18 @@ public class ACSHandler {
 
 	            String response;
 
-
+	            // Check to make sure the username exists
 	            try {
 	                username = jsonObj.getString("username");
 	                ammount = jsonObj.getInt("ammount");
 	            } catch (Exception e) {
 	                return new JsonHttpReponse(Status.BADREQUEST);
 	            }
-	            
-                  
+
 	            // Run the database command 			
 	            try {
+		    		System.out.println("running the edit ACS");
+
 	            	int newACS = DBAcs.editACS(username, ammount);
 	                response = new JSONObject()
 	                    .put("Response", "new ACS is:  " + newACS)
