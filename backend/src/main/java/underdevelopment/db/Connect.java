@@ -5,15 +5,20 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.Session;
 
-/* TODO Change */
+
 public class Connect {
 
 	public static String uriDb = "bolt://localhost:7687";
     public static String uriUser ="http://localhost:8080";
-    public static Driver driver;
+    public static Driver driver = null;
 
+    /**
+     * @Singleton
+     */
     public static void connectDB(String username, String password) {
-        driver = GraphDatabase.driver(uriDb, AuthTokens.basic(username, password));
+        if (driver == null) {
+            driver = GraphDatabase.driver(uriDb, AuthTokens.basic(username, password));
+        }
     }
 
     /**
