@@ -38,6 +38,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   carousel_slider: ^2.3.1
+  frideos: ^1.0.1
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
