@@ -53,23 +53,6 @@ class _TriviaState extends State<SoloTriviaPage> {
                           alignment: Alignment.bottomCenter,
                           child: CircularProgressIndicator()),
                     ]),
-                /*return AlertDialog(
-            // child: Column(
-            //height: 200,
-            content: Text('You will have 10 questions to solve, and 10' +
-                'seconds for each question.' +
-                'Time to prove what you know!',
-                 ),
-            actions: [CircularProgressIndicator()],
-           */
-                //width: MediaQuery.of(context).size.width,
-                //margin: EdgeInsets.symmetric(horizontal: 5.0),
-                //decoration: BoxDecoration(
-                //  color: Colors.lightGreen[900],
-                // borderRadius: BorderRadius.circular(25)),
-                //child: Text('You will have 10 questions to solve, and 10' +
-                //'seconds for each question.' +
-                //'Time to prove what you know!'),
               ),
             ),
           );
@@ -176,14 +159,6 @@ class _TriviaState extends State<SoloTriviaPage> {
                             borderRadius: new BorderRadius.circular(18.0)),
                         onPressed: () {
                           DialogBox(context);
-                          /*showDialog(
-                              context: context,
-                              barrierDismissible: true,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("Hello"),
-                                );
-                              });*/
                           Navigator.of(context).pushNamed('./homepage');
                         },
                       ),
