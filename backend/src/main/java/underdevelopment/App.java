@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpServer;
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
+import underdevelopment.api.TriviaHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
 import underdevelopment.db.Connect;
 import underdevelopment.db.DBMockdata;
@@ -61,7 +62,10 @@ public class App
         server.createContext("/api/signup", 
                 new HttpRequestHandler("POST", SignUpHandler.handleSignUp(), false));
         
-       
+        // Trivia route
+        server.createContext("/api/trivia/get-questions", 
+                new HttpRequestHandler("POST", TriviaHandler.generateQuestions(), false));
+
         // Test routes
         server.createContext("/api/test/authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), true)
