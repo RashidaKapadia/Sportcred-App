@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.sun.net.httpserver.HttpExchange;
 
+import org.neo4j.driver.internal.spi.ResponseHandler;
+
 public class HttpResponseWriter {
     
     public static boolean writeResponseHeaders (HttpExchange r) {
@@ -17,9 +19,11 @@ public class HttpResponseWriter {
             a.add("text/plain; charset=utf-8");
             r.getResponseHeaders().put("Content-Type", a);
 
-            a = new ArrayList<String>();
-            a.add(r.getRequestHeaders().get("Origin").get(0));
-            r.getResponseHeaders().put("Access-Control-Allow-Origin", a);
+            if (r.getRequestHeaders().containsKey("Origin")) {
+                a = new ArrayList<String>();
+                a.add(r.getRequestHeaders().get("Origin").get(0));
+                r.getResponseHeaders().put("Access-Control-Allow-Origin", a);
+            }
 
             a = new ArrayList<String>();
             a.add("access-control-allow-origin");
