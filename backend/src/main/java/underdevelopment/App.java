@@ -39,8 +39,10 @@ public class App
                 new HttpRequestHandler("POST", SignUpHandler.handleSignUp(), false));
               
         // ACS API (mostly for testing)
-        server.createContext("/api/acs", 
+        server.createContext("/api/editACS", 
                 new HttpRequestHandler("POST", ACSHandler.handleACS(), false));
+        server.createContext("/api/getACS", 
+                new HttpRequestHandler("POST", ACSHandler.getACS(), false));
         
         // Test routes
         server.createContext("/api/test/authorized-route", 
