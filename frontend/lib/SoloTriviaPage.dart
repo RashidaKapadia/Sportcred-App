@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'onGoingTrivia.dart';
 import './navbar.dart';
 import 'dart:async';
 
@@ -16,6 +17,9 @@ class _TriviaState extends State<SoloTriviaPage> {
     'Sports Scenarios': '/homepage',
     'Basketball': '/homepage'
   };
+
+  // hardcoded to be Basketball for now
+  String chosenCategory = 'Basketball';
 
   Timer _timer;
 
@@ -116,6 +120,7 @@ class _TriviaState extends State<SoloTriviaPage> {
   }*/
 
   Widget build(BuildContext context) {
+    //final appState = AppStateProvider.of<AppState>(context);
     Widget category_carousel = new Container(
       child: CarouselSlider(
         options: CarouselOptions(
@@ -126,6 +131,8 @@ class _TriviaState extends State<SoloTriviaPage> {
         // Items list will require to be updated here as well anytime new category is added
         items: ['General Sports', 'Sports Scenarios', 'Basketball'].map((i) {
           return Builder(builder: (BuildContext context) {
+            //final appstate =
+            //  AppStateProvider.of<AppState>(context).startTrivia(context);
             return Container(
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.symmetric(horizontal: 5.0),
@@ -158,8 +165,11 @@ class _TriviaState extends State<SoloTriviaPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(18.0)),
                         onPressed: () {
-                          DialogBox(context);
-                          Navigator.of(context).pushNamed('./homepage');
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OnGoingTrivia("Basketball")),
+                          );
                         },
                       ),
                     ],

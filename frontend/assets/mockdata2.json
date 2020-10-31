@@ -1,0 +1,94 @@
+[
+    {
+        "0": "Who is the only other player other than Jamal Murray to score 50 on less than 24 field goal attempts?",
+        "1": "Who was the NBA’s first ever unanimous mvp?",
+        "2": "Who scored the most points in a single NBA game?",
+        "3": "Who are the two players to have 25 point halves in a single playoff series?",
+        "4": "Who was the youngest player to score 10,000 points?",
+        "5": "Who scored the most points in a single NBA game?",
+        "6": "What team has the worst W-L percentage in NBA history?",
+        "7": "WWho has the most Finals MVP’s?",
+        "8": "What franchise has the most HOF’s to date?",
+        "9": "What was the name of Toronto’s first NBA team?"
+        
+
+    },
+    {
+       "0": {
+            "a": "Bob Cousy",
+            "b": "Michael Jordan",
+            "c": "Lebron James",
+            "d":"Kareem Abdul Jabbar"
+        },
+        "1": {
+            "a": "Lebron James",
+            "b": "Michael Jordan",
+            "c": "Steph Curr",
+            "d":"Shaquille O’Neal"
+        },
+        "2":{
+            "a": "Kobe Bryant",
+            "b": "Wilt Chamberlain",
+            "c": "Lebron James",
+            "d":"Kareem Abdul Jabbar"
+            
+        },
+        "3": {
+            "a": "Steph Curry/Lebron James",
+            "b": "Jamal Murray/Allen Iverson",
+            "c": "James Harden/Russel Westbrook",
+            "d":"Michael Jordan/Kobe Bryan"
+        },
+        "4": {
+            "a": "Lebron James",
+            "b": "Michael Jordan",
+            "c": "Steph Curr",
+            "d":"Shaquille O’Neal"
+        },
+        "5":{
+            "a": "Kobe Bryant",
+            "b": "Wilt Chamberlain",
+            "c": "Lebron James",
+            "d":"Kareem Abdul Jabbar"
+            
+        },
+        "6": {
+            "a": "Cleveland Cavaliers",
+            "b": "New York Knicks",
+            "c": "Phoenix Suns",
+            "d":"Minnesota Timberwolves"
+        },
+        "7": {
+            "a": "Lebron James",
+            "b": "Michael Jordan",
+            "c": "Steph Curr",
+            "d":"Kareem Abdul Jabbar"
+        },
+        "8":{
+            "a": "Los Angeles Lakers",
+            "b": "Boston Celtics",
+            "c": "Chicago Bulls",
+            "d":"San Antonio Spurs"
+            
+        },
+        "9": {
+            "a": "Toronto Raptors",
+            "b": "Toronto Knickerbokers",
+            "c": "Toronto Grizzlies",
+            "d":"Toronto Huskies"
+        }
+
+    },
+    {
+        "0": "Bob Cousy",
+        "1": "Steph Curr",
+        "2": "Wilt Chamberlain",
+        "3": "Jamal Murray/Allen Iverson",
+        "4": "Lebron James",
+        "5": "Wilt Chamberlain",
+        "6": "Minnesota Timberwolves",
+        "7": "Michael Jorda",
+        "8": "Boston Celtics",
+        "9": "Toronto Huskies"
+    }
+]

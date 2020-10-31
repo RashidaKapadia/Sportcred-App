@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/SoloTriviaPage.dart';
+import 'onGoingTrivia.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
 import './loginPage.dart';
@@ -20,7 +21,8 @@ void main() {
         '/profile': (context) => ProfilePage(),
         '/homepage': (context) => HomePage(),
         "/test": (context) => HTTPRequestExample(),
-        '/SoloTrivia': (context) => SoloTriviaPage()
+        '/soloTrivia': (context) => SoloTriviaPage(),
+        '/quizPage': (context) => OnGoingTrivia("Basketball")
       }));
 }
 
