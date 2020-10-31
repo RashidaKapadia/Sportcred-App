@@ -229,7 +229,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                 //width: 200,
                 //height: 20,
                 alignment: Alignment.center,
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                padding: EdgeInsets.all(20.0),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.indigoAccent, width: 5.0),
                   //shape: BoxShape.circle,
@@ -237,10 +237,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                 ),
 
                 child: Text(
-                  data[0][i.toString()],
-                  style: TextStyle(
-                    fontSize: 16.0,
-                  ),
+                  'Q. ' + data[0][i.toString()],
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -262,6 +260,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                 ),
               ),
             ),
+            // ****TODO :- Add Score at the bottom and Questions Left
             //SizedBox(height: 50.0),
             /*Expanded(
                 flex: 1,
