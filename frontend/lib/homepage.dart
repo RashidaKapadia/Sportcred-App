@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_session/flutter_session.dart';
 import './navbar.dart';
 
 class HomePage extends StatefulWidget {
@@ -8,6 +9,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var isSelected = false;
+  String username = "";
+
+  void loadUsername() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        username = value.toString();
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadUsername();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -15,6 +32,7 @@ class _HomePageState extends State<HomePage> {
         bottomNavigationBar: NavBar(0),
         body: new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           Expanded(child: Image.asset('assets/Logo.png')),
+          Text("Welcome " + username + "!"),
           Expanded(
             child: OrientationBuilder(
               builder: (context, orientation) {

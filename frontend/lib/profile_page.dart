@@ -78,10 +78,20 @@ class _ProfilePageState extends State<ProfilePage>
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
 
-// Initialize values
+  // Initialize values
   String acs = "";
   String tier = "";
   String username = "";
+
+  @override
+  void initState() {
+    super.initState();
+    FlutterSession().get('username').then((value) {
+      setState(() {
+        _futureUserInfo = profileGet(value.toString());
+      });
+    });
+  }
 
   Future<UserInfo> _futureUserInfo;
 
@@ -157,27 +167,6 @@ class _ProfilePageState extends State<ProfilePage>
     } else {
       return UserInfo(reqStatus: false);
     }
-  }
-
-  @override
-  void initState() {
-    print('INITIALIZING......');
-
-    setState(() {
-      _futureUserInfo = profileGet(currUser);
-    });
-
-    print('GOT DATA FROM BACKEND');
-
-    if (_futureUserInfo != null) {
-      print('INIT FUNCTION:');
-      print(username);
-      print(tier);
-      print(acs);
-    }
-    print("DONE INITIALIZING");
-
-    super.initState();
   }
 
   // This widget is the root of your application
