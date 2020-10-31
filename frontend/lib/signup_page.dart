@@ -4,7 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:intl/intl.dart';
-import './formFields.dart';
+import './formHelper.dart';
 import './fieldStyles.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
@@ -85,7 +85,8 @@ class _SignUpPageState extends State<SignUpPage> {
     // Check the type of response received from backend
     if (response.statusCode == 200) {
       // Go to the welcome page if sign up was successful
-      Navigator.of(context).pushNamed('/welcome');
+      print('SUCCESS');
+      // Navigator.of(context).pushNamed('/welcome');
       return SignUpStatus(true, "SignUp successful!");
     } else if (response.statusCode == 409) {
       return SignUpStatus(false, "Username or email already exists.");
@@ -419,51 +420,64 @@ class _SignUpPageState extends State<SignUpPage> {
                         print(favTeam);
                         print('${dateFormatter.format(this.dob)}');
 
-                          showCupertinoDialog(
-                            context: context,
-                            builder: (alertContext) {
-                              return CupertinoAlertDialog(
-                                title: Text("Please confirm!"),
-                                actions: [
-                                  CupertinoDialogAction(
-                                      child: Text("No"),
-                                      onPressed: () {
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop('dialog');
-                                      }),
-                                  CupertinoDialogAction(
-                                      child: Text("Yes"),
-                                      onPressed: () {
-                                        _futureSignUpStatus = signUp();
-                                      }),
-                                ],
-                              );
-                            },
-                          );
+                        // Display confirmation pop-up
+                        confirmationPopup();
+
                         // Set signup status to true
                       } else {
-                        showCupertinoDialog(
-                          context: context,
-                          builder: (alertContext) {
-                            return CupertinoAlertDialog(
-                              title: Text("Please fill in all fields!"),
-                              actions: [
-                                CupertinoDialogAction(
-                                    child: Text("Ok"),
-                                    onPressed: () {
-                                      Navigator.of(context, rootNavigator: true)
-                                          .pop('dialog');
-                                    })
-                              ],
-                            );
-                          },
-                        );
+                        errorPopup(
+                            context, "Please fill in all fields properly!");
                       }
                     }),
               ]),
             ),
           )),
     );
+  }
+
+  void confirmationPopup() {
+    showCupertinoDialog(
+      context: context,
+      builder: (alertContext) {
+        return CupertinoAlertDialog(
+          title: Text("Please confirm!"),
+          actions: [
+            CupertinoDialogAction(
+                child: Text("No"),
+                onPressed: () {
+                  Navigator.of(alertContext, rootNavigator: true).pop('dialog');
+                }),
+            CupertinoDialogAction(
+                child: Text("Yes"),
+                onPressed: () {
+                  setState(() {
+                    _futureSignUpStatus = signUp(); //Signup if Yes
+
+                    // Check that response has been received successfully
+                    if (_futureSignUpStatus != null) {
+                      print('HELLOOO');
+                      // Check if signup was successful
+                      checkSignup();
+                      Navigator.of(alertContext, rootNavigator: true)
+                          .pop('dialog');
+                    }
+                  });
+                }),
+          ],
+        );
+      },
+    );
+  }
+
+    void checkSignup() async {
+    await _futureSignUpStatus.then((snapshot) {
+      print('YAYY');
+      print(snapshot.message);
+      if (snapshot.success) {
+        Navigator.of(context).pushNamed('/welcome');
+      } else {
+       errorPopup(context, snapshot.message);
+      }
+    });
   }
 }
