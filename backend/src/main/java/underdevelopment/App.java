@@ -10,18 +10,46 @@ import underdevelopment.api.LoginHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
-//How to find pid consuming this port 
-//>> Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess
+
+
+import underdevelopment.db.Connect;
+import underdevelopment.db.DBMockdata;
 
 //Kill the process
 //>> kill <pid>
 public class App 
 {
-    static int PORT = 8080;
+    static final int API_PORT = 8080;
     public static void main(String[] args) throws IOException
     {
+        // Dev settings
+        String dbUsername = "neo4j";
+        String dbPassword = "1234";
+        
+        // Connect to the database
+        Connect.connectDB(dbUsername, dbPassword);
+
+        // Check the database connection
+        System.out.print("Checking database connection ... ");
+        if (Connect.checkConnection()) {
+            System.out.println("success, connected to: " + dbUsername);
+        } else {
+            System.out.println("FAILED to connect to: " + dbUsername);
+            System.exit(1);
+        }
+        
+        // Check the mockdata
+        DBMockdata.checkAndUpdate();
+
+        // Start the server
+        startAPIServer();
+        System.out.printf("Server started on port %d ...\n", API_PORT);
+    }
+
+    public static void startAPIServer() throws IOException {
+
         // Config server to localhost and port
-        HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", PORT), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", API_PORT), 0);
  
         server.createContext("/api/login", 
             new HttpRequestHandler("POST", LoginHandler.createSession(), false));
@@ -54,6 +82,6 @@ public class App
 
         // Start Server
         server.start();
-        System.out.printf("Server started on port %d...\n", PORT);
     }
+
 }

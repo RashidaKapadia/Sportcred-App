@@ -8,7 +8,6 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import underdevelopment.api.utils.JWTSessionManager;
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.Status;
@@ -39,7 +38,9 @@ public class SignUpHandler {
      */
     public static JsonRequestHandler handleSignUp() {
         return (JSONObject jsonObj) -> {
-            String email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam;
+
+        	System.out.println("Running the signup handler.");
+            String firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam;
             //Date dob;
             String dob;
            // SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");  
@@ -49,6 +50,8 @@ public class SignUpHandler {
 
             try {
                 username = jsonObj.getString("username");
+                firstname = jsonObj.getString("firstname");
+                lastname = jsonObj.getString("lastname");
                 email = jsonObj.getString("email");
                 password = jsonObj.getString("password");
                 //password2 = jsonObj.getString("password2");
@@ -93,7 +96,9 @@ public class SignUpHandler {
             	//formattedDob = formatter.parse(dob);
             	//System.out.println("formatted dob is: ");           
             	//System.out.println(formattedDob);
-            	boolean success = DBUserInfo.addUser(email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob);
+
+            	System.out.println("dob is: " + dob);
+            	boolean success = DBUserInfo.addUser(firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob);
                 response = new JSONObject()
                     .put("Response", "Added " + username + " to the database")
                     .toString();

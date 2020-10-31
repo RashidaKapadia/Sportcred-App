@@ -18,6 +18,12 @@
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
+  <resources>
+     <resource>
+       <directory>src/resources</directory>
+     </resource>
+   </resources>
+
   <dependencies>
     <dependency>
       <groupId>javax.xml.bind</groupId>

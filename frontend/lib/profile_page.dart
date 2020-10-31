@@ -4,6 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import './navbar.dart';
 import 'package:http/http.dart' as http;
+import './loginPage.dart';
+
+String old_username, old_status, old_email, old_birthday, old_about;
+TextEditingController _usernameController = TextEditingController()..text = '';
+TextEditingController _statusController = TextEditingController()..text = '';
+TextEditingController _emailController = TextEditingController()..text = '';
+TextEditingController _birthdayController = TextEditingController()..text = '';
+TextEditingController _aboutController = TextEditingController()..text = '';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -12,18 +20,19 @@ class ProfilePage extends StatefulWidget {
 
 class ProfileStatus {
   final bool success;
-  final String message;
-  ProfileStatus(this.success, this.message);
+  final UserInfo userInfo;
+  ProfileStatus(this.success, this.userInfo);
 }
 
 class UserInfo {
-  final int acs;
+  final String acs;
   final String username;
   final String status;
   final String email;
   final String dob;
   final String about;
   final String tier;
+  final bool reqStatus;
 
   UserInfo(
       {this.acs,
@@ -32,11 +41,19 @@ class UserInfo {
       this.email,
       this.dob,
       this.about,
-      this.tier});
+      this.tier,
+      @required this.reqStatus});
 
   // converts json to UserInfo object
-  factory UserInfo.fromJson(Map<String, dynamic> json) {
+  factory UserInfo.fromJson(bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return UserInfo(
+        reqStatus: status,
+      );
+    }
+
     return UserInfo(
+      reqStatus: status,
       username: json['username'],
       status: json['status'],
       email: json['email'],
@@ -48,51 +65,132 @@ class UserInfo {
   }
 }
 
-String acs = '314';
-String tier = 'FANANALYST';
-TextEditingController _usernameController = TextEditingController()
-  ..text = 'jking';
-TextEditingController _statusController = TextEditingController()
-  ..text = 'Hungry for some basketball';
-TextEditingController _emailController = TextEditingController()
-  ..text = 'jerry_king@gmail.com';
-TextEditingController _birthdayController = TextEditingController()
-  ..text = '23 March 1975';
-TextEditingController _aboutController = TextEditingController()
-  ..text = 'A history professor who is keen on basketball';
+void storePrevValues() {
+  old_username = _usernameController.text;
+  old_status = _statusController.text;
+  old_birthday = _birthdayController.text;
+  old_about = _aboutController.text;
+  old_email = _emailController.text;
+}
 
 class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
 
+// Initialize values
+  String acs = "";
+  String tier = "";
+  String username = "";
+
+  Future<UserInfo> _futureUserInfo;
+
+  // Http post request to get user info
+  Future<UserInfo> profileGet(String username) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/getUserInfo',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{'username': username}),
+    );
+
+    if (response.statusCode == 200) {
+      // Store the session token
+      print("PROFILE GET -> RESPONSE:" + response.body.toString());
+
+      UserInfo userData = UserInfo.fromJson(true, jsonDecode(response.body));
+
+      setState(() {
+        this.username = userData.username;
+
+        _usernameController..text = this.username;
+        _statusController..text = userData.status;
+        _birthdayController..text = userData.dob;
+        _aboutController..text = userData.about;
+        _emailController..text = userData.email;
+
+        storePrevValues();
+
+        print('DEBUGGING: PROFILE GET');
+        print(username);
+        print(_statusController..text);
+
+        this.acs = userData.acs;
+        this.tier = userData.tier;
+      });
+
+      return userData;
+    } else {
+      return UserInfo(reqStatus: false);
+    }
+    return null;
+  }
+
+// Http post request to update user info
+  Future<UserInfo> profileUpdate(String username, String email, String status,
+      String about, String dob, String acs) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      // new Uri.http("localhost:8080", "/api/getUserInfo"),
+      'http://localhost:8080/api/updateUserInfo',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{
+        'username': username,
+        'email': email,
+        'status': status,
+        'about': about,
+        'dob': dob,
+        'acs': acs,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return UserInfo(reqStatus: true);
+    } else {
+      return UserInfo(reqStatus: false);
+    }
+  }
+
   @override
   void initState() {
-    Future<UserInfo> _futureUserInfo;
-    //_futureUserInfo = profile_get(username);
+    print('INITIALIZING......');
 
-    if (_futureUserInfo != null) {}
+    setState(() {
+      _futureUserInfo = profileGet(currUser);
+    });
+
+    print('GOT DATA FROM BACKEND');
+
+    if (_futureUserInfo != null) {
+      print('INIT FUNCTION:');
+      print(username);
+      print(tier);
+      print(acs);
+    }
+    print("DONE INITIALIZING");
+
     super.initState();
   }
 
-  String new_username, new_status, new_email, new_birthday, new_about;
-  String old_username = _usernameController.text;
-  String old_status = _statusController.text;
-  String old_email = _emailController.text;
-  String old_birthday = _birthdayController.text;
-  String old_about = _aboutController.text;
   // This widget is the root of your application
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leading: BackButton(
-              color: Colors.black,
-              onPressed: () => Navigator.of(context).pushNamed("/homepage")),
-          title: Text("Profile"),
-          centerTitle: true,
-          backgroundColor: Colors.red,
-        ),
+            leading: BackButton(
+                color: Colors.white,
+                onPressed: () => Navigator.of(context).pushNamed("/homepage")),
+            title: Text("Profile", style: TextStyle(color: Colors.white)),
+            centerTitle: true,
+            backgroundColor: Colors.black),
         bottomNavigationBar: NavBar(2),
         body: Container(
           color: Colors.white,
@@ -111,9 +209,26 @@ class _ProfilePageState extends State<ProfilePage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Expanded(
+                                child: Container(
+                                  child: new Text(
+                                    _usernameController.text,
+                                    style: TextStyle(
+                                        fontSize: 22.0,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                flex: 2),
+                            Expanded(
                               child: Container(
                                 child: new Text(
-                                  'ACS:' + '  ' + acs + '  [' + tier + ']',
+                                  'ACS:' +
+                                      '  ' +
+                                      this.acs +
+                                      '  [' +
+                                      this.tier +
+                                      ']',
                                   style: TextStyle(
                                       fontSize: 22.0,
                                       color: Colors.black,
@@ -126,7 +241,7 @@ class _ProfilePageState extends State<ProfilePage>
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsets.only(top: 20.0),
+                          padding: EdgeInsets.only(top: 30.0),
                           child:
                               new Stack(fit: StackFit.loose, children: <Widget>[
                             // new Row(
@@ -134,8 +249,8 @@ class _ProfilePageState extends State<ProfilePage>
                             //   mainAxisAlignment: MainAxisAlignment.center,
                             //   children: <Widget>[
                             //     SizedBox(height: 20.0),
-                            Image.asset('Jerry_King.jpg',
-                                width: 250, height: 325, fit: BoxFit.cover),
+                            Image.asset('profile_icon.png',
+                                width: 150, height: 125, fit: BoxFit.fitWidth),
                             //   ],
                             // ),
                           ]),
@@ -184,7 +299,7 @@ class _ProfilePageState extends State<ProfilePage>
                               )),
                           Padding(
                             padding: EdgeInsets.only(
-                                left: 50.0, right: 25.0, top: 50.0),
+                                left: 50.0, right: 25.0, top: 30.0),
                             child: Container(
                               child: new TextField(
                                 decoration: const InputDecoration(
@@ -209,43 +324,42 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                             ),
                           ),
-                          Padding(
-                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
-                              child: new Row(
-                                children: <Widget>[
-                                  Expanded(
-                                      child: Container(
-                                    alignment: Alignment.topLeft,
-                                    child: new Text(
-                                      'Username:',
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  )),
-                                  Expanded(
-                                      child: Container(
-                                          alignment: Alignment.topLeft,
-                                          child: new Column(children: <Widget>[
-                                            new TextField(
-                                                onChanged: (text) {
-                                                  setState(() {
-                                                    new_username = text;
-                                                  });
-                                                },
-                                                style:
-                                                    TextStyle(fontSize: 16.0),
-                                                keyboardType:
-                                                    TextInputType.multiline,
-                                                maxLines: null,
-                                                enabled: !_status,
-                                                autofocus: !_status,
-                                                controller:
-                                                    _usernameController),
-                                          ])),
-                                      flex: 2),
-                                ],
-                              )),
+                          // Padding(
+                          //     padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                          //     child: new Row(
+                          //       children: <Widget>[
+                          //         Expanded(
+                          //             child: Container(
+                          //           alignment: Alignment.topLeft,
+                          //           child: new Text(
+                          //             'Username:',
+                          //             style: TextStyle(
+                          //                 fontSize: 16.0,
+                          //                 fontWeight: FontWeight.bold),
+                          //           ),
+                          //         )),
+                          //         Expanded(
+                          //             child: Container(
+                          //                 alignment: Alignment.topLeft,
+                          //                 child: new Column(children: <Widget>[
+                          //                   new TextField(
+                          //                     // onChanged: (text) {
+                          //                     //   setState(() {
+                          //                     //     username = text;
+                          //                     //   });
+                          //                     // },
+                          //                     style: TextStyle(fontSize: 16.0),
+                          //                     keyboardType:
+                          //                         TextInputType.multiline,
+                          //                     maxLines: null,
+                          //                     enabled: !_status,
+                          //                     autofocus: !_status,
+                          //                     controller: _usernameController,
+                          //                   ),
+                          //                 ])),
+                          //             flex: 2),
+                          //       ],
+                          //     )),
                           Padding(
                               padding: EdgeInsets.only(left: 50.0, top: 15.0),
                               child: new Row(
@@ -366,11 +480,6 @@ class _ProfilePageState extends State<ProfilePage>
   void dispose() {
     // Clean up the controller when the Widget is disposed
     myFocusNode.dispose();
-    _usernameController.dispose();
-    _statusController.dispose();
-    _aboutController.dispose();
-    _emailController.dispose();
-    _birthdayController.dispose();
     super.dispose();
   }
 
@@ -392,6 +501,18 @@ class _ProfilePageState extends State<ProfilePage>
                 onPressed: () {
                   setState(() {
                     _status = true;
+                    storePrevValues();
+                    // HTTP request to update profile
+                    profileUpdate(
+                        this.username,
+                        _emailController.value.text,
+                        _statusController.value.text,
+                        _aboutController.value.text,
+                        _birthdayController.value.text,
+                        this.acs.toString());
+
+                    print('SUCCESSS1!!!');
+
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                 },
@@ -412,7 +533,6 @@ class _ProfilePageState extends State<ProfilePage>
                 onPressed: () {
                   setState(() {
                     _status = true;
-
                     _statusController = TextEditingController(text: old_status);
 
                     _usernameController =
@@ -424,6 +544,7 @@ class _ProfilePageState extends State<ProfilePage>
 
                     _birthdayController =
                         TextEditingController(text: old_birthday);
+
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                 },

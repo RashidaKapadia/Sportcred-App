@@ -35,7 +35,7 @@ public class DBAcs {
 				Result result = tx.run(String.format("MATCH (n { username: '%s' }) SET n.acs = %d + n.acs  RETURN n.username as username, n.acs as acs", username, ammount));
 				//Result result = tx.run("MATCH (n { username: 'banana420' }) SET n.acs = 5556  RETURN n.username as username, n.acs as acs");
 	    		record = result.next();
-	    		newACS = record.get("acs").asInt();
+	    		newACS = Integer.parseInt(record.get("acs").asString());
     			
 	    		
 	    		System.out.println("checking");

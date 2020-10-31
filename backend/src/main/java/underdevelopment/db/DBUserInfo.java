@@ -21,7 +21,7 @@ public class DBUserInfo {
    * @param favTeam
    * @param dob
    */
-  public static boolean addUser(String email, String username, String password, String phoneNumber, String favSport,
+  public static boolean addUser(String firstname, String lastname, String email, String username, String password, String phoneNumber, String favSport,
       String sportLevel, String sportToLearn, String favTeam, String dob) {
     // set the values for the instance variables
     System.out.println("adding the user: " + username);
@@ -29,10 +29,10 @@ public class DBUserInfo {
     // Create a user node in DB for the user with the provided data
     try (Session session = Connect.driver.session()) {
       session.writeTransaction(tx -> tx.run(String.format(
-          "MERGE (a:user {email: \"%s\", username: \"%s\", password: \"%s\", " +
+          "MERGE (a:user {firstname: \"%s\", lastname: \"%s\", email: \"%s\", username: \"%s\", password: \"%s\", " +
           "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\"," +
-          "favTeam: \"%s\", dob: \"%s\", acs: \"%s\", about: \"%s\", status: \"%s\"})",
-          email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob,100, "N/A",
+          "favTeam: \"%s\", dob: \"%s\", acs: \"%d\", about: \"%s\", status: \"%s\"})",
+          firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob, 100, "N/A",
           "Hungry for basketball")));
       // System.out.println("finished adding the user");
       session.close();

@@ -5,6 +5,9 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+// Global variable for currUser to access on other pages
+String currUser = "";
+
 // -- HTTP Request ---
 
 class LoginStatus {
@@ -16,7 +19,6 @@ class LoginStatus {
 
 
 // -- Widget --
-
 class LoginPage extends StatefulWidget {
   @override
   _State_Of_Login_Page createState() => _State_Of_Login_Page();
@@ -72,6 +74,11 @@ Future<LoginStatus> login(String username, String password) async {
     String token = jsonDecode(response.body)['token'];
     await FlutterSession().set('token', token);
     await FlutterSession().set('username', username);
+    // Set the currUser to username to access from other pages
+    setState(() {
+      currUser = username;
+    });
+
     // Go to the homepage if login is successful
      Navigator.of(context).pushNamed("/homepage");
     return LoginStatus(true, "Login successful!");
@@ -81,6 +88,7 @@ Future<LoginStatus> login(String username, String password) async {
     return LoginStatus(false, "Login failed, please contact your admin.");
   }
 }
+
 
   Widget loginStatus() {
     return FutureBuilder<LoginStatus>(
