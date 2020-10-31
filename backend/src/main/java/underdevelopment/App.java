@@ -9,6 +9,7 @@ import underdevelopment.api.ACSHandler;
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
+import underdevelopment.api.TriviaHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
 
 
@@ -71,7 +72,11 @@ public class App
                 new HttpRequestHandler("POST", ACSHandler.handleACS(), false));
         server.createContext("/api/getACS", 
                 new HttpRequestHandler("POST", ACSHandler.getACS(), false));
-        
+
+        // Trivia route
+        server.createContext("/api/trivia/get-questions", 
+                new HttpRequestHandler("POST", TriviaHandler.generateQuestions(), false));
+
         // Test routes
         server.createContext("/api/test/authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), true)
