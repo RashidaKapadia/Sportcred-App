@@ -370,7 +370,12 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20.0),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: (_futureSignUpStatus != null)
+                    ? getStatus(context, _futureSignUpStatus)
+                    : Text("Enter your information below:"),),
+                //SizedBox(height: 20.0),
                 getFirstname(),
                 SizedBox(height: 20.0),
                 getLastname(),
@@ -398,7 +403,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 RaisedButton(
                     color: mainColour,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
+                        borderRadius: BorderRadius.circular(10.0)
+                        ),
                     child: Text(
                       "Sign Up",
                       style: TextStyle(color: Colors.white, fontSize: 20),
@@ -452,12 +458,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 onPressed: () {
                   setState(() {
                     _futureSignUpStatus = signUp(); //Signup if Yes
-
                     // Check that response has been received successfully
                     if (_futureSignUpStatus != null) {
                       print('HELLOOO');
                       // Check if signup was successful
-                      checkSignup();
+                      checkStatus(context, _futureSignUpStatus, '/welcome');
                       Navigator.of(alertContext, rootNavigator: true)
                           .pop('dialog');
                     }
@@ -467,17 +472,5 @@ class _SignUpPageState extends State<SignUpPage> {
         );
       },
     );
-  }
-
-    void checkSignup() async {
-    await _futureSignUpStatus.then((snapshot) {
-      print('YAYY');
-      print(snapshot.message);
-      if (snapshot.success) {
-        Navigator.of(context).pushNamed('/welcome');
-      } else {
-       errorPopup(context, snapshot.message);
-      }
-    });
   }
 }

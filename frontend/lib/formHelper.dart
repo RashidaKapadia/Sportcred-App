@@ -56,3 +56,36 @@ void errorPopup(BuildContext context, String errorMsg) {
     },
   );
 }
+
+ void checkStatus(BuildContext context, Future status, String nextPage) async {
+    await status.then((snapshot) {
+      print('YAYY');
+      print(snapshot.message);
+      if (snapshot.success) {
+        Navigator.of(context).pushNamed(nextPage);
+      } else {
+       errorPopup(context, snapshot.message);
+      }
+    });
+  }
+
+  Widget getStatus(BuildContext context, Future status) {
+    return FutureBuilder(
+      future: status,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data.message);
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        } else {
+          return Container(
+              alignment: Alignment.center,
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ));
+        }
+      },
+    );
+  }
