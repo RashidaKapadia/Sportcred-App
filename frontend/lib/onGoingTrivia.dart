@@ -1,6 +1,10 @@
+// Reference:
+// flutter-quizstar. https://github.com/desi-programmer/flutter-quizstar
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:frontend/TriviaResult.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:frontend/homepage.dart';
@@ -131,9 +135,14 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         j++;
       } else {
         // **************TODO
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => HomePage(),
-        ));
+        Timer(Duration(seconds: 2), () {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => TriviaResult(),
+          ));
+        });
+        //Navigator.of(context).pushReplacement(MaterialPageRoute(
+        //builder: (context) => TriviaResult(),
+        //));
         //Navigator.of(context).pushNamed('SoloTriviaPage');
       }
       colorsForOptions["a"] = Colors.indigoAccent;
@@ -161,7 +170,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
       disableAnswer = true;
     });
 
-    Timer(Duration(seconds: 2), nextQuestion);
+    Timer(Duration(seconds: 1), nextQuestion);
   }
 
   Widget answersAnimation(String t) {
