@@ -273,8 +273,14 @@ class _TriviaState extends State<SoloTriviaPage> {
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    OnGoingTrivia('Basketball')),
+                                builder: (context) {
+                                    // DEBUGGING...
+                                    print('TRIVIA DATA:');
+                                    print(_triviaQuestions);
+                                    print(_triviaOptions);
+                                    print(_triviaAnswers);
+
+                                    return OnGoingTrivia('Basketball', _triviaQuestions, _triviaOptions, _triviaAnswers);}),
                             //OnGoingTrivia("Basketball")),
                           );
                         },
