@@ -244,7 +244,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                 child: Container(
                     child: SimpleTimer(
               controller: _timerController,
-              duration: Duration(seconds: 1),
+              duration: Duration(seconds: 10),
               timerStyle: TimerStyle.expanding_sector,
             ))),
             SizedBox(height: 20.0),
