@@ -169,7 +169,8 @@ class _TriviaState extends State<SoloTriviaPage> {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    OnGoingTrivia("Basketball")),
+                                    OnGoingTrivia('Basketball')),
+                            //OnGoingTrivia("Basketball")),
                           );
                         },
                       ),
