@@ -91,7 +91,7 @@ public class HttpRequestHandler implements HttpHandler {
                 try {
                     sessionToken = jsonObj.getString("token");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println("Request is missing authenication token");
                 } finally {
                     if (!JWTSessionManager.validateToken(sessionToken)) {
                         HttpResponseWriter.sendStatus(r, Status.FORBIDDEN);

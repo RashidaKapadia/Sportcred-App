@@ -51,6 +51,9 @@ public class App
 
         // Config server to localhost and port
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", API_PORT), 0);
+
+        // Should be set to true for deployed app
+        boolean authorized = true;
  
         server.createContext("/api/login", 
             new HttpRequestHandler("POST", LoginHandler.createSession(), false));
@@ -59,9 +62,9 @@ public class App
 
         // Profile APIs
         server.createContext("/api/updateUserInfo",
-            new HttpRequestHandler("POST", ProfileHandler.updateUserInfo(), false));
+            new HttpRequestHandler("POST", ProfileHandler.updateUserInfo(), authorized));
         server.createContext("/api/getUserInfo",
-            new HttpRequestHandler("POST", ProfileHandler.getUserInfo(), false));
+            new HttpRequestHandler("POST", ProfileHandler.getUserInfo(), authorized));
         
         // Sign Up API
         server.createContext("/api/signup", 
@@ -69,17 +72,17 @@ public class App
               
         // ACS API (mostly for testing)
         server.createContext("/api/editACS", 
-                new HttpRequestHandler("POST", ACSHandler.handleACS(), false));
+                new HttpRequestHandler("POST", ACSHandler.handleACS(), authorized));
         server.createContext("/api/getACS", 
-                new HttpRequestHandler("POST", ACSHandler.getACS(), false));
+                new HttpRequestHandler("POST", ACSHandler.getACS(), authorized));
 
         // Trivia route
         server.createContext("/api/trivia/get-questions", 
-                new HttpRequestHandler("POST", TriviaHandler.generateQuestions(), false));
+                new HttpRequestHandler("POST", TriviaHandler.generateQuestions(), authorized));
 
         // Test routes
         server.createContext("/api/test/authorized-route", 
-            new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), true)
+            new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), authorized)
                 .addHandler("GET", LoginHandler.testGet(), true));
         server.createContext("/api/test/non-authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testNonAuthorizedRoute(), false)

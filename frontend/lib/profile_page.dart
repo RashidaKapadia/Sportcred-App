@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import './navbar.dart';
 import 'package:http/http.dart' as http;
-import './loginPage.dart';
 
 String old_username, old_status, old_email, old_birthday, old_about;
+
 TextEditingController _usernameController = TextEditingController()..text = '';
 TextEditingController _statusController = TextEditingController()..text = '';
 TextEditingController _emailController = TextEditingController()..text = '';
@@ -83,20 +83,26 @@ class _ProfilePageState extends State<ProfilePage>
   String tier = "";
   String username = "";
 
+  // TODO:
+
   @override
   void initState() {
     super.initState();
-    FlutterSession().get('username').then((value) {
-      setState(() {
-        _futureUserInfo = profileGet(value.toString());
-      });
+
+    FlutterSession().get('token').then((token) {
+      FlutterSession().get('username').then((username) => {
+            setState(() {
+              _futureUserInfo =
+                  profileGet(username.toString(), token.toString());
+            })
+          });
     });
   }
 
   Future<UserInfo> _futureUserInfo;
 
   // Http post request to get user info
-  Future<UserInfo> profileGet(String username) async {
+  Future<UserInfo> profileGet(String username, String token) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/getUserInfo',
@@ -105,17 +111,16 @@ class _ProfilePageState extends State<ProfilePage>
         'Accept': 'text/plain; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
-      body: jsonEncode(<String, String>{'username': username}),
+      body: jsonEncode(<String, String>{'username': username, 'token': token}),
     );
 
     if (response.statusCode == 200) {
-      // Store the session token
-      print("PROFILE GET -> RESPONSE:" + response.body.toString());
-
       UserInfo userData = UserInfo.fromJson(true, jsonDecode(response.body));
 
       setState(() {
         this.username = userData.username;
+        this.acs = userData.acs;
+        this.tier = userData.tier;
 
         _usernameController..text = this.username;
         _statusController..text = userData.status;
@@ -124,25 +129,22 @@ class _ProfilePageState extends State<ProfilePage>
         _emailController..text = userData.email;
 
         storePrevValues();
-
-        print('DEBUGGING: PROFILE GET');
-        print(username);
-        print(_statusController..text);
-
-        this.acs = userData.acs;
-        this.tier = userData.tier;
       });
 
       return userData;
+    } else if (response.statusCode == 403) {
+      Navigator.of(context).pushNamed('/login');
+      return UserInfo(reqStatus: false);
     } else {
       return UserInfo(reqStatus: false);
     }
-    return null;
   }
 
 // Http post request to update user info
   Future<UserInfo> profileUpdate(String username, String email, String status,
       String about, String dob, String acs) async {
+    print("making request");
+
     // Make the request and store the response
     final http.Response response = await http.post(
       // new Uri.http("localhost:8080", "/api/getUserInfo"),
@@ -164,6 +166,8 @@ class _ProfilePageState extends State<ProfilePage>
 
     if (response.statusCode == 200) {
       return UserInfo(reqStatus: true);
+    } else if (response.statusCode == 403) {
+      Navigator.of(context).pushNamed('/login');
     } else {
       return UserInfo(reqStatus: false);
     }
@@ -499,8 +503,6 @@ class _ProfilePageState extends State<ProfilePage>
                         _aboutController.value.text,
                         _birthdayController.value.text,
                         this.acs.toString());
-
-                    print('SUCCESSS1!!!');
 
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
