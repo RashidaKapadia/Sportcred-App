@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:frontend/TriviaResult.dart';
 import 'onGoingTrivia.dart';
 import './navbar.dart';
 import 'dart:async';
