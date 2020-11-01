@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/InitialPage.dart';
 import 'package:frontend/SoloTriviaPage.dart';
 import 'onGoingTrivia.dart';
 import './signup_page.dart';
@@ -35,6 +36,6 @@ class _SportCredAppState extends State<SportCredApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return LoginPage();
+    return InitialPage();
   }
 }
