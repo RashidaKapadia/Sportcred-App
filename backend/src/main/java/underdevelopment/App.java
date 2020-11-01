@@ -5,14 +5,19 @@ import java.net.InetSocketAddress;
 
 import com.sun.net.httpserver.HttpServer;
 
+import underdevelopment.api.ACSHandler;
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.TriviaHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
+
+
 import underdevelopment.db.Connect;
 import underdevelopment.db.DBMockdata;
 
+//Kill the process
+//>> kill <pid>
 public class App 
 {
     static final int API_PORT = 8080;
@@ -61,7 +66,13 @@ public class App
         // Sign Up API
         server.createContext("/api/signup", 
                 new HttpRequestHandler("POST", SignUpHandler.handleSignUp(), false));
-        
+              
+        // ACS API (mostly for testing)
+        server.createContext("/api/editACS", 
+                new HttpRequestHandler("POST", ACSHandler.handleACS(), false));
+        server.createContext("/api/getACS", 
+                new HttpRequestHandler("POST", ACSHandler.getACS(), false));
+
         // Trivia route
         server.createContext("/api/trivia/get-questions", 
                 new HttpRequestHandler("POST", TriviaHandler.generateQuestions(), false));
