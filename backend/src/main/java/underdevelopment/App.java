@@ -53,7 +53,7 @@ public class App
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", API_PORT), 0);
 
         // Should be set to true for deployed app
-        boolean authorized = true;
+        boolean authorized = false;
  
         server.createContext("/api/login", 
             new HttpRequestHandler("POST", LoginHandler.createSession(), false));
