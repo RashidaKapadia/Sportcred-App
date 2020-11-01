@@ -9,6 +9,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:frontend/homepage.dart';
 import 'package:simple_timer/simple_timer.dart';
+import 'package:flutter/animation.dart';
 
 class OnGoingTrivia extends StatelessWidget {
   String category;
@@ -54,6 +55,9 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   var data;
   _quizpageState(this.data);
 
+  AnimationController _controller;
+  Animation<double> _animation;
+
   Color colorToDisplay = Colors.indigoAccent;
   Color correctAnsColor = Colors.green;
   Color incorrectAnsColor = Colors.red;
@@ -97,7 +101,23 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     startTimer();
     createRandomList();
     _timerController = TimerController(this);
+    _controller = AnimationController(
+        duration: const Duration(milliseconds: 5000),
+        vsync: this,
+        value: 0,
+        lowerBound: 0,
+        upperBound: 1);
+    _animation =
+        CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn);
+
+    _controller.forward();
     super.initState();
+  }
+
+  @override
+  dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -140,10 +160,6 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
             builder: (context) => TriviaResult(),
           ));
         });
-        //Navigator.of(context).pushReplacement(MaterialPageRoute(
-        //builder: (context) => TriviaResult(),
-        //));
-        //Navigator.of(context).pushNamed('SoloTriviaPage');
       }
       colorsForOptions["a"] = Colors.indigoAccent;
       colorsForOptions["b"] = Colors.indigoAccent;
@@ -161,7 +177,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
       marks = marks + 1;
       colorToDisplay = correctAnsColor;
     } else {
-      marks = marks + 1;
+      marks = marks - 1;
       colorToDisplay = incorrectAnsColor;
     }
     setState(() {
@@ -228,7 +244,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                 child: Container(
                     child: SimpleTimer(
               controller: _timerController,
-              duration: Duration(seconds: 10),
+              duration: Duration(seconds: 1),
               timerStyle: TimerStyle.expanding_sector,
             ))),
             SizedBox(height: 20.0),
@@ -269,6 +285,25 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                 ),
               ),
             ),
+            Container(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Score: ',
+                  style: TextStyle(fontSize: 20),
+                ),
+                FadeTransition(
+                  opacity: _animation,
+                  child: Center(
+                    child: Text(
+                      marks.toString(),
+                      style: TextStyle(fontSize: 20, color: Colors.red),
+                    ),
+                  ),
+                ),
+              ],
+            )),
             // ****TODO :- Add Score at the bottom and Questions Left
             //SizedBox(height: 50.0),
             /*Expanded(
