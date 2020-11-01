@@ -1,10 +1,11 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'onGoingTrivia.dart';
 import './navbar.dart';
-import 'dart:async';
 import 'package:http/http.dart' as http;
 
 class TriviaQuestions {
@@ -79,9 +80,9 @@ class _TriviaState extends State<SoloTriviaPage> {
   String chosenCategory = 'Basketball';
 
   // Trivia questions, options and correct answers
-  Map<String, String> triviaQuestions;
-  Map<String, List<String>> triviaOptions;
-  Map<String, String> triviaAnswers;
+  Map<String, String> _triviaQuestions;
+  Map<String, List<String>> _triviaOptions;
+  Map<String, String> _triviaAnswers;
 
   Timer _timer;
 
@@ -109,15 +110,15 @@ class _TriviaState extends State<SoloTriviaPage> {
 
       setState(() {
         // Get the questions, options and correctAnswers and store them in the class variables
-        this.triviaQuestions = triviaData.questions;
-        this.triviaOptions = triviaData.options;
-        this.triviaAnswers = triviaData.correctAnswers;
+        this._triviaQuestions = triviaData.questions;
+        this._triviaOptions = triviaData.options;
+        this._triviaAnswers = triviaData.correctAnswers;
 
         // DEBUGGING STATEMENTS
         print('DEBUGGING: TRIVIA GET QUESTIONS');
-        print(triviaQuestions);
-        print(triviaOptions);
-        print(triviaAnswers);
+        print(_triviaQuestions);
+        print(_triviaOptions);
+        print(_triviaAnswers);
       });
 
       // Return trivia data
@@ -126,26 +127,7 @@ class _TriviaState extends State<SoloTriviaPage> {
       return TriviaQuestions(reqStatus: false);
     }
     return null;
-  }
-
-  /// Getters for the trivia questions, options and correct answers
-  Map<String, String> getTriviaQuestions() {
-    print(triviaQuestions);
-
-    return this.triviaQuestions;
-  }
-
-  Map<String, List<String>> getTriviaOptions() {
-    print(triviaOptions);
-
-    return this.triviaOptions;
-  }
-
-  Map<String, String> getTriviaAnswers() {
-    print(triviaAnswers);
-
-    return this.triviaAnswers;
-  }
+  } 
 
   Future<Widget> DialogBox(BuildContext context) async {
     showDialog(
