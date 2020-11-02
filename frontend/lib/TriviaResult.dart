@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:frontend/loginPage.dart';
 //import 'package:frontend/homepage.dart';
 import './navbar.dart';
+import 'package:http/http.dart' as http;
 
 class TriviaResult extends StatefulWidget {
   int marks, incorrect, correct, notAnswered;
@@ -20,6 +24,42 @@ class _TriviaResultState extends State<TriviaResult> {
   int marks, incorrect, correct, notAnswered;
   _TriviaResultState(
       this.marks, this.incorrect, this.correct, this.notAnswered);
+
+  // Http post request to signup
+  Future updateACS() async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+        // new Uri.http("localhost:8080", "/api/login"),
+        'http://localhost:8080/api/editACS"',
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Accept': 'text/plain; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: jsonEncode(<String, String>{
+          "username": currUser,
+          "ammount": this.marks.toString(),
+          "date": DateTime.now().toString()
+        }));
+
+    // Check the type of response received from backend
+    if (response.statusCode == 200) {
+      // Go to the welcome page if sign up was successful
+      print('SUCCESS');
+      // Navigator.of(context).pushNamed('/welcome');
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  void initState() {
+    // Send score through HTTP request to update this user's ACS
+    updateACS();
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: NavBar(0),
