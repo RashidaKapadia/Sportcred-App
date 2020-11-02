@@ -8,6 +8,7 @@ import 'package:frontend/TriviaResult.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:frontend/homepage.dart';
+import './SoloTriviaPage.dart';
 import 'package:simple_timer/simple_timer.dart';
 import 'package:flutter/animation.dart';
 
@@ -15,11 +16,11 @@ class OnGoingTrivia extends StatelessWidget {
   String category;
 
   // Trivia questions, options and correct answers
-  Map<String, String> triviaQuestions;
-  Map<String, List<String>> triviaOptions;
-  Map<String, String> triviaAnswers;
+  List<TriviaQuestion> triviaQuestions;
+  //Map<String, List<String>> triviaOptions;
+  //Map<String, String> triviaAnswers;
 
-  OnGoingTrivia(this.category, this.triviaQuestions, this.triviaOptions, this.triviaAnswers);
+  OnGoingTrivia(this.category, this.triviaQuestions);
   String assetLoad;
 
   setasset() {
@@ -34,7 +35,7 @@ class OnGoingTrivia extends StatelessWidget {
             DefaultAssetBundle.of(context).loadString(assetLoad, cache: false),
         builder: (context, snapshot) {
          // List data = json.decode(snapshot.data.toString());
-         List data = [triviaQuestions, triviaOptions, triviaAnswers]; // creating data with data from backend
+         List data = triviaQuestions; // creating data with data from backend
           if (data == null) {
             return Scaffold(
               body: Center(

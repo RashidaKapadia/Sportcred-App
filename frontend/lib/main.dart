@@ -23,7 +23,7 @@ void main() {
         '/homepage': (context) => HomePage(),
         "/test": (context) => HTTPRequestExample(),
         '/soloTrivia': (context) => SoloTriviaPage(),
-        '/quizPage': (context) => OnGoingTrivia("Basketball", null, null, null)
+        '/quizPage': (context) => OnGoingTrivia("Basketball", null)
       }));
 }
 

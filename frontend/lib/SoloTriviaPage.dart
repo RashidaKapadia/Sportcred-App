@@ -8,57 +8,23 @@ import 'onGoingTrivia.dart';
 import './navbar.dart';
 import 'package:http/http.dart' as http;
 
-class TriviaQuestions {
-  final Map<String, String> questions;
-  final Map<String, List<String>> options;
-  final Map<String, String> correctAnswers;
-  final bool reqStatus;
+class TriviaQuestion {
+  final String question;
+  final List<String> options;
+  final String answer;
+  // final bool reqStatus;
 
-  TriviaQuestions(
-      {this.questions,
-      this.options,
-      this.correctAnswers,
-      @required this.reqStatus});
+  TriviaQuestion({this.question, this.options, this.answer});
+  // @required this.reqStatus});
 
   // converts json to TriviaQuestions object
-  factory TriviaQuestions.fromJson(bool status, List<dynamic> json) {
+  factory TriviaQuestion.fromJson(Map<String, dynamic> json) {
     // If there is an error
-    if (!status && json == null) {
-      return TriviaQuestions(
-        reqStatus: status,
-      );
-    }
-
-    // Initialize maps for storing questions, their options and correct answers
-    Map<String, String> qs;
-    Map<String, List<String>> opts;
-    Map<String, String> correct;
-    int n = 0;
-
-    for (dynamic q in json) {
-      // Get the question
-      qs[n.toString()] = q['question'];
-
-      // get the options for current question
-      opts[n.toString()] = [
-        q['answer'],
-        q['otherChoices'][0],
-        q['otherChoices'][1],
-        q['otherChoices'][2]
-      ];
-
-      // get the answer
-      correct[n.toString()] = q['answer'];
-
-      // Increment n
-      n++;
-    }
-
-    return TriviaQuestions(
-        reqStatus: status,
-        questions: qs,
-        options: opts,
-        correctAnswers: correct);
+    return TriviaQuestion(
+        //  reqStatus: status,
+        question: json['question'],
+        options: json['choices'],
+        answer: json['answer']);
   }
 }
 
@@ -80,16 +46,18 @@ class _TriviaState extends State<SoloTriviaPage> {
   String chosenCategory = 'Basketball';
 
   // Trivia questions, options and correct answers
-  Map<String, String> _triviaQuestions;
+  /* Map<String, String> _triviaQuestions;
   Map<String, List<String>> _triviaOptions;
-  Map<String, String> _triviaAnswers;
+  Map<String, String> _triviaAnswers; */
+
+  List<TriviaQuestion> triviaData;
 
   Timer _timer;
 
-  Future<TriviaQuestions> _futureTriviaQuestions;
+  Future<List<TriviaQuestion>> _futureTriviaQuestions;
 
   // Http post request to get user info
-  Future<TriviaQuestions> getQuestions(String category) async {
+  Future<List<TriviaQuestion>> getQuestions(String category) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/trivia/get-questions',
@@ -105,29 +73,24 @@ class _TriviaState extends State<SoloTriviaPage> {
       // Store the session token
       print("PROFILE GET -> RESPONSE:" + response.body.toString());
 
-      TriviaQuestions triviaData =
-          TriviaQuestions.fromJson(true, jsonDecode(response.body));
-
       setState(() {
         // Get the questions, options and correctAnswers and store them in the class variables
-        this._triviaQuestions = triviaData.questions;
-        this._triviaOptions = triviaData.options;
-        this._triviaAnswers = triviaData.correctAnswers;
+        for (Map<String, dynamic> question
+            in jsonDecode(response.body) as List) {
+          triviaData.add(TriviaQuestion.fromJson(question));
+        }
 
         // DEBUGGING STATEMENTS
         print('DEBUGGING: TRIVIA GET QUESTIONS');
-        print(_triviaQuestions);
-        print(_triviaOptions);
-        print(_triviaAnswers);
       });
 
       // Return trivia data
       return triviaData;
     } else {
-      return TriviaQuestions(reqStatus: false);
+      return null;
     }
     return null;
-  } 
+  }
 
   Future<Widget> DialogBox(BuildContext context) async {
     showDialog(
@@ -272,15 +235,12 @@ class _TriviaState extends State<SoloTriviaPage> {
                             borderRadius: new BorderRadius.circular(18.0)),
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                                builder: (context) {
-                                    // DEBUGGING...
-                                    print('TRIVIA DATA:');
-                                    print(_triviaQuestions);
-                                    print(_triviaOptions);
-                                    print(_triviaAnswers);
+                            MaterialPageRoute(builder: (context) {
+                              // DEBUGGING...
+                              print('TRIVIA DATA:');
 
-                                    return OnGoingTrivia('Basketball', _triviaQuestions, _triviaOptions, _triviaAnswers);}),
+                              return OnGoingTrivia('Basketball', triviaData);
+                            }),
                             //OnGoingTrivia("Basketball")),
                           );
                         },
