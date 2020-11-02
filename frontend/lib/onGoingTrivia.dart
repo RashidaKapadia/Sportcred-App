@@ -25,17 +25,6 @@ class OnGoingTrivia extends StatelessWidget {
 
   setasset() {
     assetLoad = "assets/mockdata2.json";
-    /*this.triviaAnswers = triviaAnswers;
-    this.triviaOptions = triviaOptions;
-    this.triviaQuestions = triviaQuestions;
-    print('**********');
-    print(this.triviaAnswers);
-    print(this.triviaQuestions);
-    print(this.triviaOptions);
-    print('***********');
-    print(triviaAnswers);
-    print(triviaQuestions);
-    print(triviaOptions);*/
   }
 
   @override
@@ -74,19 +63,22 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   var data;
   _quizpageState(this.data);
 
-  AnimationController _controller;
-  Animation<double> _animation;
+  //AnimationController _controller;
 
   Color colorToDisplay = Colors.indigoAccent;
   Color correctAnsColor = Colors.green;
   Color incorrectAnsColor = Colors.red;
 
   int marks = 0;
+  int pressedCorrectOption = 0;
+  int pressedIncorrectOption = 0;
+  int notAnswered = 0;
   int i = 1;
   int j = 1;
   int timer = 10;
   String showTimer = "10";
   bool disableAnswer = false;
+  bool _isPressed = false;
   var randomList;
   //TimerController _timerController;
   TimerController _timerController;
@@ -120,24 +112,14 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     startTimer();
     createRandomList();
     _timerController = TimerController(this);
-    _controller = AnimationController(
-        duration: const Duration(milliseconds: 5000),
-        vsync: this,
-        value: 0,
-        lowerBound: 0,
-        upperBound: 1);
-    _animation =
-        CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn);
-
-    _controller.forward();
     super.initState();
   }
 
-  @override
+  /*@override
   dispose() {
     _controller.dispose();
     super.dispose();
-  }
+  }*/
 
   @override
   void setState(fn) {
@@ -176,8 +158,11 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         // **************TODO
         Timer(Duration(seconds: 2), () {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => TriviaResult(),
-          ));
+              builder: (context) => TriviaResult(
+                  marks: marks,
+                  incorrect: pressedIncorrectOption,
+                  correct: pressedCorrectOption,
+                  notAnswered: notAnswered)));
         });
       }
       colorsForOptions[0] = Colors.indigoAccent;
@@ -191,20 +176,27 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     _timerController.start();
   }
 
-  void validateAnswer(int t) {
-    if (data[i].answer == data[i].options[t]) {
-      marks = marks + 1;
-      colorToDisplay = correctAnsColor;
+  void validateAnswer(int t, bool val) {
+    if (val == true) {
+      if (data[i].answer == data[i].options[t]) {
+        marks = marks + 1;
+        colorToDisplay = correctAnsColor;
+        pressedCorrectOption++;
+      } else {
+        marks = marks - 1;
+        colorToDisplay = incorrectAnsColor;
+        pressedIncorrectOption++;
+      }
+      setState(() {
+        colorsForOptions[t] = colorToDisplay;
+        cancelTimer = true;
+        disableAnswer = true;
+        _isPressed = false;
+      });
     } else {
+      notAnswered++;
       marks = marks - 1;
-      colorToDisplay = incorrectAnsColor;
     }
-    setState(() {
-      colorsForOptions[t] = colorToDisplay;
-      cancelTimer = true;
-      disableAnswer = true;
-    });
-
     Timer(Duration(seconds: 1), nextQuestion);
   }
 
@@ -215,7 +207,16 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
           horizontal: 20.0,
         ),
         child: MaterialButton(
-          onPressed: () => validateAnswer(t),
+          onPressed: () {
+            setState(() {
+              _isPressed = !_isPressed;
+            });
+            if (_isPressed) {
+              validateAnswer(t, true);
+            } else {
+              validateAnswer(t, false);
+            }
+          },
           child: Text(
             data[i].options[t],
             maxLines: 1,
@@ -309,17 +310,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Score: ',
+                  'Score: ' + marks.toString(),
                   style: TextStyle(fontSize: 20),
-                ),
-                FadeTransition(
-                  opacity: _animation,
-                  child: Center(
-                    child: Text(
-                      marks.toString(),
-                      style: TextStyle(fontSize: 20, color: Colors.red),
-                    ),
-                  ),
                 ),
               ],
             )),
@@ -327,3 +319,5 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         )));
   }
 }
+
+mixin _isPressed {}
