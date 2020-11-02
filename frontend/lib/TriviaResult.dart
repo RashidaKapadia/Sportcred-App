@@ -3,11 +3,23 @@ import 'package:flutter/material.dart';
 import './navbar.dart';
 
 class TriviaResult extends StatefulWidget {
+  int marks, incorrect, correct, notAnswered;
+  TriviaResult({
+    Key key,
+    @required this.marks,
+    @required this.incorrect,
+    @required this.correct,
+    @required this.notAnswered,
+  }) : super(key: key);
   @override
-  _TriviaResultState createState() => _TriviaResultState();
+  _TriviaResultState createState() =>
+      _TriviaResultState(marks, incorrect, correct, notAnswered);
 }
 
 class _TriviaResultState extends State<TriviaResult> {
+  int marks, incorrect, correct, notAnswered;
+  _TriviaResultState(
+      this.marks, this.incorrect, this.correct, this.notAnswered);
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: NavBar(0),
@@ -52,7 +64,7 @@ class _TriviaResultState extends State<TriviaResult> {
                     child: Row(
                       children: [
                         Icon(Icons.check_circle, color: Colors.green),
-                        Text('correct' + '/10'),
+                        Text(correct.toString() + '/10'),
                       ],
                     ),
                     decoration: BoxDecoration(
@@ -69,7 +81,7 @@ class _TriviaResultState extends State<TriviaResult> {
                     child: Row(
                       children: [
                         Icon(Icons.cancel, color: Colors.red),
-                        Text('Incorrect' + '/10'),
+                        Text(incorrect.toString() + '/10'),
                       ],
                     ),
                     decoration: BoxDecoration(
@@ -85,8 +97,8 @@ class _TriviaResultState extends State<TriviaResult> {
                     padding: EdgeInsets.all(5.0),
                     child: Row(
                       children: [
-                        Icon(Icons.cancel, color: Colors.red),
-                        Text('NotAnswered' + '/10'),
+                        Icon(Icons.error, color: Colors.blue),
+                        Text(notAnswered.toString() + '/10'),
                       ],
                     ),
                   ),
@@ -104,7 +116,7 @@ class _TriviaResultState extends State<TriviaResult> {
             ),
             Container(
               alignment: Alignment.center,
-              child: Text('score' + '/10',
+              child: Text(marks.toString() + '/10',
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
