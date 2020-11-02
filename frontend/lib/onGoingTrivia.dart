@@ -192,7 +192,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   }
 
   void validateAnswer(int t) {
-    if (data.answer == data.options[t]) {
+    if (data[i].answer == data[i].options[t]) {
       marks = marks + 1;
       colorToDisplay = correctAnsColor;
     } else {
@@ -281,7 +281,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                 ),
 
                 child: Text(
-                  'Q. ' + data.question[i],
+                  'Q. ' + data[i].question,
                   style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -323,17 +323,6 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                 ),
               ],
             )),
-            // ****TODO :- Add Score at the bottom and Questions Left
-            //SizedBox(height: 50.0),
-            /*Expanded(
-                flex: 1,
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  child: Text(
-                    showTimer,
-                    style: TextStyle(fontSize: 35.0),
-                  ),
-                ))*/
           ],
         )));
   }
