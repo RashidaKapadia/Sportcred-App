@@ -237,7 +237,12 @@ class _TriviaState extends State<SoloTriviaPage> {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(builder: (context) {
                               // DEBUGGING...
+                              // Getting Trivia Data from backend
+                              print('GETTING DATA FROM BACKEND');
+                              _futureTriviaQuestions = getQuestions(chosenCategory);
+
                               print('TRIVIA DATA:');
+                              print(triviaData[0].question);
 
                               return OnGoingTrivia('Basketball', triviaData);
                             }),
