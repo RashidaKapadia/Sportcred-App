@@ -45,7 +45,7 @@ class _TriviaResultState extends State<TriviaResult> {
     // Check the type of response received from backend
     if (response.statusCode == 200) {
       // Go to the welcome page if sign up was successful
-      print('SUCCESS');
+      print('SUCCESS - ACS UPDATED!');
       // Navigator.of(context).pushNamed('/welcome');
       return true;
     } else {
