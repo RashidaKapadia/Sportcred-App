@@ -19,11 +19,23 @@ class OnGoingTrivia extends StatelessWidget {
   Map<String, List<String>> triviaOptions;
   Map<String, String> triviaAnswers;
 
-  OnGoingTrivia(this.category, this.triviaQuestions, this.triviaOptions, this.triviaAnswers);
+  OnGoingTrivia(this.category, this.triviaQuestions, this.triviaOptions,
+      this.triviaAnswers);
   String assetLoad;
 
   setasset() {
     assetLoad = "assets/mockdata2.json";
+    this.triviaAnswers = triviaAnswers;
+    this.triviaOptions = triviaOptions;
+    this.triviaQuestions = triviaQuestions;
+    print('**********');
+    print(this.triviaAnswers);
+    print(this.triviaQuestions);
+    print(this.triviaOptions);
+    print('***********');
+    print(triviaAnswers);
+    print(triviaQuestions);
+    print(triviaOptions);
   }
 
   @override
@@ -33,8 +45,12 @@ class OnGoingTrivia extends StatelessWidget {
         future:
             DefaultAssetBundle.of(context).loadString(assetLoad, cache: false),
         builder: (context, snapshot) {
-         // List data = json.decode(snapshot.data.toString());
-         List data = [triviaQuestions, triviaOptions, triviaAnswers]; // creating data with data from backend
+          // List data = json.decode(snapshot.data.toString());
+          List data = [
+            triviaQuestions,
+            triviaOptions,
+            triviaAnswers
+          ]; // creating data with data from backend
           if (data == null) {
             return Scaffold(
               body: Center(
@@ -79,11 +95,11 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   //TimerController _timerController;
   TimerController _timerController;
 
-  Map<String, Color> colorsForOptions = {
-    "a": Colors.indigoAccent,
-    "b": Colors.indigoAccent,
-    "c": Colors.indigoAccent,
-    "d": Colors.indigoAccent
+  Map<int, Color> colorsForOptions = {
+    0: Colors.indigoAccent,
+    1: Colors.indigoAccent,
+    2: Colors.indigoAccent,
+    3: Colors.indigoAccent
   };
 
   bool cancelTimer = false;
@@ -168,10 +184,10 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
           ));
         });
       }
-      colorsForOptions["a"] = Colors.indigoAccent;
-      colorsForOptions["b"] = Colors.indigoAccent;
-      colorsForOptions["c"] = Colors.indigoAccent;
-      colorsForOptions["d"] = Colors.indigoAccent;
+      colorsForOptions[0] = Colors.indigoAccent;
+      colorsForOptions[1] = Colors.indigoAccent;
+      colorsForOptions[2] = Colors.indigoAccent;
+      colorsForOptions[3] = Colors.indigoAccent;
       disableAnswer = false;
     });
     startTimer();
@@ -179,8 +195,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     _timerController.start();
   }
 
-  void validateAnswer(String t) {
-    if (data[2][i.toString()] == data[1][i.toString()][t]) {
+  void validateAnswer(int t) {
+    if (data[1][i] == data[2][i][t]) {
       marks = marks + 1;
       colorToDisplay = correctAnsColor;
     } else {
@@ -196,7 +212,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     Timer(Duration(seconds: 1), nextQuestion);
   }
 
-  Widget answersAnimation(String t) {
+  Widget answersAnimation(int t) {
     return Padding(
         padding: EdgeInsets.symmetric(
           vertical: 10.0,
@@ -205,7 +221,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         child: MaterialButton(
           onPressed: () => validateAnswer(t),
           child: Text(
-            data[1][i.toString()][t],
+            data[1][i][t],
             maxLines: 1,
           ),
           color: colorsForOptions[t],
@@ -283,10 +299,10 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      answersAnimation('a'),
-                      answersAnimation('b'),
-                      answersAnimation('c'),
-                      answersAnimation('d'),
+                      answersAnimation(0),
+                      answersAnimation(1),
+                      answersAnimation(2),
+                      answersAnimation(3),
                     ],
                   ),
                 ),
