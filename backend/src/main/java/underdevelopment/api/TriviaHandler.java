@@ -47,7 +47,7 @@ public class TriviaHandler {
                             .put("questionId", question.get("questionId").toString())
                             .put("question", question.get("question").toString())
                             .put("answer", question.get("answer").toString())
-                            .put("otherChoices", new JSONArray(question.get("otherChoices").toString()))
+                            .put("choices", new JSONArray(question.get("choices").toString()))
                         );
                 }
 
