@@ -20,11 +20,11 @@ public class DBAcs {
 	}
 	
 	/*
-	 * Finds the corresponding user, edits their ACS by that ammount.
+	 * Finds the corresponding user, edits their ACS by that amount.
 	 * Also updates their ACS history
 	 * Returns the new ACS on success, and -1 on failure
 	 */
-	 public static int editACS(String username, int ammount, String date) {
+	 public static int editACS(String username, int amount, String oppUsername, String game, String date) {
 		 System.out.println("editing ACS");
 		 Record record;
 		 Record data = null;
@@ -32,7 +32,7 @@ public class DBAcs {
 		 try (Session session = Connect.driver.session()) {
 	    	try (Transaction tx = session.beginTransaction()) {
 	    		// Update the person's ACS score
-				Result result = tx.run(String.format("MATCH (n { username: '%s' }) SET n.acs = %d + toInteger(n.acs)  RETURN n.username as username, n.acs as acs", username, ammount));
+				Result result = tx.run(String.format("MATCH (n { username: '%s' }) SET n.acs = %d + toInteger(n.acs)  RETURN n.username as username, n.acs as acs", username, amount));
 				//Result result = tx.run("MATCH (n { username: 'banana420' }) SET n.acs = 5556  RETURN n.username as username, n.acs as acs");
 	    		record = result.next();
 	    		newACS = record.get("acs").asInt();
@@ -45,18 +45,18 @@ public class DBAcs {
 
 	    		if (result2.hasNext()) {
 	    			System.out.println("has next");
-	    			// Update the person's ACS history
+	    			// Update the person's ACS history 
 					tx.run(String.format("MATCH(m {username: '%s'}) -[r:ACSRecord]->(o) "
-							+ "CREATE (n:ACSRecord { ammount: %d, date: '%s' })"
+							+ "CREATE (n:ACSRecord { amount: %d, date: '%s' , oppUsername: '%s', gameType: '%s'})"
 							+ "CREATE ((m)-[h:ACSRecord]-> (n))"
 							+ "CREATE ((n)-[i:ACSRecord]-> (o))"
 							+ "DELETE r "
-							, username, ammount, date));
+							, username, amount, date, oppUsername, game));
 	    		}else {
 	    			System.out.println("has no next");
 	    			tx.run(String.format("MATCH (n:user {username: '%s'})" + 
-	    					"CREATE (m:ACSRecord { ammount: %d, date: '%s' })" + 
-	    					"CREATE (n)-[:ACSRecord]->(m)", username, ammount, date));
+	    					"CREATE (m:ACSRecord { amount: %d, date: '%s', oppUsername: '%s', gameType: '%s' })" + 
+	    					"CREATE (n)-[:ACSRecord]->(m)", username,  amount, date, oppUsername, game));
 	    		}		
 
 				tx.commit();
@@ -78,37 +78,47 @@ public class DBAcs {
 	 public static String[][] getACS(String username, int limit) {
 		 /*
 		  * MATCH (tgtUser:user { username:"banana420" })-[:ACSRecord *1..]->(ACSRecord: ACSRecord)
-		  * RETURN ACSRecord.ammount, ACSRecord.date;
+		  * RETURN ACSRecord.amount, ACSRecord.date;
 		  */
- 		String[][] retVal = new String[2][];
+ 		String[][] retVal = new String[4][];
 
 		 System.out.println("running the getting ACS");
 		 try (Session session = Connect.driver.session()) {
 		    	try (Transaction tx = session.beginTransaction()) {
 		    		Result result = tx.run(String.format("MATCH (tgtUser:user { username: '%s' })-[:ACSRecord *1..%d]->(ACSRecord: ACSRecord)"
-		    				+ " RETURN ACSRecord.ammount as ammount, ACSRecord.date as date", username, limit) );
+		    				+ " RETURN ACSRecord.amount as amount, ACSRecord.date as date, ACSRecord.oppUsername as oppUsername, ACSRecord.gameType as game", username, limit) );
 		    		
 		    		// I use String cause it auto fills with null.
-		    		String ammounts[] = new String[limit];
+		    		String amounts[] = new String[limit];
 		    		String dates[] = new String[limit];
-		    		retVal[0] = ammounts;
+		    		String oppUsernames[] = new String[limit];
+		    		String gameType[] = new String[limit];
+		    		
+		    		retVal[0] = amounts;
 		    		retVal[1] = dates;
+		    		retVal[2] = oppUsernames;
+		    		retVal[3] = gameType;
+		    		
 		    		int i = 0;
 		    		System.out.println("looping stuff");
 		    		while(result.hasNext() && i < limit) {
 		    			Record data = result.next();
-		    			ammounts[i] = Integer.toString(data.get("ammount").asInt());
+		    			amounts[i] = Integer.toString(data.get("amount").asInt());
 		    			dates[i]= data.get("date").asString();
-		    			//System.out.println(ammounts[i]);
+		    			oppUsernames[i] = data.get("oppUsername").asString();
+		    			gameType[i] = data.get("game").asString();
+		    			//System.out.println(amounts[i]);
 		    			//System.out.println(dates[i]);
 		    			i++;
 		    		}
+		    		/*
 		    		System.out.println("We are returning");
 		    		for(int j = 0; j < limit; j++) {
 		    			System.out.println(retVal[0][j]);
 		    			System.out.println(retVal[1][j]);
 
 		    		}
+		    		*/
 		    	}catch (Exception e) {
 	                e.printStackTrace();
 	    	        return null;
@@ -122,4 +132,4 @@ public class DBAcs {
 		 
 	 }
 }
-//Result result = session.writeTransaction(tx -> tx.run( String.format("MATCH (n { username: '%s' }) SET n.acs = %d RETURN n.name, n.acs", username, ammount)));
+//Result result = session.writeTransaction(tx -> tx.run( String.format("MATCH (n { username: '%s' }) SET n.acs = %d RETURN n.name, n.acs", username, amount)));
