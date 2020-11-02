@@ -192,7 +192,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   }
 
   void validateAnswer(int t) {
-    if (data[1][i] == data[2][i][t]) {
+    if (data.answer == data.options[t]) {
       marks = marks + 1;
       colorToDisplay = correctAnsColor;
     } else {
@@ -217,7 +217,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         child: MaterialButton(
           onPressed: () => validateAnswer(t),
           child: Text(
-            data[1][i][t],
+            data[i].options[t],
             maxLines: 1,
           ),
           color: colorsForOptions[t],
@@ -281,7 +281,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                 ),
 
                 child: Text(
-                  'Q. ' + data[0][i.toString()],
+                  'Q. ' + data.question[i],
                   style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                 ),
               ),
