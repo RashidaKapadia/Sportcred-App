@@ -13,7 +13,13 @@ import 'package:flutter/animation.dart';
 
 class OnGoingTrivia extends StatelessWidget {
   String category;
-  OnGoingTrivia(this.category);
+
+  // Trivia questions, options and correct answers
+  Map<String, String> triviaQuestions;
+  Map<String, List<String>> triviaOptions;
+  Map<String, String> triviaAnswers;
+
+  OnGoingTrivia(this.category, this.triviaQuestions, this.triviaOptions, this.triviaAnswers);
   String assetLoad;
 
   setasset() {
@@ -27,7 +33,8 @@ class OnGoingTrivia extends StatelessWidget {
         future:
             DefaultAssetBundle.of(context).loadString(assetLoad, cache: false),
         builder: (context, snapshot) {
-          List data = json.decode(snapshot.data.toString());
+         // List data = json.decode(snapshot.data.toString());
+         List data = [triviaQuestions, triviaOptions, triviaAnswers]; // creating data with data from backend
           if (data == null) {
             return Scaffold(
               body: Center(
