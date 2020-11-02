@@ -25,11 +25,10 @@ class _TriviaResultState extends State<TriviaResult> {
   _TriviaResultState(
       this.marks, this.incorrect, this.correct, this.notAnswered);
 
-  // Http post request to signup
+  // Http post request to update ACS
   Future updateACS() async {
     // Make the request and store the response
     final http.Response response = await http.post(
-        // new Uri.http("localhost:8080", "/api/login"),
         'http://localhost:8080/api/editACS"',
         headers: {
           'Content-Type': 'text/plain; charset=utf-8',
@@ -44,9 +43,8 @@ class _TriviaResultState extends State<TriviaResult> {
 
     // Check the type of response received from backend
     if (response.statusCode == 200) {
-      // Go to the welcome page if sign up was successful
       print('SUCCESS - ACS UPDATED!');
-      // Navigator.of(context).pushNamed('/welcome');
+      // Return true if ACS was updated successfully
       return true;
     } else {
       return false;
