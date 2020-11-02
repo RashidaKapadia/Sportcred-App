@@ -135,6 +135,9 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         _timerController.start();
         if (timer < 1) {
           t.cancel();
+          if (_isPressed == false) {
+            validateAnswer(0, false);
+          }
           nextQuestion();
         } else if (cancelTimer == true) {
           t.cancel();
@@ -155,7 +158,6 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         i = randomList[j];
         j++;
       } else {
-        // **************TODO
         Timer(Duration(seconds: 2), () {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (context) => TriviaResult(
@@ -181,11 +183,11 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
       if (data[i].answer == data[i].options[t]) {
         marks = marks + 1;
         colorToDisplay = correctAnsColor;
-        pressedCorrectOption++;
+        pressedCorrectOption = pressedCorrectOption + 1;
       } else {
         marks = marks - 1;
         colorToDisplay = incorrectAnsColor;
-        pressedIncorrectOption++;
+        pressedIncorrectOption = pressedIncorrectOption + 1;
       }
       setState(() {
         colorsForOptions[t] = colorToDisplay;
@@ -194,7 +196,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         _isPressed = false;
       });
     } else {
-      notAnswered++;
+      notAnswered = notAnswered + 1;
       marks = marks - 1;
     }
     Timer(Duration(seconds: 1), nextQuestion);
@@ -208,14 +210,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         ),
         child: MaterialButton(
           onPressed: () {
-            setState(() {
-              _isPressed = !_isPressed;
-            });
-            if (_isPressed) {
-              validateAnswer(t, true);
-            } else {
-              validateAnswer(t, false);
-            }
+            _isPressed = true;
+            validateAnswer(t, true);
           },
           child: Text(
             data[i].options[t],
@@ -293,15 +289,23 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
               child: AbsorbPointer(
                 absorbing: disableAnswer,
                 child: Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      answersAnimation(0),
-                      answersAnimation(1),
-                      answersAnimation(2),
-                      answersAnimation(3),
-                    ],
-                  ),
+                  child: Wrap(
+                      direction: Axis.vertical,
+                      // spacing: 8.0, // gap between adjacent chips
+                      //runSpacing: 4.0,
+                      //mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(data[i].options.length, (index) {
+                        return answersAnimation(index);
+                      })
+                      //children: List.generate(data[i].length(options), index){
+                      //return answersAnimation(index);
+                      // },
+                      //answersAnimation(0),
+                      //answersAnimation(1),
+                      //answersAnimation(2),
+                      //answersAnimation(3),
+
+                      ),
                 ),
               ),
             ),
@@ -319,5 +323,3 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         )));
   }
 }
-
-mixin _isPressed {}
