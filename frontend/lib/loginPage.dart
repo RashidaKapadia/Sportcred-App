@@ -3,10 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/fieldStyles.dart';
+import 'package:frontend/formHelper.dart';
 import 'package:http/http.dart' as http;
-
-// Global variable for currUser to access on other pages
-String currUser = "";
 
 // -- HTTP Request ---
 
@@ -15,8 +14,6 @@ class LoginStatus {
   final String message;
   LoginStatus(this.success, this.message);
 }
-
-
 
 // -- Widget --
 class LoginPage extends StatefulWidget {
@@ -55,183 +52,163 @@ class _State_Of_Login_Page extends State<LoginPage> {
   }
 
 // Http post request to login
-Future<LoginStatus> login(String username, String password) async {
-  // Make the request and store the response
-  final http.Response response = await http.post(
-    // new Uri.http("localhost:8080", "/api/login"),
-    'http://localhost:8080/api/login',
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'Accept': 'text/plain; charset=utf-8',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: jsonEncode(
-        <String, String>{'username': username, 'password': password}),
-  );
-
-  if (response.statusCode == 200) {
-    // Store the session token
-    String token = jsonDecode(response.body)['token'];
-    await FlutterSession().set('token', token);
-    await FlutterSession().set('username', username);
-    // Set the currUser to username to access from other pages
-    setState(() {
-      currUser = username;
-    });
-
-    // Go to the homepage if login is successful
-     Navigator.of(context).pushNamed("/homepage");
-    return LoginStatus(true, "Login successful!");
-  } else if (response.statusCode == 403) {
-    return LoginStatus(false, "Your username or password is incorrect.");
-  } else {
-    return LoginStatus(false, "Login failed, please contact your admin.");
-  }
-}
-
-
-  Widget loginStatus() {
-    return FutureBuilder<LoginStatus>(
-      future: _futureLoginStatus,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Text(snapshot.data.message);
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        } else {
-          return Container(
-              alignment: Alignment.center,
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(),
-              ));
-        }
+  Future<LoginStatus> login(String username, String password) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      // new Uri.http("localhost:8080", "/api/login"),
+      'http://localhost:8080/api/login',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
       },
+      body: jsonEncode(
+          <String, String>{'username': username, 'password': password}),
     );
+
+    if (response.statusCode == 200) {
+      // Store the session token
+      String token = jsonDecode(response.body)['token'];
+      await FlutterSession().set('token', token);
+      await FlutterSession().set('username', username);
+      return LoginStatus(true, "Login successful!");
+    } else if (response.statusCode == 403) {
+      return LoginStatus(false, "Your username or password is incorrect.");
+    } else {
+      return LoginStatus(false, "Login failed, please contact your admin.");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            body: Padding(
-                padding: EdgeInsets.all(10),
-                child: ListView(
-                  children: <Widget>[
-                    logoTitle(),
-                    Container(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                        child: Text(
-                          'Welcome, Sign in!',
-                          style:
-                              TextStyle(fontSize: 17, color: Color(0xFF9E9E9E)),
-                        )),
-                    (_futureLoginStatus != null)
-                        ? loginStatus()
-                        : Text("Enter your information below:"),
-                    // Username field
-                    TextFormField(
-                      //padding: EdgeInsets.all(5),
-                      //child: TextField(
-                      controller: nameController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Enter your username';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.person),
-                        labelText: 'User Name',
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          this.username = value;
-                        });
-                      },
-                    ),
-                    // Pasword field
-                    TextFormField(
-                      //padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      //child: TextField(
-                      obscureText: true,
-                      controller: passwordController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Enter your password';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        //border: OutlineInputBorder(),
-                        icon: Icon(Icons.lock),
-                        labelText: 'Password',
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          this.password = value;
-                        });
-                      },
-                    ),
-                    // Forgot Password Link
-                    FlatButton(
-                      textColor: Color(0xFFFF8F00),
-                      child: Text('Forgot Password'),
-                      onPressed: () {
-                        //Move to forgot password screen, to be implemented after
-                      },
-                    ),
-                    // Login button
-                    Container(
-                        height: 50,
-                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        child: RaisedButton(
-                          textColor: Colors.white,
-                          color: Color(0xFFFF8F00),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(18.0)),
-                          child: Text(
-                            'Login',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              // Call the HTTP request to make an album
-                              _futureLoginStatus = login(
-                                  nameController.text, passwordController.text);
-                            });
-                           
-                          },
-                        )),
-                    // Sign up Link
-                    Container(
-                        child: Row(
+    return Scaffold(
+        body: Container(
+            padding: EdgeInsets.all(10),
+            child: Form(
+                key: _loginKey,
+                child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: ListView(
                       children: <Widget>[
-                        Text('Not a member yet?'),
+                        logoTitle(),
+                        Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            child: Text(
+                              'Welcome, Sign in!',
+                              style: TextStyle(
+                                  fontSize: 17, color: Color(0xFF9E9E9E)),
+                            )),
+                        (_futureLoginStatus != null)
+                            ? getStatus(context, _futureLoginStatus)
+                            : Text("Enter your information below:"),
+                        // Username field
+                        TextFormField(
+                          //padding: EdgeInsets.all(5),
+                          //child: TextField(
+                          controller: nameController,
+                          validator: requiredValidator,
+                          cursorColor: mainColour,
+                          decoration: InputDecoration(
+                            icon: Icon(Icons.person),
+                            labelText: 'User Name',
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              this.username = value;
+                            });
+                          },
+                        ),
+                        // Pasword field
+                        TextFormField(
+                          //padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                          //child: TextField(
+                          obscureText: true,
+                          cursorColor: mainColour,
+                          controller: passwordController,
+                          validator: requiredValidator,
+                          decoration: InputDecoration(
+                            //border: OutlineInputBorder(),
+                            icon: Icon(Icons.lock),
+                            labelText: 'Password',
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              this.password = value;
+                            });
+                          },
+                        ),
+                        // Forgot Password Link
                         FlatButton(
                           textColor: Color(0xFFFF8F00),
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyle(fontSize: 20),
-                          ),
+                          child: Text('Forgot Password'),
                           onPressed: () {
-                            //if (_loginKey.currentState.validate()) {
-                            //_loginKey.currentState.save();
-
-                            // the model object at this point can be POSTed
-                            // to an API or persisted for further use
-
-                            //signup screen
-                            Navigator.of(context).pushNamed("/signup");
+                            //Move to forgot password screen, to be implemented after
                           },
-                        )
+                        ),
+                        // Login button
+                        Container(
+                            height: 50,
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: RaisedButton(
+                              textColor: Colors.white,
+                              color: Color(0xFFFF8F00),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      new BorderRadius.circular(18.0)),
+                              child: Text(
+                                'Login',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  // Validate the fields
+                                  if (_loginKey.currentState.validate()) {
+                                    // Make HTTP request
+                                    _futureLoginStatus = login(
+                                        nameController.text,
+                                        passwordController.text);
+
+                                    // If response has been returned, check the status and go to homepage if
+                                    // login was successful
+                                    if (_futureLoginStatus != null) {
+                                      checkStatus(context, _futureLoginStatus,
+                                          "/homepage");
+                                    }
+                                  } else {
+                                    errorPopup(context,
+                                        "Please provide both your username and password.");
+                                  }
+                                });
+                              },
+                            )),
+                        // Sign up Link
+                        Container(
+                            child: Row(
+                          children: <Widget>[
+                            Text('Not a member yet?'),
+                            FlatButton(
+                              textColor: Color(0xFFFF8F00),
+                              child: Text(
+                                'Sign Up',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              onPressed: () {
+                                //if (_loginKey.currentState.validate()) {
+                                //_loginKey.currentState.save();
+
+                                // the model object at this point can be POSTed
+                                // to an API or persisted for further use
+
+                                //signup screen
+                                Navigator.of(context).pushNamed("/signup");
+                              },
+                            )
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.center,
+                        ))
                       ],
-                      mainAxisAlignment: MainAxisAlignment.center,
-                    ))
-                  ],
-                ))));
+                    )))));
     // _loginKey yet to be used....
   }
 }

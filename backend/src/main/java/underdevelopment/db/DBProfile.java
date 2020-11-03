@@ -10,13 +10,13 @@ import org.neo4j.driver.Transaction;
 public class DBProfile{
 
     // DB command for upadting user status
-    public static void updateUserInfo(String username, String status, String email, 
+    public static void updateUserInfo(String username, String firstname, String lastname, String status, String email, 
                                     String about, String dob, String acs){
         
         try (Session session = Connect.driver.session()) {
             session.writeTransaction(tx -> tx.run(
-                "MATCH (u:user) WHERE u.username = $username SET u.status = $status, u.email = $email, u.about = $about, u.dob = $dob, u.acs = $acs",
-                parameters("username", username, "status", status, "email", email, "about", about, "dob", dob, "acs", acs)));
+                "MATCH (u:user) WHERE u.username = $username SET u.firstname = $firstname, u.lastname = $lastname, u.status = $status, u.email = $email, u.about = $about, u.dob = $dob, u.acs = $acs",
+                parameters("username", username, "firstname", firstname, "lastname",lastname, "status", status, "email", email, "about", about, "dob", dob, "acs", acs)));
             
             session.close();
         }
@@ -30,7 +30,7 @@ public class DBProfile{
     public static Record getUserInfo(String username){
         try (Session session = Connect.driver.session()) {
             try (Transaction tx = session.beginTransaction()) {
-              Result node_result = tx.run("MATCH (u:user) WHERE u.username = $username WITH u RETURN u.username as username, u.email as email, u.dob as dob, u.about as about, u.status as status, toInteger(u.acs) as acs ",
+              Result node_result = tx.run("MATCH (u:user) WHERE u.username = $username WITH u RETURN u.username as username, u.firstname as firstname, u.lastname as lastname, u.email as email, u.dob as dob, u.about as about, u.status as status, toInteger(u.acs) as acs ",
               parameters("username", username));
       
               // If any results have been returned, return the record

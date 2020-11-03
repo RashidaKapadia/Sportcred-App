@@ -15,12 +15,14 @@ public class ProfileHandler {
     public static JsonRequestHandler updateUserInfo() {
         return (JSONObject jsonObj) -> {
 
-            String username, status, email, dob, about;
+            String username, firstname, lastname, status, email, dob, about;
             String acs;
 
             // Get input
             try {
                 username = jsonObj.getString("username");
+                firstname = jsonObj.getString("firstname");
+                lastname = jsonObj.getString("lastname");
                 status = jsonObj.getString("status");
                 email = jsonObj.getString("email");
                 dob = jsonObj.getString("dob");
@@ -32,7 +34,7 @@ public class ProfileHandler {
 
             // Run DB command
             try {
-                DBProfile.updateUserInfo(username, status, email, about, dob, acs);
+                DBProfile.updateUserInfo(username, firstname, lastname, status, email, about, dob, acs);
                 return new JsonHttpReponse(Status.OK);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -86,6 +88,8 @@ public class ProfileHandler {
                 
                 // Set up response in a JSON format
                 String usrname = r.get("username").asString();
+                String firstname = r.get("firstname").asString();
+                String lastname = r.get("lastname").asString();
                 String status = r.get("status").asString();
                 String email = r.get("email").asString();
                 String dob = r.get("dob").asString();
@@ -98,6 +102,8 @@ public class ProfileHandler {
 
                 JSONObject response = new JSONObject();
                 response.put("username", usrname);
+                response.put("firstname", firstname);
+                response.put("lastname", lastname);
                 response.put("status", status);
                 response.put("email", email);
                 response.put("dob", dob);
