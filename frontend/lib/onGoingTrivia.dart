@@ -36,6 +36,7 @@ class OnGoingTrivia extends StatelessWidget {
         builder: (context, snapshot) {
           // List data = json.decode(snapshot.data.toString());
           List data = triviaQuestions; // creating data with data from backend
+          print(data.length);
           if (data == null) {
             return Scaffold(
               body: Center(
@@ -139,7 +140,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         if (timer < 1) {
           t.cancel();
           if (_isPressed == false) {
-            validateAnswer(0, false);
+            marks = marks - 1;
           }
           nextQuestion();
         } else if (cancelTimer == true) {
@@ -167,7 +168,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                   marks: marks,
                   incorrect: pressedIncorrectOption,
                   correct: pressedCorrectOption,
-                  notAnswered: notAnswered)));
+                  notAnswered:
+                      10 - (pressedIncorrectOption + pressedCorrectOption))));
         });
       }
       //colorsForOptions[0] = Colors.indigoAccent;
@@ -202,7 +204,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         _isPressed = false;
       });
     } else {
-      notAnswered = notAnswered + 1;
+      //notAnswered = notAnswered + 1;
       marks = marks - 1;
     }
 
