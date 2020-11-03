@@ -39,7 +39,7 @@ class _TriviaResultState extends State<TriviaResult> {
             body: jsonEncode(<String, String>{
               "username": username,
               "token": token,
-              "ammount": this.marks.toString(),
+              "amount": this.marks.toString(),
               "date": DateTime.now().toString()
             }));
 
