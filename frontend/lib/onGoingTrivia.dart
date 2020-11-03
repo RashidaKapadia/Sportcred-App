@@ -68,9 +68,9 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   Color incorrectAnsColor = Colors.red;
 
   int marks = 0;
-  int pressedCorrectOption = 0; // number of correct answers picked
-  int pressedIncorrectOption = 0; // number of questions answered wrong
-  int notAnswered = 0; // number of questions not answered
+  var pressedCorrectOption = 0; // number of correct answers picked
+  var pressedIncorrectOption = 0; // number of questions answered wrong
+  var notAnswered = 0; // number of questions not answered
   int i = 1;
   int j = 1;
   int timer = 10;
@@ -150,14 +150,14 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         i = randomList[j];
         j++;
       } else {
-        Timer(Duration(seconds: 2), () {
+        Timer(Duration(seconds: 0), () {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (context) => TriviaResult(
                   marks: marks,
                   incorrect: pressedIncorrectOption,
                   correct: pressedCorrectOption,
                   notAnswered:
-                      10 - (pressedIncorrectOption + pressedCorrectOption))));
+                      10 - pressedCorrectOption - pressedIncorrectOption)));
         });
       }
       disableAnswer = false;
@@ -196,8 +196,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   Widget answersAnimation(int t) {
     return Padding(
         padding: EdgeInsets.symmetric(
-          vertical: 10.0,
-          horizontal: 20.0,
+          vertical: 5.0,
+          horizontal: 10.0,
         ),
         child: MaterialButton(
           onPressed: () {
@@ -250,7 +250,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         child: Scaffold(
             body: Column(
           children: <Widget>[
-            SizedBox(height: 50.0),
+            SizedBox(height: 25.0),
             Expanded(
                 child: Container(
                     child: SimpleTimer(
@@ -258,12 +258,12 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
               duration: Duration(seconds: 10),
               timerStyle: TimerStyle.expanding_sector,
             ))),
-            SizedBox(height: 20.0),
-            Expanded(
-              flex: 3,
+            SizedBox(height: 25.0),
+            Container(
+              //flex: 3,
               child: Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(20.0),
+                padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.indigoAccent, width: 5.0),
                   borderRadius: BorderRadius.all(Radius.circular(50)),
@@ -274,13 +274,14 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                 ),
               ),
             ),
+            SizedBox(height: 30.0),
             Expanded(
               flex: 6,
               child: AbsorbPointer(
                 absorbing: disableAnswer,
                 child: Container(
                   child: Wrap(
-                      direction: Axis.vertical,
+                      direction: Axis.horizontal,
                       children: List.generate(data[i].options.length, (index) {
                         return answersAnimation(index);
                       })),
