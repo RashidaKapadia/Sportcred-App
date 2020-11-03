@@ -28,18 +28,18 @@ class _TriviaResultState extends State<TriviaResult> {
   // Http post request to update ACS
   Future updateACS() async {
     // Make the request and store the response
-    final http.Response response = await http.post(
-        'http://localhost:8080/api/editACS"',
-        headers: {
-          'Content-Type': 'text/plain; charset=utf-8',
-          'Accept': 'text/plain; charset=utf-8',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: jsonEncode(<String, String>{
-          "username": currUser,
-          "ammount": this.marks.toString(),
-          "date": DateTime.now().toString()
-        }));
+    final http.Response response =
+        await http.post('http://localhost:8080/api/editACS"',
+            headers: {
+              'Content-Type': 'text/plain; charset=utf-8',
+              'Accept': 'text/plain; charset=utf-8',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: jsonEncode(<String, String>{
+              "username": currUser,
+              "ammount": this.marks.toString(),
+              "date": DateTime.now().toString()
+            }));
 
     // Check the type of response received from backend
     if (response.statusCode == 200) {
@@ -81,6 +81,7 @@ class _TriviaResultState extends State<TriviaResult> {
             ),
             SizedBox(height: 20.0),
             Container(
+              alignment: Alignment.center,
               padding: EdgeInsets.all(20.0),
               child: Text(
                 'Your trivia result is as follows:',
@@ -94,12 +95,14 @@ class _TriviaResultState extends State<TriviaResult> {
             SizedBox(height: 10.0),
             Container(
               // width: MediaQuery.of(context).size.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
+                //direction: Axis.horizontal,
                 children: [
                   Container(
-                    padding: EdgeInsets.all(5.0),
+                    width: 200.0,
+                    padding: EdgeInsets.all(2.0),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.check_circle, color: Colors.green),
                         Text('Correct: '),
@@ -108,7 +111,7 @@ class _TriviaResultState extends State<TriviaResult> {
                     ),
                     decoration: BoxDecoration(
                       border: Border(
-                        right: BorderSide(
+                        bottom: BorderSide(
                           color: Colors.grey,
                           width: 3.0,
                         ),
@@ -116,8 +119,10 @@ class _TriviaResultState extends State<TriviaResult> {
                     ),
                   ),
                   Container(
+                    width: 200.0,
                     padding: EdgeInsets.all(5.0),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.cancel, color: Colors.red),
                         Text('Incorrect: '),
@@ -126,7 +131,7 @@ class _TriviaResultState extends State<TriviaResult> {
                     ),
                     decoration: BoxDecoration(
                       border: Border(
-                        right: BorderSide(
+                        bottom: BorderSide(
                           color: Colors.grey,
                           width: 3.0,
                         ),
@@ -136,6 +141,7 @@ class _TriviaResultState extends State<TriviaResult> {
                   Container(
                     padding: EdgeInsets.all(5.0),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.error, color: Colors.blue),
                         Text('Not Answered: '),
@@ -153,6 +159,7 @@ class _TriviaResultState extends State<TriviaResult> {
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
                   )),
             ),
             Container(
@@ -163,7 +170,7 @@ class _TriviaResultState extends State<TriviaResult> {
                     fontWeight: FontWeight.bold,
                   )),
             ),
-            SizedBox(height: 45.0),
+            SizedBox(height: 35.0),
             RaisedButton(
               highlightElevation: 25.0,
               //color: Colors.black,
