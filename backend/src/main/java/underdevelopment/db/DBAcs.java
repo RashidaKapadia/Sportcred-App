@@ -32,7 +32,7 @@ public class DBAcs {
 		 try (Session session = Connect.driver.session()) {
 	    	try (Transaction tx = session.beginTransaction()) {
 	    		// Update the person's ACS score
-				Result result = tx.run(String.format("MATCH (n { username: '%s' }) SET n.acs = %d + toInteger(n.acs)  RETURN n.username as username, n.acs as acs", username, amount));
+				Result result = tx.run(String.format("MATCH (n:user { username: '%s' }) SET n.acs = %d + toInteger(n.acs)  RETURN n.username as username, n.acs as acs", username, amount));
 				//Result result = tx.run("MATCH (n { username: 'banana420' }) SET n.acs = 5556  RETURN n.username as username, n.acs as acs");
 	    		record = result.next();
 	    		newACS = record.get("acs").asInt();
