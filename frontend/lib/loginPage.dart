@@ -7,9 +7,6 @@ import 'package:frontend/fieldStyles.dart';
 import 'package:frontend/formHelper.dart';
 import 'package:http/http.dart' as http;
 
-// Global variable for currUser to access on other pages
-String currUser = "";
-
 // -- HTTP Request ---
 
 class LoginStatus {
@@ -74,10 +71,6 @@ class _State_Of_Login_Page extends State<LoginPage> {
       String token = jsonDecode(response.body)['token'];
       await FlutterSession().set('token', token);
       await FlutterSession().set('username', username);
-      // Set the currUser to username to access from other pages
-      setState(() {
-        currUser = username;
-      });
       return LoginStatus(true, "Login successful!");
     } else if (response.statusCode == 403) {
       return LoginStatus(false, "Your username or password is incorrect.");
