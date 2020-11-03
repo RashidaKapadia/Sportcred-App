@@ -6,6 +6,7 @@ import './signup_page.dart';
 import './welcome_page.dart';
 import './loginPage.dart';
 import './homepage.dart';
+import './settings.dart';
 import './HTTPRequestExample.dart';
 import './profile_page.dart';
 

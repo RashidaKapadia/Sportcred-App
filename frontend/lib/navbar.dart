@@ -51,7 +51,7 @@ class NavBarState extends State<NavBar> {
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
           title: Text('Settings'),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black,
         ),
       ],
       onTap: (index) {
@@ -63,7 +63,7 @@ class NavBarState extends State<NavBar> {
           } else if (index == 2) {
             Navigator.of(context).pushNamed("/profile");
           } else if (index == 3) {
-            //Navigator.of(context).pushNamed("/settings");
+            Navigator.of(context).pushNamed("/settings");
           }
         });
       },
