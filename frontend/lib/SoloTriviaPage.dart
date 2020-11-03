@@ -73,23 +73,23 @@ class _TriviaState extends State<SoloTriviaPage> {
       // Store the session token
       print("PROFILE GET -> RESPONSE:" + response.body.toString());
       print(jsonDecode(response.body)['questions']);
-        List<TriviaQuestion> triviaQs = [];
-        // Get the questions, options and correctAnswers and store them in the class variables
-        for (Map<String, dynamic> question
-            in jsonDecode(response.body)["questions"] as List) {
-                print("*********************");
-                print(TriviaQuestion.fromJson(question).question);
-                print("*********************");
+      List<TriviaQuestion> triviaQs = [];
+      // Get the questions, options and correctAnswers and store them in the class variables
+      for (Map<String, dynamic> question
+          in jsonDecode(response.body)["questions"] as List) {
+        print("*********************");
+        print(TriviaQuestion.fromJson(question).question);
+        print("*********************");
 
-               triviaQs += [TriviaQuestion.fromJson(question)];
-        }
-        //setState(() {
-          //this.triviaData = triviaQs;
-        //});
-        
-        // DEBUGGING STATEMENTS
-        print('DEBUGGING: TRIVIA GET QUESTIONS');
-        print("\n\nTRIVIA QUESTION: " + triviaQs[0].question);
+        triviaQs += [TriviaQuestion.fromJson(question)];
+      }
+      //setState(() {
+      //this.triviaData = triviaQs;
+      //});
+
+      // DEBUGGING STATEMENTS
+      print('DEBUGGING: TRIVIA GET QUESTIONS');
+      print("\n\nTRIVIA QUESTION: " + triviaQs[0].question);
 
       // Return trivia data
       return triviaQs;
@@ -100,7 +100,7 @@ class _TriviaState extends State<SoloTriviaPage> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
     setState(() {
@@ -108,12 +108,8 @@ class _TriviaState extends State<SoloTriviaPage> {
 
       _futureTriviaQuestions = getQuestions(chosenCategory);
     });
-    
-
-
-   // print(triviaData[0].question);
-
   }
+
   Future<Widget> DialogBox(BuildContext context) async {
     showDialog(
         context: context,
@@ -256,19 +252,18 @@ class _TriviaState extends State<SoloTriviaPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(18.0)),
                         onPressed: () {
-                              // DEBUGGING...
-                              // Getting Trivia Data from backend
-                            //  print('GETTING DATA FROM BACKEND');
-                             // _futureTriviaQuestions = getQuestions(chosenCategory);
+                          // DEBUGGING...
+                          // Getting Trivia Data from backend
+                          //  print('GETTING DATA FROM BACKEND');
+                          // _futureTriviaQuestions = getQuestions(chosenCategory);
 
-                             // print(triviaData[0].question);
-                              if (_futureTriviaQuestions != null) {
-                                goToTrivia();
-                              }
-                              //return OnGoingTrivia('Basketball', triviaData);
-                            
-                            //OnGoingTrivia("Basketball")),
-                          
+                          // print(triviaData[0].question);
+                          if (_futureTriviaQuestions != null) {
+                            goToTrivia();
+                          }
+                          //return OnGoingTrivia('Basketball', triviaData);
+
+                          //OnGoingTrivia("Basketball")),
                         },
                       ),
                     ],
@@ -300,13 +295,11 @@ class _TriviaState extends State<SoloTriviaPage> {
 
   void goToTrivia() async {
     await _futureTriviaQuestions.then((snapshot) {
-      if (snapshot.isNotEmpty){
+      if (snapshot.isNotEmpty) {
         print(snapshot[0].question);
         print('GOING TO ONGOING TRIVIA PAGE');
-         Navigator.of(context).pushReplacement(
-                             MaterialPageRoute(builder: (context) => OnGoingTrivia('Basketball', snapshot)));
-                           
-                            
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => OnGoingTrivia('Basketball', snapshot)));
       }
     });
   }
