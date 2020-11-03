@@ -21,7 +21,7 @@ public class ACSHandler {
 	            // Check to make sure the username exists
 	            try {
 	                username = jsonObj.getString("username");
-	                ammount = jsonObj.getInt("ammount");
+	                ammount = jsonObj.getInt("amount");
 	            } catch (Exception e) {
 	                return new JsonHttpReponse(Status.BADREQUEST);
 	            }
