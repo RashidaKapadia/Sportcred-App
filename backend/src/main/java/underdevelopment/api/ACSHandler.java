@@ -18,12 +18,24 @@ public class ACSHandler {
 
 	            String response;
 
-	            // Check to make sure the username exists
 	            try {
 	                username = jsonObj.getString("username");
 	                ammount = jsonObj.getInt("ammount");
 	            } catch (Exception e) {
 	                return new JsonHttpReponse(Status.BADREQUEST);
+	            }
+	            
+	            // Check if the username exists
+	            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+	          	  try {
+	                  response = new JSONObject()
+	                      .put("Error", "Username doesn't exist")
+	                      .toString();
+	                  	return new JsonHttpReponse(Status.CONFLICT, response);
+	              } catch (JSONException e) {
+	                  e.printStackTrace();
+	                  return new JsonHttpReponse(Status.SERVERERROR);
+	              }
 	            }
 	            
 	            // Make sure we have a positive number.....
@@ -60,7 +72,7 @@ public class ACSHandler {
 	            
 	            String response;
 
-	            // Check to make sure the username exists
+	            // Check to make sure the variables exist
 	            try {
 	                username = jsonObj.getString("username");
 	                oppUsername = jsonObj.getString("oppUsername");
@@ -70,7 +82,19 @@ public class ACSHandler {
 	            } catch (Exception e) {
 	                return new JsonHttpReponse(Status.BADREQUEST);
 	            }
-
+	            
+	            // Check if the username exists
+	            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+	          	  try {
+	                  response = new JSONObject()
+	                      .put("Error", "Username doesn't exist")
+	                      .toString();
+	                  	return new JsonHttpReponse(Status.CONFLICT, response);
+	              } catch (JSONException e) {
+	                  e.printStackTrace();
+	                  return new JsonHttpReponse(Status.SERVERERROR);
+	              }
+	            }
 	            // Run the database command 			
 	            try {
 		    		System.out.println("running the edit ACS");
