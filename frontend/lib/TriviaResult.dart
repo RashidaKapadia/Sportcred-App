@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/loginPage.dart';
 //import 'package:frontend/homepage.dart';
 import './navbar.dart';
@@ -26,7 +27,7 @@ class _TriviaResultState extends State<TriviaResult> {
       this.marks, this.incorrect, this.correct, this.notAnswered);
 
   // Http post request to update ACS
-  Future updateACS() async {
+  Future updateACS(String username, String token) async {
     // Make the request and store the response
     final http.Response response =
         await http.post('http://localhost:8080/api/editACS"',
@@ -36,7 +37,8 @@ class _TriviaResultState extends State<TriviaResult> {
               'Access-Control-Allow-Origin': '*',
             },
             body: jsonEncode(<String, String>{
-              "username": currUser,
+              "username": username,
+              "token": token,
               "ammount": this.marks.toString(),
               "date": DateTime.now().toString()
             }));
@@ -53,9 +55,15 @@ class _TriviaResultState extends State<TriviaResult> {
 
   @override
   void initState() {
-    // Send score through HTTP request to update this user's ACS
-    updateACS();
     super.initState();
+    // Send score through HTTP request to update this user's ACS
+    FlutterSession().get('token').then((token) {
+      FlutterSession().get('username').then((username) => {
+            setState(() {
+              updateACS(username.toString(), token.toString());
+            })
+          });
+    });
   }
 
   Widget build(BuildContext context) {
