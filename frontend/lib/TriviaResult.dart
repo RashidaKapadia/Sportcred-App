@@ -64,6 +64,7 @@ class _TriviaResultState extends State<TriviaResult> {
                     child: Row(
                       children: [
                         Icon(Icons.check_circle, color: Colors.green),
+                        Text('Correct: '),
                         Text(correct.toString() + '/10'),
                       ],
                     ),
@@ -81,6 +82,7 @@ class _TriviaResultState extends State<TriviaResult> {
                     child: Row(
                       children: [
                         Icon(Icons.cancel, color: Colors.red),
+                        Text('Incorrect: '),
                         Text(incorrect.toString() + '/10'),
                       ],
                     ),
@@ -98,6 +100,7 @@ class _TriviaResultState extends State<TriviaResult> {
                     child: Row(
                       children: [
                         Icon(Icons.error, color: Colors.blue),
+                        Text('Not Answered: '),
                         Text(notAnswered.toString() + '/10'),
                       ],
                     ),

@@ -70,27 +70,30 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   Color incorrectAnsColor = Colors.red;
 
   int marks = 0;
-  int pressedCorrectOption = 0;
-  int pressedIncorrectOption = 0;
-  int notAnswered = 0;
+  int pressedCorrectOption = 0; // number of correct answers picked
+  int pressedIncorrectOption = 0; // number of questions answered wrong
+  int notAnswered = 0; // number of questions not answered
   int i = 1;
   int j = 1;
   int timer = 10;
   String showTimer = "10";
   bool disableAnswer = false;
   bool _isPressed = false;
+  //bool _isCorrect = false;
+  int _isPressedCorrect = -1; // 0 - correct; 1 - incorrect; -1  for not pressed
   var randomList;
-  //TimerController _timerController;
   TimerController _timerController;
 
-  Map<int, Color> colorsForOptions = {
+  /*Map<int, Color> colorsForOptions = {
     0: Colors.indigoAccent,
     1: Colors.indigoAccent,
     2: Colors.indigoAccent,
     3: Colors.indigoAccent
-  };
+  };*/
 
   bool cancelTimer = false;
+
+  colorOptionsReset() {}
 
   createRandomList() {
     var distinctIds = [];
@@ -167,11 +170,12 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                   notAnswered: notAnswered)));
         });
       }
-      colorsForOptions[0] = Colors.indigoAccent;
-      colorsForOptions[1] = Colors.indigoAccent;
-      colorsForOptions[2] = Colors.indigoAccent;
-      colorsForOptions[3] = Colors.indigoAccent;
+      //colorsForOptions[0] = Colors.indigoAccent;
+      //colorsForOptions[1] = Colors.indigoAccent;
+      //colorsForOptions[2] = Colors.indigoAccent;
+      //colorsForOptions[3] = Colors.indigoAccent;
       disableAnswer = false;
+      _isPressedCorrect = -1;
     });
     startTimer();
     _timerController.reset();
@@ -181,16 +185,18 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   void validateAnswer(int t, bool val) {
     if (val == true) {
       if (data[i].answer == data[i].options[t]) {
+        _isPressedCorrect = 0; //true
         marks = marks + 1;
         colorToDisplay = correctAnsColor;
         pressedCorrectOption = pressedCorrectOption + 1;
       } else {
+        _isPressedCorrect = 1; //false
         marks = marks - 1;
         colorToDisplay = incorrectAnsColor;
         pressedIncorrectOption = pressedIncorrectOption + 1;
       }
       setState(() {
-        colorsForOptions[t] = colorToDisplay;
+        //colorsForOptions[t] = colorToDisplay;
         cancelTimer = true;
         disableAnswer = true;
         _isPressed = false;
@@ -199,7 +205,9 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
       notAnswered = notAnswered + 1;
       marks = marks - 1;
     }
+
     Timer(Duration(seconds: 1), nextQuestion);
+    //return _isCorrect;
   }
 
   Widget answersAnimation(int t) {
@@ -217,7 +225,12 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
             data[i].options[t],
             maxLines: 1,
           ),
-          color: colorsForOptions[t],
+          //color: colorsForOptions[t],
+          color: _isPressedCorrect == 0
+              ? Colors.green
+              : _isPressedCorrect == 1
+                  ? Colors.red
+                  : Colors.indigoAccent, //Colors.indigoAccent,
           highlightColor: Colors.indigo[700],
           minWidth: 200.0,
           height: 45.0,
@@ -295,6 +308,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
                       //runSpacing: 4.0,
                       //mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(data[i].options.length, (index) {
+                        //colorsForOptions[index] = Colors.indigoAccent;
                         return answersAnimation(index);
                       })
                       //children: List.generate(data[i].length(options), index){
