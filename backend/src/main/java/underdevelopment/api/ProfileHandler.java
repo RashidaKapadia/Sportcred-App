@@ -1,5 +1,6 @@
 package underdevelopment.api;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.neo4j.driver.Record;
 
@@ -7,10 +8,110 @@ import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.Status;
 import underdevelopment.db.DBProfile;
+import underdevelopment.db.DBUserInfo;
 
 
 public class ProfileHandler {
+    public static JsonRequestHandler updateUserPassword() {
+        return (JSONObject jsonObj) -> {
 
+            String username, password, oldPassword;
+            String acs;
+            // Get input
+            try {
+                username = jsonObj.getString("username");
+                password = jsonObj.getString("newPassword");
+                oldPassword = jsonObj.getString("oldPassword");
+            } catch (Exception e) {
+                return new JsonHttpReponse(Status.BADREQUEST);
+            }
+            
+            String response;
+            // Check if the username exists
+            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+          	  try {
+                  response = new JSONObject()
+                      .put("Error", "Username doesn't exist")
+                      .toString();
+                  	return new JsonHttpReponse(Status.CONFLICT, response);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+                  return new JsonHttpReponse(Status.SERVERERROR);
+              }
+            }
+
+            // Check if the old passwodr they entered is correct
+            boolean correctPassword = DBProfile.checkPassword(username, oldPassword);
+            if(! correctPassword) {
+            	try {
+            		System.out.println("incorrect password");
+					response = new JSONObject()
+					        .put("Error:", "Incorrect password")
+					        .toString();
+	                return new JsonHttpReponse(Status.CONFLICT, response);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+	                return new JsonHttpReponse(Status.SERVERERROR);
+				}
+            }
+    		System.out.println("incorrect password2");
+
+            // Run DB command
+            try {
+                DBProfile.updateUserPassword(username, password);
+                response = new JSONObject()
+                        .put("Response:", "Password changed")
+                        .toString();
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
+        };
+    }
+    
+    public static JsonRequestHandler updateUserEmail() {
+        return (JSONObject jsonObj) -> {
+            System.out.println("updating them mails");
+
+            String username, email;
+            String acs;
+
+            // Get input
+            try {
+                username = jsonObj.getString("username");
+                email = jsonObj.getString("email");
+
+            } catch (Exception e) {
+                return new JsonHttpReponse(Status.BADREQUEST);
+            }
+            String response;
+            // Check if the username exists
+            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+          	  try {
+                  response = new JSONObject()
+                      .put("Error", "Username doesn't exist")
+                      .toString();
+                  	return new JsonHttpReponse(Status.CONFLICT, response);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+                  return new JsonHttpReponse(Status.SERVERERROR);
+              }
+            }
+            // Run DB command
+            try {
+                DBProfile.updateUserEmail(username, email);
+                response = new JSONObject()
+                        .put("Response:", "Email changed")
+                        .toString();
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
+        };
+    }
 
     public static JsonRequestHandler updateUserInfo() {
         return (JSONObject jsonObj) -> {
