@@ -43,7 +43,10 @@ void errorPopup(BuildContext context, String errorMsg) {
     context: context,
     builder: (alertContext) {
       return CupertinoAlertDialog(
-        title: Text('ERROR', style: TextStyle(fontWeight: FontWeight.bold),),
+        title: Text(
+          'ERROR',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: Text(errorMsg),
         actions: [
           CupertinoDialogAction(
@@ -57,35 +60,57 @@ void errorPopup(BuildContext context, String errorMsg) {
   );
 }
 
- void checkStatus(BuildContext context, Future status, String nextPage) async {
-    await status.then((snapshot) {
-      print('YAYY');
-      print(snapshot.message);
-      if (snapshot.success) {
-        Navigator.of(context).pushNamed(nextPage);
-      } else {
-       errorPopup(context, snapshot.message);
-      }
-    });
-  }
+void popUp(BuildContext context, String title, String msg) {
+  showCupertinoDialog(
+    context: context,
+    builder: (alertContext) {
+      return CupertinoAlertDialog(
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Text(msg),
+        actions: [
+          CupertinoDialogAction(
+              child: Text("Ok"),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop('dialog');
+              })
+        ],
+      );
+    },
+  );
+}
 
-  Widget getStatus(BuildContext context, Future status) {
-    return FutureBuilder(
-      future: status,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Text(snapshot.data.message);
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        } else {
-          return Container(
-              alignment: Alignment.center,
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(),
-              ));
-        }
-      },
-    );
-  }
+void checkStatus(BuildContext context, Future status, String nextPage) async {
+  await status.then((snapshot) {
+    print('YAYY');
+    print(snapshot.message);
+    if (snapshot.success) {
+      Navigator.of(context).pushNamed(nextPage);
+    } else {
+      errorPopup(context, snapshot.message);
+    }
+  });
+}
+
+Widget getStatus(BuildContext context, Future status) {
+  return FutureBuilder(
+    future: status,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return Text(snapshot.data.message);
+      } else if (snapshot.hasError) {
+        return Text("${snapshot.error}");
+      } else {
+        return Container(
+            alignment: Alignment.center,
+            child: SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(),
+            ));
+      }
+    },
+  );
+}

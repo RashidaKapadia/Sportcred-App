@@ -71,17 +71,18 @@ public class ProfileHandler {
         };
     }
     
-    public static JsonRequestHandler updateUserEmail() {
+    public static JsonRequestHandler updateUserContact() {
         return (JSONObject jsonObj) -> {
-            System.out.println("updating them mails");
+            System.out.println("updating contact info");
 
-            String username, email;
+            String username, email, phoneNumber;
             String acs;
 
             // Get input
             try {
                 username = jsonObj.getString("username");
                 email = jsonObj.getString("email");
+                phoneNumber = jsonObj.getString("phoneNumber");
 
             } catch (Exception e) {
                 return new JsonHttpReponse(Status.BADREQUEST);
@@ -101,9 +102,9 @@ public class ProfileHandler {
             }
             // Run DB command
             try {
-                DBProfile.updateUserEmail(username, email);
+                DBProfile.updateUserContact(username, email, phoneNumber);
                 response = new JSONObject()
-                        .put("Response:", "Email changed")
+                        .put("Response:", "Contact Info changed")
                         .toString();
                 return new JsonHttpReponse(Status.OK, response);
             } catch (Exception e) {
@@ -193,6 +194,7 @@ public class ProfileHandler {
                 String lastname = r.get("lastname").asString();
                 String status = r.get("status").asString();
                 String email = r.get("email").asString();
+                String phoneNumber = r.get("phoneNumber").asString();
                 String dob = r.get("dob").asString();
                 String about = r.get("about").asString();                
 
@@ -207,6 +209,7 @@ public class ProfileHandler {
                 response.put("lastname", lastname);
                 response.put("status", status);
                 response.put("email", email);
+                response.put("phoneNumber", phoneNumber);
                 response.put("dob", dob);
                 response.put("about", about);
                 response.put("tier", tier);

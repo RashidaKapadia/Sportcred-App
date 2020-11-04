@@ -4,6 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_session/flutter_session.dart';
 
+import 'formHelper.dart';
+
+// -- HTTP Request ---
+
+class PasswordStatus {
+  final bool success;
+  final String message;
+  PasswordStatus(this.success, this.message);
+}
+
 class ChangePassword extends StatefulWidget {
   @override
   _ChangePasswordState createState() => _ChangePasswordState();
@@ -37,10 +47,10 @@ class Password {
   }
 }
 
-Future<Password> _futureUserInfo;
+Future<PasswordStatus> _futurePassword;
 
 // Http post request to update user info
-Future<Password> passwordUpdate(
+Future<PasswordStatus> passwordUpdate(
     String username, String newPassword, String oldPassword) async {
   print("making request");
 
@@ -61,9 +71,9 @@ Future<Password> passwordUpdate(
   );
 
   if (response.statusCode == 200) {
-    return Password(reqStatus: true);
+    return PasswordStatus(true, "Password Updated Successfully");
   } else {
-    return Password(reqStatus: false);
+    return PasswordStatus(false, "Incorrect Password");
   }
 }
 
@@ -78,7 +88,8 @@ class _ChangePasswordState extends State<ChangePassword>
     FlutterSession().get('token').then((token) {
       FlutterSession().get('username').then((username) => {
             setState(() {
-              username = username.toString();
+              this.username = username.toString();
+              print(this.username);
             })
           });
     });
@@ -103,6 +114,7 @@ class _ChangePasswordState extends State<ChangePassword>
         decoration: InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             hintText: "New Password",
+            helperText: 'Minimum 8 characters',
             border:
                 OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
         onChanged: (value) {
@@ -118,8 +130,16 @@ class _ChangePasswordState extends State<ChangePassword>
           minWidth: MediaQuery.of(context).size.width,
           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           onPressed: () {
-            // Call API
-            passwordUpdate(username, input_new, input_old);
+            if (this.input_new.length < 8) {
+              errorPopup(context, "Password must be atleast 8 characters long");
+            } else {
+              // Call API
+              _futurePassword =
+                  passwordUpdate(this.username, input_new, input_old);
+              if (_futurePassword != null) {
+                checkStatus(context, _futurePassword);
+              }
+            }
           },
           child: Text("CONFIRM", textAlign: TextAlign.center)),
     );
@@ -161,5 +181,19 @@ class _ChangePasswordState extends State<ChangePassword>
         ),
       ),
     );
+  }
+
+  void checkStatus(BuildContext context, Future status) async {
+    await status.then((snapshot) {
+      print('YAYY');
+      print(snapshot);
+      print(snapshot.message);
+      if (snapshot.success) {
+        print("HEREE");
+        popUp(context, "Success", snapshot.message);
+      } else {
+        errorPopup(context, snapshot.message);
+      }
+    });
   }
 }
