@@ -24,7 +24,8 @@ void main() {
         '/homepage': (context) => HomePage(),
         "/test": (context) => HTTPRequestExample(),
         '/soloTrivia': (context) => SoloTriviaPage(),
-        '/quizPage': (context) => OnGoingTrivia("Basketball", null)
+        '/quizPage': (context) => OnGoingTrivia("Basketball", null),
+        '/settings': (context) => Settings()
       }));
 }
 
