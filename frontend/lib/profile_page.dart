@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import './formHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import './navbar.dart';
@@ -345,7 +345,7 @@ class _ProfilePageState extends State<ProfilePage>
                                   )),
                                   Expanded(
                                       child: Container(
-                                          child: new TextField(
+                                          child: new TextFormField(
                                         style: TextStyle(fontSize: 16.0),
                                         keyboardType: TextInputType.multiline,
                                         maxLines: null,
@@ -477,21 +477,37 @@ class _ProfilePageState extends State<ProfilePage>
                 color: Colors.green,
                 onPressed: () {
                   setState(() {
-                    _status = true;
-                    storePrevValues();
-                    print("SAVE" + _firstnameController.value.text);
-                    // HTTP request to update profile
-                    profileUpdate(
-                        this.username,
-                        _firstnameController.value.text,
-                        _lastnameController.value.text,
-                        _statusController.value.text,
-                        _aboutController.value.text,
-                        _emailController.value.text,
-                        _birthdayController.value.text,
-                        this.acs.toString());
+                    String dateRegex =
+                        "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])\$";
+                    bool birthdayValid = RegExp(dateRegex)
+                        .hasMatch(_birthdayController.value.text);
 
-                    FocusScope.of(context).requestFocus(new FocusNode());
+                    if (_firstnameController.value.text == "") {
+                      errorPopup(context, "First Name cannot be empty!");
+                    } else if (_lastnameController.value.text == "") {
+                      errorPopup(context, "Last Name cannot be empty!");
+                    } else if (!birthdayValid) {
+                      errorPopup(
+                          context,
+                          "Birthday Format must be yyyy-mm-dd\n" +
+                              " - Months must be between 1 and 12\n" +
+                              " - Days must be between 1 and 31\n");
+                    } else {
+                      _status = true;
+                      storePrevValues();
+                      // HTTP request to update profile
+                      profileUpdate(
+                          this.username,
+                          _firstnameController.value.text,
+                          _lastnameController.value.text,
+                          _statusController.value.text,
+                          _aboutController.value.text,
+                          _emailController.value.text,
+                          _birthdayController.value.text,
+                          this.acs.toString());
+
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                    }
                   });
                 },
                 shape: new RoundedRectangleBorder(
