@@ -55,12 +55,12 @@ public class DBProfile{
     }
     
     // DB command for upadting user status
-    public static void updateUserEmail(String username, String email){
-        System.out.println("updating email");
+    public static void updateUserContact(String username, String email, String phoneNumber){
+        System.out.println("updating contact info");
 
         try (Session session = Connect.driver.session()) {
                	try(Transaction tx = session.beginTransaction()){
-               		 tx.run(String.format( "MATCH (u:user) WHERE u.username = '%s' SET u.email = '%s'", username, email));               
+               		 tx.run(String.format( "MATCH (u:user) WHERE u.username = '%s' SET u.email = '%s', u.phoneNumber = '%s'", username, email, phoneNumber));               
                	     tx.commit();
                	     tx.close();
                	                session.close();
@@ -93,7 +93,7 @@ public class DBProfile{
     public static Record getUserInfo(String username){
         try (Session session = Connect.driver.session()) {
             try (Transaction tx = session.beginTransaction()) {
-              Result node_result = tx.run("MATCH (u:user) WHERE u.username = $username WITH u RETURN u.username as username, u.firstname as firstname, u.lastname as lastname, u.email as email, u.dob as dob, u.about as about, u.status as status, toInteger(u.acs) as acs ",
+              Result node_result = tx.run("MATCH (u:user) WHERE u.username = $username WITH u RETURN u.username as username, u.firstname as firstname, u.lastname as lastname, u.email as email, u.dob as dob, u.about as about, u.phoneNumber as phoneNumber, u.status as status, toInteger(u.acs) as acs",
               parameters("username", username));
       
               // If any results have been returned, return the record
@@ -104,4 +104,5 @@ public class DBProfile{
         }
         return null;
     }
+    
 }

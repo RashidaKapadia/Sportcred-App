@@ -44,9 +44,9 @@ class Settings extends StatelessWidget {
                   ),
                   SettingsTile(
                     leading: Icon(Icons.email, color: Colors.orangeAccent),
-                    title: 'Change Email',
+                    title: 'Change Contact Info',
                     onTap: () {
-                      Navigator.of(context).pushNamed("/changeEmail");
+                      Navigator.of(context).pushNamed("/changeContact");
                     },
                   ),
                 ],

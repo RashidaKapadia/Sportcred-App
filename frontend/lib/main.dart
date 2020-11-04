@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:frontend/InitialPage.dart';
 import 'package:frontend/SoloTriviaPage.dart';
 import 'package:frontend/changePassword.dart';
-import 'changeEmail.dart';
+import 'changeContact.dart';
 import 'onGoingTrivia.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
@@ -26,7 +26,7 @@ void main() {
         '/profile': (context) => ProfilePage(),
         '/homepage': (context) => HomePage(),
         '/changePassword': (context) => ChangePassword(),
-        '/changeEmail': (context) => ChangeEmail(),
+        '/changeContact': (context) => ChangeContact(),
         "/test": (context) => HTTPRequestExample(),
         '/soloTrivia': (context) => SoloTriviaPage(),
         '/quizPage': (context) => OnGoingTrivia("Basketball", null),
