@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/InitialPage.dart';
 import 'package:frontend/SoloTriviaPage.dart';
+import 'package:frontend/changePassword.dart';
+import 'changeEmail.dart';
 import 'onGoingTrivia.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
@@ -22,6 +24,8 @@ void main() {
         '/login': (context) => LoginPage(),
         '/profile': (context) => ProfilePage(),
         '/homepage': (context) => HomePage(),
+        '/changePassword': (context) => ChangePassword(),
+        '/changeEmail': (context) => ChangeEmail(),
         "/test": (context) => HTTPRequestExample(),
         '/soloTrivia': (context) => SoloTriviaPage(),
         '/quizPage': (context) => OnGoingTrivia("Basketball", null),

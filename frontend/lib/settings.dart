@@ -38,12 +38,16 @@ class Settings extends StatelessWidget {
                     leading:
                         Icon(Icons.lock_outline, color: Colors.orangeAccent),
                     title: 'Change Password',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).pushNamed("/changePassword");
+                    },
                   ),
                   SettingsTile(
                     leading: Icon(Icons.email, color: Colors.orangeAccent),
                     title: 'Change Email',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).pushNamed("/changeEmail");
+                    },
                   ),
                 ],
               ),
