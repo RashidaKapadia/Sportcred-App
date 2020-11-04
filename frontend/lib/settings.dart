@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import 'navbar.dart';
@@ -6,6 +7,13 @@ import 'navbar.dart';
 class Settings extends StatelessWidget {
   String edition = "US & Canada";
   String version = "1.0";
+
+  void logout(BuildContext context) {
+    FlutterSession()
+        .set('token', "")
+        .then((value) => Navigator.of(context).pushNamed('/login'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +75,10 @@ class Settings extends StatelessWidget {
               SettingsSection(
                 title: '',
                 tiles: [
-                  SettingsTile(title: 'Log Out', trailing: Icon(Icons.logout))
+                  SettingsTile(
+                      title: 'Log Out',
+                      onTap: () => logout(context),
+                      trailing: Icon(Icons.logout))
                 ],
               ),
             ],
