@@ -267,7 +267,17 @@ class _ProfilePageState extends State<ProfilePage>
                             Image.asset('profile_icon.png',
                                 width: 150, height: 125, fit: BoxFit.fitWidth),
                           ]),
-                        )
+                        ),
+                        // Container(
+                        // SizedBox(height: 30),
+                        RaisedButton(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pushNamed("/profile/ACSHistory");
+                          },
+                          child: const Text('ACS History',
+                              style: TextStyle(fontSize: 20)),
+                        ),
                       ],
                     ),
                   ),

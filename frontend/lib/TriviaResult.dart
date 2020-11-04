@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
-import 'package:frontend/loginPage.dart';
+// import 'package:frontend/loginPage.dart';
 //import 'package:frontend/homepage.dart';
 import './navbar.dart';
 import 'package:http/http.dart' as http;
@@ -39,6 +39,8 @@ class _TriviaResultState extends State<TriviaResult> {
             body: jsonEncode(<String, String>{
               "username": username,
               "token": token,
+              "oppUsername": "N/A",
+              "gameType": "Trivia Solo",
               "amount": this.marks.toString(),
               "date": DateTime.now().toString()
             }));
@@ -191,7 +193,9 @@ class _TriviaResultState extends State<TriviaResult> {
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(18.0)),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed("/profile/ACSHistory");
+              },
             ),
             RaisedButton(
               highlightElevation: 25.0,

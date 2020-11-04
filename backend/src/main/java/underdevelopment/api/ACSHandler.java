@@ -49,7 +49,7 @@ public class ACSHandler {
 
 	            	String[][] newACS = DBAcs.getACS(username, ammount);
 	                response = new JSONObject()
-	                    .put("ammount", newACS[0])
+	                    .put("amount", newACS[0])
 	                    .put("date", newACS[1])
 	                    .put("oppUserane", newACS[2])
 	                    .put("gameType", newACS[3])

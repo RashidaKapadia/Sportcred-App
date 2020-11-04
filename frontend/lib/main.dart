@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/InitialPage.dart';
+// import 'package:frontend/InitialPage.dart';
 import 'package:frontend/SoloTriviaPage.dart';
 import 'package:frontend/changePassword.dart';
 import 'changeEmail.dart';
@@ -11,6 +11,7 @@ import './homepage.dart';
 import './settings.dart';
 import './HTTPRequestExample.dart';
 import './profile_page.dart';
+import 'ACSHistory_page.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -29,7 +30,8 @@ void main() {
         "/test": (context) => HTTPRequestExample(),
         '/soloTrivia': (context) => SoloTriviaPage(),
         '/quizPage': (context) => OnGoingTrivia("Basketball", null),
-        '/settings': (context) => Settings()
+        '/settings': (context) => Settings(),
+        "/profile/ACSHistory": (context) => ACSHistoryPage()
       }));
 }
 
