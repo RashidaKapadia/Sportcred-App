@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                       height: 25.0,
                       child: RaisedButton(
                         onPressed: () {
-                          Navigator.of(context).pushNamed('/soloTrivia');
+                          Navigator.of(context).pushNamed('/trivia');
                         },
                         child: Text("Trivia"),
                         color: Colors.yellowAccent[100],
