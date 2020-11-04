@@ -95,6 +95,8 @@ class _ChangePasswordState extends State<ChangePassword>
     });
   }
 
+  String confirmPassword = "";
+
   @override
   Widget build(BuildContext context) {
     final oldPassword = TextField(
@@ -122,6 +124,19 @@ class _ChangePasswordState extends State<ChangePassword>
             this.input_new = value;
           });
         });
+    final newPasswordConfirm = TextField(
+        obscureText: true,
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            hintText: "Confirm New Password",
+            helperText: 'Minimum 8 characters',
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+        onChanged: (value) {
+          setState(() {
+            confirmPassword = value;
+          });
+        });
     final changePassword = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -130,7 +145,9 @@ class _ChangePasswordState extends State<ChangePassword>
           minWidth: MediaQuery.of(context).size.width,
           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           onPressed: () {
-            if (this.input_new.length < 8) {
+            if (confirmPassword != this.input_new) {
+              errorPopup(context, "New Passwords must match");
+            } else if (this.input_new.length < 8) {
               errorPopup(context, "Password must be atleast 8 characters long");
             } else {
               // Call API
@@ -168,6 +185,8 @@ class _ChangePasswordState extends State<ChangePassword>
                 oldPassword,
                 SizedBox(height: 25.0),
                 newPassword,
+                SizedBox(height: 25.0),
+                newPasswordConfirm,
                 SizedBox(
                   height: 35.0,
                 ),

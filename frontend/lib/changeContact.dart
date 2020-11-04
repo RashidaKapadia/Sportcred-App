@@ -27,11 +27,11 @@ class Contact {
   final bool reqStatus;
 
   Contact(
-      {this.username,
-      this.oldEmail,
-      this.newEmail,
-      this.oldPhone,
-      this.newPhone,
+      {this.username = "",
+      this.oldEmail = "",
+      this.newEmail = "",
+      this.oldPhone = "",
+      this.newPhone = "",
       @required this.reqStatus});
 
   // converts json to Password object
@@ -93,7 +93,6 @@ class _ChangeContactState extends State<ChangeContact>
         this.username = userData.username;
         this.oldEmail = userData.oldEmail;
         this.oldPhone = userData.oldPhone;
-        print(userData.oldEmail + " " + userData.oldPhone);
       });
 
       return userData;
@@ -192,17 +191,17 @@ class _ChangeContactState extends State<ChangeContact>
             String dateRegex =
                 "^[a-zA-Z0-9.a-zA-Z0-9.!#\$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
             bool emailValid = RegExp(dateRegex).hasMatch(this.newEmail);
-            if (this.newEmail == "") {
+            if (this.newEmail == null || this.newEmail == "") {
+              print("Email is null");
               this.newEmail = this.oldEmail;
             }
-            if (this.newPhone == "") {
+            if (this.newPhone == null || this.newPhone == "") {
               this.newPhone = this.oldPhone;
             }
             if (this.newPhone.length < 9) {
               errorPopup(
                   context, "Phone Number must be atleast 9 characters long");
-            }
-            if (!emailValid) {
+            } else if (!emailValid) {
               errorPopup(context,
                   "Email format incorrect: must be similar to abc@xyz.com");
             } else {
