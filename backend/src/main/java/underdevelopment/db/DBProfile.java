@@ -34,15 +34,19 @@ public class DBProfile{
 	        System.out.println("returning: " + correctPassword);
 	        return correctPassword;
 	}
+	
     // DB command for upadting user password
     public static void updateUserPassword(String username, String newPassword) {
         System.out.println("updating password");
-              
+        System.out.println(newPassword);
         try (Session session = Connect.driver.session()) {
-              session.writeTransaction(tx -> tx.run(
-                "MATCH (u:user) WHERE u.username = $username SET u.password = '$password'",
-                parameters("username", username, "password", newPassword)));
-            session.close();
+        	try(Transaction tx = session.beginTransaction()){
+        		 tx.run(String.format( "MATCH (u:user) WHERE u.username = '%s' SET u.password = '%s'", username, newPassword));               
+        	     tx.commit();
+        	     tx.close();
+        	                session.close();
+        	}
+             
         }
         catch (Exception e){
             // FOR DEBUG
@@ -55,11 +59,12 @@ public class DBProfile{
         System.out.println("updating email");
 
         try (Session session = Connect.driver.session()) {
-            session.writeTransaction(tx -> tx.run(
-                "MATCH (u:user) WHERE u.username = $username SET u.email = '$email'",
-                parameters("username", username, "email", email)));
-            
-            session.close();
+               	try(Transaction tx = session.beginTransaction()){
+               		 tx.run(String.format( "MATCH (u:user) WHERE u.username = '%s' SET u.email = '%s'", username, email));               
+               	     tx.commit();
+               	     tx.close();
+               	                session.close();
+               	}
         }
         catch (Exception e){
             // FOR DEBUG

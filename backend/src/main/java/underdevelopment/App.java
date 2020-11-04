@@ -65,6 +65,7 @@ public class App
                 new HttpRequestHandler("POST", ProfileHandler.updateUserPassword(), false));
         server.createContext("/api/updateUserEmail",
                 new HttpRequestHandler("POST", ProfileHandler.updateUserEmail(), false));
+        
         server.createContext("/api/updateUserInfo",
             new HttpRequestHandler("POST", ProfileHandler.updateUserInfo(), authorized));
         server.createContext("/api/getUserInfo",
