@@ -11,7 +11,8 @@ import './homepage.dart';
 import './settings.dart';
 import './HTTPRequestExample.dart';
 import './profile_page.dart';
-import 'ACSHistory_page.dart';
+import './ACSHistory_page.dart';
+import './trivia.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -28,6 +29,7 @@ void main() {
         '/changePassword': (context) => ChangePassword(),
         '/changeContact': (context) => ChangeContact(),
         "/test": (context) => HTTPRequestExample(),
+        '/trivia': (context) => TriviaHomePage(),
         '/soloTrivia': (context) => SoloTriviaPage(),
         '/quizPage': (context) => OnGoingTrivia("Basketball", null),
         '/settings': (context) => Settings(),
