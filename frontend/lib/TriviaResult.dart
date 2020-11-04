@@ -172,7 +172,7 @@ class _TriviaResultState extends State<TriviaResult> {
             ),
             Container(
               alignment: Alignment.center,
-              child: Text(marks.toString() + '/10',
+              child: Text(marks.toString(),
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,

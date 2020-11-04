@@ -25,13 +25,6 @@ class _HomePageState extends State<HomePage> {
     loadUsername();
   }
 
-  // TODO: temp remove
-  void logout(BuildContext context) {
-    FlutterSession()
-        .set('token', "")
-        .then((value) => Navigator.of(context).pushNamed('/login'));
-  }
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -40,7 +33,6 @@ class _HomePageState extends State<HomePage> {
         body: new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           Expanded(child: Image.asset('assets/Logo.png')),
           Text("Welcome " + username + "!"),
-          RaisedButton(onPressed: () => logout(context), child: Text("Logout")),
           Expanded(
             child: OrientationBuilder(
               builder: (context, orientation) {

@@ -230,13 +230,22 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
               context: context,
               builder: (context) => AlertDialog(
                     content: Text(
-                      "Trivia",
+                      "You sure want to leave? You will get a score of -10!",
                     ),
                     actions: [
                       FlatButton(
                           onPressed: () {
                             Navigator.of(context).pop();
-                            // TO DO something with ACS
+                            marks = -10;
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => TriviaResult(
+                                        marks: marks,
+                                        incorrect: pressedIncorrectOption,
+                                        correct: pressedCorrectOption,
+                                        notAnswered: 10 -
+                                            pressedCorrectOption -
+                                            pressedIncorrectOption)));
                           },
                           child: Text('Leave')),
                       FlatButton(
