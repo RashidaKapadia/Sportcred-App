@@ -1,17 +1,25 @@
 import 'dart:convert';
-
+import './formHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import './navbar.dart';
 import 'package:http/http.dart' as http;
 
-String old_username, old_status, old_email, old_birthday, old_about;
+String old_username,
+    old_firstname,
+    old_lastname,
+    old_email,
+    old_status,
+    old_birthday,
+    old_about;
 
 TextEditingController _usernameController = TextEditingController()..text = '';
 TextEditingController _statusController = TextEditingController()..text = '';
-TextEditingController _emailController = TextEditingController()..text = '';
+TextEditingController _firstnameController = TextEditingController()..text = '';
+TextEditingController _lastnameController = TextEditingController()..text = '';
 TextEditingController _birthdayController = TextEditingController()..text = '';
 TextEditingController _aboutController = TextEditingController()..text = '';
+TextEditingController _emailController = TextEditingController()..text = '';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -27,10 +35,12 @@ class ProfileStatus {
 class UserInfo {
   final String acs;
   final String username;
+  final String firstname;
+  final String lastname;
   final String status;
-  final String email;
   final String dob;
   final String about;
+  final String email;
   final String tier;
   final bool reqStatus;
 
@@ -38,9 +48,11 @@ class UserInfo {
       {this.acs,
       this.username,
       this.status,
-      this.email,
+      this.firstname,
+      this.lastname,
       this.dob,
       this.about,
+      this.email,
       this.tier,
       @required this.reqStatus});
 
@@ -55,10 +67,12 @@ class UserInfo {
     return UserInfo(
       reqStatus: status,
       username: json['username'],
+      firstname: json['firstname'],
+      lastname: json['lastname'],
       status: json['status'],
-      email: json['email'],
       dob: json['dob'],
       about: json['about'],
+      email: json['email'],
       tier: json['tier'],
       acs: json['acs'],
     );
@@ -67,10 +81,11 @@ class UserInfo {
 
 void storePrevValues() {
   old_username = _usernameController.text;
+  old_firstname = _firstnameController.text;
+  old_lastname = _lastnameController.text;
   old_status = _statusController.text;
   old_birthday = _birthdayController.text;
   old_about = _aboutController.text;
-  old_email = _emailController.text;
 }
 
 class _ProfilePageState extends State<ProfilePage>
@@ -92,8 +107,8 @@ class _ProfilePageState extends State<ProfilePage>
     FlutterSession().get('token').then((token) {
       FlutterSession().get('username').then((username) => {
             setState(() {
-              _futureUserInfo =
-                  profileGet(username.toString(), token.toString());
+              String store_token = token.toString();
+              _futureUserInfo = profileGet(username.toString(), store_token);
             })
           });
     });
@@ -123,10 +138,13 @@ class _ProfilePageState extends State<ProfilePage>
         this.tier = userData.tier;
 
         _usernameController..text = this.username;
+        _firstnameController..text = userData.firstname;
+        _lastnameController..text = userData.lastname;
         _statusController..text = userData.status;
         _birthdayController..text = userData.dob;
         _aboutController..text = userData.about;
         _emailController..text = userData.email;
+        print(userData.firstname);
 
         storePrevValues();
       });
@@ -141,8 +159,15 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
 // Http post request to update user info
-  Future<UserInfo> profileUpdate(String username, String email, String status,
-      String about, String dob, String acs) async {
+  Future<UserInfo> profileUpdate(
+      String username,
+      String firstname,
+      String lastname,
+      String status,
+      String about,
+      String email,
+      String dob,
+      String acs) async {
     print("making request");
 
     // Make the request and store the response
@@ -156,9 +181,11 @@ class _ProfilePageState extends State<ProfilePage>
       },
       body: jsonEncode(<String, String>{
         'username': username,
-        'email': email,
+        'firstname': firstname,
+        'lastname': lastname,
         'status': status,
         'about': about,
+        'email': email,
         'dob': dob,
         'acs': acs,
       }),
@@ -237,15 +264,8 @@ class _ProfilePageState extends State<ProfilePage>
                           padding: EdgeInsets.only(top: 30.0),
                           child:
                               new Stack(fit: StackFit.loose, children: <Widget>[
-                            // new Row(
-                            //   crossAxisAlignment: CrossAxisAlignment.center,
-                            //   mainAxisAlignment: MainAxisAlignment.center,
-                            //   children: <Widget>[
-                            //     SizedBox(height: 20.0),
                             Image.asset('profile_icon.png',
                                 width: 150, height: 125, fit: BoxFit.fitWidth),
-                            //   ],
-                            // ),
                           ]),
                         )
                       ],
@@ -301,15 +321,6 @@ class _ProfilePageState extends State<ProfilePage>
                                 ),
                                 keyboardType: TextInputType.multiline,
                                 maxLines: null,
-                                // onChanged: (text) {
-                                //   setState(() {
-                                //     _statusController =
-                                //         TextEditingController(text: text);
-                                //     //you can access nameController in its scope to get
-                                //     // the value of text entered as shown below
-                                //     //fullName = nameController.text;
-                                //   });
-                                // },
                                 style: TextStyle(fontSize: 16.0),
                                 enabled: !_status,
                                 autofocus: !_status,
@@ -317,42 +328,62 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                             ),
                           ),
-                          // Padding(
-                          //     padding: EdgeInsets.only(left: 50.0, top: 15.0),
-                          //     child: new Row(
-                          //       children: <Widget>[
-                          //         Expanded(
-                          //             child: Container(
-                          //           alignment: Alignment.topLeft,
-                          //           child: new Text(
-                          //             'Username:',
-                          //             style: TextStyle(
-                          //                 fontSize: 16.0,
-                          //                 fontWeight: FontWeight.bold),
-                          //           ),
-                          //         )),
-                          //         Expanded(
-                          //             child: Container(
-                          //                 alignment: Alignment.topLeft,
-                          //                 child: new Column(children: <Widget>[
-                          //                   new TextField(
-                          //                     // onChanged: (text) {
-                          //                     //   setState(() {
-                          //                     //     username = text;
-                          //                     //   });
-                          //                     // },
-                          //                     style: TextStyle(fontSize: 16.0),
-                          //                     keyboardType:
-                          //                         TextInputType.multiline,
-                          //                     maxLines: null,
-                          //                     enabled: !_status,
-                          //                     autofocus: !_status,
-                          //                     controller: _usernameController,
-                          //                   ),
-                          //                 ])),
-                          //             flex: 2),
-                          //       ],
-                          //     )),
+                          Padding(
+                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Expanded(
+                                      child: Container(
+                                    child: new Text(
+                                      'First Name:',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )),
+                                  Expanded(
+                                      child: Container(
+                                          child: new TextFormField(
+                                        style: TextStyle(fontSize: 16.0),
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: null,
+                                        enabled: !_status,
+                                        autofocus: !_status,
+                                        controller: _firstnameController,
+                                      )),
+                                      flex: 2),
+                                ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Expanded(
+                                      child: Container(
+                                    child: new Text(
+                                      'Last Name:',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )),
+                                  Expanded(
+                                      child: Container(
+                                          child: new TextField(
+                                        style: TextStyle(fontSize: 16.0),
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: null,
+                                        enabled: !_status,
+                                        autofocus: !_status,
+                                        controller: _lastnameController,
+                                      )),
+                                      flex: 2),
+                                ],
+                              )),
                           Padding(
                               padding: EdgeInsets.only(left: 50.0, top: 15.0),
                               child: new Row(
@@ -371,12 +402,6 @@ class _ProfilePageState extends State<ProfilePage>
                                   Expanded(
                                       child: Container(
                                           child: new TextField(
-                                        // onChanged: (text) {
-                                        //   setState(() {
-                                        //     _aboutController =
-                                        //         TextEditingController(text: text);
-                                        //   });
-                                        // },
                                         style: TextStyle(fontSize: 16.0),
                                         keyboardType: TextInputType.multiline,
                                         maxLines: null,
@@ -384,41 +409,6 @@ class _ProfilePageState extends State<ProfilePage>
                                         autofocus: !_status,
                                         controller: _aboutController,
                                       )),
-                                      flex: 2),
-                                ],
-                              )),
-                          Padding(
-                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
-                              child: new Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  Expanded(
-                                      child: Container(
-                                    child: new Text(
-                                      'Email:',
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  )),
-                                  Expanded(
-                                      child: Container(
-                                        child: new TextField(
-                                          // onChanged: (text) {
-                                          //   setState(() {
-                                          //     _emailController =
-                                          //         TextEditingController(text: text);
-                                          //   });
-                                          // },
-                                          style: TextStyle(fontSize: 16.0),
-                                          keyboardType: TextInputType.multiline,
-                                          maxLines: null,
-                                          enabled: !_status,
-                                          autofocus: !_status,
-                                          controller: _emailController,
-                                        ),
-                                      ),
                                       flex: 2),
                                 ],
                               )),
@@ -440,12 +430,6 @@ class _ProfilePageState extends State<ProfilePage>
                                   Expanded(
                                       child: Container(
                                         child: new TextField(
-                                          // onChanged: (text) {
-                                          //   setState(() {
-                                          //     _birthdayController =
-                                          //         TextEditingController(text: text);
-                                          //   });
-                                          // },
                                           style: TextStyle(fontSize: 16.0),
                                           keyboardType: TextInputType.multiline,
                                           maxLines: null,
@@ -493,18 +477,37 @@ class _ProfilePageState extends State<ProfilePage>
                 color: Colors.green,
                 onPressed: () {
                   setState(() {
-                    _status = true;
-                    storePrevValues();
-                    // HTTP request to update profile
-                    profileUpdate(
-                        this.username,
-                        _emailController.value.text,
-                        _statusController.value.text,
-                        _aboutController.value.text,
-                        _birthdayController.value.text,
-                        this.acs.toString());
+                    String dateRegex =
+                        "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])\$";
+                    bool birthdayValid = RegExp(dateRegex)
+                        .hasMatch(_birthdayController.value.text);
 
-                    FocusScope.of(context).requestFocus(new FocusNode());
+                    if (_firstnameController.value.text == "") {
+                      errorPopup(context, "First Name cannot be empty!");
+                    } else if (_lastnameController.value.text == "") {
+                      errorPopup(context, "Last Name cannot be empty!");
+                    } else if (!birthdayValid) {
+                      errorPopup(
+                          context,
+                          "Birthday Format must be yyyy-mm-dd\n" +
+                              " - Months must be between 1 and 12\n" +
+                              " - Days must be between 1 and 31\n");
+                    } else {
+                      _status = true;
+                      storePrevValues();
+                      // HTTP request to update profile
+                      profileUpdate(
+                          this.username,
+                          _firstnameController.value.text,
+                          _lastnameController.value.text,
+                          _statusController.value.text,
+                          _aboutController.value.text,
+                          _emailController.value.text,
+                          _birthdayController.value.text,
+                          this.acs.toString());
+
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                    }
                   });
                 },
                 shape: new RoundedRectangleBorder(
@@ -528,10 +531,12 @@ class _ProfilePageState extends State<ProfilePage>
 
                     _usernameController =
                         TextEditingController(text: old_username);
+                    _firstnameController =
+                        TextEditingController(text: old_firstname);
+                    _lastnameController =
+                        TextEditingController(text: old_lastname);
 
                     _aboutController = TextEditingController(text: old_about);
-
-                    _emailController = TextEditingController(text: old_email);
 
                     _birthdayController =
                         TextEditingController(text: old_birthday);

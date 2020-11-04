@@ -6,6 +6,7 @@ import './signup_page.dart';
 import './welcome_page.dart';
 import './loginPage.dart';
 import './homepage.dart';
+import './settings.dart';
 import './HTTPRequestExample.dart';
 import './profile_page.dart';
 
@@ -23,7 +24,8 @@ void main() {
         '/homepage': (context) => HomePage(),
         "/test": (context) => HTTPRequestExample(),
         '/soloTrivia': (context) => SoloTriviaPage(),
-        '/quizPage': (context) => OnGoingTrivia("Basketball", null)
+        '/quizPage': (context) => OnGoingTrivia("Basketball", null),
+        '/settings': (context) => Settings()
       }));
 }
 
