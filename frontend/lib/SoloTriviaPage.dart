@@ -150,6 +150,9 @@ class _TriviaState extends State<SoloTriviaPage> {
         });
   }
 
+  // KEEPING THIS CODE (BELOW) IN CASE IT IS REQUIRED FOR FUTURE
+  // PURPOSES TO INCLUDE 1-1 AND SOLO-TRIVIA BUTTONS INSIDE THIS PAGE
+
   /*Future<Widget> DialogBox(BuildContext context, String val) async {
     return await showDialog(
         context: context,
@@ -218,8 +221,6 @@ class _TriviaState extends State<SoloTriviaPage> {
         // Items list will require to be updated here as well anytime new category is added
         items: ['General Sports', 'Sports Scenarios', 'Basketball'].map((i) {
           return Builder(builder: (BuildContext context) {
-            //final appstate =
-            //  AppStateProvider.of<AppState>(context).startTrivia(context);
             return Container(
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.symmetric(horizontal: 5.0),
@@ -252,18 +253,9 @@ class _TriviaState extends State<SoloTriviaPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(18.0)),
                         onPressed: () {
-                          // DEBUGGING...
-                          // Getting Trivia Data from backend
-                          //  print('GETTING DATA FROM BACKEND');
-                          // _futureTriviaQuestions = getQuestions(chosenCategory);
-
-                          // print(triviaData[0].question);
                           if (_futureTriviaQuestions != null) {
                             goToTrivia();
                           }
-                          //return OnGoingTrivia('Basketball', triviaData);
-
-                          //OnGoingTrivia("Basketball")),
                         },
                       ),
                     ],

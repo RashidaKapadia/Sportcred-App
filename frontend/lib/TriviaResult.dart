@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
-// import 'package:frontend/loginPage.dart';
-//import 'package:frontend/homepage.dart';
 import './navbar.dart';
 import 'package:http/http.dart' as http;
 
@@ -85,9 +83,6 @@ class _TriviaResultState extends State<TriviaResult> {
                     color: Colors.white),
               ),
               padding: EdgeInsets.all(20.0),
-              //decoration: BoxDecoration(
-              //borderRadius: BorderRadius.all(Radius.circular(10)),
-              //),
             ),
             SizedBox(height: 20.0),
             Container(
@@ -200,8 +195,6 @@ class _TriviaResultState extends State<TriviaResult> {
             RaisedButton(
               highlightElevation: 25.0,
               padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-              //color: Colors.black,
-              //color: Colors.lightGreen[800]
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -224,122 +217,3 @@ class _TriviaResultState extends State<TriviaResult> {
         ));
   }
 }
-
-/*
-children: [
-           Container(
-            color: Colors.blueGrey[900],
-            height: 200,
-            alignment: Alignment.center,
-            child: Text(
-              'Result',
-              style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-            ),
-            padding: EdgeInsets.all(20.0),
-            //decoration: BoxDecoration(
-            //borderRadius: BorderRadius.all(Radius.circular(10)),
-            //),
-          ),
-          Container(
-             Text('Your trivia result is as follows:'),
-          ),
-          Container(
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(20.0),
-                  child: Row(
-                    children: [
-                       Icon(Icons.check_circle, color: Colors.green),
-                  Text('correct'+'/10'),
-                    ],
-                  )
-,                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(
-                        color: Colors.grey,
-                        width: 3.0,
-                  ),
-                ),
-            ),)
-            Container(
-              padding: EdgeInsets.all(20.0),
-                  child: Row(
-                    children: [
-                       Icon(Icons.cancel, color: Colors.red),
-                  Text('Incorrect'+'/10'),
-                    ],
-                  )
-,                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(
-                        color: Colors.grey,
-                        width: 3.0,
-                  ),
-                ),
-            ),
-            ),
-             Container(
-              padding: EdgeInsets.all(20.0),
-                  child: Row(
-                    children: [
-                       Icon(Icons.cancel, color: Colors.red),
-                  Text('NotAnswered'+'/10'),
-                    ],
-                  )
-,                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(
-                        color: Colors.grey,
-                        width: 3.0,
-                  ),
-                ),
-            ),
-            ),]
-          )),],
-          Container(
-            Text('Total Score'),
-          ),
-          Container(
-            Text('score'+'/10'),
-          ),
-          OutlineButton(
-            highlightElevation: 25.0,
-            color: Colors.black,
-            //color: Colors.lightGreen[800]
-            child: Text(
-              'Get My ACS History',
-              style: TextStyle(color: Colors.black, fontSize: 20),
-              textAlign: TextAlign.center,
-            ),
-            shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(18.0)),
-            onPressed: () {},
-          ),
-          OutlineButton(
-            highlightElevation: 25.0,
-            color: Colors.black,
-            //color: Colors.lightGreen[800]
-            child: Row(
-              children: [
-                Text(
-                  'Share',
-                  style: TextStyle(color: Colors.black, fontSize: 20),
-                  textAlign: TextAlign.center,
-                ),
-                Icon(Icons.share)
-              ],
-            ),
-            shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(18.0)),
-            onPressed: () {},
-          ),
-          Container(
-            Text("ScoreBoard",
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold))
-          )
-        ],
-*/
