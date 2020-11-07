@@ -164,3 +164,10 @@ Given the contents of a debate, we must have a way to decide how well they did i
 __* 10: As a casual basketball fan, I want to see what the “hot” topics in basketball are when I get on the app, as well as what the common viewpoints and arguments for each side are.__
 
 Given that users are on the debates page, when they click a “view debates” button, they should be able to view current and past debates and select how much they agree or disagree using a slider.
+
+
+## Sprint2 Bugs
+__* If a user force closes the app when in the middle of the trivia, the should get -10 points deduction in ACS history
+__* Investigate null errors that happen with page navigation 
+__* When a user is signing up, when they pick their birthday the user should not be able to choose a date in the future.
+
