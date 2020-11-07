@@ -12,10 +12,7 @@ import 'package:simple_timer/simple_timer.dart';
 class OnGoingTrivia extends StatelessWidget {
   String category;
 
-  // Trivia questions, options and correct answers
   List<TriviaQuestion> triviaQuestions;
-  //Map<String, List<String>> triviaOptions;
-  //Map<String, String> triviaAnswers;
 
   OnGoingTrivia(this.category, this.triviaQuestions);
   String assetLoad;
@@ -31,7 +28,6 @@ class OnGoingTrivia extends StatelessWidget {
         future:
             DefaultAssetBundle.of(context).loadString(assetLoad, cache: false),
         builder: (context, snapshot) {
-          // List data = json.decode(snapshot.data.toString());
           List data = triviaQuestions; // creating data with data from backend
           print(data.length);
           if (data == null) {
@@ -61,8 +57,6 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   var data;
   _quizpageState(this.data);
 
-  //AnimationController _controller;
-
   Color colorToDisplay = Colors.indigoAccent;
   Color correctAnsColor = Colors.green;
   Color incorrectAnsColor = Colors.red;
@@ -77,7 +71,6 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   String showTimer = "10";
   bool disableAnswer = false;
   bool _isPressed = false;
-  //bool _isCorrect = false;
   int _isPressedCorrect = -1; // 0 - correct; 1 - incorrect; -1  for not pressed
   var randomList;
   TimerController _timerController;
@@ -106,12 +99,6 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     _timerController = TimerController(this);
     super.initState();
   }
-
-  /*@override
-  dispose() {
-    _controller.dispose();
-    super.dispose();
-  }*/
 
   @override
   void setState(fn) {
