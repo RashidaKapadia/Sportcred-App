@@ -1,31 +1,130 @@
 package underdevelopment.api;
 
-import java.io.OutputStream;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import org.neo4j.driver.Record;
-import org.neo4j.driver.Result;
 
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.Status;
 import underdevelopment.db.DBProfile;
+import underdevelopment.db.DBUserInfo;
 
 
 public class ProfileHandler {
-
-
-    public static JsonRequestHandler updateUserInfo() {
+    public static JsonRequestHandler updateUserPassword() {
         return (JSONObject jsonObj) -> {
 
-            String username, status, email, dob, about;
+            String username, password, oldPassword;
+            String acs;
+            // Get input
+            try {
+                username = jsonObj.getString("username");
+                password = jsonObj.getString("newPassword");
+                oldPassword = jsonObj.getString("oldPassword");
+            } catch (Exception e) {
+                return new JsonHttpReponse(Status.BADREQUEST);
+            }
+            
+            String response;
+            // Check if the username exists
+            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+          	  try {
+                  response = new JSONObject()
+                      .put("Error", "Username doesn't exist")
+                      .toString();
+                  	return new JsonHttpReponse(Status.CONFLICT, response);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+                  return new JsonHttpReponse(Status.SERVERERROR);
+              }
+            }
+
+            // Check if the old passwodr they entered is correct
+            boolean correctPassword = DBProfile.checkPassword(username, oldPassword);
+            if(! correctPassword) {
+            	try {
+            		System.out.println("incorrect password");
+					response = new JSONObject()
+					        .put("Error:", "Incorrect password")
+					        .toString();
+	                return new JsonHttpReponse(Status.CONFLICT, response);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+	                return new JsonHttpReponse(Status.SERVERERROR);
+				}
+            }
+    		System.out.println("incorrect password2");
+
+            // Run DB command
+            try {
+                DBProfile.updateUserPassword(username, password);
+                response = new JSONObject()
+                        .put("Response:", "Password changed")
+                        .toString();
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
+        };
+    }
+    
+    public static JsonRequestHandler updateUserContact() {
+        return (JSONObject jsonObj) -> {
+            System.out.println("updating contact info");
+
+            String username, email, phoneNumber;
             String acs;
 
             // Get input
             try {
                 username = jsonObj.getString("username");
+                email = jsonObj.getString("email");
+                phoneNumber = jsonObj.getString("phoneNumber");
+
+            } catch (Exception e) {
+                return new JsonHttpReponse(Status.BADREQUEST);
+            }
+            String response;
+            // Check if the username exists
+            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+          	  try {
+                  response = new JSONObject()
+                      .put("Error", "Username doesn't exist")
+                      .toString();
+                  	return new JsonHttpReponse(Status.CONFLICT, response);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+                  return new JsonHttpReponse(Status.SERVERERROR);
+              }
+            }
+            // Run DB command
+            try {
+                DBProfile.updateUserContact(username, email, phoneNumber);
+                response = new JSONObject()
+                        .put("Response:", "Contact Info changed")
+                        .toString();
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
+        };
+    }
+
+    public static JsonRequestHandler updateUserInfo() {
+        return (JSONObject jsonObj) -> {
+
+            String username, firstname, lastname, status, email, dob, about;
+            String acs;
+
+            // Get input
+            try {
+                username = jsonObj.getString("username");
+                firstname = jsonObj.getString("firstname");
+                lastname = jsonObj.getString("lastname");
                 status = jsonObj.getString("status");
                 email = jsonObj.getString("email");
                 dob = jsonObj.getString("dob");
@@ -37,7 +136,7 @@ public class ProfileHandler {
 
             // Run DB command
             try {
-                DBProfile.updateUserInfo(username, status, email, about, dob, acs);
+                DBProfile.updateUserInfo(username, firstname, lastname, status, email, about, dob, acs);
                 return new JsonHttpReponse(Status.OK);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -91,8 +190,11 @@ public class ProfileHandler {
                 
                 // Set up response in a JSON format
                 String usrname = r.get("username").asString();
+                String firstname = r.get("firstname").asString();
+                String lastname = r.get("lastname").asString();
                 String status = r.get("status").asString();
                 String email = r.get("email").asString();
+                String phoneNumber = r.get("phoneNumber").asString();
                 String dob = r.get("dob").asString();
                 String about = r.get("about").asString();                
 
@@ -103,8 +205,11 @@ public class ProfileHandler {
 
                 JSONObject response = new JSONObject();
                 response.put("username", usrname);
+                response.put("firstname", firstname);
+                response.put("lastname", lastname);
                 response.put("status", status);
                 response.put("email", email);
+                response.put("phoneNumber", phoneNumber);
                 response.put("dob", dob);
                 response.put("about", about);
                 response.put("tier", tier);

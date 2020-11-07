@@ -1,9 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:intl/intl.dart';
-import './formFields.dart';
+import './formHelper.dart';
 import './fieldStyles.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
@@ -24,15 +25,17 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
 
   // Signup fields
-  String email = "";
-  String username = "";
-  String password1 = "";
-  String password2 = "";
-  String phoneNumber = "";
-  String favSport = "";
-  String sportLevel = "";
-  String sportToLearn = "";
-  String favTeam = "";
+  String email;
+  String username;
+  String firstname;
+  String lastname;
+  String password1;
+  String password2;
+  String phoneNumber;
+  String favSport;
+  String sportLevel;
+  String sportToLearn;
+  String favTeam;
   DateTime dob;
   DateFormat dateFormatter = new DateFormat('yyyy-MM-dd');
 
@@ -51,45 +54,39 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController password1Controller = TextEditingController();
   TextEditingController dobController = TextEditingController();
 
-  bool signupSuccess = false;
+  bool signupSuccess = true;
 
 // Http post request to signup
-  Future<SignUpStatus> signUp(
-      String username,
-      String email,
-      String password,
-      String phoneNum,
-      String favSport,
-      String sportLevel,
-      String sportToLearn,
-      String favTeam,
-      String dob) async {
+  Future<SignUpStatus> signUp() async {
     // Make the request and store the response
     final http.Response response = await http.post(
-      // new Uri.http("localhost:8080", "/api/login"),
-      'http://localhost:8080/api/signup',
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Accept': 'text/plain; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: jsonEncode(<String, String>{
-        'username': username,
-        'email': email,
-        'password': password,
-        'phoneNumber': phoneNum,
-        'favSport': favSport,
-        'sportLevel': sportLevel,
-        'sportToLearn': sportToLearn,
-        'favTeam': favTeam,
-        'dob': dob
-      }),
-    );
+        // new Uri.http("localhost:8080", "/api/login"),
+        'http://localhost:8080/api/signup',
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Accept': 'text/plain; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: jsonEncode(<String, String>{
+          'firstname': firstname,
+          'lastname': lastname,
+          'username': username,
+          'email': email,
+          'password': password2,
+          'phoneNumber': phoneNumber,
+          'favSport': favSport,
+          'sportLevel': sportLevel,
+          'sportToLearn': sportToLearn,
+          'favTeam': favTeam,
+          'dob':
+              '${dateFormatter.format(this.dob)}', // date formatted as string
+        }));
 
     // Check the type of response received from backend
     if (response.statusCode == 200) {
       // Go to the welcome page if sign up was successful
-      Navigator.of(context).pushNamed('/welcome');
+      print('SUCCESS');
+      // Navigator.of(context).pushNamed('/welcome');
       return SignUpStatus(true, "SignUp successful!");
     } else if (response.statusCode == 409) {
       return SignUpStatus(false, "Username or email already exists.");
@@ -98,32 +95,6 @@ class _SignUpPageState extends State<SignUpPage> {
     }
 
     return null;
-  }
-
-  /// Indicates signup status based on the response
-  Widget signupStatus() {
-    return FutureBuilder<SignUpStatus>(
-      future: _futureSignUpStatus,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          // DEBUGGING
-          if (snapshot.data.success) {
-            print('SUCCESS');
-          }
-          return Text(snapshot.data.message);
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        } else {
-          return Container(
-              alignment: Alignment.center,
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(),
-              ));
-        }
-      },
-    );
   }
 
   @override
@@ -168,6 +139,38 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
+  Widget getFirstname() {
+    return TextFormField(
+      cursorColor: mainColour,
+      validator: requiredValidator,
+      decoration: inputDecorator(
+        'First name',
+        Icon(Icons.person_pin),
+      ),
+      onChanged: (value) {
+        setState(() {
+          this.firstname = value;
+        });
+      },
+    );
+  }
+
+  Widget getLastname() {
+    return TextFormField(
+      cursorColor: mainColour,
+      validator: requiredValidator,
+      decoration: inputDecorator(
+        'Last name',
+        Icon(Icons.person_pin),
+      ),
+      onChanged: (value) {
+        setState(() {
+          this.lastname = value;
+        });
+      },
+    );
+  }
+
   Widget getUsername() {
     return TextFormField(
       cursorColor: mainColour,
@@ -176,7 +179,7 @@ class _SignUpPageState extends State<SignUpPage> {
         'Username',
         Icon(Icons.person),
       ),
-      onSaved: (value) {
+      onChanged: (value) {
         setState(() {
           this.username = value;
         });
@@ -192,7 +195,7 @@ class _SignUpPageState extends State<SignUpPage> {
         'Email',
         Icon(Icons.email),
       ),
-      onSaved: (value) {
+      onChanged: (value) {
         setState(() {
           this.email = value;
         });
@@ -210,7 +213,7 @@ class _SignUpPageState extends State<SignUpPage> {
         'Password',
         Icon(Icons.lock),
       ),
-      onSaved: (value) {
+      onChanged: (value) {
         setState(() {
           this.password1 = value;
         });
@@ -229,7 +232,7 @@ class _SignUpPageState extends State<SignUpPage> {
         'Confirm Password',
         Icon(Icons.lock),
       ),
-      onSaved: (value) {
+      onChanged: (value) {
         setState(() {
           this.password2 = value;
         });
@@ -245,7 +248,7 @@ class _SignUpPageState extends State<SignUpPage> {
         'Phone number',
         Icon(Icons.phone),
       ),
-      onSaved: (value) {
+      onChanged: (value) {
         setState(() {
           this.phoneNumber = value;
         });
@@ -289,7 +292,7 @@ class _SignUpPageState extends State<SignUpPage> {
         'Favourite sport',
         Icon(Icons.sports_basketball),
       ),
-      onSaved: (value) {
+      onChanged: (value) {
         this.favSport = value;
       },
     );
@@ -321,7 +324,7 @@ class _SignUpPageState extends State<SignUpPage> {
           prefixIcon: Icon(Icons.question_answer),
           labelText: 'What sport would you like to know or learn about?',
           hintText: 'Enter your answer'),
-      onSaved: (value) {
+      onChanged: (value) {
         setState(() {
           this.sportToLearn = value;
         });
@@ -338,7 +341,7 @@ class _SignUpPageState extends State<SignUpPage> {
         labelText: 'What is your favourite sports team?',
         hintText: 'Enter your answer',
       ),
-      onSaved: (value) {
+      onChanged: (value) {
         setState(() {
           this.favTeam = value;
         });
@@ -354,8 +357,8 @@ class _SignUpPageState extends State<SignUpPage> {
           padding: EdgeInsets.all(10),
           child: Form(
             key: _formKey,
-            child: ListView(
-              children: [
+            child: SingleChildScrollView(
+              child: Column(children: [
                 SizedBox(height: 20.0),
                 Image.asset('assets/Logo.png',
                     width: 250, height: 325, fit: BoxFit.cover),
@@ -367,32 +370,28 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                (_futureSignUpStatus != null)
-                    ? signupStatus()
-                    : Text("Enter your information below:"),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: (_futureSignUpStatus != null)
+                    ? getStatus(context, _futureSignUpStatus)
+                    : Text("Enter your information below:"),),
+                //SizedBox(height: 20.0),
+                getFirstname(),
+                SizedBox(height: 20.0),
+                getLastname(),
                 SizedBox(height: 20.0),
                 getUsername(),
                 SizedBox(height: 20.0),
                 getEmail(),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 getPassword1(),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 getPassword2(),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 getPhoneNumber(),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 getDateOfBirth(),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 getFavouriteSport(),
                 SizedBox(height: 20.0),
                 getHighestSportLevel(),
@@ -404,14 +403,15 @@ class _SignUpPageState extends State<SignUpPage> {
                 RaisedButton(
                     color: mainColour,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
+                        borderRadius: BorderRadius.circular(10.0)
+                        ),
                     child: Text(
                       "Sign Up",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        print("Sign up was successful!");
+                        print("Fields validated successfully!");
 
                         _formKey.currentState.save();
 
@@ -426,23 +426,51 @@ class _SignUpPageState extends State<SignUpPage> {
                         print(favTeam);
                         print('${dateFormatter.format(this.dob)}');
 
-                        // Call the HTTP request
-                        _futureSignUpStatus = signUp(
-                          username,
-                          email,
-                          password1,
-                          phoneNumber,
-                          favSport,
-                          sportLevel,
-                          sportToLearn,
-                          favTeam,
-                          '${dateFormatter.format(this.dob)}',
-                        );
+                        // Display confirmation pop-up
+                        confirmationPopup();
+
+                        // Set signup status to true
+                      } else {
+                        errorPopup(
+                            context, "Please fill in all fields properly!");
                       }
                     }),
-              ],
+              ]),
             ),
           )),
+    );
+  }
+
+  void confirmationPopup() {
+    showCupertinoDialog(
+      context: context,
+      builder: (alertContext) {
+        return CupertinoAlertDialog(
+          title: Text("Please confirm!"),
+          actions: [
+            CupertinoDialogAction(
+                child: Text("No"),
+                onPressed: () {
+                  Navigator.of(alertContext, rootNavigator: true).pop('dialog');
+                }),
+            CupertinoDialogAction(
+                child: Text("Yes"),
+                onPressed: () {
+                  setState(() {
+                    _futureSignUpStatus = signUp(); //Signup if Yes
+                    // Check that response has been received successfully
+                    if (_futureSignUpStatus != null) {
+                      print('HELLOOO');
+                      // Check if signup was successful
+                      checkStatus(context, _futureSignUpStatus, '/welcome');
+                      Navigator.of(alertContext, rootNavigator: true)
+                          .pop('dialog');
+                    }
+                  });
+                }),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,0 +1,650 @@
+{
+   "questions": [
+      {
+         "questionId": 1,
+         "category": "basketball",
+         "star": false,
+         "question": "Who is the only other player other than Jamal Murray to score 50 on less than 24 field goal attempts?",
+         "answer": "Bob Cousy",
+         "choices": [
+            "Michael Jordan",
+            "Lebron James",
+            "Bob Cousy",
+            "Kareem Abdul Jabbar"
+         ]
+      },
+      {
+         "questionId": 2,
+         "category": "basketball",
+         "star": false,
+         "question": "Who are the two players to have 25 point halves in a single playoff series?",
+         "answer": "Jamal Murray/Allen Iverson",
+         "choices": [
+            "Jamal Murray/Allen Iverson",
+            "James Harden/Russel Westbrook",
+            "Michael Jordan/Kobe Bryant",
+            "Steph Curry/Lebron James"
+         ]
+      },
+      {
+         "questionId": 3,
+         "category": "basketball",
+         "star": true,
+         "question": "Who was the NBA’s first ever unanimous mvp?",
+         "answer": "Steph Curry",
+         "choices": [
+            "Michael Jordan",
+            "Shaquille O’Neal",
+            "LeBron James",
+            "Steph Curry"
+         ]
+      },
+      {
+         "questionId": 5,
+         "category": "basketball",
+         "star": true,
+         "question": "Who was the youngest player to score 10,000 points?",
+         "answer": "LeBron James",
+         "choices": [
+            "Kobe Bryant",
+            "LeBron James",
+            "Michael Jordan",
+            "Kevin Durant"
+         ]
+      },
+      {
+         "questionId": 7,
+         "category": "basketball",
+         "star": true,
+         "question": "Who scored the most points in a single NBA game?",
+         "answer": "Wilt Chamberlain",
+         "choices": [
+            "Kobe Bryant",
+            "Wilt Chamberlain",
+            "James Harden",
+            "Michael Jordan"
+         ]
+      },
+      {
+         "questionId": 8,
+         "category": "basketball",
+         "star": true,
+         "question": "What team has the worst W-L percentage in NBA history?",
+         "answer": "Minnesota Timberwolves",
+         "choices": [
+            "Minnesota Timberwolves",
+            "Phoenix Suns",
+            "Cleveland Cavaliers",
+            "New York Knicks"
+         ]
+      },
+      {
+         "questionId": 9,
+         "category": "basketball",
+         "star": true,
+         "question": "Who has the most Finals MVP’s?",
+         "answer": "Michael Jordan",
+         "choices": [
+            "Kareem Abdul Jabbar",
+            "Magic Johnson",
+            "Shaquille O’Neal",
+            "Michael Jordan"
+         ]
+      },
+      {
+         "questionId": 10,
+         "category": "basketball",
+         "star": true,
+         "question": "What franchise has the most HOF’s to date?",
+         "answer": "Boston Celtics",
+         "choices": [
+            "Los Angeles Lakers",
+            "Chicago Bulls",
+            "Boston Celtics",
+            "San Antonio Spurs"
+         ]
+      },
+      {
+         "questionId": 12,
+         "category": "basketball",
+         "star": true,
+         "question": "What was the name of Toronto’s first NBA team?",
+         "answer": "Toronto Huskies",
+         "choices": [
+            "Toronto Raptors",
+            "Toronto Huskies",
+            "Toronto Knickerbokers",
+            "Toronto Grizzlies"
+         ]
+      },
+      {
+         "questionId": 13,
+         "category": "basketball",
+         "star": true,
+         "question": "Who are the only two players in NBA history to average a triple double in a single season?",
+         "answer": "Oscar Robertson/Russell Westbrook",
+         "choices": [
+            "Oscar Robertson/Lebron James",
+            "Magic Johnson/Russel Westbrook",
+            "Luka Doncic/James Harden",
+            "Oscar Robertson/Russell Westbrook"
+         ]
+      },
+      {
+         "questionId": 14,
+         "category": "basketball",
+         "star": true,
+         "question": "Who holds the record for most assists in a single game?",
+         "answer": "Scott Skiles- 30",
+         "choices": [
+            "Kevin Porter- 29",
+            "Magic Johnson- 32",
+            "John Stockton- 31",
+            "Scott Skiles- 30"
+         ]
+      },
+      {
+         "questionId": 15,
+         "category": "basketball",
+         "star": true,
+         "question": "What team drafted Kobe Bryant?",
+         "answer": "Charlotte Hornets",
+         "choices": [
+            "Charlotte Hornets",
+            "Los Angeles Lakers",
+            "Minnesota Timberwolves",
+            "Los Angeles Clippers"
+         ]
+      },
+      {
+         "questionId": 16,
+         "category": "basketball",
+         "star": true,
+         "question": "What team did Kobe Bryant score 81 points against?",
+         "answer": "Toronto Raptors",
+         "choices": [
+            "Dallas Mavericks",
+            "Portland Trailblazers",
+            "Toronto Raptors",
+            "Washington Wizards"
+         ]
+      },
+      {
+         "questionId": 17,
+         "category": "basketball",
+         "star": true,
+         "question": "Who holds the record for most steals in a playoff game?",
+         "answer": "Allen Iverson",
+         "choices": [
+            "Manu Ginobli",
+            "Scottie Pippen",
+            "Allen Iverson",
+            "Gary Payton"
+         ]
+      },
+      {
+         "questionId": 18,
+         "category": "basketball",
+         "star": true,
+         "question": "Draymond Green was selected with the ____ pick in the NBA draft.",
+         "answer": "35th",
+         "choices": [
+            "5th",
+            "20th",
+            "35th",
+            "60th"
+         ]
+      },
+      {
+         "questionId": 19,
+         "category": "basketball",
+         "star": true,
+         "question": "Youngest player to ever record a triple double in NBA history?",
+         "answer": "Markelle Fultz",
+         "choices": [
+            "Lebron James",
+            "Luka Doncic",
+            "Markelle Fultz",
+            "Oscar Robertson"
+         ]
+      },
+      {
+         "questionId": 20,
+         "category": "basketball",
+         "star": true,
+         "question": "What year was the NBA created?",
+         "answer": "1949",
+         "choices": [
+            "1920",
+            "1949",
+            "1952",
+            "1961"
+         ]
+      },
+      {
+         "questionId": 21,
+         "category": "basketball",
+         "star": true,
+         "question": "What university did Dwayne Wade attend?",
+         "answer": "Marquette",
+         "choices": [
+            "Duke",
+            "Boston College",
+            "Georgia Tech",
+            "Marquette"
+         ]
+      },
+      {
+         "questionId": 22,
+         "category": "basketball",
+         "star": false,
+         "question": "How many players to this date have made the jump from high school to the NBA?",
+         "answer": "44",
+         "choices": [
+            "10",
+            "22",
+            "44",
+            "75"
+         ]
+      },
+      {
+         "questionId": 23,
+         "category": "basketball",
+         "star": true,
+         "question": "How many championship rings does the Laker franchise have?",
+         "answer": "16",
+         "choices": [
+            "18",
+            "16",
+            "15",
+            "11"
+         ]
+      },
+      {
+         "questionId": 24,
+         "category": "basketball",
+         "star": false,
+         "question": "What is Shaquille O’neal’s career PPG average?",
+         "answer": "23.7",
+         "choices": [
+            "19.5",
+            "23.7",
+            "27.3",
+            "30.1"
+         ]
+      },
+      {
+         "questionId": 25,
+         "category": "basketball",
+         "star": false,
+         "question": "Who scored the Toronto Raptors first ever franchise basket?",
+         "answer": "Alvin Robertson",
+         "choices": [
+            "Damon Stoudamire",
+            "Vince Carter",
+            "Doug Christie",
+            "Alvin Robertson"
+         ]
+      },
+      {
+         "questionId": 26,
+         "category": "basketball",
+         "star": true,
+         "question": "Who is the only player to average a triple double in the NBA finals?",
+         "answer": "LeBron James",
+         "choices": [
+            "LeBron James",
+            "Magic Johnson",
+            "Larry Bird",
+            "Oscar Robertson"
+         ]
+      },
+      {
+         "questionId": 27,
+         "category": "basketball",
+         "star": true,
+         "question": "Who was the only team to beat Michael Jordan in a series between 1991 and 1998?",
+         "answer": "Orlando Magic",
+         "choices": [
+            "Houston Rockets",
+            "Detroit Pistons",
+            "Boston Celtics",
+            "Orlando Magic"
+         ]
+      },
+      {
+         "questionId": 28,
+         "category": "basketball",
+         "star": true,
+         "question": "How many points did Reggie Miller score in the final 18.7 seconds of Game 1 against the New York Knicks in 1995?",
+         "answer": "8",
+         "choices": [
+            "6",
+            "8",
+            "10",
+            "12"
+         ]
+      },
+      {
+         "questionId": 29,
+         "category": "basketball",
+         "star": false,
+         "question": "Which coach did Latrell Spreewell choke in practice?",
+         "answer": "PJ Carlesimo",
+         "choices": [
+            "Flip Saunders",
+            "Jeff Van Gundy",
+            "PJ Carlesimo",
+            "Don Nelson",
+            "Eric Musselman"
+         ]
+      },
+      {
+         "questionId": 30,
+         "category": "basketball",
+         "star": false,
+         "question": "Who did the Toronto Raptors trade in exchange to the rights for Vince Carter in 1998?",
+         "answer": "Antawn Jamison",
+         "choices": [
+            "Mike Bibby",
+            "Keon Clark",
+            "Tyson Wheeler",
+            "Bonzi Wells",
+            "Antawn Jamison"
+         ]
+      },
+      {
+         "questionId": 31,
+         "category": "basketball",
+         "star": true,
+         "question": "Who won the 1997 rookie of the year?",
+         "answer": "Allen Iverson",
+         "choices": [
+            "Marcus Camby",
+            "Stephon Marbury",
+            "Ray Allen",
+            "Steve nash",
+            "Allen Iverson",
+            "Kobe Bryant"
+         ]
+      },
+      {
+         "questionId": 32,
+         "category": "basketball",
+         "star": true,
+         "question": "Who were the first team to be a #1 seed and lose to a #8 seed in the NBA playoffs?",
+         "answer": "Seattle SuperSonics",
+         "choices": [
+            "LA Lakers",
+            "Seattle SuperSonics",
+            "Dallas mavericks",
+            "Portland Trailblazers",
+            "Milwaukee Bucks",
+            "Denver Nuggets"
+         ]
+      },
+      {
+         "questionId": 33,
+         "category": "basketball",
+         "star": false,
+         "question": "When was the last time Kobe Byrant made all NBA first team?",
+         "answer": "2012-13",
+         "choices": [
+            "2013-14",
+            "2012-13",
+            "2011-12",
+            "2010-11"
+         ]
+      },
+      {
+         "questionId": 34,
+         "category": "basketball",
+         "star": false,
+         "question": "What two teams did Kareem Abdul-Jabbar play for?",
+         "answer": "LA Lakers, Milwaukee Bucks",
+         "choices": [
+            "Baltimore Bullets, Seattle Supersonics",
+            "LA Lakers, New York Knicks",
+            "Milwauke Bucks, Houston Rockets",
+            "LA Lakers, Milwaukee Bucks"
+         ]
+      },
+      {
+         "questionId": 35,
+         "category": "basketball",
+         "star": false,
+         "question": "What team originally drafted Brandon Roy in 2006?",
+         "answer": "Minnesota Timberwolves",
+         "choices": [
+            "Minnesota Timberwolves",
+            "Portland Trailblazers",
+            "Indian Pacers",
+            "Washington Wizards",
+            "Toronto Raptors"
+         ]
+      },
+      {
+         "questionId": 36,
+         "category": "basketball",
+         "star": false,
+         "question": "1989 NBA Playoffs - Game 5 between the Chicago Bulls and Cleveland Cavaliers - Michael Jordan made what came to be known today as \"The Shot\". The Bulls were trailing by one point and had the ball with 3 seconds to go. Who did Jordan shoot over?",
+         "answer": "Craig Ehlo",
+         "choices": [
+            "Craig Ehlo",
+            "Ron Harper",
+            "Steve Kerr",
+            "Larry Nance",
+            "Mark Price"
+         ]
+      },
+      {
+         "questionId": 37,
+         "category": "basketball",
+         "star": false,
+         "question": "What shoes was Jordan wearing when he made his first well known “game winner”?",
+         "answer": "Jordan 4",
+         "choices": [
+            "Jordan 1",
+            "Jordan 3",
+            "Jordan 4",
+            "Jordan 13"
+         ]
+      },
+      {
+         "questionId": 38,
+         "category": "basketball",
+         "star": true,
+         "question": "Which of the following was a NBA scoring champ one year after being named Rookie of the Year?",
+         "answer": "Dave Bing",
+         "choices": [
+            "Dave Bing",
+            "Michael Jordan",
+            "Lebron james",
+            "Kobe Bryant"
+         ]
+      },
+      {
+         "questionId": 39,
+         "category": "basketball",
+         "star": true,
+         "question": "What number did Scottie Pippen wear?",
+         "answer": "33",
+         "choices": [
+            "23",
+            "32",
+            "33",
+            "34",
+            "43"
+         ]
+      },
+      {
+         "questionId": 40,
+         "category": "basketball",
+         "star": true,
+         "question": "Who won the 2005 NBA MVP?",
+         "answer": "Steve Nash",
+         "choices": [
+            "Lebron James",
+            "Kobe Bryant",
+            "Steve Nash",
+            "Dirk Nowitzki"
+         ]
+      },
+      {
+         "questionId": 41,
+         "category": "basketball",
+         "star": true,
+         "question": "What player led the NBA in points per game during the 03-04 season?",
+         "answer": "Tracy McGrady",
+         "choices": [
+            "Peja Stojakovic",
+            "Kevin Garnett",
+            "Kobe Bryant",
+            "Tracy McGrady"
+         ]
+      },
+      {
+         "questionId": 42,
+         "category": "basketball",
+         "star": true,
+         "question": "What year did LeBron James win his first MVP?",
+         "answer": "2008-2009",
+         "choices": [
+            "2007-2008",
+            "2006-2007",
+            "2008-2009",
+            "2010-2011"
+         ]
+      },
+      {
+         "questionId": 43,
+         "category": "basketball",
+         "star": true,
+         "question": "Who was the NBA’s first ever MVP in 1956?",
+         "answer": "Bob Pettit",
+         "choices": [
+            "Bob Pettit",
+            "George Mikan",
+            "Bill Sharman",
+            "Larry Foust"
+         ]
+      },
+      {
+         "questionId": 44,
+         "category": "basketball",
+         "star": true,
+         "question": "What was LeBron James rookie stat line?",
+         "answer": "20PPG-5APG-5RPG",
+         "choices": [
+            "18PPG-6APG-6RSP",
+            "25PPG-5APG-6RPG",
+            "20PPG-5APG-5RPG",
+            "22PPG-8APG-5RPG"
+         ]
+      },
+      {
+         "questionId": 45,
+         "category": "basketball",
+         "star": true,
+         "question": "Who won MVP in 2008?",
+         "answer": "Kobe Bryant",
+         "choices": [
+            "Chris Paul",
+            "Steve Nash",
+            "Dirk Nowitzki"
+         ]
+      },
+      {
+         "questionId": 46,
+         "category": "basketball",
+         "star": true,
+         "question": "What team did Damian Lillard eliminate with an iconic game winner over Paul George?",
+         "answer": "OKC thunder",
+         "choices": [
+            "Indiana Pacers",
+            "LA Clippers",
+            "OKC thunder",
+            "Atlanta hawks"
+         ]
+      },
+      {
+         "questionId": 47,
+         "category": "basketball",
+         "star": true,
+         "question": "How many sixth man of the year awards has Jamal Crawford won?",
+         "answer": "3",
+         "choices": [
+            "2",
+            "3",
+            "4",
+            "5"
+         ]
+      },
+      {
+         "questionId": 48,
+         "category": "basketball",
+         "star": true,
+         "question": "Which player is the all time leader in points scored for the Memphis Grizzlies?",
+         "answer": "Mike Conley",
+         "choices": [
+            "Marc Gasol",
+            "Zach Randolph",
+            "Pau Gasol",
+            "Mike Conley"
+         ]
+      },
+      {
+         "questionId": 49,
+         "category": "basketball",
+         "star": false,
+         "question": "Which player was traded from the Toronto Raptors for Kawhi Leonard?",
+         "answer": "DeMar DeRozen",
+         "choices": [
+            "Malachi Richardson",
+            "DeMar DeRozen",
+            "Delon Wright",
+            "CJ Miles"
+         ]
+      },
+      {
+         "questionId": 50,
+         "category": "basketball",
+         "star": true,
+         "question": "Which player scored 37 points in a single quarter?",
+         "answer": "Klay Thompson",
+         "choices": [
+            "James Johnson",
+            "Steph Curry",
+            "James Harden",
+            "Bradley Beal",
+            "Klay Thompson"
+         ]
+      },
+      {
+         "questionId": 51,
+         "category": "basketball",
+         "star": true,
+         "question": "Who is the all time leader in points scored for the Toronto Raptors?",
+         "answer": "DeMar DeRozan",
+         "choices": [
+            "DeMar DeRozan",
+            "Vince Carter",
+            "Chris Bosh",
+            "Kawhi Leonard"
+         ]
+      },
+      {
+         "questionId": 52,
+         "category": "basketball",
+         "star": true,
+         "question": "What is Dwayne Wade’s nickname?",
+         "answer": "Flash",
+         "choices": [
+            "Lightning",
+            "Speedy",
+            "Invisible Man",
+            "Flash"
+         ]
+      }
+   ]
+}
