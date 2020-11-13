@@ -4,24 +4,20 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'onGoingTrivia.dart';
-import './navbar.dart';
+import 'package:frontend/trivia/onGoingTrivia.dart';
+import '../navbar.dart';
 import 'package:http/http.dart' as http;
 
 class TriviaQuestion {
   final String question;
   final List<dynamic> options;
   final String answer;
-  // final bool reqStatus;
 
   TriviaQuestion({this.question, this.options, this.answer});
-  // @required this.reqStatus});
 
   // converts json to TriviaQuestions object
   factory TriviaQuestion.fromJson(Map<String, dynamic> json) {
-    // If there is an error
     return TriviaQuestion(
-        //  reqStatus: status,
         question: json['question'],
         options: json['choices'],
         answer: json['answer']);
@@ -42,16 +38,9 @@ class _TriviaState extends State<SoloTriviaPage> {
     'Basketball': '/homepage'
   };
 
-  // hardcoded to be Basketball for now
+  // TODO: FIX should not hardcode to basketball
   String chosenCategory = 'basketball';
-
-  // Trivia questions, options and correct answers
-  /* Map<String, String> _triviaQuestions;
-  Map<String, List<String>> _triviaOptions;
-  Map<String, String> _triviaAnswers; */
-
   List<TriviaQuestion> triviaData;
-
   Timer _timer;
 
   Future<List<TriviaQuestion>> _futureTriviaQuestions;
@@ -70,42 +59,23 @@ class _TriviaState extends State<SoloTriviaPage> {
     );
 
     if (response.statusCode == 200) {
-      // Store the session token
-      print("PROFILE GET -> RESPONSE:" + response.body.toString());
-      print(jsonDecode(response.body)['questions']);
       List<TriviaQuestion> triviaQs = [];
+
       // Get the questions, options and correctAnswers and store them in the class variables
       for (Map<String, dynamic> question
           in jsonDecode(response.body)["questions"] as List) {
-        print("*********************");
-        print(TriviaQuestion.fromJson(question).question);
-        print("*********************");
-
         triviaQs += [TriviaQuestion.fromJson(question)];
       }
-      //setState(() {
-      //this.triviaData = triviaQs;
-      //});
-
-      // DEBUGGING STATEMENTS
-      print('DEBUGGING: TRIVIA GET QUESTIONS');
-      print("\n\nTRIVIA QUESTION: " + triviaQs[0].question);
-
-      // Return trivia data
       return triviaQs;
     } else {
       return null;
     }
-    return null;
   }
 
   @override
   void initState() {
     super.initState();
-
     setState(() {
-      print('GETTING DATA FROM BACKEND');
-
       _futureTriviaQuestions = getQuestions(chosenCategory);
     });
   }
@@ -149,65 +119,6 @@ class _TriviaState extends State<SoloTriviaPage> {
           );
         });
   }
-
-  // KEEPING THIS CODE (BELOW) IN CASE IT IS REQUIRED FOR FUTURE
-  // PURPOSES TO INCLUDE 1-1 AND SOLO-TRIVIA BUTTONS INSIDE THIS PAGE
-
-  /*Future<Widget> DialogBox(BuildContext context, String val) async {
-    return await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Container(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 250.0,
-                ),
-                RaisedButton(
-                  padding: EdgeInsets.all(10),
-                  color: Colors.lightGreen[800],
-                  highlightColor: Colors.lightGreen[700],
-                  elevation: 10.0,
-                  highlightElevation: 25.0,
-                  child: Text(
-                    '1-1',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                    textAlign: TextAlign.center,
-                  ),
-                  //shape: RoundedRectangleBorder(
-                  //borderRadius: new BorderRadius.circular(25.0)),
-                  shape: CircleBorder(),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(categories[val]);
-                  },
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                RaisedButton(
-                  padding: EdgeInsets.all(10),
-                  color: Colors.lightGreen[800],
-                  highlightColor: Colors.lightGreen[700],
-                  elevation: 10.0,
-                  highlightElevation: 25.0,
-                  child: Text(
-                    'Solo',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                    textAlign: TextAlign.center,
-                  ),
-                  //shape: RoundedRectangleBorder(
-                  //  borderRadius: new BorderRadius.circular(25.0)),
-                  shape: StadiumBorder(),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(categories[val]);
-                  },
-                ),
-              ],
-            ),
-          );
-        });
-  }*/
 
   Widget build(BuildContext context) {
     //final appState = AppStateProvider.of<AppState>(context);
@@ -288,8 +199,6 @@ class _TriviaState extends State<SoloTriviaPage> {
   void goToTrivia() async {
     await _futureTriviaQuestions.then((snapshot) {
       if (snapshot.isNotEmpty) {
-        print(snapshot[0].question);
-        print('GOING TO ONGOING TRIVIA PAGE');
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => OnGoingTrivia('Basketball', snapshot)));
       }

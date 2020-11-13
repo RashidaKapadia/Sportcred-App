@@ -1,7 +1,7 @@
 import 'dart:html';
 
 import 'package:flutter/material.dart';
-import './navbar.dart';
+import '../navbar.dart';
 
 class TriviaHomePage extends StatefulWidget {
   @override
@@ -9,8 +9,8 @@ class TriviaHomePage extends StatefulWidget {
 }
 
 class _TriviaHomePageState extends State<TriviaHomePage> {
-  var isSelected = false;
-  // This widget is the root of your application.
+  Widget gameModeTile({String text, void onPressed}) {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +26,7 @@ class _TriviaHomePageState extends State<TriviaHomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const SizedBox(height: 30),
+              // const SizedBox(height: 30),
               ButtonTheme(
                   minWidth: 200.0,
                   height: 100.0,
@@ -38,7 +38,7 @@ class _TriviaHomePageState extends State<TriviaHomePage> {
                     child: const Text('Solo Trivia',
                         style: TextStyle(fontSize: 20)),
                   )),
-              const SizedBox(height: 30),
+              // const SizedBox(height: 30),
               ButtonTheme(
                   minWidth: 200.0,
                   height: 100.0,

@@ -3,10 +3,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:frontend/TriviaResult.dart';
+import 'package:frontend/trivia/triviaResult.dart';
 import 'dart:async';
 import 'dart:math';
-import './SoloTriviaPage.dart';
+import 'package:frontend/trivia/soloTriviaPage.dart';
 import 'package:simple_timer/simple_timer.dart';
 
 class OnGoingTrivia extends StatelessWidget {
@@ -17,6 +17,7 @@ class OnGoingTrivia extends StatelessWidget {
   OnGoingTrivia(this.category, this.triviaQuestions);
   String assetLoad;
 
+  // TODO: what is this?
   setasset() {
     assetLoad = "assets/mockdata2.json";
   }
@@ -217,7 +218,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
               context: context,
               builder: (context) => AlertDialog(
                     content: Text(
-                      "You sure want to leave? You will get a score of -10!",
+                      "You sure want to leave? You will forfeit the game resulting in a score of -10!",
                     ),
                     actions: [
                       FlatButton(

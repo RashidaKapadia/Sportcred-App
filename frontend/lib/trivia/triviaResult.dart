@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
-import './navbar.dart';
+import '../navbar.dart';
 import 'package:http/http.dart' as http;
 
 class TriviaResult extends StatefulWidget {
@@ -45,8 +45,6 @@ class _TriviaResultState extends State<TriviaResult> {
 
     // Check the type of response received from backend
     if (response.statusCode == 200) {
-      print('SUCCESS - ACS UPDATED!');
-      // Return true if ACS was updated successfully
       return true;
     } else {
       return false;
@@ -130,8 +128,7 @@ class _TriviaResultState extends State<TriviaResult> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.cancel, color: Colors.red),
-                        Text('Incorrect: '),
-                        Text(incorrect.toString() + '/10'),
+                        Text('Incorrect: ' + incorrect.toString() + '/10'),
                       ],
                     ),
                     decoration: BoxDecoration(
@@ -149,8 +146,7 @@ class _TriviaResultState extends State<TriviaResult> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.error, color: Colors.blue),
-                        Text('Not Answered: '),
-                        Text(notAnswered.toString() + '/10'),
+                        Text('Not Answered: ' + notAnswered.toString() + '/10'),
                       ],
                     ),
                   ),
