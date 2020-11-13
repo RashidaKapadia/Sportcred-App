@@ -14,7 +14,7 @@ public class DBPosts {
     /***
      * create a post using following parameters
      */
-    public static boolean createPost(String username, String content, String title, String profileName, int postsCount){
+    public static String createPost(String username, String content, String title, String profileName, int postsCount){
         //
         System.out.println("creating post for user: " + username);
         String id = username.concat("."+ Integer.toString(postsCount+1));
@@ -27,11 +27,11 @@ public class DBPosts {
             parameters("z", id, "x", username,"y", content, "u", title,"a",
             profileName, "b", new HashSet<String>(), "c", new HashSet<String>(),"d", new ArrayList<String>())));// COMMENTS INITIALIAZATION NEEDS TO BE UPDATED
             session.close();
-            return true;
+            return id;
         }
         catch(Exception e){
             e.printStackTrace();
-            return false;
+            return "";
 
         }
 
@@ -44,5 +44,20 @@ public class DBPosts {
     public static void deletePost(){
 
     }
+
+    public static boolean addRelationToPost(String username, String id){
+        try (Session session = Connect.driver.session()){
+			session.writeTransaction(tx -> tx.run(
+                "MATCH (u:user {username: $x}), (p:post {uniqueIdentifier: $y})\n" +
+                "MERGE (u)-[act:Posted]->(p)\n" +
+                "RETURN act", parameters("x", username, "y", id)));
+			session.close();
+			return true;
+		}catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     
 }
