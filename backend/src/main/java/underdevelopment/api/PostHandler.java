@@ -43,30 +43,40 @@ public class PostHandler {
                 }
             }
             // create Post
-            boolean isPostCreated = DBPosts.createPost(username, content, title, profileName, count);
-            if(!isPostCreated){
+            String postId = DBPosts.createPost(username, content, title, profileName, count);
+            if(postId == ""){
                 try {
-                    response = new JSONObject().put("Couldn't create the post!", isPostCreated).toString();
+                    response = new JSONObject().put("Couldn't create the post!", "").toString();
+                    return new JsonHttpReponse(Status.SERVERERROR, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } 
+            // add relationship of user to post
+            boolean isAddedRelation = DBPosts.addRelationToPost(username, postId);
+            if(!isAddedRelation){
+                try {
+                    response = new JSONObject().put("Couldn't create the relation", isAddedRelation).toString();
+                    // TODO: DELETE THE
                     return new JsonHttpReponse(Status.SERVERERROR, response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             } 
             // update the number of posts in user node for the user with "username"
-            boolean isUpdateCountTrue = DBUserInfo.updatePostCount(username);
-            if(!isUpdateCountTrue){
-                try {
-                    response = new JSONObject()
-                            .put("Number of Posts did not update for some reason!", isUpdateCountTrue).toString();
-                            return new JsonHttpReponse(Status.SERVERERROR, response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // add relationship of user to post
+             boolean isUpdateCountTrue = DBUserInfo.updatePostCount(username);
+             if(!isUpdateCountTrue){
+                 try {
+                     response = new JSONObject()
+                             .put("Number of Posts did not update for some reason!", isUpdateCountTrue).toString();
+                              // TODO : DELETE POST AND REMOVE RELATION AND ASK USER TO RETRY
+                             return new JsonHttpReponse(Status.SERVERERROR, response);
+                 } catch (JSONException e) {
+                     e.printStackTrace();
+                 }
+             }
             try {
-                response = new JSONObject().put("Post successfully created!", jsonObj).toString();
+                response = new JSONObject().put("Successfully added relation btw user and post!", jsonObj).toString();
                 return new JsonHttpReponse(Status.OK, response);
             } catch (JSONException e) {
                     e.printStackTrace();
