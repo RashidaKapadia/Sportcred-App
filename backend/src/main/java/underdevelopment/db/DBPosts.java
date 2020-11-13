@@ -41,22 +41,43 @@ public class DBPosts {
 
     }
 
-    public static void deletePost(){
-
-    }
-
-    public static boolean addRelationToPost(String username, String id){
+    public static boolean deletePost(String postId){
         try (Session session = Connect.driver.session()){
 			session.writeTransaction(tx -> tx.run(
-                "MATCH (u:user {username: $x}), (p:post {uniqueIdentifier: $y})\n" +
-                "MERGE (u)-[act:Posted]->(p)\n" +
-                "RETURN act", parameters("x", username, "y", id)));
+                "MATCH (p:post {uniqueIdentifier: $x}) DELETE p", parameters("x", postId)));
 			session.close();
 			return true;
 		}catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static boolean addRelationToPost(String username, String postId){
+        try (Session session = Connect.driver.session()){
+			session.writeTransaction(tx -> tx.run(
+                "MATCH (u:user {username: $x}), (p:post {uniqueIdentifier: $y})\n" +
+                "MERGE (u)-[Posted]->(p)\n" ,parameters("x", username, "y", postId)));
+			session.close();
+			return true;
+		}catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean removeRelation(String username, String postId){
+        try (Session session = Connect.driver.session()){
+			session.writeTransaction(tx -> tx.run(
+                "MATCH (u:user {username: $x}) -[r:Posted] ->(p:post {uniqueIdentifier: $y})\n" +
+                "Delete r", parameters("x", username, "y", postId)));
+			session.close();
+			return true;
+		}catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     
