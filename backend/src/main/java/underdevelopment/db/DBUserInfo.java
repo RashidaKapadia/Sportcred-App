@@ -32,7 +32,7 @@ public class DBUserInfo {
           "MERGE (a:user {firstname: \"%s\", lastname: \"%s\", email: \"%s\", username: \"%s\", password: \"%s\", " +
           "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\"," +
           "favTeam: \"%s\", dob: \"%s\", acs: %d, about: \"%s\", status: \"%s\"})",
-          firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob, 100, "N/A",
+          firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob, 200, "N/A",
           "Hungry for basketball")));
       // System.out.println("finished adding the user");
       session.close();
