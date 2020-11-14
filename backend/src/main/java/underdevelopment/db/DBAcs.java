@@ -31,13 +31,17 @@ public class DBAcs {
 		 int newACS;
 		 try (Session session = Connect.driver.session()) {
 	    	try (Transaction tx = session.beginTransaction()) {
-	    		// Update the person's ACS score
-				Result result = tx.run(String.format("MATCH (n:user { username: '%s' }) SET n.acs = %d + toInteger(n.acs)  RETURN n.username as username, n.acs as acs", username, amount));
+	    		// Update the person's ACS score (MIN: 100, MAX: 1100)
+				Result result = tx.run(String.format("MATCH (n:user { username: '%s' }) SET n.acs = %d + toInteger(n.acs), "
+				+ "n.acs = CASE WHEN toInteger(n.acs) < 100 THEN 100 " 
+				+ "WHEN toInteger(n.acs) > 1100 THEN 1100 ELSE toInteger(n.acs) END " 
+				+ "RETURN n.username as username, n.acs as acs", username, amount));
 				//Result result = tx.run("MATCH (n { username: 'banana420' }) SET n.acs = 5556  RETURN n.username as username, n.acs as acs");
 	    		record = result.next();
 	    		newACS = record.get("acs").asInt();
     			
-	    		
+				System.out.println(newACS);
+				
 	    		System.out.println("checking");
 	    		// Check if the person has played any games at all.
 	    		Result result2 = tx.run(String.format("MATCH (n:user {username: '%s'})-[r:ACSRecord]-() RETURN n", username));
