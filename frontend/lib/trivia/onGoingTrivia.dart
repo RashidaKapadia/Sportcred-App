@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:frontend/trivia/triviaResult.dart';
 import 'dart:async';
-import 'dart:math';
 import 'package:frontend/trivia/soloTriviaPage.dart';
 import 'package:simple_timer/simple_timer.dart';
 
@@ -16,18 +15,9 @@ class OnGoingTrivia extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List data = triviaQuestions; // creating data with data from backend
-    if (data == null) {
-      return Scaffold(
-        body: Center(
-          child: Text(
-            "Loading",
-          ),
-        ),
-      );
-    } else {
-      return quizPage(data: data);
-    }
+    return (triviaQuestions == null)
+        ? Text("Loading")
+        : quizPage(data: triviaQuestions);
   }
 }
 
@@ -67,13 +57,6 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     super.initState();
   }
 
-  @override
-  void setState(fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
-
   void startTimer() async {
     const onesec = Duration(seconds: 1);
     Timer.periodic(onesec, (Timer t) {
@@ -82,14 +65,14 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         if (timer < 1) {
           t.cancel();
           if (_isPressed == false) {
-            marks = marks - 1;
+            marks--;
           }
           nextQuestion();
         } else if (cancelTimer == true) {
           t.cancel();
           _timerController.stop();
         } else {
-          timer = timer - 1;
+          timer--;
         }
         showTimer = timer.toString();
       });
@@ -101,6 +84,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     cancelTimer = false;
     setState(() {
       if (i < 10) {
+        print(i);
         i++;
       } else {
         Timer(Duration(seconds: 0), () {
@@ -148,24 +132,14 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
 
   Widget answersAnimation(int t) {
     return Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 5.0,
-          horizontal: 10.0,
-        ),
+        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
         child: MaterialButton(
           onPressed: () {
             _isPressed = true;
             validateAnswer(t, true);
           },
-          child: Text(
-            data[i].options[t],
-            maxLines: 1,
-          ),
-          color: _isPressedCorrect == 0
-              ? Colors.green
-              : _isPressedCorrect == 1
-                  ? Colors.red
-                  : Colors.indigoAccent,
+          child: Text(data[i].options[t], maxLines: 1),
+          color: _isPressedCorrect == 0 ? Colors.green : Colors.red,
           highlightColor: Colors.indigo[700],
           minWidth: 200.0,
           height: 45.0,
@@ -175,92 +149,89 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         ));
   }
 
+  Future<dynamic> confirmLeave(BuildContext context) {
+    Widget leaveButton = FlatButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+          marks = -10;
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => TriviaResult(
+                  marks: marks,
+                  incorrect: pressedIncorrectOption,
+                  correct: pressedCorrectOption,
+                  notAnswered:
+                      10 - pressedCorrectOption - pressedIncorrectOption)));
+        },
+        child: Text('Leave'));
+
+    Widget resumeButton = FlatButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        child: Text('Resume'));
+
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+            content: Text(
+              "You sure want to leave? You will forfeit the game resulting in a score of -10!",
+            ),
+            actions: [leaveButton, resumeButton]));
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget timer = Expanded(
+        child: Container(
+            child: SimpleTimer(
+      controller: _timerController,
+      duration: Duration(seconds: 10),
+      timerStyle: TimerStyle.expanding_sector,
+    )));
+
+    Widget question = Container(
+      alignment: Alignment.center,
+      margin: const EdgeInsets.only(top: 8),
+      padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.indigoAccent, width: 5.0),
+        borderRadius: BorderRadius.all(Radius.circular(50)),
+      ),
+      child: Text(
+        'Q. ' + data[i].question,
+        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+      ),
+    );
+
+    Widget options = Expanded(
+      flex: 6,
+      child: AbsorbPointer(
+        absorbing: disableAnswer,
+        child: Container(
+          child: Wrap(
+              direction: Axis.horizontal,
+              children: List.generate(data[i].options.length, (index) {
+                return answersAnimation(index);
+              })),
+        ),
+      ),
+    );
+
+    Widget currentScore = Text(
+      'Score: ' + marks.toString(),
+      style: TextStyle(fontSize: 20),
+      textAlign: TextAlign.center,
+    );
+
     return WillPopScope(
-        onWillPop: () {
-          return showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                    content: Text(
-                      "You sure want to leave? You will forfeit the game resulting in a score of -10!",
-                    ),
-                    actions: [
-                      FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            marks = -10;
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) => TriviaResult(
-                                        marks: marks,
-                                        incorrect: pressedIncorrectOption,
-                                        correct: pressedCorrectOption,
-                                        notAnswered: 10 -
-                                            pressedCorrectOption -
-                                            pressedIncorrectOption)));
-                          },
-                          child: Text('Leave')),
-                      FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Resume'))
-                    ],
-                  ));
-        },
-        child: Scaffold(
-            body: Column(
+        onWillPop: () => confirmLeave(context),
+        child: Column(
           children: <Widget>[
-            SizedBox(height: 25.0),
-            Expanded(
-                child: Container(
-                    child: SimpleTimer(
-              controller: _timerController,
-              duration: Duration(seconds: 10),
-              timerStyle: TimerStyle.expanding_sector,
-            ))),
-            SizedBox(height: 25.0),
-            Container(
-              //flex: 3,
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.indigoAccent, width: 5.0),
-                  borderRadius: BorderRadius.all(Radius.circular(50)),
-                ),
-                child: Text(
-                  'Q. ' + data[i].question,
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            SizedBox(height: 30.0),
-            Expanded(
-              flex: 6,
-              child: AbsorbPointer(
-                absorbing: disableAnswer,
-                child: Container(
-                  child: Wrap(
-                      direction: Axis.horizontal,
-                      children: List.generate(data[i].options.length, (index) {
-                        return answersAnimation(index);
-                      })),
-                ),
-              ),
-            ),
-            Container(
-                child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Score: ' + marks.toString(),
-                  style: TextStyle(fontSize: 20),
-                ),
-              ],
-            )),
+            timer,
+            question,
+            options,
+            currentScore,
           ],
-        )));
+        ));
   }
 }

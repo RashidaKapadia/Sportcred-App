@@ -25,6 +25,18 @@ class _HomePageState extends State<HomePage> {
     loadUsername();
   }
 
+  Widget homepageTile(toRoute, title, colour) {
+    return ButtonTheme(
+      minWidth: 50.0,
+      height: 25.0,
+      child: RaisedButton(
+        onPressed: () => Navigator.of(context).pushNamed(toRoute),
+        child: Text(title),
+        color: colour,
+      ),
+    );
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -41,44 +53,12 @@ class _HomePageState extends State<HomePage> {
                   crossAxisCount: 4,
                   primary: false,
                   children: <Widget>[
-                    ButtonTheme(
-                      minWidth: 50.0,
-                      height: 25.0,
-                      child: RaisedButton(
-                        onPressed: () {},
-                        child: Text("The Zone"),
-                        color: Colors.redAccent,
-                      ),
-                    ),
-                    ButtonTheme(
-                      minWidth: 50.0,
-                      height: 25.0,
-                      child: RaisedButton(
-                        onPressed: () {},
-                        child: Text("Picks & Predictions"),
-                        color: Colors.orangeAccent,
-                      ),
-                    ),
-                    ButtonTheme(
-                      minWidth: 50.0,
-                      height: 25.0,
-                      child: RaisedButton(
-                        onPressed: () {
-                          Navigator.of(context).pushNamed('/trivia');
-                        },
-                        child: Text("Trivia"),
-                        color: Colors.yellowAccent[100],
-                      ),
-                    ),
-                    ButtonTheme(
-                      minWidth: 50.0,
-                      height: 25.0,
-                      child: RaisedButton(
-                        onPressed: () {},
-                        child: Text("Analyze & Debate"),
-                        color: Colors.greenAccent,
-                      ),
-                    ),
+                    homepageTile("/homepage", "The Zone", Colors.redAccent),
+                    homepageTile("/homepage", "Picks & Predictions",
+                        Colors.orangeAccent),
+                    homepageTile("/trivia", "Trivia", Colors.yellowAccent[100]),
+                    homepageTile(
+                        "/homepage", "Analyze & Debate", Colors.greenAccent),
                   ],
                 );
               },
