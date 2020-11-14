@@ -127,9 +127,9 @@ public class DBUserInfo {
    * @param username
    * @return boolean
    */
-  public static boolean updatePostCount(String username) {
+  public static boolean updatePostCount(String username, String num) {
     try(Session session = Connect.driver.session()){
-      session.writeTransaction(tx->tx.run("MATCH (u: user{username: $x}) SET u.numberOfPosts = 1 + toInteger(u.numberOfPosts) ",
+      session.writeTransaction(tx->tx.run("MATCH (u: user{username: $x}) SET u.numberOfPosts = num + toInteger(u.numberOfPosts) ",
       parameters("x", username)));
       session.close();
       return true;
