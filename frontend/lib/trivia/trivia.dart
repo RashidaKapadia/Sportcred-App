@@ -9,7 +9,16 @@ class TriviaHomePage extends StatefulWidget {
 }
 
 class _TriviaHomePageState extends State<TriviaHomePage> {
-  Widget gameModeTile({String text, void onPressed}) {}
+  Widget gameModeTile({String text, Function onPressed}) {
+    return ButtonTheme(
+        minWidth: 200.0,
+        height: 100.0,
+        child: RaisedButton(
+          onPressed: onPressed,
+          color: Color(0xFFFF8F00),
+          child: Text(text, style: TextStyle(fontSize: 20)),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,28 +35,14 @@ class _TriviaHomePageState extends State<TriviaHomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              // const SizedBox(height: 30),
-              ButtonTheme(
-                  minWidth: 200.0,
-                  height: 100.0,
-                  child: RaisedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed("/soloTrivia");
-                    },
-                    color: Color(0xFFFF8F00),
-                    child: const Text('Solo Trivia',
-                        style: TextStyle(fontSize: 20)),
-                  )),
-              // const SizedBox(height: 30),
-              ButtonTheme(
-                  minWidth: 200.0,
-                  height: 100.0,
-                  child: RaisedButton(
-                    onPressed: () {},
-                    color: Color(0xFFFF8F00),
-                    child: const Text('1 - 1 Trivia',
-                        style: TextStyle(fontSize: 20)),
-                  )),
+              gameModeTile(
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed("/soloTrivia"),
+                  text: "Solo Trivia"),
+              gameModeTile(
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed("/soloTrivia"),
+                  text: "1 - 1 Trivia"),
             ],
           ),
         )));

@@ -11,38 +11,23 @@ import 'package:simple_timer/simple_timer.dart';
 
 class OnGoingTrivia extends StatelessWidget {
   String category;
-
   List<TriviaQuestion> triviaQuestions;
-
   OnGoingTrivia(this.category, this.triviaQuestions);
-  String assetLoad;
-
-  // TODO: what is this?
-  setasset() {
-    assetLoad = "assets/mockdata2.json";
-  }
 
   @override
   Widget build(BuildContext context) {
-    setasset();
-    return FutureBuilder(
-        future:
-            DefaultAssetBundle.of(context).loadString(assetLoad, cache: false),
-        builder: (context, snapshot) {
-          List data = triviaQuestions; // creating data with data from backend
-          print(data.length);
-          if (data == null) {
-            return Scaffold(
-              body: Center(
-                child: Text(
-                  "Loading",
-                ),
-              ),
-            );
-          } else {
-            return quizPage(data: data);
-          }
-        });
+    List data = triviaQuestions; // creating data with data from backend
+    if (data == null) {
+      return Scaffold(
+        body: Center(
+          child: Text(
+            "Loading",
+          ),
+        ),
+      );
+    } else {
+      return quizPage(data: data);
+    }
   }
 }
 
@@ -66,37 +51,18 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   var pressedCorrectOption = 0; // number of correct answers picked
   var pressedIncorrectOption = 0; // number of questions answered wrong
   var notAnswered = 0; // number of questions not answered
-  int i = 1;
-  int j = 1;
+  int i = 0;
   int timer = 10;
   String showTimer = "10";
   bool disableAnswer = false;
   bool _isPressed = false;
   int _isPressedCorrect = -1; // 0 - correct; 1 - incorrect; -1  for not pressed
-  var randomList;
   TimerController _timerController;
-
   bool cancelTimer = false;
-
-  createRandomList() {
-    var distinctIds = [];
-    var rand = new Random();
-    for (int i = 0;;) {
-      distinctIds.add(rand.nextInt(10));
-      randomList = distinctIds.toSet().toList();
-      if (randomList.length < 10) {
-        continue;
-      } else {
-        break;
-      }
-    }
-    print(randomList);
-  }
 
   @override
   void initState() {
     startTimer();
-    createRandomList();
     _timerController = TimerController(this);
     super.initState();
   }
@@ -134,9 +100,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     timer = 10;
     cancelTimer = false;
     setState(() {
-      if (j < 10) {
-        i = randomList[j];
-        j++;
+      if (i < 10) {
+        i++;
       } else {
         Timer(Duration(seconds: 0), () {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -160,14 +125,14 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     if (val == true) {
       if (data[i].answer == data[i].options[t]) {
         _isPressedCorrect = 0; //true
-        marks = marks + 1;
+        marks++;
         colorToDisplay = correctAnsColor;
-        pressedCorrectOption = pressedCorrectOption + 1;
+        pressedCorrectOption++;
       } else {
         _isPressedCorrect = 1; //false
-        marks = marks - 1;
+        marks--;
         colorToDisplay = incorrectAnsColor;
-        pressedIncorrectOption = pressedIncorrectOption + 1;
+        pressedIncorrectOption++;
       }
       setState(() {
         cancelTimer = true;
@@ -175,7 +140,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         _isPressed = false;
       });
     } else {
-      marks = marks - 1;
+      marks--;
     }
 
     Timer(Duration(seconds: 1), nextQuestion);
