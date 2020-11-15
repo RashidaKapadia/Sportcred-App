@@ -61,7 +61,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
             score: correctlyAnswered - (questions - correctlyAnswered),
             incorrect: questions - notAnswered - correctlyAnswered,
             correct: correctlyAnswered,
-            notAnswered: notAnswered)));
+            notAnswered: notAnswered,
+            questions: questions)));
   };
 
   @override
@@ -80,7 +81,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
       notAnswered = data.length;
       questions = data.length;
     });
-    _timerController = TimerController(this); // TODO:
+    _timerController = TimerController(this);
     startTimer();
   }
 
@@ -88,14 +89,16 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     const onesec = Duration(seconds: 1);
     Timer.periodic(onesec, (Timer t) {
       print("start time set state");
+      print("timer: " + timer.toString());
+      print(cancelTimer);
       setState(() {
         _timerController.start();
-        if (timer < 1) {
-          t.cancel();
-          nextQuestion();
-        } else if (cancelTimer == true) {
+        if (cancelTimer) {
+          print("cancelling");
           t.cancel();
           _timerController.stop();
+        } else if (timer < 1) {
+          nextQuestion();
         } else {
           timer--;
         }
@@ -107,19 +110,22 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     print("next question set state");
     setState(() {
       timer = 10;
-      cancelTimer = false;
       // NOTE: i is inclusive TODO:
-      (i < questions - 1)
-          ? i++
-          : Timer(
-              Duration(seconds: 0),
-              () => gotoResults(
-                  context, questions, correctlyAnswered, notAnswered));
+      print("i: " + i.toString());
+      if (i < questions - 1) {
+        i++;
+        _timerController.reset();
+        _timerController.start();
+      } else {
+        cancelTimer = true;
+        Timer(
+            Duration(seconds: 0),
+            () => gotoResults(
+                context, questions, correctlyAnswered, notAnswered));
+      }
       disableAnswer = false;
       colorToDisplay = colorDefault;
     });
-    _timerController.reset();
-    _timerController.start();
   }
 
   void validateAnswer(int t, bool val) {
@@ -133,7 +139,6 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
           colorToDisplay = incorrectAnsColor;
         }
         notAnswered--;
-        cancelTimer = true;
         disableAnswer = true;
       });
     }
@@ -160,6 +165,9 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   Future<dynamic> confirmLeave(BuildContext context) {
     Widget leaveButton = FlatButton(
         onPressed: () {
+          setState(() {
+            cancelTimer = true;
+          });
           Navigator.of(context).pop();
           gotoResults(context, questions, correctlyAnswered, notAnswered);
         },
@@ -175,7 +183,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         context: context,
         builder: (context) => AlertDialog(
             content: Text(
-              "You sure want to leave? You will forfeit the game resulting in a score of -10!",
+              "You sure want to leave? You will forfeit the remaining questions!",
             ),
             actions: [leaveButton, resumeButton]));
   }
@@ -202,7 +210,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),
         child: Text(
-          'Q. ' + data[i].question,
+          'Q' + (i + 1).toString() + ": " + data[i].question,
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
         ),
       ),

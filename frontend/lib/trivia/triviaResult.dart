@@ -6,23 +6,24 @@ import '../navbar.dart';
 import 'package:http/http.dart' as http;
 
 class TriviaResult extends StatefulWidget {
-  int score, incorrect, correct, notAnswered;
+  int score, incorrect, correct, notAnswered, questions;
   TriviaResult({
     Key key,
     @required this.score,
     @required this.incorrect,
     @required this.correct,
     @required this.notAnswered,
+    @required this.questions,
   }) : super(key: key);
   @override
   _TriviaResultState createState() =>
-      _TriviaResultState(score, incorrect, correct, notAnswered);
+      _TriviaResultState(score, incorrect, correct, notAnswered, questions);
 }
 
 class _TriviaResultState extends State<TriviaResult> {
-  int score, incorrect, correct, notAnswered;
-  _TriviaResultState(
-      this.score, this.incorrect, this.correct, this.notAnswered);
+  int score, incorrect, correct, notAnswered, questions;
+  _TriviaResultState(this.score, this.incorrect, this.correct, this.notAnswered,
+      this.questions);
 
   // Http post request to update ACS
   Future updateACS(String username, String token) async {
@@ -64,6 +65,29 @@ class _TriviaResultState extends State<TriviaResult> {
     });
   }
 
+  Widget fieldSore(Icon icon, String field, int score) {
+    return Container(
+      width: 200.0,
+      padding: EdgeInsets.all(2.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          icon,
+          Text(field),
+          Text(score.toString() + '/' + questions.toString()),
+        ],
+      ),
+      // decoration: BoxDecoration(
+      //   border: Border(
+      //     bottom: BorderSide(
+      //       color: Colors.grey,
+      //       width: 3.0,
+      //     ),
+      //   ),
+      // ),
+    );
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: NavBar(0),
@@ -82,7 +106,7 @@ class _TriviaResultState extends State<TriviaResult> {
               ),
               padding: EdgeInsets.all(20.0),
             ),
-            SizedBox(height: 20.0),
+            // Title
             Container(
               alignment: Alignment.center,
               padding: EdgeInsets.all(20.0),
@@ -95,51 +119,35 @@ class _TriviaResultState extends State<TriviaResult> {
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
             Container(
               // width: MediaQuery.of(context).size.width,
               child: Column(
                 //direction: Axis.horizontal,
                 children: [
-                  Container(
-                    width: 200.0,
-                    padding: EdgeInsets.all(2.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.check_circle, color: Colors.green),
-                        Text('Correct: '),
-                        Text(correct.toString() + '/10'),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.grey,
-                          width: 3.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 200.0,
-                    padding: EdgeInsets.all(5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.cancel, color: Colors.red),
-                        Text('Incorrect: ' + incorrect.toString() + '/10'),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.grey,
-                          width: 3.0,
-                        ),
-                      ),
-                    ),
-                  ),
+                  fieldSore(Icon(Icons.check_circle, color: Colors.green),
+                      "Correct: ", correct),
+                  fieldSore(Icon(Icons.cancel, color: Colors.red),
+                      "Incorrect: ", incorrect),
+
+                  // Container(
+                  //   width: 200.0,
+                  //   padding: EdgeInsets.all(5.0),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       Icon(Icons.cancel, color: Colors.red),
+                  //       Text('Incorrect: ' + incorrect.toString() + '/10'),
+                  //     ],
+                  //   ),
+                  //   decoration: BoxDecoration(
+                  //     border: Border(
+                  //       bottom: BorderSide(
+                  //         color: Colors.grey,
+                  //         width: 3.0,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   Container(
                     padding: EdgeInsets.all(5.0),
                     child: Row(
@@ -153,7 +161,6 @@ class _TriviaResultState extends State<TriviaResult> {
                 ],
               ),
             ),
-            SizedBox(height: 35.0),
             Container(
               alignment: Alignment.center,
               child: Text('Total Score',
@@ -171,7 +178,6 @@ class _TriviaResultState extends State<TriviaResult> {
                     fontWeight: FontWeight.bold,
                   )),
             ),
-            SizedBox(height: 35.0),
             RaisedButton(
               highlightElevation: 25.0,
               //color: Colors.black,
