@@ -1,7 +1,9 @@
 package underdevelopment.db;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import static org.neo4j.driver.Values.parameters;
 import org.neo4j.driver.Result;
@@ -52,6 +54,32 @@ public class DBPosts {
             return false;
         }
     }
+
+    public static Map<String, Object> getPost(String id){
+        try (Session session = Connect.driver.session()) {
+            Result result = session.run("MATCH (p:post {uniqueIdentifier: $x}) RETURN p",
+                                        parameters("x", id));
+                                        Map<String, Object> postMap = new HashMap<>();
+            if(result.hasNext()){
+                postMap.put("username", result.next().get("username").asString());
+                postMap.put("content", result.next().get("content").asString());
+                postMap.put("title", result.next().get("title").asString());
+                postMap.put("profileName", result.next().get("profileName").asString());
+                postMap.put("peopleAgree", result.next().get("peopleAgree").asList());
+                postMap.put("peopleDisagree", result.next().get("peopleDisagree").asList());
+                postMap.put("comments", result.next().get("comments").asList());// UNSURE ABOUT THIS
+                return postMap;
+            }
+            else{
+                return postMap;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+
+        }
+    }
+                            
 
     public static boolean addRelationToPost(String username, String postId){
         try (Session session = Connect.driver.session()){

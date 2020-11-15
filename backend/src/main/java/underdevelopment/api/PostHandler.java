@@ -1,8 +1,5 @@
 package underdevelopment.api;
 
-//import java.io.OutputStream;
-//import java.text.ParseException;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,26 +52,26 @@ public class PostHandler {
             // add relationship of user to post
             boolean isAddedRelation = DBPosts.addRelationToPost(username, postId);
             if(!isAddedRelation){
+                DBPosts.deletePost(postId);
                 try {
                     response = new JSONObject().put("Couldn't create the relation", isAddedRelation).toString();
-                    // TODO: DELETE THE
                     return new JsonHttpReponse(Status.SERVERERROR, response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             } 
             // update the number of posts in user node for the user with "username"
-             boolean isUpdateCountTrue = DBUserInfo.updatePostCount(username);
+             boolean isUpdateCountTrue = DBUserInfo.updatePostCount(username, "1");
              if(!isUpdateCountTrue){
-                 try {
-                     response = new JSONObject()
-                             .put("Number of Posts did not update for some reason!", isUpdateCountTrue).toString();
-                              // TODO : DELETE POST AND REMOVE RELATION AND ASK USER TO RETRY
-                             return new JsonHttpReponse(Status.SERVERERROR, response);
-                 } catch (JSONException e) {
-                     e.printStackTrace();
-                 }
-             }
+                DBPosts.removeRelation(username, postId);
+                DBPosts.deletePost(postId);
+                try {
+                    response = new JSONObject().put("Number of Posts did not update for some reason!", isUpdateCountTrue ).toString();
+                    return new JsonHttpReponse(Status.SERVERERROR, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
             try {
                 response = new JSONObject().put("Successfully added relation btw user and post!", jsonObj).toString();
                 return new JsonHttpReponse(Status.OK, response);
@@ -84,4 +81,70 @@ public class PostHandler {
             }
         };
     }
+    
+    public static JsonRequestHandler handleDeletePost(){
+        return (JSONObject jsonObj) -> {
+            System.out.println("Running the Post handler.");
+            String postId, username; 
+
+            String response;
+            // Get and validate input
+
+            try {
+                postId = jsonObj.getString("uniqueIdentifier");
+                username = jsonObj.getString("username");
+            } catch (Exception e) {
+                return new JsonHttpReponse(Status.BADREQUEST);
+            }
+            // user can delete pnly his own post
+            if (postId.split(".")[0] != username){
+                try {
+                    response = new JSONObject().put("You can only delete your own post", false).toString();
+                    return new JsonHttpReponse(Status.CONFLICT, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } 
+            }
+            // remove teh relation btw post and user node
+            boolean isRelationRemoved = DBPosts.removeRelation(postId.split(".")[0], postId);
+            if(!isRelationRemoved){
+                try {
+                    response = new JSONObject().put("Couldn't delete the relation", isRelationRemoved).toString();
+                    return new JsonHttpReponse(Status.SERVERERROR, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } 
+            //delete the post
+            boolean isPostDeleted = DBPosts.deletePost(postId);
+            if(!isPostDeleted){
+                try {
+                    response = new JSONObject().put("Couldn't delete the post", isPostDeleted).toString();
+                    return new JsonHttpReponse(Status.SERVERERROR, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } 
+            // decrease the post count for the user
+            boolean isPostCountUpdated = DBUserInfo.updatePostCount(postId, "-1");
+            if(!isPostCountUpdated){
+                try {
+                    response = new JSONObject().put("Couldn't update the number of posts !", isPostCountUpdated).toString();
+                    return new JsonHttpReponse(Status.SERVERERROR, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                response = new JSONObject().put("Successfully deleted the post!", jsonObj).toString();
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (JSONException e) {
+                    e.printStackTrace();
+                    return new JsonHttpReponse(Status.SERVERERROR);
+            }
+        };
+
+
+    }
+
 }
