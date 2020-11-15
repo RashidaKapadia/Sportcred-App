@@ -6,23 +6,23 @@ import '../navbar.dart';
 import 'package:http/http.dart' as http;
 
 class TriviaResult extends StatefulWidget {
-  int marks, incorrect, correct, notAnswered;
+  int score, incorrect, correct, notAnswered;
   TriviaResult({
     Key key,
-    @required this.marks,
+    @required this.score,
     @required this.incorrect,
     @required this.correct,
     @required this.notAnswered,
   }) : super(key: key);
   @override
   _TriviaResultState createState() =>
-      _TriviaResultState(marks, incorrect, correct, notAnswered);
+      _TriviaResultState(score, incorrect, correct, notAnswered);
 }
 
 class _TriviaResultState extends State<TriviaResult> {
-  int marks, incorrect, correct, notAnswered;
+  int score, incorrect, correct, notAnswered;
   _TriviaResultState(
-      this.marks, this.incorrect, this.correct, this.notAnswered);
+      this.score, this.incorrect, this.correct, this.notAnswered);
 
   // Http post request to update ACS
   Future updateACS(String username, String token) async {
@@ -39,7 +39,7 @@ class _TriviaResultState extends State<TriviaResult> {
               "token": token,
               "oppUsername": "N/A",
               "gameType": "Trivia Solo",
-              "amount": this.marks.toString(),
+              "amount": this.score.toString(),
               "date": DateTime.now().toString()
             }));
 
@@ -165,7 +165,7 @@ class _TriviaResultState extends State<TriviaResult> {
             ),
             Container(
               alignment: Alignment.center,
-              child: Text(marks.toString(),
+              child: Text(score.toString(),
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,

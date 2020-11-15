@@ -33,40 +33,64 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   var data;
   _quizpageState(this.data);
 
+  TimerController _timerController;
+
   Color colorToDisplay = Colors.indigoAccent;
   Color correctAnsColor = Colors.green;
   Color incorrectAnsColor = Colors.red;
 
-  int marks = 0;
-  var pressedCorrectOption = 0; // number of correct answers picked
-  var pressedIncorrectOption = 0; // number of questions answered wrong
-  var notAnswered = 0; // number of questions not answered
+  int correctlyAnswered;
+  int notAnswered; // number of questions not answered
+  int questions;
+
   int i = 0;
   int timer = 10;
+
   String showTimer = "10";
   bool disableAnswer = false;
-  bool _isPressed = false;
-  int _isPressedCorrect = -1; // 0 - correct; 1 - incorrect; -1  for not pressed
-  TimerController _timerController;
   bool cancelTimer = false;
+
+  int displayScore(questions, correctlyAnswered) {
+    return correctlyAnswered - (i - correctlyAnswered);
+  }
+
+  Function gotoResults = (context, questions, correctlyAnswered, notAnswered) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => TriviaResult(
+            score: correctlyAnswered - (questions - correctlyAnswered),
+            incorrect: questions - notAnswered - correctlyAnswered,
+            correct: correctlyAnswered,
+            notAnswered: notAnswered)));
+  };
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
 
   @override
   void initState() {
-    startTimer();
-    _timerController = TimerController(this);
     super.initState();
+    print("initState");
+    setState(() {
+      correctlyAnswered = 0;
+      notAnswered = data.length;
+      questions = data.length;
+    });
+    _timerController = TimerController(this); // TODO:
+    startTimer();
   }
 
   void startTimer() async {
     const onesec = Duration(seconds: 1);
     Timer.periodic(onesec, (Timer t) {
+      print("start time set state");
       setState(() {
         _timerController.start();
         if (timer < 1) {
           t.cancel();
-          if (_isPressed == false) {
-            marks--;
-          }
           nextQuestion();
         } else if (cancelTimer == true) {
           t.cancel();
@@ -80,27 +104,20 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   }
 
   void nextQuestion() {
-    timer = 10;
-    cancelTimer = false;
+    print("next question set state");
     setState(() {
-      if (i < 10) {
-        print(i);
-        i++;
-      } else {
-        Timer(Duration(seconds: 0), () {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => TriviaResult(
-                  marks: marks,
-                  incorrect: pressedIncorrectOption,
-                  correct: pressedCorrectOption,
-                  notAnswered:
-                      10 - pressedCorrectOption - pressedIncorrectOption)));
-        });
-      }
+      timer = 10;
+      cancelTimer = false;
+      // NOTE: i is inclusive TODO:
+      (i < questions - 1)
+          ? i++
+          : Timer(
+              Duration(seconds: 0),
+              () => gotoResults(
+                  context, questions, correctlyAnswered, notAnswered));
       disableAnswer = false;
-      _isPressedCorrect = -1;
     });
-    startTimer();
+    // startTimer();
     _timerController.reset();
     _timerController.start();
   }
@@ -108,23 +125,16 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   void validateAnswer(int t, bool val) {
     if (val == true) {
       if (data[i].answer == data[i].options[t]) {
-        _isPressedCorrect = 0; //true
-        marks++;
+        correctlyAnswered++;
         colorToDisplay = correctAnsColor;
-        pressedCorrectOption++;
       } else {
-        _isPressedCorrect = 1; //false
-        marks--;
         colorToDisplay = incorrectAnsColor;
-        pressedIncorrectOption++;
       }
+      print("validate set state");
       setState(() {
         cancelTimer = true;
         disableAnswer = true;
-        _isPressed = false;
       });
-    } else {
-      marks--;
     }
 
     Timer(Duration(seconds: 1), nextQuestion);
@@ -135,11 +145,11 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
         child: MaterialButton(
           onPressed: () {
-            _isPressed = true;
+            // _isPressed = true;
             validateAnswer(t, true);
           },
           child: Text(data[i].options[t], maxLines: 1),
-          color: _isPressedCorrect == 0 ? Colors.green : Colors.red,
+          color: colorToDisplay,
           highlightColor: Colors.indigo[700],
           minWidth: 200.0,
           height: 45.0,
@@ -152,15 +162,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   Future<dynamic> confirmLeave(BuildContext context) {
     Widget leaveButton = FlatButton(
         onPressed: () {
-          Navigator.of(context).pop();
-          marks = -10;
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => TriviaResult(
-                  marks: marks,
-                  incorrect: pressedIncorrectOption,
-                  correct: pressedCorrectOption,
-                  notAnswered:
-                      10 - pressedCorrectOption - pressedIncorrectOption)));
+          Navigator.of(context).pop(); // TODO:
+          gotoResults(context, questions, correctlyAnswered, notAnswered);
         },
         child: Text('Leave'));
 
@@ -218,7 +221,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     );
 
     Widget currentScore = Text(
-      'Score: ' + marks.toString(),
+      'Score: ' + displayScore(questions, correctlyAnswered).toString(),
       style: TextStyle(fontSize: 20),
       textAlign: TextAlign.center,
     );
