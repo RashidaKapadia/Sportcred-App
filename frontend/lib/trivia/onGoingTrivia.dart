@@ -226,8 +226,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
         margin: EdgeInsets.symmetric(vertical: 15.0),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.indigoAccent, width: 5.0),
-          borderRadius: BorderRadius.all(Radius.circular(50)),
+          border: Border.all(color: Colors.indigoAccent, width: 3.0),
+          borderRadius: BorderRadius.all(Radius.circular(30)),
         ),
         child: Text(
           'Q' + (i + 1).toString() + ": " + data[i].question,
@@ -256,19 +256,21 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
       textAlign: TextAlign.center,
     );
 
-    return WillPopScope(
-        onWillPop: () => confirmLeave(context),
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-          child: Column(
-            children: <Widget>[
-              h3("Good luck " + username),
-              timer,
-              question,
-              options,
-              currentScore,
-            ],
-          ),
-        ));
+    // TODO: material theme missing
+    return Scaffold(
+        body: WillPopScope(
+            onWillPop: () => confirmLeave(context),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+              child: Column(
+                children: <Widget>[
+                  h3("Good luck " + username),
+                  timer,
+                  question,
+                  options,
+                  currentScore,
+                ],
+              ),
+            )));
   }
 }

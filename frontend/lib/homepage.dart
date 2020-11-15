@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
+import 'package:frontend/widgets/layout.dart';
 import './navbar.dart';
 
 class HomePage extends StatefulWidget {
@@ -43,14 +44,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         bottomNavigationBar: NavBar(0),
         body: new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Expanded(child: Image.asset('assets/Logo.png')),
+          logoBanner(),
           Text("Welcome " + username + "!"),
           Expanded(
             child: OrientationBuilder(
               builder: (context, orientation) {
                 return GridView.count(
                   padding: EdgeInsets.all(30),
-                  crossAxisCount: 4,
+                  crossAxisCount: 2,
                   primary: false,
                   children: <Widget>[
                     homepageTile("/homepage", "The Zone", Colors.redAccent),
