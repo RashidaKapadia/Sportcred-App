@@ -124,14 +124,15 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
 
   void validateAnswer(int t, bool val) {
     if (val == true) {
-      if (data[i].answer == data[i].options[t]) {
-        correctlyAnswered++;
-        colorToDisplay = correctAnsColor;
-      } else {
-        colorToDisplay = incorrectAnsColor;
-      }
       print("validate set state");
       setState(() {
+        if (data[i].answer == data[i].options[t]) {
+          correctlyAnswered++;
+          colorToDisplay = correctAnsColor;
+        } else {
+          colorToDisplay = incorrectAnsColor;
+        }
+        notAnswered--;
         cancelTimer = true;
         disableAnswer = true;
       });
