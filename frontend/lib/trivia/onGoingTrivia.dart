@@ -183,23 +183,27 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Widget timer = Expanded(
         child: Container(
+            margin: EdgeInsets.symmetric(vertical: 5.0),
             child: SimpleTimer(
-      controller: _timerController,
-      duration: Duration(seconds: 10),
-      timerStyle: TimerStyle.expanding_sector,
-    )));
+              controller: _timerController,
+              duration: Duration(seconds: 10),
+              timerStyle: TimerStyle.expanding_sector,
+            )));
 
     Widget question = Container(
-      alignment: Alignment.center,
-      margin: const EdgeInsets.only(top: 8),
-      padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.indigoAccent, width: 5.0),
-        borderRadius: BorderRadius.all(Radius.circular(50)),
-      ),
-      child: Text(
-        'Q. ' + data[i].question,
-        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+      //flex: 3,
+      child: Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
+        margin: EdgeInsets.symmetric(vertical: 15.0),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.indigoAccent, width: 5.0),
+          borderRadius: BorderRadius.all(Radius.circular(50)),
+        ),
+        child: Text(
+          'Q. ' + data[i].question,
+          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+        ),
       ),
     );
 
@@ -225,13 +229,16 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
 
     return WillPopScope(
         onWillPop: () => confirmLeave(context),
-        child: Column(
-          children: <Widget>[
-            timer,
-            question,
-            options,
-            currentScore,
-          ],
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+          child: Column(
+            children: <Widget>[
+              timer,
+              question,
+              options,
+              currentScore,
+            ],
+          ),
         ));
   }
 }
