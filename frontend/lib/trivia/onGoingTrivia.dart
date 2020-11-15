@@ -35,18 +35,19 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
 
   TimerController _timerController;
 
-  Color colorToDisplay = Colors.indigoAccent;
+  // Styling
+  Color colorToDisplay = Colors.indigoAccent; // current colour
+  Color colorDefault = Colors.indigoAccent;
   Color correctAnsColor = Colors.green;
   Color incorrectAnsColor = Colors.red;
 
-  int correctlyAnswered;
+  int correctlyAnswered; // number of questions answered
   int notAnswered; // number of questions not answered
-  int questions;
+  int questions; // number of questions
 
-  int i = 0;
+  int i = 0; // question index
   int timer = 10;
 
-  String showTimer = "10";
   bool disableAnswer = false;
   bool cancelTimer = false;
 
@@ -98,7 +99,6 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         } else {
           timer--;
         }
-        showTimer = timer.toString();
       });
     });
   }
@@ -116,8 +116,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
               () => gotoResults(
                   context, questions, correctlyAnswered, notAnswered));
       disableAnswer = false;
+      colorToDisplay = colorDefault;
     });
-    // startTimer();
     _timerController.reset();
     _timerController.start();
   }
@@ -137,23 +137,20 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
       });
     }
 
+    // Delay for colour change before repainting
     Timer(Duration(seconds: 1), nextQuestion);
   }
 
-  Widget answersAnimation(int t) {
+  Widget animatedChoiceButton(int t) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
         child: MaterialButton(
-          onPressed: () {
-            // _isPressed = true;
-            validateAnswer(t, true);
-          },
+          onPressed: () => validateAnswer(t, true),
           child: Text(data[i].options[t], maxLines: 1),
+          // Using race condition to colour buttons
           color: colorToDisplay,
-          highlightColor: Colors.indigo[700],
           minWidth: 200.0,
           height: 45.0,
-          splashColor: Colors.indigo[700],
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         ));
@@ -162,7 +159,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   Future<dynamic> confirmLeave(BuildContext context) {
     Widget leaveButton = FlatButton(
         onPressed: () {
-          Navigator.of(context).pop(); // TODO:
+          Navigator.of(context).pop();
           gotoResults(context, questions, correctlyAnswered, notAnswered);
         },
         child: Text('Leave'));
@@ -214,7 +211,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
           child: Wrap(
               direction: Axis.horizontal,
               children: List.generate(data[i].options.length, (index) {
-                return answersAnimation(index);
+                return animatedChoiceButton(index);
               })),
         ),
       ),
