@@ -5,7 +5,7 @@ import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
 
 class TriviaResult extends StatefulWidget {
-  int score = 0, incorrect = 0, correct = 0, notAnswered = 0, questions = 0;
+  int score, incorrect, correct, notAnswered, questions;
   TriviaResult({
     Key key,
     this.score,
@@ -20,7 +20,7 @@ class TriviaResult extends StatefulWidget {
 }
 
 class _TriviaResultState extends State<TriviaResult> {
-  int score = 0, incorrect = 0, correct = 0, notAnswered = 0, questions = 0;
+  int score, incorrect, correct, notAnswered, questions;
   _TriviaResultState(this.score, this.incorrect, this.correct, this.notAnswered,
       this.questions);
 
@@ -54,8 +54,9 @@ class _TriviaResultState extends State<TriviaResult> {
           // Score breakdown
           Container(
               margin: EdgeInsets.symmetric(vertical: 20),
-              width: 240,
+              width: 200,
               child: Table(
+                  columnWidths: {0: FlexColumnWidth(2), 1: FlexColumnWidth(1)},
                   border: TableBorder.all(
                       color: Colors.black26, width: 1, style: BorderStyle.none),
                   children: [

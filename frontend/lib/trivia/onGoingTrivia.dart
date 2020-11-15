@@ -80,19 +80,27 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     }
   }
 
+  void loadUsername() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        username = value.toString();
+      });
+    });
+  }
+
+  void loadToken() {
+    FlutterSession().get('token').then((value) {
+      this.setState(() {
+        token = value.toString();
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    print("get user");
-    FlutterSession().get('token').then((token) {
-      FlutterSession().get('username').then((username) {
-        setState(() {
-          username = username.toString();
-          token = token.toString();
-        });
-      });
-    });
-    print("initState");
+    loadToken();
+    loadUsername();
     correctlyAnswered = 0;
     notAnswered = data.length;
     questions = data.length;
