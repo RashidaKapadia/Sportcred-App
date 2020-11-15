@@ -72,9 +72,9 @@ class _State_Of_Login_Page extends State<LoginPage> {
       await FlutterSession().set('token', token);
       await FlutterSession().set('username', username);
 
-      String userSession =
-          jsonEncode(<String, String>{'username': username, 'token': token});
-      await FlutterSession().set('user', userSession);
+      // String userSession =
+      //     jsonEncode(<String, String>{'username': username, 'token': token});
+      // await FlutterSession().set('user', '{"username": "apple"}');
 
       return LoginStatus(true, "Login successful!");
     } else if (response.statusCode == 403) {

@@ -3,9 +3,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_session/flutter_session.dart';
+import 'package:frontend/requests/trivia.dart';
 import 'package:frontend/trivia/triviaResult.dart';
 import 'dart:async';
 import 'package:frontend/trivia/soloTriviaPage.dart';
+import 'package:frontend/widgets/fonts.dart';
 import 'package:simple_timer/simple_timer.dart';
 
 class OnGoingTrivia extends StatelessWidget {
@@ -51,19 +54,24 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   bool disableAnswer = false;
   bool cancelTimer = false;
 
+  String username = "";
+  String token = "";
+
   int displayScore(questions, correctlyAnswered) {
     return correctlyAnswered - (i - correctlyAnswered);
   }
 
-  Function gotoResults = (context, questions, correctlyAnswered, notAnswered) {
+  gotoResults(context) async {
+    int score = correctlyAnswered - (questions - correctlyAnswered);
+    updateACS(token, username, score);
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => TriviaResult(
-            score: correctlyAnswered - (questions - correctlyAnswered),
+            score: score,
             incorrect: questions - notAnswered - correctlyAnswered,
             correct: correctlyAnswered,
             notAnswered: notAnswered,
             questions: questions)));
-  };
+  }
 
   @override
   void setState(fn) {
@@ -75,12 +83,19 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    print("initState");
-    setState(() {
-      correctlyAnswered = 0;
-      notAnswered = data.length;
-      questions = data.length;
+    print("get user");
+    FlutterSession().get('token').then((token) {
+      FlutterSession().get('username').then((username) {
+        setState(() {
+          username = username.toString();
+          token = token.toString();
+        });
+      });
     });
+    print("initState");
+    correctlyAnswered = 0;
+    notAnswered = data.length;
+    questions = data.length;
     _timerController = TimerController(this);
     startTimer();
   }
@@ -118,10 +133,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         _timerController.start();
       } else {
         cancelTimer = true;
-        Timer(
-            Duration(seconds: 0),
-            () => gotoResults(
-                context, questions, correctlyAnswered, notAnswered));
+        Timer(Duration(seconds: 0), () => gotoResults(context));
       }
       disableAnswer = false;
       colorToDisplay = colorDefault;
@@ -169,7 +181,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
             cancelTimer = true;
           });
           Navigator.of(context).pop();
-          gotoResults(context, questions, correctlyAnswered, notAnswered);
+          gotoResults(context);
         },
         child: Text('Leave'));
 
@@ -242,6 +254,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
           margin: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
           child: Column(
             children: <Widget>[
+              h3("Good luck " + username),
               timer,
               question,
               options,
