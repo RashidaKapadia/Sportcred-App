@@ -4,6 +4,7 @@ import 'package:frontend/trivia/soloTriviaPage.dart';
 import 'package:frontend/trivia/onGoingTrivia.dart';
 import 'package:frontend/trivia/trivia.dart';
 import 'package:frontend/changePassword.dart';
+import 'package:frontend/trivia/triviaResult.dart';
 import 'changeContact.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
@@ -33,7 +34,8 @@ void main() {
         '/soloTrivia': (context) => SoloTriviaPage(),
         '/quizPage': (context) => OnGoingTrivia("Basketball", null),
         '/settings': (context) => Settings(),
-        "/profile/ACSHistory": (context) => ACSHistoryPage()
+        "/profile/ACSHistory": (context) => ACSHistoryPage(),
+        '/trivia/solo/result': (context) => TriviaResult(),
       }));
 }
 

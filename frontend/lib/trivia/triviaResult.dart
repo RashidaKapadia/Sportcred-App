@@ -2,18 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
+import 'package:frontend/widgets/buttons.dart';
+import 'package:frontend/widgets/fonts.dart';
+import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
 import 'package:http/http.dart' as http;
 
 class TriviaResult extends StatefulWidget {
-  int score, incorrect, correct, notAnswered, questions;
+  int score = 0, incorrect = 0, correct = 0, notAnswered = 0, questions = 0;
   TriviaResult({
     Key key,
-    @required this.score,
-    @required this.incorrect,
-    @required this.correct,
-    @required this.notAnswered,
-    @required this.questions,
+    this.score,
+    this.incorrect,
+    this.correct,
+    this.notAnswered,
+    this.questions,
   }) : super(key: key);
   @override
   _TriviaResultState createState() =>
@@ -21,7 +24,7 @@ class TriviaResult extends StatefulWidget {
 }
 
 class _TriviaResultState extends State<TriviaResult> {
-  int score, incorrect, correct, notAnswered, questions;
+  int score = 0, incorrect = 0, correct = 0, notAnswered = 0, questions = 0;
   _TriviaResultState(this.score, this.incorrect, this.correct, this.notAnswered,
       this.questions);
 
@@ -45,11 +48,7 @@ class _TriviaResultState extends State<TriviaResult> {
             }));
 
     // Check the type of response received from backend
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
-    }
+    return (response.statusCode == 200);
   }
 
   @override
@@ -65,157 +64,85 @@ class _TriviaResultState extends State<TriviaResult> {
     });
   }
 
-  Widget fieldSore(Icon icon, String field, int score) {
+  Widget headerBanner(Widget title) {
     return Container(
-      width: 200.0,
-      padding: EdgeInsets.all(2.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          icon,
-          Text(field),
-          Text(score.toString() + '/' + questions.toString()),
-        ],
-      ),
-      // decoration: BoxDecoration(
-      //   border: Border(
-      //     bottom: BorderSide(
-      //       color: Colors.grey,
-      //       width: 3.0,
-      //     ),
-      //   ),
-      // ),
+        width: double.infinity,
+        color: Colors.blueGrey[900],
+        height: 200,
+        padding: EdgeInsets.all(20.0),
+        child: title);
+  }
+
+  TableRow scoreRow(Icon icon, String field, int score) {
+    return TableRow(children: [
+      TableCell(child: Row(children: [icon, Text(field)])),
+      TableCell(
+          child: Text(score.toString() + '/' + questions.toString(),
+              textAlign: TextAlign.right))
+    ]);
+  }
+
+  Widget pagebody() {
+    return Container(
+        alignment: Alignment.center,
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+        child: Column(children: [
+          // Description
+          h3("Your trivia result is as follows:"),
+
+          // Score breakdown
+          Container(
+              margin: EdgeInsets.symmetric(vertical: 20),
+              width: 240,
+              child: Table(
+                  border: TableBorder.all(
+                      color: Colors.black26, width: 1, style: BorderStyle.none),
+                  children: [
+                    scoreRow(Icon(Icons.check_circle, color: Colors.green),
+                        "Correct: ", correct),
+                    scoreRow(Icon(Icons.cancel, color: Colors.red),
+                        "Incorrect: ", incorrect),
+                    scoreRow(Icon(Icons.error, color: Colors.blue),
+                        "Not Answered: ", notAnswered),
+                  ])),
+
+          // Display Total Score
+          h2("Total Score"),
+          h3(score.toString()),
+
+          // Buttons Links
+          vmargin20(Column(
+            children: [
+              greyButtonFullWidth(
+                  () => Navigator.of(context).pushNamed("/profile/ACSHistory"),
+                  largeButtonTextGrey(" See ACS History ")),
+              greyButtonFullWidth(
+                  () {},
+                  new Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.share),
+                        largeButtonTextGrey(" Share "),
+                      ]))
+            ],
+          )),
+        ]));
+  }
+
+  Widget page(BuildContext context) {
+    return Container(
+      child: Column(children: [
+        headerBanner(superLargeHeading("Result", color: Colors.white)),
+        pagebody(),
+      ]),
     );
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: NavBar(0),
-        body: Container(
-          child: new ListView(children: [
-            Container(
-              color: Colors.blueGrey[900],
-              height: 200,
-              alignment: Alignment.center,
-              child: Text(
-                'Result',
-                style: TextStyle(
-                    fontSize: 50.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              padding: EdgeInsets.all(20.0),
-            ),
-            // Title
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(20.0),
-              child: Text(
-                'Your trivia result is as follows:',
-                style: TextStyle(
-                  fontSize: 15.0,
-                  color: Colors.blueGrey[900],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Container(
-              // width: MediaQuery.of(context).size.width,
-              child: Column(
-                //direction: Axis.horizontal,
-                children: [
-                  fieldSore(Icon(Icons.check_circle, color: Colors.green),
-                      "Correct: ", correct),
-                  fieldSore(Icon(Icons.cancel, color: Colors.red),
-                      "Incorrect: ", incorrect),
-
-                  // Container(
-                  //   width: 200.0,
-                  //   padding: EdgeInsets.all(5.0),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.center,
-                  //     children: [
-                  //       Icon(Icons.cancel, color: Colors.red),
-                  //       Text('Incorrect: ' + incorrect.toString() + '/10'),
-                  //     ],
-                  //   ),
-                  //   decoration: BoxDecoration(
-                  //     border: Border(
-                  //       bottom: BorderSide(
-                  //         color: Colors.grey,
-                  //         width: 3.0,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  Container(
-                    padding: EdgeInsets.all(5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.error, color: Colors.blue),
-                        Text('Not Answered: ' + notAnswered.toString() + '/10'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              alignment: Alignment.center,
-              child: Text('Total Score',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                  )),
-            ),
-            Container(
-              alignment: Alignment.center,
-              child: Text(score.toString(),
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  )),
-            ),
-            RaisedButton(
-              highlightElevation: 25.0,
-              //color: Colors.black,
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-              //color: Colors.lightGreen[800]
-              child: Text(
-                'Get My ACS History',
-                style: TextStyle(color: Colors.blueGrey[900], fontSize: 20),
-                textAlign: TextAlign.center,
-              ),
-              shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(18.0)),
-              onPressed: () {
-                Navigator.of(context).pushNamed("/profile/ACSHistory");
-              },
-            ),
-            RaisedButton(
-              highlightElevation: 25.0,
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Share',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.blueGrey[900],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Icon(Icons.share)
-                ],
-              ),
-              shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(18.0)),
-              onPressed: () {},
-            ),
-          ]),
-        ));
+      bottomNavigationBar: NavBar(0),
+      body: page(context),
+    );
   }
 }
