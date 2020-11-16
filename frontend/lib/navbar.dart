@@ -14,24 +14,18 @@ class NavBar extends StatefulWidget {
 
 class NavBarState extends State<NavBar> {
   List<BottomNavigationBarItem> items;
-  final tabs = [
-    Center(child: Text("Home")),
-    Center(child: Text("Search")),
-    Center(child: Text("Profile")),
-    Center(child: Text("Settings")),
-  ];
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      unselectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white38,
       // type: BottomNavigationBarType.fixed,
       type: BottomNavigationBarType.shifting,
       iconSize: 20,
       //selectedFontSize: 25,
       backgroundColor: Colors.blue,
       currentIndex: widget.defaultIndex,
-      selectedItemColor: Colors.grey,
+      selectedItemColor: Colors.white,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -39,14 +33,14 @@ class NavBarState extends State<NavBar> {
           backgroundColor: Colors.red,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          title: Text('Search'),
+          icon: Icon(Icons.notifications),
+          title: Text('Notifications'),
           backgroundColor: Colors.orange,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
           title: Text('Profile'),
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.blueGrey,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
@@ -59,7 +53,7 @@ class NavBarState extends State<NavBar> {
           if (index == 0) {
             Navigator.of(context).pushNamed("/homepage");
           } else if (index == 1) {
-            // Navigator stuff
+            Navigator.of(context).pushNamed("/notifications");
           } else if (index == 2) {
             Navigator.of(context).pushNamed("/profile");
           } else if (index == 3) {
