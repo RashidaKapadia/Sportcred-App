@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 // import 'package:frontend/InitialPage.dart';
 import 'package:frontend/trivia/pickTriviaCategory.dart';
@@ -14,6 +16,7 @@ import './settings.dart';
 import './HTTPRequestExample.dart';
 import './profile_page.dart';
 import './ACSHistory_page.dart';
+import 'notificationBoard.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -36,6 +39,7 @@ void main() {
         '/settings': (context) => Settings(),
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
         '/trivia/solo/result': (context) => TriviaResult(),
+        '/notifications': (context) => NotificationBoard(),
       }));
 }
 

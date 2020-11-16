@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget plainButton({String text, fontColor, backgroundColor, onPressed}) {
+Widget plainButton({String text, fontColor, backgroundColor, onPressed, key}) {
   return RaisedButton(
     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     highlightElevation: 20.0,
@@ -24,11 +24,10 @@ Widget greyButtonFullWidth(Function onPressed, Widget body) {
     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
     width: double.infinity,
     child: RaisedButton(
-      highlightElevation: 25.0,
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: body,
       shape:
-          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(18.0)),
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(12.0)),
       onPressed: onPressed,
     ),
   );
