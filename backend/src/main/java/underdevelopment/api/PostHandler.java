@@ -106,7 +106,7 @@ public class PostHandler {
             //System.out.println(postId);
             int splitArray = postId.indexOf(".");
             //System.out.println(splitArray);
-            String subString = postId.substring(0, 4);
+            String subString = postId.substring(0, splitArray);
             //System.out.println(subString);
             System.out.println(subString.equals(username));
             //for (String a : splitArray){
@@ -175,11 +175,97 @@ public class PostHandler {
 
     }
 
-    public static JsonRequestHandler handleEditCreation() {
+    public static JsonRequestHandler handleEditPost() {
         return (JSONObject jsonObj) -> {
-            
-        }
 
-    }    
+            System.out.println("Running the Post Edit handler.");
+            String newData, toUpdate, username, postId; 
+
+            String response;
+            // Get and validate input
+
+            try {
+                postId = jsonObj.getString("postId"); 
+                username = jsonObj.getString("username"); 
+                newData = jsonObj.getString("newData");
+                toUpdate = jsonObj.getString("toUpdate");
+            } catch (Exception e) {
+                return new JsonHttpReponse(Status.BADREQUEST);
+            }
+
+            // verify credentials for the post
+            int splitArray = postId.indexOf(".");
+            //System.out.println(splitArray);
+            String subString = postId.substring(0, splitArray); 
+            //String subString1 = postId.substring(splitArray+1, postId.length());
+            //System.out.println(subString1);
+            //System.out.println(subString);
+            System.out.println(subString.equals(username));
+            if (!subString.equals(username)){
+                try {
+                    System.out.println("The post does not belong to the current user");
+                    response = new JSONObject().put("You can only edit your own own post", false).toString();
+                    return new JsonHttpReponse(Status.CONFLICT, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } 
+            }
+            boolean isUpdated ;
+            switch (toUpdate){
+                case "comments":
+                isUpdated =DBPosts.editPostComments(postId, newData);
+                if(!isUpdated){
+                    try {
+                        response = new JSONObject().put("Couldn't edit comments", isUpdated).toString();
+                        return new JsonHttpReponse(Status.SERVERERROR, response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } 
+                break;
+                case "title":
+                System.out.println("title:" + newData);
+                isUpdated = DBPosts.editPostTitle(postId, newData);
+                System.out.println("isUpdated:" + isUpdated);
+                if(!isUpdated){
+                    try {
+                        response = new JSONObject().put("Couldn't edit title", isUpdated).toString();
+                        return new JsonHttpReponse(Status.SERVERERROR, response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } 
+                break;
+                case "content":
+                isUpdated= DBPosts.editPostContent(postId, newData);
+                if(!isUpdated){
+                    try {
+                        response = new JSONObject().put("Couldn't edit content", isUpdated).toString();
+                        return new JsonHttpReponse(Status.SERVERERROR, response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } 
+                break;
+                default:
+                isUpdated = false;
+                    try {
+                        response = new JSONObject().put("Can only edit comments, content or title", isUpdated)
+                                .toString();
+                                return new JsonHttpReponse(Status.BADREQUEST, response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+            }
+            try {
+                //System.out.println("Something happened at the last stage");
+                response = new JSONObject().put("Successfully deleted the post!", jsonObj).toString();
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (JSONException e) {
+                    e.printStackTrace();
+                    return new JsonHttpReponse(Status.SERVERERROR);
+            }
+    };
+}
 
 }
