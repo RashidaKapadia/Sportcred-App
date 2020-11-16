@@ -114,6 +114,21 @@ public class TriviaHandler {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
+            
+        	
+       	 // Check if the username exists
+           if ( ! DBUserInfo.checkUsernameExists(username) ) {
+         	  try {
+                 String response = new JSONObject()
+                     .put("Error", "Username doesn't exist")
+                     .toString();
+                 	return new JsonHttpReponse(Status.CONFLICT, response);
+             } catch (JSONException e) {
+                 e.printStackTrace();
+                 return new JsonHttpReponse(Status.SERVERERROR);
+             }
+           }
+       	
 
             // Get questions from the db
             Boolean success = DBTrivia.subtractTriviaCount(username);
@@ -149,6 +164,22 @@ public class TriviaHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
+            
+        	
+       	 // Check if the username exists
+           if ( ! DBUserInfo.checkUsernameExists(username) ) {
+         	  try {
+                 String response = new JSONObject()
+                     .put("Error", "Username doesn't exist")
+                     .toString();
+                 	return new JsonHttpReponse(Status.CONFLICT, response);
+             } catch (JSONException e) {
+                 e.printStackTrace();
+                 return new JsonHttpReponse(Status.SERVERERROR);
+             }
+           }
+       	
+           
             // Get questions from the db
             int remainingPlays = DBTrivia.getTriviaCount(username);
             
@@ -196,6 +227,7 @@ public class TriviaHandler {
     
     public static JsonRequestHandler getQuesionsByID() {
         return (JSONObject jsonObj) -> {
+
 
             System.out.println("getting questions by ID");
             JSONArray choices;
