@@ -93,10 +93,17 @@ public class App
         server.createContext("/api/test/non-authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testNonAuthorizedRoute(), false)
                 .addHandler("GET", LoginHandler.testGet(), false));
-        
+                        
         // Post API test
         server.createContext("/api/addPost", 
                 new HttpRequestHandler("POST", PostHandler.handlePostCreation(), false));
+        // Delete Post API test
+        server.createContext("/api/deletePost", 
+                new HttpRequestHandler("DELETE", PostHandler.handleDeletePost(), authorized));
+        
+        server.createContext("/api/editPost", 
+                new HttpRequestHandler("POST", PostHandler.handleEditPost(), authorized));
+
         // Start Server
         server.start();
     }
