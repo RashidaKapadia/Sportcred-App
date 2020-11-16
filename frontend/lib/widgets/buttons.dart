@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget plainButton({String text, fontColor, backgroundColor, onPressed}) {
+Widget plainButton({String text, fontColor, backgroundColor, onPressed, key}) {
   return RaisedButton(
     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     highlightElevation: 20.0,

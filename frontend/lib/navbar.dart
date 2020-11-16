@@ -35,7 +35,7 @@ class NavBarState extends State<NavBar> {
         BottomNavigationBarItem(
           icon: Icon(Icons.notifications),
           title: Text('Notifications'),
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.brown[300],
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),

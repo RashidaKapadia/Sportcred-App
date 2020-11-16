@@ -38,7 +38,7 @@ class _NotificationBoardState extends State<NotificationBoard> {
       return Text("");
     }
   }
-  
+
   // Tag factory
   Widget getTag(String value) {
     if (value == "trivia") {
@@ -118,7 +118,7 @@ class _NotificationBoardState extends State<NotificationBoard> {
                 onPressed: () => Navigator.of(context).pushNamed("/homepage")),
             title: Text("Notifications", style: TextStyle(color: Colors.white)),
             centerTitle: true,
-            backgroundColor: Colors.orange),
+            backgroundColor: Colors.brown[300]),
         bottomNavigationBar: NavBar(1),
         body: body(context));
   }
