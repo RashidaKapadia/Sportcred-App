@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import underdevelopment.api.ACSHandler;
 import underdevelopment.api.LoginHandler;
+import underdevelopment.api.NotificationHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.TriviaHandler;
@@ -95,6 +96,10 @@ public class App
         server.createContext("/api/trivia/get-specific-questions", 
                 new HttpRequestHandler("POST", TriviaHandler.getQuesionsByID(), authorized));
 
+        // Notification routes
+        server.createContext("/api/notifications/get",
+                new HttpRequestHandler("POST", NotificationHandler.getNotifications(), authorized));
+        
         // Test routes
         server.createContext("/api/test/authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), authorized)

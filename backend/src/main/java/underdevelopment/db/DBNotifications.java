@@ -2,6 +2,8 @@ package underdevelopment.db;
 
 import static org.neo4j.driver.Values.parameters;
 
+import java.util.ArrayList;
+
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -28,8 +30,7 @@ public class DBNotifications {
 							"CREATE ((n)-[i:hasANotification]-> (o))" + 
 							"DELETE r", username, type, category, ID, title));
 				}else {
-					tx.run(String
-							.format("MATCH(u:user) WHERE (u.username = '%s')" +
+					tx.run(String.format("MATCH(u:user) WHERE (u.username = '%s')" +
 									"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False" + 
 									"CREATE(u)-[r:hasANotification]->(n) ", username, type, category, ID, title));	
 				}
@@ -46,54 +47,46 @@ public class DBNotifications {
 		return notifID;
 	}
 	
-	public static String[][] getNotification(String username, int limit) {
+	public static ArrayList<ArrayList<String>> getNotification(String username ) {
 		 /*
 		  * MATCH (tgtUser:user { username:"banana420" })-[:ACSRecord *1..]->(ACSRecord: ACSRecord)
 		  * RETURN ACSRecord.amount, ACSRecord.date;
 		  */
-		String[][] retVal = new String[6][];
+		ArrayList<ArrayList<String>> retVal = new ArrayList<ArrayList<String>>();
 
 		 System.out.println("running the getting ACS");
 		 try (Session session = Connect.driver.session()) {
 		    	try (Transaction tx = session.beginTransaction()) {
 		    		Result result = tx.run(String.format("MATCH (tgtUser:user { username: '%s' })-[:hasANotification *1..]->(n: notification)"
-		    				+ " RETURN n.category, n.infoID", username) );
+		    				+ " RETURN ID(n) as ID, n.type as type, n.category as category, n.title as title, n.infoID as infoID, n.read as read", username) );
 		    		
 		    		// I use String cause it auto fills with null.
-		    		String ID[] = new String[limit];
-		    		String type[] = new String[limit];
-		    		String category[] = new String[limit];
-		    		String title[] = new String[limit];
-		    		String infoID[] = new String[limit];
-		    		String read[] = new String[limit];
+		    		ArrayList<String> ID = new ArrayList<String>();
+		    		ArrayList<String> type = new ArrayList<String>();
+		    		ArrayList<String> category = new ArrayList<String>();
+		    		ArrayList<String> title = new ArrayList<String>();
+		    		ArrayList<String> infoID = new ArrayList<String>();
+		    		ArrayList<String> read = new ArrayList<String>();
 		    		
-		    		retVal[0] = ID;
-		    		retVal[1] = type;
-		    		retVal[2] = category;
-		    		retVal[3] = title;
-		    		retVal[4] = infoID;
-		    		retVal[5] = read;
+		    		retVal.add(ID);
+		    		retVal.add(type);
+		    		retVal.add(category);
+		    		retVal.add(title);
+		    		retVal.add(infoID);
+		    		retVal.add(read);
 
 		    		int i = 0;
 		    		System.out.println("looping stuff");
-		    		while(result.hasNext() && i < limit) {
+		    		while(result.hasNext()) {
 		    			Record data = result.next();
-		    			//amounts[i] = Integer.toString(data.get("amount").asInt());
-		    			//dates[i]= data.get("date").asString();
-		    			//oppUsernames[i] = data.get("oppUsername").asString();
-		    			//gameType[i] = data.get("game").asString();
-		    			//System.out.println(amounts[i]);
-		    			//System.out.println(dates[i]);
+		    			ID.add(Integer.toString(data.get("ID").asInt()));
+		    			category.add(data.get("category").asString());
+		    			type.add(data.get("type").asString());
+		    			title.add(data.get("title").asString());
+		    			infoID.add(Integer.toString(data.get("infoID").asInt()));
+		    			read.add(Boolean.toString(data.get("read").asBoolean()));
 		    			i++;
 		    		}
-		    		/*
-		    		System.out.println("We are returning");
-		    		for(int j = 0; j < limit; j++) {
-		    			System.out.println(retVal[0][j]);
-		    			System.out.println(retVal[1][j]);
-
-		    		}
-		    		*/
 		    	}catch (Exception e) {
 	                e.printStackTrace();
 	    	        return null;
