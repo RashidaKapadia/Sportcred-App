@@ -1,5 +1,5 @@
 package underdevelopment.db;
-
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,10 +16,12 @@ public class DBPosts {
     /***
      * create a post using following parameters
      */
-    public static String createPost(String username, String content, String title, String profileName, int postsCount){
+    public static String createPost(String username, String content, String title, String profileName){
         //
         System.out.println("creating post for user: " + username);
-        String id = username.concat("."+ Integer.toString(postsCount+1));
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        //String id = username.concat("."+ Integer.toString(postsCount+1));
+        String id = username.concat("."+ timestamp);
         System.out.println("id:"+ id);
 
         //create a post node
@@ -85,7 +87,7 @@ public class DBPosts {
         try (Session session = Connect.driver.session()){
 			session.writeTransaction(tx -> tx.run(
                 "MATCH (u:user {username: $x}), (p:post {uniqueIdentifier: $y})\n" +
-                "MERGE (u)-[Posted]->(p)\n" ,parameters("x", username, "y", postId)));
+                "MERGE (u)-[r:Posted]->(p)\n" ,parameters("x", username, "y", postId)));
 			session.close();
 			return true;
 		}catch (Exception e) {
