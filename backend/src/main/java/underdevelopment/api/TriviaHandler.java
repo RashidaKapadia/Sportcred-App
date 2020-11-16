@@ -80,6 +80,19 @@ public class TriviaHandler {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
+            
+            // Check if the username exists
+            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+          	  try {
+                  String response = new JSONObject()
+                      .put("Error", "Username doesn't exist")
+                      .toString();
+                  	return new JsonHttpReponse(Status.CONFLICT, response);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+                  return new JsonHttpReponse(Status.SERVERERROR);
+              }
+            }
 
             // Get questions from the db
             Boolean success = DBTrivia.resetTriviaCount(username);
@@ -115,6 +128,19 @@ public class TriviaHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
             
+            // Check if the username exists
+            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+          	  try {
+                  String response = new JSONObject()
+                      .put("Error", "Username doesn't exist")
+                      .toString();
+                  	return new JsonHttpReponse(Status.CONFLICT, response);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+                  return new JsonHttpReponse(Status.SERVERERROR);
+              }
+            }
+
         	
        	 // Check if the username exists
            if ( ! DBUserInfo.checkUsernameExists(username) ) {
@@ -162,6 +188,19 @@ public class TriviaHandler {
             } catch (Exception e) {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
+            }
+
+            // Check if the username exists
+            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+          	  try {
+                  String response = new JSONObject()
+                      .put("Error", "Username doesn't exist")
+                      .toString();
+                  	return new JsonHttpReponse(Status.CONFLICT, response);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+                  return new JsonHttpReponse(Status.SERVERERROR);
+              }
             }
 
             
