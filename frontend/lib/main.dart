@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 // import 'package:frontend/InitialPage.dart';
-import 'package:frontend/trivia/soloTriviaPage.dart';
+import 'package:frontend/trivia/pickTriviaCategory.dart';
 import 'package:frontend/trivia/onGoingTrivia.dart';
-import 'package:frontend/trivia/trivia.dart';
+import 'package:frontend/trivia/triviaStart.dart';
 import 'package:frontend/changePassword.dart';
 import 'package:frontend/trivia/triviaResult.dart';
 import 'changeContact.dart';
@@ -31,7 +31,7 @@ void main() {
         '/changeContact': (context) => ChangeContact(),
         "/test": (context) => HTTPRequestExample(),
         '/trivia': (context) => TriviaHomePage(),
-        '/soloTrivia': (context) => SoloTriviaPage(),
+        '/soloTrivia': (context) => PickTriviaCategoryPage(),
         '/quizPage': (context) => OnGoingTrivia("Basketball", null),
         '/settings': (context) => Settings(),
         "/profile/ACSHistory": (context) => ACSHistoryPage(),

@@ -9,12 +9,12 @@ import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
 
-class SoloTriviaPage extends StatefulWidget {
+class PickTriviaCategoryPage extends StatefulWidget {
   @override
   _TriviaState createState() => _TriviaState();
 }
 
-class _TriviaState extends State<SoloTriviaPage> {
+class _TriviaState extends State<PickTriviaCategoryPage> {
   // key is the cetgory of the trivia and ist value is its route
   // add more categories here
   final categories = {

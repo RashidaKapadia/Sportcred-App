@@ -7,7 +7,7 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/requests/trivia.dart';
 import 'package:frontend/trivia/triviaResult.dart';
 import 'dart:async';
-import 'package:frontend/trivia/soloTriviaPage.dart';
+import 'package:frontend/trivia/pickTriviaCategory.dart';
 import 'package:frontend/widgets/fonts.dart';
 import 'package:simple_timer/simple_timer.dart';
 
