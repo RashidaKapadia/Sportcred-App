@@ -41,7 +41,40 @@ public class DBPosts {
 
     }
 
-    public static void editPost(){
+    public static boolean editPostComments(String username, String newData){
+        return true;
+
+    }
+
+    public static boolean editPostTitle(String postId, String newData){
+        System.out.println("Was here!:");
+        try (Session session = Connect.driver.session()){
+            try (Transaction tx = session.beginTransaction()){
+                tx.run("MATCH (p: post {uniqueIdentifier: $x}) SET p.title = $y",
+                parameters("x", postId, "y", newData));
+                //tx.run(String.format( "MATCH (p:post) WHERE p.uniqueIdentifier = '%s' SET p.title = '%s'", postId, newData)); 
+                tx.commit();
+                tx.close();
+                session.close();
+                return true;   
+            }
+		}catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    public static boolean editPostContent(String postId, String newData){
+        try (Session session = Connect.driver.session()){
+			session.writeTransaction(tx->tx.run("MATCH (p: post{uniqueIdentifier: $x}) SET p.content = $y",
+      parameters("x", postId, "y", newData)));
+			session.close();
+			return true;
+		}catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
 
     }
 
