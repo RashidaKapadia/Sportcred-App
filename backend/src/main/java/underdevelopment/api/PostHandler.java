@@ -29,8 +29,13 @@ public class PostHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
             // get the numbe of posts for this username
+            //String str = DBUserInfo.getPostCount(username);
+            System.out.println("*");
             int count = DBUserInfo.getPostCount(username);
-                System.out.println("postCount: "+ count);
+            //System.out.println(str);
+            //int count = Integer.parseInt(DBUserInfo.getPostCount(username));
+            System.out.println("**");
+            System.out.println("postCount: "+ count);
             if(count == -1){
                 try {
                     response = new JSONObject().put("Couldn't return  number of Posts !", count).toString();
@@ -40,7 +45,7 @@ public class PostHandler {
                 }
             }
             // create Post
-            String postId = DBPosts.createPost(username, content, title, profileName, count);
+            String postId = DBPosts.createPost(username, content, title, profileName);
             if(postId == ""){
                 try {
                     response = new JSONObject().put("Couldn't create the post!", "").toString();
@@ -61,7 +66,7 @@ public class PostHandler {
                 }
             } 
             // update the number of posts in user node for the user with "username"
-             boolean isUpdateCountTrue = DBUserInfo.updatePostCount(username, "1");
+             boolean isUpdateCountTrue = DBUserInfo.updatePostCount(username, 1);
              if(!isUpdateCountTrue){
                 DBPosts.removeRelation(username, postId);
                 DBPosts.deletePost(postId);
@@ -84,7 +89,7 @@ public class PostHandler {
     
     public static JsonRequestHandler handleDeletePost(){
         return (JSONObject jsonObj) -> {
-            System.out.println("Running the Post handler.");
+            System.out.println("Running the Delete Post handler.");
             String postId, username; 
 
             String response;
@@ -93,12 +98,28 @@ public class PostHandler {
             try {
                 postId = jsonObj.getString("uniqueIdentifier");
                 username = jsonObj.getString("username");
+                System.out.println("Got the required info");
             } catch (Exception e) {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
+            //System.out.println(username);
+            //System.out.println(postId);
+            int splitArray = postId.indexOf(".");
+            //System.out.println(splitArray);
+            String subString = postId.substring(0, 4);
+            //System.out.println(subString);
+            System.out.println(subString.equals(username));
+            //for (String a : splitArray){
+              //  System.out.println(a);
+            //}
+            //System.out.println(splitArray);
+
+            System.out.println("Going to check if username has its name in post id...");
             // user can delete pnly his own post
-            if (postId.split(".")[0] != username){
+            if (!subString.equals(username)){
+                System.out.println("Something happened while checking strings");
                 try {
+                    System.out.println("The post does not belong to the current user");
                     response = new JSONObject().put("You can only delete your own post", false).toString();
                     return new JsonHttpReponse(Status.CONFLICT, response);
                 } catch (JSONException e) {
@@ -106,9 +127,12 @@ public class PostHandler {
                 } 
             }
             // remove teh relation btw post and user node
-            boolean isRelationRemoved = DBPosts.removeRelation(postId.split(".")[0], postId);
+            System.out.println("Going to remove the relation");
+            boolean isRelationRemoved = DBPosts.removeRelation(subString, postId);
+            System.out.println("Removed the relation");
             if(!isRelationRemoved){
                 try {
+                    System.out.println("Somwthing happened with the relation.");
                     response = new JSONObject().put("Couldn't delete the relation", isRelationRemoved).toString();
                     return new JsonHttpReponse(Status.SERVERERROR, response);
                 } catch (JSONException e) {
@@ -119,6 +143,7 @@ public class PostHandler {
             boolean isPostDeleted = DBPosts.deletePost(postId);
             if(!isPostDeleted){
                 try {
+                    System.out.println("Something happened during the deletion");
                     response = new JSONObject().put("Couldn't delete the post", isPostDeleted).toString();
                     return new JsonHttpReponse(Status.SERVERERROR, response);
                 } catch (JSONException e) {
@@ -126,16 +151,19 @@ public class PostHandler {
                 }
             } 
             // decrease the post count for the user
-            boolean isPostCountUpdated = DBUserInfo.updatePostCount(postId, "-1");
+            /*boolean isPostCountUpdated = DBUserInfo.updatePostCount(postId, -1);
+            System.out.println("Updated the count");
             if(!isPostCountUpdated){
                 try {
+                    System.out.println("Something happened during counting posts");
                     response = new JSONObject().put("Couldn't update the number of posts !", isPostCountUpdated).toString();
                     return new JsonHttpReponse(Status.SERVERERROR, response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
             try {
+                //System.out.println("Something happened at the last stage");
                 response = new JSONObject().put("Successfully deleted the post!", jsonObj).toString();
                 return new JsonHttpReponse(Status.OK, response);
             } catch (JSONException e) {
@@ -146,5 +174,12 @@ public class PostHandler {
 
 
     }
+
+    public static JsonRequestHandler handleEditCreation() {
+        return (JSONObject jsonObj) -> {
+            
+        }
+
+    }    
 
 }
