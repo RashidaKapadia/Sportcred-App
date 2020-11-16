@@ -51,7 +51,7 @@ public class DBNotifications {
 		  * MATCH (tgtUser:user { username:"banana420" })-[:ACSRecord *1..]->(ACSRecord: ACSRecord)
 		  * RETURN ACSRecord.amount, ACSRecord.date;
 		  */
-		String[][] retVal = new String[6[];
+		String[][] retVal = new String[6][];
 
 		 System.out.println("running the getting ACS");
 		 try (Session session = Connect.driver.session()) {
@@ -71,17 +71,17 @@ public class DBNotifications {
 		    		retVal[1] = type;
 		    		retVal[2] = category;
 		    		retVal[3] = title;
-		    		retVal[3] = infoID;
-		    		retVal[3] = read;
+		    		retVal[4] = infoID;
+		    		retVal[5] = read;
 
 		    		int i = 0;
 		    		System.out.println("looping stuff");
 		    		while(result.hasNext() && i < limit) {
 		    			Record data = result.next();
-		    			amounts[i] = Integer.toString(data.get("amount").asInt());
-		    			dates[i]= data.get("date").asString();
-		    			oppUsernames[i] = data.get("oppUsername").asString();
-		    			gameType[i] = data.get("game").asString();
+		    			//amounts[i] = Integer.toString(data.get("amount").asInt());
+		    			//dates[i]= data.get("date").asString();
+		    			//oppUsernames[i] = data.get("oppUsername").asString();
+		    			//gameType[i] = data.get("game").asString();
 		    			//System.out.println(amounts[i]);
 		    			//System.out.println(dates[i]);
 		    			i++;
