@@ -15,8 +15,8 @@ import underdevelopment.db.DBUserInfo;
 
 
 public class NotificationHandler {
-
-    public static JsonRequestHandler getNotifications() {
+	
+	public static JsonRequestHandler getNotifications() {
         return (JSONObject jsonObj) -> {
             System.out.println("getting notifications");
             String username;
@@ -48,14 +48,6 @@ public class NotificationHandler {
 		    		retVal.add(title);
 		    		retVal.add(infoID);
 		    		retVal.add(read);
-		    		
-		    		response = new JSONObject().put("ID",new JSONArray(notificationList.get(0)))
-                			.put("type", new JSONArray(notificationList.get(1)))
-                			.put("category",  new JSONArray(notificationList.get(2)))
-                			.put("title", new JSONArray(notificationList.get(3)))
-                			.put("infoID", new JSONArray(notificationList.get(4)))
-                			.put("read", new JSONArray(notificationList.get(5)))
-                			.toString();
              */
             // Run DB command            
             try {
@@ -81,6 +73,34 @@ public class NotificationHandler {
                 //        .put("Response:", "Contact Info changed")
                 //        .toString();
                 return new JsonHttpReponse(Status.OK, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
+        };
+    }
+
+    public static JsonRequestHandler markRead() {
+        return (JSONObject jsonObj) -> {
+        	JSONArray arr = new JSONArray();
+        	int IDs[];
+            // Get input
+            try {
+                arr = jsonObj.getJSONArray("notifications");
+                IDs = new  int[arr.length()];
+                for(int i = 0; i < arr.length(); i++) {
+                	IDs[i] = arr.getInt(i);
+                }
+            } catch (Exception e) {
+                return new JsonHttpReponse(Status.BADREQUEST);
+            }
+            String response;
+
+            // Run DB command            
+            try {
+            	DBNotifications.markRead(IDs);
+            	
+                return new JsonHttpReponse(Status.OK, null);
             } catch (Exception e) {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.SERVERERROR);

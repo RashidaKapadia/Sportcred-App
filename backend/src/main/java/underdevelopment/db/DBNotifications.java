@@ -47,6 +47,27 @@ public class DBNotifications {
 		return notifID;
 	}
 	
+	public static int markRead( int[] IDs) {
+		int notifID = -1;
+
+		try (Session session = Connect.driver.session()) {
+			try (Transaction tx = session.beginTransaction()) {
+				for(int i = 0; i < IDs.length; i++) {
+					tx.run(String.format("match(n:notification) WHERE  ID(n) = %d SET n.read = True", IDs[i]));
+				}
+				tx.commit();
+				tx.close();
+				session.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return notifID;
+	}
+	
+	
 	public static ArrayList<ArrayList<String>> getNotification(String username ) {
 		 /*
 		  * MATCH (tgtUser:user { username:"banana420" })-[:ACSRecord *1..]->(ACSRecord: ACSRecord)
@@ -96,8 +117,7 @@ public class DBNotifications {
 	        return null;
 	      }
 		 
-		 return retVal;
-		 
+		 return retVal; 
 	 }
 
 }
