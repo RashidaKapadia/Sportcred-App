@@ -106,6 +106,7 @@ public class DBUserInfo {
         Result node = tx.run("MATCH (u:user {username: $x}) RETURN u.numberOfPosts as count", parameters("x", username));
         System.out.println("returns node");
         Record data = node.single();
+        //int postCount =  Integer.parseInt((data.get("count").asString()));
         int postCount =  data.get("count").asInt();
         return postCount;
       }
@@ -127,10 +128,11 @@ public class DBUserInfo {
    * @param username
    * @return boolean
    */
-  public static boolean updatePostCount(String username, String num) {
+  public static boolean updatePostCount(String username, int num) {
+    System.out.println(num);
     try(Session session = Connect.driver.session()){
-      session.writeTransaction(tx->tx.run("MATCH (u: user{username: $x}) SET u.numberOfPosts = num + toInteger(u.numberOfPosts) ",
-      parameters("x", username)));
+      session.writeTransaction(tx->tx.run("MATCH (u: user{username: $x}) SET u.numberOfPosts = $y + toInteger(u.numberOfPosts) ",
+      parameters("x", username, "y", num)));
       session.close();
       return true;
     }
