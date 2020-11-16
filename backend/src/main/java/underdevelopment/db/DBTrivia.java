@@ -12,7 +12,8 @@ public class DBTrivia{
 	
 	public static boolean resetTriviaCount(String username) {
 		boolean successfulChange = false;
-
+		
+		
 		 try (Session session = Connect.driver.session()){
 	        	try (Transaction tx = session.beginTransaction()) {
 	        		
