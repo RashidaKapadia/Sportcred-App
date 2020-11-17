@@ -4,6 +4,7 @@ import 'package:frontend/trivia/triviaPickCategory.dart';
 import 'package:frontend/trivia/triviaMode.dart';
 import 'package:frontend/changePassword.dart';
 import 'package:frontend/trivia/triviaResult.dart';
+import 'package:frontend/trivia/triviaSearchOpponent.dart';
 import 'changeContact.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
@@ -33,6 +34,7 @@ void main() {
         '/trivia/mode': (context) => TriviaModePage("basketball"),
         '/trivia/category': (context) => TriviaPickCategoryPage(),
         '/trivia/solo/result': (context) => TriviaResult(),
+        '/trivia/searchOpponent': (context) => TriviaSearchOpponentPage(),
         '/settings': (context) => Settings(),
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
         '/notifications': (context) => NotificationBoard(),
