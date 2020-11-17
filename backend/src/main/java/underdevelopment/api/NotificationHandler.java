@@ -57,7 +57,7 @@ public class NotificationHandler {
             			System.out.println(notificationList.get(i).get(j));
             		}
             	}
-            	response = "";
+            	response = "[";
                 JSONObject jsonResponse  = new JSONObject();
                 for(int i = 0; i < notificationList.get(0).size(); i++) {
 		    		String oneResponse = new JSONObject().put("ID", notificationList.get(0).get(i))
@@ -67,8 +67,12 @@ public class NotificationHandler {
 		    			.put("infoID", notificationList.get(4).get(i))
 		    			.put("read", notificationList.get(5).get(i))
 		    			.toString();
-		    		response += oneResponse;
+		    		response += oneResponse + ',';
                 }
+                if(response.length() > 1) {
+                	response = response.substring(0, response.length() - 1);
+                }
+                response += ']';
             	//response = new JSONObject()
                 //        .put("Response:", "Contact Info changed")
                 //        .toString();
