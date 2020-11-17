@@ -6,6 +6,7 @@ import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpServer;
 
 import underdevelopment.api.ACSHandler;
+import underdevelopment.api.DailyCountHandler;
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.NotificationHandler;
 import underdevelopment.api.ProfileHandler;
@@ -89,15 +90,17 @@ public class App
         // Trivia route
         server.createContext("/api/trivia/get-questions", 
                 new HttpRequestHandler("POST", TriviaHandler.generateQuestions(), authorized));
-        server.createContext("/api/trivia/reset-trivia-count", 
-                new HttpRequestHandler("POST", TriviaHandler.resetTriviaCount(), authorized));
-        server.createContext("/api/trivia/subtract-trivia-count", 
-                new HttpRequestHandler("POST", TriviaHandler.subtractTriviaCount(), authorized));
-        server.createContext("/api/trivia/has-daily-play", 
-                new HttpRequestHandler("POST", TriviaHandler.getTriviaCount(), authorized));
         server.createContext("/api/trivia/get-specific-questions", 
                 new HttpRequestHandler("POST", TriviaHandler.getQuesionsByID(), authorized));
 
+        // Count resetting
+        server.createContext("/api/reset-count", 
+                new HttpRequestHandler("POST", DailyCountHandler.resetCount(), authorized));
+        server.createContext("/api/subtract-count", 
+                new HttpRequestHandler("POST", DailyCountHandler.subtractCount(), authorized));
+        server.createContext("/api/has-daily-play", 
+                new HttpRequestHandler("POST", DailyCountHandler.getCount(), authorized));
+        
         // Notification routes
         server.createContext("/api/notifications/get",
                 new HttpRequestHandler("POST", NotificationHandler.getNotifications(), authorized));

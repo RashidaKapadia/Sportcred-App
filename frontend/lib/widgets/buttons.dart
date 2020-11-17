@@ -21,23 +21,24 @@ Widget orangeButtonLarge({String text, Function onPressed}) {
       ));
 }
 
-Widget plainButton({String text, fontColor, backgroundColor, onPressed}) {
-  return RaisedButton(
-    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-    highlightElevation: 20.0,
-    color: (backgroundColor != null)
-        ? backgroundColor
-        : Color.fromRGBO(180, 180, 220, 1),
-    child: Text(
-      text,
-      style: TextStyle(
-          color: (fontColor != null) ? fontColor : Colors.black, fontSize: 20),
-      textAlign: TextAlign.center,
-    ),
-    shape:
-        RoundedRectangleBorder(borderRadius: new BorderRadius.circular(18.0)),
-    onPressed: onPressed,
-  );
+Widget plainButton(
+    {String text, fontColor, backgroundColor, onPressed, width}) {
+  return Container(
+      width: (width != null) ? width : null,
+      child: RaisedButton(
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+        color: (backgroundColor != null) ? backgroundColor : Colors.black12,
+        child: Text(
+          text,
+          style: TextStyle(
+              color: (fontColor != null) ? fontColor : Colors.black,
+              fontSize: 14),
+          textAlign: TextAlign.center,
+        ),
+        shape: RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(12.0)),
+        onPressed: onPressed,
+      ));
 }
 
 Widget greyButtonFullWidth(Function onPressed, Widget body) {

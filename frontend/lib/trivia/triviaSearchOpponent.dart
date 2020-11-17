@@ -130,6 +130,7 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
   Widget body(BuildContext context, List<UserInfo> users) {
     return Center(
         child: Container(
+      padding: EdgeInsets.symmetric(vertical: 30),
       width: MediaQuery.of(context).size.width * 0.80,
       child: Column(children: [
         vmargin20(h1("Choose your Opponent!",
@@ -140,13 +141,16 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
         (selectedUsername == null) ? searchBar(users) : h2(selectedUsername),
         (selectedUsername == null)
             ? listUsers()
-            : margin10(greyButtonFullWidth(() {
-                setState(() {
-                  selectedUsername = null;
-                });
-              }, Text("Change Opponent"))),
+            : margin10(plainButton(
+                text: "Change Opponent",
+                onPressed: () {
+                  setState(() {
+                    selectedUsername = null;
+                  });
+                })),
         (selectedUsername != null)
-            ? orangeButtonLarge(text: "Play!", onPressed: () => goToTrivia())
+            ? vmargin30(
+                orangeButtonLarge(text: "Play!", onPressed: () => goToTrivia()))
             : Text("..."),
       ]),
     ));
