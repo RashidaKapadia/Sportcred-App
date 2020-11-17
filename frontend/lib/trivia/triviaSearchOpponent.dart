@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
+import 'package:frontend/requests/user.dart';
 import 'package:frontend/widgets/fonts.dart';
 import 'package:frontend/widgets/layout.dart';
 
@@ -92,6 +93,8 @@ class TriviaSearchOpponentPage extends StatefulWidget {
 }
 
 class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
+  Future<List<UserInfo>> _futureUsers;
+
   var isSelected = false;
   String username = "";
 
@@ -103,10 +106,31 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
     });
   }
 
+  Widget searchList(List<UserInfo> users) {
+    for (UserInfo user in users) {
+      print(user.firstname);
+    }
+    return Text("hi");
+  }
+
+  Widget loadUsers() {
+    return FutureBuilder<List<UserInfo>>(
+      future: _futureUsers,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return searchList(snapshot.data);
+        } else {
+          return margin10(CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     loadUsername();
+    _futureUsers = getUsers();
   }
 
   Widget body(BuildContext context) {
@@ -118,6 +142,7 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
             vmargin30(h1("Choose your Opponent!")),
             h1("You"),
             h3("vs", color: Colors.grey),
+            loadUsers(),
           ]),
     );
   }
@@ -126,16 +151,16 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            leading: BackButton(
-                color: Colors.white,
-                onPressed: () =>
-                    Navigator.of(context).pushNamed("/trivia/mode")),
-            title: Text("1-1 Trivia", style: TextStyle(color: Colors.white)),
-            centerTitle: true,
-            backgroundColor: Colors.deepOrange),
-        body: MyHomePage(title: "test")
-        // body(context),
-        );
+      appBar: AppBar(
+          leading: BackButton(
+              color: Colors.white,
+              onPressed: () => Navigator.of(context).pushNamed("/trivia/mode")),
+          title: Text("1-1 Trivia", style: TextStyle(color: Colors.white)),
+          centerTitle: true,
+          backgroundColor: Colors.deepOrange),
+      body:
+          // MyHomePage(title: "test")
+          body(context),
+    );
   }
 }
