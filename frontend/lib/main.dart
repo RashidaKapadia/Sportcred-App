@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 // import 'package:frontend/InitialPage.dart';
-import 'package:frontend/trivia/pickTriviaCategory.dart';
-import 'package:frontend/trivia/onGoingTrivia.dart';
+import 'package:frontend/trivia/triviaPickCategory.dart';
 import 'package:frontend/trivia/triviaMode.dart';
 import 'package:frontend/changePassword.dart';
 import 'package:frontend/trivia/triviaResult.dart';
@@ -32,10 +31,10 @@ void main() {
         '/changeContact': (context) => ChangeContact(),
         "/test": (context) => HTTPRequestExample(),
         '/trivia/mode': (context) => TriviaModePage("basketball"),
-        '/trivia/category': (context) => PickTriviaCategoryPage(),
+        '/trivia/category': (context) => TriviaPickCategoryPage(),
+        '/trivia/solo/result': (context) => TriviaResult(),
         '/settings': (context) => Settings(),
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
-        '/trivia/solo/result': (context) => TriviaResult(),
         '/notifications': (context) => NotificationBoard(),
       }));
 }

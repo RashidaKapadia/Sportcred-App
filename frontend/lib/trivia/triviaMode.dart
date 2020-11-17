@@ -1,9 +1,6 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
-import 'package:frontend/requests/trivia.dart';
 import '../navbar.dart';
-import 'onGoingTrivia.dart';
+import 'triviaOngoing.dart';
 
 class TriviaModePage extends StatefulWidget {
   String category;
@@ -20,17 +17,21 @@ class _TriviaHomePageState extends State<TriviaModePage> {
   goToTrivia() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) =>
-            OnGoingTrivia(category: category, opponent: null)));
+            TriviaOngoing(category: category, opponent: null)));
+  }
+
+  selectUser() {
+    Navigator.of(context).pushNamed('/trivia/searchOpponent');
   }
 
   Widget gameModeTile({String text, Function onPressed}) {
     return ButtonTheme(
-        minWidth: 200.0,
-        height: 100.0,
+        height: MediaQuery.of(context).size.height / 3,
         child: RaisedButton(
           onPressed: onPressed,
-          color: Color(0xFFFF8F00),
-          child: Text(text, style: TextStyle(fontSize: 20)),
+          color: Colors.black38,
+          child: Text(text.toUpperCase(),
+              style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
         ));
   }
 
@@ -48,10 +49,11 @@ class _TriviaHomePageState extends State<TriviaModePage> {
         bottomNavigationBar: NavBar(0),
         body: (Center(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               gameModeTile(onPressed: () => goToTrivia(), text: "Solo Trivia"),
-              gameModeTile(onPressed: () => goToTrivia(), text: "1 - 1 Trivia"),
+              gameModeTile(onPressed: () => selectUser(), text: "1 - 1 Trivia"),
             ],
           ),
         )));
