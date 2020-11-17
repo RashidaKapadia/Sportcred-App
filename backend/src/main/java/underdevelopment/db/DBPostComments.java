@@ -9,9 +9,11 @@ import java.util.Map;
 import java.util.Set;
 import static org.neo4j.driver.Values.parameters;
 
+import org.json.JSONObject;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import org.neo4j.driver.Value;
 
 public class DBPostComments {
 
@@ -74,7 +76,7 @@ public class DBPostComments {
     public static boolean deleteComment(String commentId) {
         try (Session session = Connect.driver.session()) {
             session.writeTransaction(
-                    tx -> tx.run("MATCH (p:post)-[r:hasComment]->[c:comment{id: $x}] "
+                    tx -> tx.run("MATCH (p:post)-[r:hasComment]->(c:comment{id: $x}) "
                             + "DELETE r,c return p", parameters( "x", commentId)));
             session.close();
             return true;
@@ -84,6 +86,23 @@ public class DBPostComments {
         }
     }
 
+    public static boolean checkCommentExists(String commentId){
+        try (Session session = Connect.driver.session()) {
+            Result result = session.run("MATCH (c:comment {id: $x}) RETURN c", parameters("x", commentId));
+
+            if (result.hasNext()){
+                System.out.println(result.toString());
+                System.out.println(result.single());
+
+                return true;
+            } 
+
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     public static Map<String, Object> getComment(String commentId) {
         try (Session session = Connect.driver.session()) {
             Result result = session.run("MATCH (c:comment {id: $x}) RETURN c", parameters("x", commentId));
@@ -130,35 +149,33 @@ public class DBPostComments {
         }
     }
 
-    public static List<Map<String, Object>> getComments(String postId){
-        List<Map<String,Object>> allComments = new ArrayList<Map<String, Object>>();
+    public static List<JSONObject> getComments(String postId){
+        List<JSONObject> allComments = new ArrayList<JSONObject>();
 
         try (Session session = Connect.driver.session()) {
             // Initialize list to store all the comments
             System.out.println("in getComments method: Running query!");
             // Run query to get all comments for the post with the given id, ordered by their timestamp
-            Result result = session.run("MATCH (p:post{uniqueIdentifier: $x})-[:hasComment]->(c) " 
+            Result result = session.run("MATCH (p:post{uniqueIdentifier: $x})-[:hasComment]->(c:comment) " 
             + "RETURN c ORDER BY c.timestamp DESC", parameters("x", postId));
 
             System.out.println("FINISHED RUNNING QUERY!");
             System.out.println(result.hasNext());
-            System.out.println(result.next());
 
             // Loop through each comment in the result and add that comment to the list
             while (result.hasNext()) {
-                Record data = result.next();
-                Map<String, Object> commentMap = new HashMap<>();
-
-                System.out.println("data: " + data);
+                Value comment = result.next().get("c");
+                JSONObject commentJson = new JSONObject();
 
                 // Add the data for this comment in the commentMap
-                commentMap.put("timestamp", data.get("timestamp").asString());
-                commentMap.put("username", data.get("username").asString());
-                commentMap.put("content", data.get("content").asString());
-                commentMap.put("profileName", data.get("profileName").asString());
+                commentJson.put("id", comment.get("id").asString());
+                commentJson.put("timestamp", comment.get("timestamp").asObject().toString());
+                commentJson.put("username", comment.get("username").asString());
+                commentJson.put("content", comment.get("content").asString());
+                commentJson.put("profileName", comment.get("profileName").asString());
 
                 // Add it to the list of all comments
-                allComments.add(commentMap);
+                allComments.add(commentJson);
             } 
             return allComments;
             
