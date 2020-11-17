@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.Status;
+import underdevelopment.db.DBNotifications;
 import underdevelopment.db.DBQuestion;
 import underdevelopment.db.DBTrivia;
 import underdevelopment.db.DBUserInfo;
@@ -80,6 +81,19 @@ public class TriviaHandler {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
+            
+            // Check if the username exists
+            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+          	  try {
+                  String response = new JSONObject()
+                      .put("Error", "Username doesn't exist")
+                      .toString();
+                  	return new JsonHttpReponse(Status.CONFLICT, response);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+                  return new JsonHttpReponse(Status.SERVERERROR);
+              }
+            }
 
             // Get questions from the db
             Boolean success = DBTrivia.resetTriviaCount(username);
@@ -115,6 +129,19 @@ public class TriviaHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
             
+            // Check if the username exists
+            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+          	  try {
+                  String response = new JSONObject()
+                      .put("Error", "Username doesn't exist")
+                      .toString();
+                  	return new JsonHttpReponse(Status.CONFLICT, response);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+                  return new JsonHttpReponse(Status.SERVERERROR);
+              }
+            }
+
         	
        	 // Check if the username exists
            if ( ! DBUserInfo.checkUsernameExists(username) ) {
@@ -164,6 +191,19 @@ public class TriviaHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
+            // Check if the username exists
+            if ( ! DBUserInfo.checkUsernameExists(username) ) {
+          	  try {
+                  String response = new JSONObject()
+                      .put("Error", "Username doesn't exist")
+                      .toString();
+                  	return new JsonHttpReponse(Status.CONFLICT, response);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+                  return new JsonHttpReponse(Status.SERVERERROR);
+              }
+            }
+
             
         	
        	 // Check if the username exists
@@ -204,7 +244,7 @@ public class TriviaHandler {
         return (JSONObject jsonObj) -> {
 
             System.out.println("getting user list");
-            String username;
+
             // Get questions from the db
             ArrayList<String>[] users = DBUserInfo.returnUsers();
             
@@ -212,11 +252,21 @@ public class TriviaHandler {
                 JSONArray questionsJSON = new JSONArray();
                 // Build the json array of questions
                 // Create the json response
-                String response = new JSONObject()
-                	.put("username", users[0])
-                	.put("firstname", users[1])
-                	.put("lastname", users[2])
-                    .toString();
+                String response = "[";
+                for(int i = 0; i < users[0].size(); i++) {
+                	String oneResponse = new JSONObject()
+                        	.put("username", users[0].get(i))
+                        	.put("firstname", users[1].get(i))
+                        	.put("lastname", users[2].get(i))
+                            .toString();
+                    response += oneResponse + ',';
+                	
+                }
+                if(response.length() > 1) {
+                	response = response.substring(0, response.length() - 1);
+                }
+                response += ']';
+             
                 return new JsonHttpReponse(Status.OK, response);
             } catch (JSONException e) {
                 e.printStackTrace();
