@@ -4,21 +4,36 @@ import 'package:frontend/requests/user.dart';
 import 'package:frontend/widgets/fonts.dart';
 import 'package:frontend/widgets/layout.dart';
 
-class MyHomePage extends StatefulWidget {
+class TriviaSearchOpponentPage extends StatefulWidget {
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _TriviaSearchOpponentPageState createState() =>
+      _TriviaSearchOpponentPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
+  Future<List<UserInfo>> _futureUsers;
   TextEditingController editingController = TextEditingController();
 
   final duplicateItems = List<String>.generate(10000, (i) => "$i");
   var items = List<String>();
 
+  var isSelected = false;
+  String username = "";
+
   @override
   void initState() {
     items.addAll(duplicateItems);
+    loadUsername();
+    _futureUsers = getUsers();
     super.initState();
+  }
+
+  void loadUsername() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        username = value.toString();
+      });
+    });
   }
 
   void filterSearchResults(String query) {
@@ -76,48 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          searchBar(),
-          listUsers(),
-        ],
-      ),
-    );
-  }
-}
-
-// ----------
-
-class TriviaSearchOpponentPage extends StatefulWidget {
-  @override
-  _TriviaSearchOpponentPageState createState() =>
-      _TriviaSearchOpponentPageState();
-}
-
-class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
-  Future<List<UserInfo>> _futureUsers;
-
-  var isSelected = false;
-  String username = "";
-
-  @override
-  void initState() {
-    super.initState();
-    loadUsername();
-    _futureUsers = getUsers();
-  }
-
-  void loadUsername() {
-    FlutterSession().get('username').then((value) {
-      this.setState(() {
-        username = value.toString();
-      });
-    });
-  }
-
   Widget searchList(List<UserInfo> users) {
     for (UserInfo user in users) {
       print(user.firstname);
@@ -149,6 +122,8 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
             h1("You"),
             h3("vs", color: Colors.grey),
             loadUsers(),
+            searchBar(),
+            listUsers(),
           ]),
     );
   }
@@ -157,16 +132,14 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            leading: BackButton(
-                color: Colors.white,
-                onPressed: () =>
-                    Navigator.of(context).pushNamed("/trivia/mode")),
-            title: Text("1-1 Trivia", style: TextStyle(color: Colors.white)),
-            centerTitle: true,
-            backgroundColor: Colors.deepOrange),
-        body: MyHomePage()
-        // body(context),
-        );
+      appBar: AppBar(
+          leading: BackButton(
+              color: Colors.white,
+              onPressed: () => Navigator.of(context).pushNamed("/trivia/mode")),
+          title: Text("1-1 Trivia", style: TextStyle(color: Colors.white)),
+          centerTitle: true,
+          backgroundColor: Colors.deepOrange),
+      body: body(context),
+    );
   }
 }
