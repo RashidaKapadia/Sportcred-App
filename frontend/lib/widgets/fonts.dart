@@ -34,10 +34,11 @@ Widget bold(String text) {
       ));
 }
 
-Widget heading(String text, {double size, color}) {
+Widget heading(String text, {double size, color, textAlign}) {
   return Container(
     margin: EdgeInsets.fromLTRB(0, 8, 0, 8),
     child: Text(text,
+        textAlign: (textAlign == null) ? TextAlign.left : textAlign,
         style: TextStyle(
           fontSize: size,
           color: (color == null) ? Colors.black : color,
@@ -46,20 +47,20 @@ Widget heading(String text, {double size, color}) {
   );
 }
 
-Widget h1(String text, {color}) {
-  return heading(text, size: 30.0, color: color);
+Widget h1(String text, {color, textAlign}) {
+  return heading(text, size: 30.0, color: color, textAlign: textAlign);
 }
 
-Widget h2(String text, {color}) {
-  return heading(text, size: 25.0, color: color);
+Widget h2(String text, {color, textAlign}) {
+  return heading(text, size: 25.0, color: color, textAlign: textAlign);
 }
 
-Widget h3(String text, {color}) {
-  return heading(text, size: 20.0, color: color);
+Widget h3(String text, {color, textAlign}) {
+  return heading(text, size: 20.0, color: color, textAlign: textAlign);
 }
 
-Widget h4(String text, {color}) {
-  return heading(text, size: 15.0, color: color);
+Widget h4(String text, {color, textAlign}) {
+  return heading(text, size: 15.0, color: color, textAlign: textAlign);
 }
 
 Widget superLargeHeading(String text, {color}) {

@@ -7,77 +7,37 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/requests/trivia.dart';
 import 'package:frontend/trivia/triviaResult.dart';
 import 'dart:async';
-import 'package:frontend/trivia/pickTriviaCategory.dart';
 import 'package:frontend/widgets/fonts.dart';
+import 'package:frontend/widgets/layout.dart';
 import 'package:simple_timer/simple_timer.dart';
 
-class OnGoingTrivia extends StatelessWidget {
+class TriviaOngoing extends StatefulWidget {
   String category;
-  List<TriviaQuestion> triviaQuestions;
-  OnGoingTrivia(this.category, this.triviaQuestions);
+  String opponent;
+  TriviaOngoing({@required this.category, this.opponent});
 
   @override
-  Widget build(BuildContext context) {
-    return (triviaQuestions == null)
-        ? Text("Loading")
-        : quizPage(data: triviaQuestions);
-  }
+  State<StatefulWidget> createState() =>
+      _TriviaOngoingState(category: category, opponent: opponent);
 }
 
-class quizPage extends StatefulWidget {
-  var data;
-  quizPage({Key key, @required this.data}) : super(key: key);
-
-  @override
-  _quizpageState createState() => _quizpageState(data);
-}
-
-class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
-  var data;
-  _quizpageState(this.data);
-
-  TimerController _timerController;
-
-  // Styling
-  Color colorToDisplay = Colors.indigoAccent; // current colour
-  Color colorDefault = Colors.indigoAccent;
-  Color correctAnsColor = Colors.green;
-  Color incorrectAnsColor = Colors.red;
-
-  int correctlyAnswered; // number of questions answered
-  int notAnswered; // number of questions not answered
-  int questions; // number of questions
-
-  int i = 0; // question index
-  int timer = 10;
-
-  bool disableAnswer = false;
-  bool cancelTimer = false;
-
+// Get questions, then call the actually quiz page after questions are recieved
+class _TriviaOngoingState extends State<TriviaOngoing> {
+  String category = "";
+  String opponent = "";
   String username = "";
   String token = "";
-
-  int displayScore(questions, correctlyAnswered) {
-    return correctlyAnswered - (i - correctlyAnswered);
-  }
-
-  gotoResults(context) async {
-    int score = correctlyAnswered - (questions - correctlyAnswered);
-    updateACS(token, username, score);
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => TriviaResult(
-            score: score,
-            incorrect: questions - notAnswered - correctlyAnswered,
-            correct: correctlyAnswered,
-            notAnswered: notAnswered,
-            questions: questions)));
-  }
+  _TriviaOngoingState({this.category, this.opponent});
+  Future<List<TriviaQuestion>> _futureTriviaQuestions;
 
   @override
-  void setState(fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
+  void initState() {
+    super.initState();
+    setState(() {
+      loadToken();
+      loadUsername();
+      _futureTriviaQuestions = getQuestions(category);
+    });
   }
 
   void loadUsername() {
@@ -96,16 +56,116 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     });
   }
 
+  Widget loadTrivia() {
+    return FutureBuilder<List<TriviaQuestion>>(
+      future: _futureTriviaQuestions,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return QuizPage(
+              username: username,
+              token: token,
+              questions: snapshot.data,
+              category: category,
+              opponent: opponent);
+        } else {
+          return margin10(CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => loadTrivia();
+}
+
+// Page with changing questions
+class QuizPage extends StatefulWidget {
+  List<TriviaQuestion> questions;
+  String username = "";
+  String token = "";
+  String category;
+  String opponent;
+  QuizPage(
+      {Key key,
+      @required this.username,
+      @required this.token,
+      @required this.questions,
+      this.category,
+      this.opponent})
+      : super(key: key);
+
+  @override
+  _QuizpageState createState() => _QuizpageState(
+      username: username,
+      token: token,
+      questions: questions,
+      category: category,
+      opponent: opponent);
+}
+
+class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
+  List<TriviaQuestion> questions;
+  String username = "";
+  String token = "";
+  String category;
+  String opponent;
+  _QuizpageState(
+      {@required this.username,
+      @required this.token,
+      @required this.questions,
+      this.category,
+      this.opponent});
+
+  TimerController _timerController;
+
+  // Styling
+  Color colorToDisplay = Colors.indigoAccent; // current colour
+  Color colorDefault = Colors.indigoAccent;
+  Color correctAnsColor = Colors.green;
+  Color incorrectAnsColor = Colors.red;
+
+  int correctlyAnswered; // number of questions answered
+  int notAnswered; // number of questions not answered
+  int numQuestions; // number of questions
+
+  int i = 0; // question index
+  int timer = 10;
+
+  bool disableAnswer = false;
+  bool cancelTimer = false;
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    loadToken();
-    loadUsername();
     correctlyAnswered = 0;
-    notAnswered = data.length;
-    questions = data.length;
+    notAnswered = questions.length;
+    numQuestions = questions.length;
     _timerController = TimerController(this);
+
     startTimer();
+  }
+
+  int calculateDisplayScore(numQuestions, correctlyAnswered) {
+    return correctlyAnswered - (i - correctlyAnswered);
+  }
+
+  gotoResults(context) {
+    int score = correctlyAnswered - (numQuestions - correctlyAnswered);
+    updateACS(token, username, score);
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => TriviaResult(
+            score: score,
+            incorrect: numQuestions - notAnswered - correctlyAnswered,
+            correct: correctlyAnswered,
+            notAnswered: notAnswered,
+            numQuestions: numQuestions)));
   }
 
   void startTimer() async {
@@ -135,7 +195,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
       timer = 10;
       // NOTE: i is inclusive TODO:
       print("i: " + i.toString());
-      if (i < questions - 1) {
+      if (i < numQuestions - 1) {
         i++;
         _timerController.reset();
         _timerController.start();
@@ -152,7 +212,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     if (val == true) {
       print("validate set state");
       setState(() {
-        if (data[i].answer == data[i].options[t]) {
+        if (questions[i].answer == questions[i].options[t]) {
           correctlyAnswered++;
           colorToDisplay = correctAnsColor;
         } else {
@@ -172,7 +232,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
         child: MaterialButton(
           onPressed: () => validateAnswer(t, true),
-          child: Text(data[i].options[t], maxLines: 1),
+          child: Text(questions[i].options[t], maxLines: 1),
           // Using race condition to colour buttons
           color: colorToDisplay,
           minWidth: 200.0,
@@ -203,7 +263,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         context: context,
         builder: (context) => AlertDialog(
             content: Text(
-              "You sure want to leave? You will forfeit the remaining questions!",
+              "You sure want to leave? You will forfeit the remaining numQuestions!",
             ),
             actions: [leaveButton, resumeButton]));
   }
@@ -230,7 +290,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
           borderRadius: BorderRadius.all(Radius.circular(30)),
         ),
         child: Text(
-          'Q' + (i + 1).toString() + ": " + data[i].question,
+          'Q' + (i + 1).toString() + ": " + questions[i].question,
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
         ),
       ),
@@ -243,7 +303,7 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
         child: Container(
           child: Wrap(
               direction: Axis.horizontal,
-              children: List.generate(data[i].options.length, (index) {
+              children: List.generate(questions[i].options.length, (index) {
                 return animatedChoiceButton(index);
               })),
         ),
@@ -251,7 +311,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     );
 
     Widget currentScore = Text(
-      'Score: ' + displayScore(questions, correctlyAnswered).toString(),
+      'Score: ' +
+          calculateDisplayScore(numQuestions, correctlyAnswered).toString(),
       style: TextStyle(fontSize: 20),
       textAlign: TextAlign.center,
     );

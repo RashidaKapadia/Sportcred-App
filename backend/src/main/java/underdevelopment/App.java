@@ -64,9 +64,9 @@ public class App
 
         // Profile APIs
         server.createContext("/api/updateUserPassword",
-                new HttpRequestHandler("POST", ProfileHandler.updateUserPassword(), false));
+                new HttpRequestHandler("POST", ProfileHandler.updateUserPassword(), authorized));
         server.createContext("/api/updateUserContact",
-                new HttpRequestHandler("POST", ProfileHandler.updateUserContact(), false));
+                new HttpRequestHandler("POST", ProfileHandler.updateUserContact(), authorized));
         
         server.createContext("/api/updateUserInfo",
             new HttpRequestHandler("POST", ProfileHandler.updateUserInfo(), authorized));
@@ -76,7 +76,11 @@ public class App
         // Sign Up API
         server.createContext("/api/signup", 
                 new HttpRequestHandler("POST", SignUpHandler.handleSignUp(), false));
-              
+
+        // Users
+        server.createContext("/api/get-users-list", 
+                new HttpRequestHandler("POST", TriviaHandler.getUserList(), authorized));
+
         // ACS API (mostly for testing)
         server.createContext("/api/editACS", 
                 new HttpRequestHandler("POST", ACSHandler.handleACS(), authorized));
@@ -86,8 +90,6 @@ public class App
         // Trivia route
         server.createContext("/api/trivia/get-questions", 
                 new HttpRequestHandler("POST", TriviaHandler.generateQuestions(), authorized));
-        server.createContext("/api/trivia/get-users-list", 
-                new HttpRequestHandler("POST", TriviaHandler.getUserList(), authorized));
         server.createContext("/api/trivia/get-specific-questions", 
                 new HttpRequestHandler("POST", TriviaHandler.getQuesionsByID(), authorized));
 
