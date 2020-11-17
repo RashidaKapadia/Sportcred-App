@@ -5,6 +5,8 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/fieldStyles.dart';
 import 'package:frontend/formHelper.dart';
+import 'package:frontend/widgets/buttons.dart';
+import 'package:frontend/widgets/layout.dart';
 import 'package:http/http.dart' as http;
 
 // -- HTTP Request ---
@@ -95,18 +97,20 @@ class _State_Of_Login_Page extends State<LoginPage> {
                     padding: EdgeInsets.all(10),
                     child: ListView(
                       children: <Widget>[
-                        logoTitle(),
+                        logoBanner(),
                         Container(
                             alignment: Alignment.center,
                             padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                             child: Text(
                               'Welcome, Sign in!',
                               style: TextStyle(
-                                  fontSize: 17, color: Color(0xFF9E9E9E)),
+                                  fontSize: 17, color: Colors.black87),
                             )),
-                        (_futureLoginStatus != null)
-                            ? getStatus(context, _futureLoginStatus)
-                            : Text("Enter your information below:"),
+                        vmargin10(Center(
+                            child: (_futureLoginStatus != null)
+                                ? getStatus(context, _futureLoginStatus)
+                                : Text("Enter your information below:",
+                                    style: TextStyle(color: Colors.black54)))),
                         // Username field
                         TextFormField(
                           //padding: EdgeInsets.all(5),
@@ -144,49 +148,39 @@ class _State_Of_Login_Page extends State<LoginPage> {
                           },
                         ),
                         // Forgot Password Link
-                        FlatButton(
+                        vmargin10(FlatButton(
                           textColor: Color(0xFFFF8F00),
                           child: Text('Forgot Password'),
                           onPressed: () {
                             //Move to forgot password screen, to be implemented after
                           },
-                        ),
-                        // Login button
-                        Container(
-                            height: 50,
-                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            child: RaisedButton(
-                              textColor: Colors.white,
-                              color: Color(0xFFFF8F00),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      new BorderRadius.circular(18.0)),
-                              child: Text(
-                                'Login',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  // Validate the fields
-                                  if (_loginKey.currentState.validate()) {
-                                    // Make HTTP request
-                                    _futureLoginStatus = login(
-                                        nameController.text,
-                                        passwordController.text);
+                        )),
 
-                                    // If response has been returned, check the status and go to homepage if
-                                    // login was successful
-                                    if (_futureLoginStatus != null) {
-                                      checkStatus(context, _futureLoginStatus,
-                                          "/homepage");
-                                    }
-                                  } else {
-                                    errorPopup(context,
-                                        "Please provide both your username and password.");
-                                  }
-                                });
-                              },
-                            )),
+                        // Login button
+                        vmargin10(orangeButtonLarge(
+                          text: "Login!",
+                          onPressed: () {
+                            setState(() {
+                              // Validate the fields
+                              if (_loginKey.currentState.validate()) {
+                                // Make HTTP request
+                                _futureLoginStatus = login(nameController.text,
+                                    passwordController.text);
+
+                                // If response has been returned, check the status and go to homepage if
+                                // login was successful
+                                if (_futureLoginStatus != null) {
+                                  checkStatus(
+                                      context, _futureLoginStatus, "/homepage");
+                                }
+                              } else {
+                                errorPopup(context,
+                                    "Please provide both your username and password.");
+                              }
+                            });
+                          },
+                        )),
+
                         // Sign up Link
                         Container(
                             child: Row(

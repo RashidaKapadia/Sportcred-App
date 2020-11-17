@@ -1,6 +1,27 @@
 import 'package:flutter/material.dart';
 
-Widget plainButton({String text, fontColor, backgroundColor, onPressed, key}) {
+Widget orangeButtonLarge({String text, Function onPressed}) {
+  String _text = (text != null) ? text : "";
+  Function _onPressed = (onPressed != null) ? onPressed : () {};
+
+  return Container(
+      width: 400,
+      height: 50,
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: RaisedButton(
+        textColor: Colors.white,
+        color: Color(0xFFFF8F00),
+        shape: RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(18.0)),
+        child: Text(
+          _text,
+          style: TextStyle(fontSize: 18),
+        ),
+        onPressed: _onPressed,
+      ));
+}
+
+Widget plainButton({String text, fontColor, backgroundColor, onPressed}) {
   return RaisedButton(
     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     highlightElevation: 20.0,

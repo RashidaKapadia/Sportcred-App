@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 Widget logoBanner() {
   return Container(
-      margin: EdgeInsets.symmetric(horizontal: 45, vertical: 50),
+      margin: EdgeInsets.symmetric(horizontal: 70, vertical: 45),
       child: Image.asset('assets/Logo.png'));
 }
 
