@@ -98,6 +98,13 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
   var isSelected = false;
   String username = "";
 
+  @override
+  void initState() {
+    super.initState();
+    loadUsername();
+    _futureUsers = getUsers();
+  }
+
   void loadUsername() {
     FlutterSession().get('username').then((value) {
       this.setState(() {
@@ -124,13 +131,6 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
         }
       },
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadUsername();
-    _futureUsers = getUsers();
   }
 
   Widget body(BuildContext context) {

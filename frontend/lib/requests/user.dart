@@ -31,12 +31,45 @@ Future<List<UserInfo>> getUsers() async {
 
   if (response.statusCode == 200) {
     List<UserInfo> users = [];
-
-    // Get the questions, options and correctAnswers and store them in the class variables
     for (Map<String, dynamic> user in jsonDecode(response.body) as List) {
       users += [UserInfo.fromJson(user)];
     }
     return users;
+  } else {
+    return null;
+  }
+}
+
+class UserDailyPlays {
+  final bool available;
+  final int gamesLeft;
+
+  UserDailyPlays({this.available, this.gamesLeft});
+
+  factory UserDailyPlays.fromJson(Map<String, dynamic> json) {
+    return UserDailyPlays(
+      available: json['available'],
+      gamesLeft: json['gamesLeft'],
+    );
+  }
+}
+
+// Http post request to get user info
+Future<UserDailyPlays> getDailyPlays(String username, String activity) async {
+  // Make the request and store the response
+  final http.Response response = await http.post(
+    'http://localhost:8080/api/trivia/has-daily-play',
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Accept': 'text/plain; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: jsonEncode(
+        <String, String>{'username': username, 'activity': activity}),
+  );
+
+  if (response.statusCode == 200) {
+    return UserDailyPlays.fromJson(jsonDecode(response.body));
   } else {
     return null;
   }
