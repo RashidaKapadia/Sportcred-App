@@ -67,7 +67,7 @@ public class ACSHandler {
 	 public static JsonRequestHandler handleACS() {
 		 return (JSONObject jsonObj) -> {
 	            String username, oppUsername, game;
-	            int ammount;
+	            int amount;
 	            String date;
 	            
 	            String response;
@@ -77,7 +77,7 @@ public class ACSHandler {
 	                username = jsonObj.getString("username");
 	                oppUsername = jsonObj.getString("oppUsername");
 	                game = jsonObj.getString("gameType");
-	                ammount = jsonObj.getInt("amount");
+	                amount = jsonObj.getInt("amount");
 	                date = jsonObj.getString("date");
 	            } catch (Exception e) {
 	                return new JsonHttpReponse(Status.BADREQUEST);
@@ -99,7 +99,7 @@ public class ACSHandler {
 	            try {
 		    		System.out.println("running the edit ACS");
 
-	            	int newACS = DBAcs.editACS(username, ammount, oppUsername, game, date);
+	            	int newACS = DBAcs.editACS(username, amount, oppUsername, game, date);
 	                response = new JSONObject()
 	                    .put("Response", "new ACS is:  " + newACS)
 	                    .toString();
