@@ -175,6 +175,61 @@ public class PostHandler {
 
     }
 
+    public static JsonRequestHandler handlePostAgreeDisAgree() {
+        return (JSONObject jsonObj) -> {
+            System.out.println("Running the Post Edit handler.");
+            String postId, username;
+            boolean agreed; 
+
+            String response;
+            // Get and validate input
+
+            try {
+                postId = jsonObj.getString("postId"); 
+                username = jsonObj.getString("username"); 
+                agreed = jsonObj.getBoolean("agreed");
+            } catch (Exception e) {
+                return new JsonHttpReponse(Status.BADREQUEST);
+            }
+            
+            int splitArray = postId.indexOf(".");
+            //System.out.println(splitArray);
+            String subString = postId.substring(0, splitArray); 
+            //String subString1 = postId.substring(splitArray+1, postId.length());
+            //System.out.println(subString1);
+            //System.out.println(subString);
+            System.out.println(subString.equals(username));
+            if (subString.equals(username)){
+                try {
+                    System.out.println("The post does not belong to the current user");
+                    response = new JSONObject().put("You canot agree/disagree to  your own own post", false).toString();
+                    return new JsonHttpReponse(Status.CONFLICT, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } 
+            }
+            boolean isUpdated = DBPosts.likedOrDislikedPost(username, postId, agreed);
+            if(!isUpdated){
+                try {
+                    response = new JSONObject().put("Couldn't perform the logic for agreed/disliked post", isUpdated).toString();
+                    return new JsonHttpReponse(Status.SERVERERROR, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            try {
+                //System.out.println("Something happened at the last stage");
+                response = new JSONObject().put("Successfully agreed/disagreed to the post!", jsonObj).toString();
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (JSONException e) {
+                    e.printStackTrace();
+                    return new JsonHttpReponse(Status.SERVERERROR);
+            }
+        };
+
+    }
+
     public static JsonRequestHandler handleEditPost() {
         return (JSONObject jsonObj) -> {
 
