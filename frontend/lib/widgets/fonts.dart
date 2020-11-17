@@ -46,20 +46,20 @@ Widget heading(String text, {double size, color}) {
   );
 }
 
-Widget h1(String text) {
-  return heading(text, size: 30.0);
+Widget h1(String text, {color}) {
+  return heading(text, size: 30.0, color: color);
 }
 
-Widget h2(String text) {
-  return heading(text, size: 25.0);
+Widget h2(String text, {color}) {
+  return heading(text, size: 25.0, color: color);
 }
 
-Widget h3(String text) {
-  return heading(text, size: 20.0);
+Widget h3(String text, {color}) {
+  return heading(text, size: 20.0, color: color);
 }
 
-Widget h4(String text) {
-  return heading(text, size: 15.0);
+Widget h4(String text, {color}) {
+  return heading(text, size: 15.0, color: color);
 }
 
 Widget superLargeHeading(String text, {color}) {
