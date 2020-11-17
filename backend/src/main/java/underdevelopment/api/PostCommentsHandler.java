@@ -17,8 +17,6 @@ public class PostCommentsHandler {
 
     public static JsonRequestHandler handleCreateComment() {
         return (JSONObject jsonObj) -> {
-
-            System.out.println("Running the Comment Creation handler.");
             String postId, username, content;
 
             String response;
@@ -37,38 +35,25 @@ public class PostCommentsHandler {
 
             // Check that the comment was created
             if (commentId == "") {
-                try {
-                    response = new JSONObject().put("Couldn't add the comment!", commentId).toString();
-                    return new JsonHttpReponse(Status.SERVERERROR, response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                response = "Couldn't add the comment!";
+                return new JsonHttpReponse(Status.SERVERERROR, response);
             }
             // Add relationship between post and comment
             boolean relationAdded = DBPostComments.addPosttoCommentRelationship(postId, commentId);
 
             // Verify that the relationship has been added
             if (!relationAdded) {
-                // Delete comment if the relationship could not be created between the post and the comment
+                // Delete comment if the relationship could not be created between the post and
+                // the comment
                 DBPostComments.deleteComment(commentId);
-                try {
-                    response = new JSONObject()
-                            .put("Couldn't create the relation between post and comment", relationAdded).toString();
-                    return new JsonHttpReponse(Status.SERVERERROR, response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
+                response = "Couldn't create the relation between post and comment";
+                return new JsonHttpReponse(Status.SERVERERROR, response);
             }
 
-            try {
-                response = new JSONObject()
-                        .put("Successfully created comment and added relation between post and comment!", jsonObj)
-                        .toString();
-                return new JsonHttpReponse(Status.OK, response);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return new JsonHttpReponse(Status.SERVERERROR);
-            }
+            // If this part is reached -> comment successfully created and linked with post
+            response = "Successfully created comment and added relation between post and comment!";
+            return new JsonHttpReponse(Status.OK, response);
         };
     }
 
@@ -88,53 +73,41 @@ public class PostCommentsHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
+            // Check that the comment with the given id exists
+            if (!DBPostComments.checkCommentExists(commentId)) {
+                response = "Comment with given ID does not exist";
+
+                return new JsonHttpReponse(Status.CONFLICT, response);
+            }
+
             // Check that the given user is the one that created the comment
-            boolean isCommentor = verifyCommentor(commentId, username);
-            
-            // user can only delete their comment
-            if (!isCommentor) {
-                System.out.println("Something happened while checking strings");
-                try {
-                    System.out.println("This commment does not belong to the current user");
-                    response = new JSONObject().put("You can only delete your own comment", false).toString();
-                    return new JsonHttpReponse(Status.CONFLICT, response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            if (verifyCommentor(commentId, username)) {
+                response = "You can only delete your own comment";
+                return new JsonHttpReponse(Status.CONFLICT, response);
             }
 
             // delete the comment and relationship between it and its post
             boolean commentDeleted = DBPostComments.deleteComment(commentId);
             if (!commentDeleted) {
-                try {
-                    System.out.println("Something happened during the deletion");
-                    response = new JSONObject().put("Couldn't delete the comment", commentDeleted).toString();
-                    return new JsonHttpReponse(Status.SERVERERROR, response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                response = "Couldn't delete the comment";
+
+                return new JsonHttpReponse(Status.SERVERERROR, response);
             }
 
-            try {
-                response = new JSONObject().put("Successfully deleted the comment!", jsonObj).toString();
-                return new JsonHttpReponse(Status.OK, response);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return new JsonHttpReponse(Status.SERVERERROR);
-            }
+            // If this line is reached -> comment was deleted
+            response = "Successfully deleted the comment!";
+            return new JsonHttpReponse(Status.OK, response);
         };
 
     }
 
     public static JsonRequestHandler handleEditComment() {
         return (JSONObject jsonObj) -> {
-
-            System.out.println("Running the Edit Comment handler.");
             String newData, username, commentId;
 
             String response;
-            // Get and validate input
 
+            // Get and validate input
             try {
                 commentId = jsonObj.getString("commentId");
                 username = jsonObj.getString("username");
@@ -143,49 +116,31 @@ public class PostCommentsHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
-            // verify credentials for the post
-            boolean isCommentor = verifyCommentor(commentId, username);
-
-            if (!isCommentor) {
-                try {
-                    System.out.println("The comment does not belong to the current user");
-                    response = new JSONObject().put("You can only edit your own own comment", false).toString();
-                    return new JsonHttpReponse(Status.CONFLICT, response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            // verify credentials for the comment
+            if (!verifyCommentor(commentId, username)) {
+                response = "You can only edit your own own comment";
+                return new JsonHttpReponse(Status.CONFLICT, response);
             }
 
-           
             boolean isUpdated = DBPostComments.editComment(commentId, newData);
 
+            // Check that the comment has been updated or not
             if (!isUpdated) {
-                try {
-                    response = new JSONObject().put("Couldn't edit comment", isUpdated).toString();
-                    return new JsonHttpReponse(Status.SERVERERROR, response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }               
-               
-            try {
-                response = new JSONObject().put("Successfully updated the comment!", jsonObj).toString();
-                return new JsonHttpReponse(Status.OK, response);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return new JsonHttpReponse(Status.SERVERERROR);
+                response = "Couldn't edit comment";
+                return new JsonHttpReponse(Status.SERVERERROR, response);
+
             }
+
+            // If this part is reached -> comment successfully updated
+            response = "Successfully updated the comment!";
+            return new JsonHttpReponse(Status.OK, response);
+
         };
     }
 
     public static JsonRequestHandler handleGetComments() {
         return (JSONObject jsonObj) -> {
-
-            System.out.println("Running the Get Comments handler.");
             String postId;
-
-            String response;
-
             // Get and validate input
             try {
                 postId = jsonObj.getString("postId");
@@ -193,21 +148,12 @@ public class PostCommentsHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
-           
-            List<Map<String,Object>> allComments = DBPostComments.getComments(postId);
+            // Get the comments for the given post - [] if no comments exist for this post
+            List<JSONObject> allComments = DBPostComments.getComments(postId);
 
-            if (allComments.isEmpty()) {
-                try {
-                    response = new JSONObject().put("No comments for given post or couldn't get comments", allComments).toString();
-                    return new JsonHttpReponse(Status.SERVERERROR, response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }               
-            
             // Return the response with list of all comments
             return new JsonHttpReponse(Status.OK, allComments.toString());
-            
+
         };
     }
 
@@ -215,8 +161,6 @@ public class PostCommentsHandler {
         // verify credentials for the post
         int splitArray = commentId.indexOf(".");
         String subString = commentId.substring(0, splitArray);
-
-        System.out.println(subString.equals(username));
 
         return subString.equals(username);
     }
