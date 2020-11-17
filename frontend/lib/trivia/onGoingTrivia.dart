@@ -8,12 +8,12 @@ import 'package:frontend/requests/trivia.dart';
 import 'package:frontend/trivia/triviaResult.dart';
 import 'dart:async';
 import 'package:frontend/widgets/fonts.dart';
+import 'package:frontend/widgets/layout.dart';
 import 'package:simple_timer/simple_timer.dart';
 
 class OnGoingTrivia extends StatefulWidget {
   String category;
   String opponent;
-  List<TriviaQuestion> questions;
   OnGoingTrivia({@required this.category, this.opponent});
 
   @override
@@ -21,21 +21,40 @@ class OnGoingTrivia extends StatefulWidget {
       _OnGoingTriviaState(category: category, opponent: opponent);
 }
 
+// Get questions, then call the actually quiz page after questions are recieved
 class _OnGoingTriviaState extends State<OnGoingTrivia> {
-  List<TriviaQuestion> questions;
   String category;
   String opponent;
   _OnGoingTriviaState({this.category, this.opponent});
 
+  Future<List<TriviaQuestion>> _futureTriviaQuestions;
   @override
-  Widget build(BuildContext context) {
-    return (questions == null)
-        ? Text("Loading...")
-        : quizPage(
-            questions: questions, category: category, opponent: opponent);
+  void initState() {
+    super.initState();
+    setState(() {
+      _futureTriviaQuestions = getQuestions(category);
+    });
   }
+
+  Widget loadTrivia() {
+    return FutureBuilder<List<TriviaQuestion>>(
+      future: _futureTriviaQuestions,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return quizPage(
+              questions: snapshot.data, category: category, opponent: opponent);
+        } else {
+          return margin10(CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => loadTrivia();
 }
 
+// Page with changing questions
 class quizPage extends StatefulWidget {
   List<TriviaQuestion> questions;
   String category;

@@ -17,25 +17,10 @@ class _TriviaHomePageState extends State<TriviaModePage> {
   String category;
   _TriviaHomePageState(this.category);
 
-  Future<List<TriviaQuestion>> _futureTriviaQuestions;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      print(category);
-      _futureTriviaQuestions = getQuestions(category);
-    });
-  }
-
-  void goToTrivia() async {
-    await _futureTriviaQuestions.then((snapshot) {
-      if (snapshot.isNotEmpty) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) =>
-                OnGoingTrivia(category: category, opponent: null)));
-      }
-    });
+  goToTrivia() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) =>
+            OnGoingTrivia(category: category, opponent: null)));
   }
 
   Widget gameModeTile({String text, Function onPressed}) {
@@ -65,20 +50,8 @@ class _TriviaHomePageState extends State<TriviaModePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              gameModeTile(
-                  onPressed: () {
-                    if (_futureTriviaQuestions != null) {
-                      goToTrivia();
-                    }
-                  },
-                  text: "Solo Trivia"),
-              gameModeTile(
-                  onPressed: () {
-                    if (_futureTriviaQuestions != null) {
-                      goToTrivia();
-                    }
-                  },
-                  text: "1 - 1 Trivia"),
+              gameModeTile(onPressed: () => goToTrivia(), text: "Solo Trivia"),
+              gameModeTile(onPressed: () => goToTrivia(), text: "1 - 1 Trivia"),
             ],
           ),
         )));
