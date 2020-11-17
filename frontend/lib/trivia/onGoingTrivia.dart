@@ -23,16 +23,36 @@ class OnGoingTrivia extends StatefulWidget {
 
 // Get questions, then call the actually quiz page after questions are recieved
 class _OnGoingTriviaState extends State<OnGoingTrivia> {
-  String category;
-  String opponent;
+  String category = "";
+  String opponent = "";
+  String username = "";
+  String token = "";
   _OnGoingTriviaState({this.category, this.opponent});
-
   Future<List<TriviaQuestion>> _futureTriviaQuestions;
+
   @override
   void initState() {
     super.initState();
     setState(() {
+      loadToken();
+      loadUsername();
       _futureTriviaQuestions = getQuestions(category);
+    });
+  }
+
+  void loadUsername() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        username = value.toString();
+      });
+    });
+  }
+
+  void loadToken() {
+    FlutterSession().get('token').then((value) {
+      this.setState(() {
+        token = value.toString();
+      });
     });
   }
 
@@ -41,8 +61,12 @@ class _OnGoingTriviaState extends State<OnGoingTrivia> {
       future: _futureTriviaQuestions,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return quizPage(
-              questions: snapshot.data, category: category, opponent: opponent);
+          return QuizPage(
+              username: username,
+              token: token,
+              questions: snapshot.data,
+              category: category,
+              opponent: opponent);
         } else {
           return margin10(CircularProgressIndicator());
         }
@@ -55,23 +79,42 @@ class _OnGoingTriviaState extends State<OnGoingTrivia> {
 }
 
 // Page with changing questions
-class quizPage extends StatefulWidget {
+class QuizPage extends StatefulWidget {
   List<TriviaQuestion> questions;
+  String username = "";
+  String token = "";
   String category;
   String opponent;
-  quizPage({Key key, @required this.questions, this.category, this.opponent})
+  QuizPage(
+      {Key key,
+      @required this.username,
+      @required this.token,
+      @required this.questions,
+      this.category,
+      this.opponent})
       : super(key: key);
 
   @override
   _QuizpageState createState() => _QuizpageState(
-      questions: questions, category: category, opponent: opponent);
+      username: username,
+      token: token,
+      questions: questions,
+      category: category,
+      opponent: opponent);
 }
 
-class _QuizpageState extends State<quizPage> with TickerProviderStateMixin {
+class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
   List<TriviaQuestion> questions;
+  String username = "";
+  String token = "";
   String category;
   String opponent;
-  _QuizpageState({@required this.questions, this.category, this.opponent});
+  _QuizpageState(
+      {@required this.username,
+      @required this.token,
+      @required this.questions,
+      this.category,
+      this.opponent});
 
   TimerController _timerController;
 
@@ -91,9 +134,6 @@ class _QuizpageState extends State<quizPage> with TickerProviderStateMixin {
   bool disableAnswer = false;
   bool cancelTimer = false;
 
-  String username = "";
-  String token = "";
-
   @override
   void setState(fn) {
     if (mounted) {
@@ -104,8 +144,6 @@ class _QuizpageState extends State<quizPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    loadToken();
-    loadUsername();
     correctlyAnswered = 0;
     notAnswered = questions.length;
     numQuestions = questions.length;
@@ -114,27 +152,11 @@ class _QuizpageState extends State<quizPage> with TickerProviderStateMixin {
     startTimer();
   }
 
-  void loadUsername() {
-    FlutterSession().get('username').then((value) {
-      this.setState(() {
-        username = value.toString();
-      });
-    });
-  }
-
-  void loadToken() {
-    FlutterSession().get('token').then((value) {
-      this.setState(() {
-        token = value.toString();
-      });
-    });
-  }
-
   int calculateDisplayScore(numQuestions, correctlyAnswered) {
     return correctlyAnswered - (i - correctlyAnswered);
   }
 
-  gotoResults(context) async {
+  gotoResults(context) {
     int score = correctlyAnswered - (numQuestions - correctlyAnswered);
     updateACS(token, username, score);
     Navigator.of(context).pushReplacement(MaterialPageRoute(
