@@ -30,8 +30,8 @@ public class DBPostComments {
         try (Session session = Connect.driver.session()) {
             // timestamp converted to dateTime object in neo4j
             session.writeTransaction(tx -> tx.run(
-                    "MERGE (c: comment{timestamp: datetime($t), id: $z, profileName: $p, username: $x, content: $y}) return c",
-                    parameters("t", timestamp, "z", commentId, "x", username, "y", content, "p", userFullName)));
+                    "MERGE (c: comment{timestamp: datetime(), id: $z, profileName: $p, username: $x, content: $y}) return c",
+                    parameters("z", commentId, "x", username, "y", content, "p", userFullName)));
             session.close();
 
             return commentId;
@@ -112,7 +112,7 @@ public class DBPostComments {
         int numComments = 0;
 
         try (Session session = Connect.driver.session()) {            
-            Result result = session.run("MATCH (p:post{id: $x})-[:hasComment]->(c) " 
+            Result result = session.run("MATCH (p:post{uniqueIdentifier: $x})-[:hasComment]->(c) " 
             + "RETURN count(c) as numOfComments", parameters("x", postId));
 
             // Get number of comments for this post
@@ -127,7 +127,6 @@ public class DBPostComments {
         } catch (Exception e) {
             e.printStackTrace();
             return numComments;
-
         }
     }
 
@@ -136,15 +135,21 @@ public class DBPostComments {
 
         try (Session session = Connect.driver.session()) {
             // Initialize list to store all the comments
-            
+            System.out.println("in getComments method: Running query!");
             // Run query to get all comments for the post with the given id, ordered by their timestamp
-            Result result = session.run("MATCH (p:post{id: $x})-[:hasComment]->(c) " 
+            Result result = session.run("MATCH (p:post{uniqueIdentifier: $x})-[:hasComment]->(c) " 
             + "RETURN c ORDER BY c.timestamp DESC", parameters("x", postId));
+
+            System.out.println("FINISHED RUNNING QUERY!");
+            System.out.println(result.hasNext());
+            System.out.println(result.next());
 
             // Loop through each comment in the result and add that comment to the list
             while (result.hasNext()) {
                 Record data = result.next();
                 Map<String, Object> commentMap = new HashMap<>();
+
+                System.out.println("data: " + data);
 
                 // Add the data for this comment in the commentMap
                 commentMap.put("timestamp", data.get("timestamp").asString());
