@@ -42,6 +42,7 @@ class UserInfo {
   final String about;
   final String email;
   final String tier;
+  final String numberOfPosts;
   final bool reqStatus;
 
   UserInfo(
@@ -54,6 +55,7 @@ class UserInfo {
       this.about,
       this.email,
       this.tier,
+      this.numberOfPosts,
       @required this.reqStatus});
 
   // converts json to UserInfo object
@@ -65,17 +67,17 @@ class UserInfo {
     }
 
     return UserInfo(
-      reqStatus: status,
-      username: json['username'],
-      firstname: json['firstname'],
-      lastname: json['lastname'],
-      status: json['status'],
-      dob: json['dob'],
-      about: json['about'],
-      email: json['email'],
-      tier: json['tier'],
-      acs: json['acs'],
-    );
+        reqStatus: status,
+        username: json['username'],
+        firstname: json['firstname'],
+        lastname: json['lastname'],
+        status: json['status'],
+        dob: json['dob'],
+        about: json['about'],
+        email: json['email'],
+        tier: json['tier'],
+        acs: json['acs'],
+        numberOfPosts: json['numberOfPosts']);
   }
 }
 

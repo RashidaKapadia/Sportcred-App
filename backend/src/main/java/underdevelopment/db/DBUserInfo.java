@@ -1,9 +1,12 @@
 package underdevelopment.db;
 
 import static org.neo4j.driver.Values.parameters;
+
+import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
+import org.neo4j.driver.Value;
 
 public class DBUserInfo {
 
@@ -21,19 +24,19 @@ public class DBUserInfo {
    * @param favTeam
    * @param dob
    */
-  public static boolean addUser(String firstname, String lastname, String email, String username, String password, String phoneNumber, String favSport,
-      String sportLevel, String sportToLearn, String favTeam, String dob) {
+  public static boolean addUser(String firstname, String lastname, String email, String username, String password,
+      String phoneNumber, String favSport, String sportLevel, String sportToLearn, String favTeam, String dob) {
     // set the values for the instance variables
     System.out.println("adding the user: " + username);
 
     // Create a user node in DB for the user with the provided data
     try (Session session = Connect.driver.session()) {
       session.writeTransaction(tx -> tx.run(String.format(
-          "MERGE (a:user {firstname: \"%s\", lastname: \"%s\", email: \"%s\", username: \"%s\", password: \"%s\", " +
-          "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\"," +
-          "favTeam: \"%s\", dob: \"%s\", acs: %d, about: \"%s\", status: \"%s\"})",
-          firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob, 200, "N/A",
-          "Hungry for basketball")));
+          "MERGE (a:user {firstname: \"%s\", lastname: \"%s\", email: \"%s\", username: \"%s\", password: \"%s\", "
+              + "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\","
+              + "favTeam: \"%s\", dob: \"%s\", acs: %d, about: \"%s\", status: \"%s\", numberOfPosts: %d})",
+          firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob,
+          100, "N/A","Hungry for basketball", 0)));
       // System.out.println("finished adding the user");
       session.close();
       return true;
@@ -90,4 +93,55 @@ public class DBUserInfo {
     return false;
 
   }
+
+  /**
+   * Return the count of posts for this user
+   * 
+   * @param username
+   * @return int
+   */
+  public static int getPostCount(String username) {
+    try (Session session = Connect.driver.session()) {
+      try (Transaction tx = session.beginTransaction()) {
+        Result node = tx.run("MATCH (u:user {username: $x}) RETURN u.numberOfPosts as count", parameters("x", username));
+        System.out.println("returns node");
+        Record data = node.single();
+        //int postCount =  Integer.parseInt((data.get("count").asString()));
+        int postCount =  data.get("count").asInt();
+        return postCount;
+      }
+        // If any results have been returned, it means user exists already
+      catch(Exception e){
+        e.printStackTrace();
+        return -1;
+      }
+    }
+    catch(Exception e){
+      e.printStackTrace();
+      return -1;
+    }
+  }
+
+   /**
+   * Return the count of posts for this user
+   * 
+   * @param username
+   * @return boolean
+   */
+  public static boolean updatePostCount(String username, int num) {
+    System.out.println(num);
+    try(Session session = Connect.driver.session()){
+      session.writeTransaction(tx->tx.run("MATCH (u: user{username: $x}) SET u.numberOfPosts = $y + toInteger(u.numberOfPosts) ",
+      parameters("x", username, "y", num)));
+      session.close();
+      return true;
+    }
+    catch(Exception e){
+      e.printStackTrace();
+      return false;
+    }
+
+  }
+
+
 }
