@@ -10,12 +10,22 @@ import 'dart:async';
 import 'package:frontend/widgets/fonts.dart';
 import 'package:simple_timer/simple_timer.dart';
 
-class OnGoingTrivia extends StatelessWidget {
+class OnGoingTrivia extends StatefulWidget {
   String category;
-  List<TriviaQuestion> questions;
   String opponent;
-  OnGoingTrivia(
-      {@required this.category, @required this.questions, this.opponent});
+  List<TriviaQuestion> questions;
+  OnGoingTrivia({@required this.category, this.opponent});
+
+  @override
+  State<StatefulWidget> createState() =>
+      _OnGoingTriviaState(category: category, opponent: opponent);
+}
+
+class _OnGoingTriviaState extends State<OnGoingTrivia> {
+  List<TriviaQuestion> questions;
+  String category;
+  String opponent;
+  _OnGoingTriviaState({this.category, this.opponent});
 
   @override
   Widget build(BuildContext context) {
