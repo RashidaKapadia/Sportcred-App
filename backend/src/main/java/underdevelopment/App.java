@@ -104,6 +104,8 @@ public class App
         server.createContext("/api/editPost", 
                 new HttpRequestHandler("POST", PostHandler.handleEditPost(), authorized));
 
+        server.createContext("/api/agreedOrDisagreedPost", 
+                new HttpRequestHandler("POST", PostHandler.handlePostAgreeDisAgree(), authorized));
         // Start Server
         server.start();
     }
