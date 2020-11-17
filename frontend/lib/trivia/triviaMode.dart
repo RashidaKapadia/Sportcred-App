@@ -18,7 +18,6 @@ class _TriviaHomePageState extends State<TriviaModePage> {
   _TriviaHomePageState(this.category);
 
   Future<List<TriviaQuestion>> _futureTriviaQuestions;
-  List<TriviaQuestion> triviaData;
 
   @override
   void initState() {
@@ -33,8 +32,8 @@ class _TriviaHomePageState extends State<TriviaModePage> {
     await _futureTriviaQuestions.then((snapshot) {
       if (snapshot.isNotEmpty) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => OnGoingTrivia(
-                category: category, questions: snapshot, opponent: null)));
+            builder: (context) =>
+                OnGoingTrivia(category: category, opponent: null)));
       }
     });
   }

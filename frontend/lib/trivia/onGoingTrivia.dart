@@ -14,31 +14,35 @@ class OnGoingTrivia extends StatelessWidget {
   String category;
   List<TriviaQuestion> questions;
   String opponent;
-  OnGoingTrivia({this.category, this.questions, this.opponent});
+  OnGoingTrivia(
+      {@required this.category, @required this.questions, this.opponent});
 
   @override
   Widget build(BuildContext context) {
     return (questions == null)
-        ? Text("Loading")
+        ? Text("Loading...")
         : quizPage(
             questions: questions, category: category, opponent: opponent);
   }
 }
 
 class quizPage extends StatefulWidget {
-  var questions;
+  List<TriviaQuestion> questions;
   String category;
   String opponent;
   quizPage({Key key, @required this.questions, this.category, this.opponent})
       : super(key: key);
 
   @override
-  _quizpageState createState() => _quizpageState(questions);
+  _QuizpageState createState() => _QuizpageState(
+      questions: questions, category: category, opponent: opponent);
 }
 
-class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
-  var questions;
-  _quizpageState(this.questions);
+class _QuizpageState extends State<quizPage> with TickerProviderStateMixin {
+  List<TriviaQuestion> questions;
+  String category;
+  String opponent;
+  _QuizpageState({@required this.questions, this.category, this.opponent});
 
   TimerController _timerController;
 
@@ -61,27 +65,24 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
   String username = "";
   String token = "";
 
-  int displayScore(numQuestions, correctlyAnswered) {
-    return correctlyAnswered - (i - correctlyAnswered);
-  }
-
-  gotoResults(context) async {
-    int score = correctlyAnswered - (numQuestions - correctlyAnswered);
-    updateACS(token, username, score);
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => TriviaResult(
-            score: score,
-            incorrect: numQuestions - notAnswered - correctlyAnswered,
-            correct: correctlyAnswered,
-            notAnswered: notAnswered,
-            numQuestions: numQuestions)));
-  }
-
   @override
   void setState(fn) {
     if (mounted) {
       super.setState(fn);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadToken();
+    loadUsername();
+    correctlyAnswered = 0;
+    notAnswered = questions.length;
+    numQuestions = questions.length;
+    _timerController = TimerController(this);
+
+    startTimer();
   }
 
   void loadUsername() {
@@ -100,16 +101,20 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    loadToken();
-    loadUsername();
-    correctlyAnswered = 0;
-    notAnswered = questions.length;
-    numQuestions = questions.length;
-    _timerController = TimerController(this);
-    startTimer();
+  int calculateDisplayScore(numQuestions, correctlyAnswered) {
+    return correctlyAnswered - (i - correctlyAnswered);
+  }
+
+  gotoResults(context) async {
+    int score = correctlyAnswered - (numQuestions - correctlyAnswered);
+    updateACS(token, username, score);
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => TriviaResult(
+            score: score,
+            incorrect: numQuestions - notAnswered - correctlyAnswered,
+            correct: correctlyAnswered,
+            notAnswered: notAnswered,
+            numQuestions: numQuestions)));
   }
 
   void startTimer() async {
@@ -255,7 +260,8 @@ class _quizpageState extends State<quizPage> with TickerProviderStateMixin {
     );
 
     Widget currentScore = Text(
-      'Score: ' + displayScore(numQuestions, correctlyAnswered).toString(),
+      'Score: ' +
+          calculateDisplayScore(numQuestions, correctlyAnswered).toString(),
       style: TextStyle(fontSize: 20),
       textAlign: TextAlign.center,
     );
