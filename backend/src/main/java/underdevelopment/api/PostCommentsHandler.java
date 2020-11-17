@@ -116,6 +116,13 @@ public class PostCommentsHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
+             // Check that the comment with the given id exists
+             if (!DBPostComments.checkCommentExists(commentId)) {
+                response = "Comment with given ID does not exist";
+
+                return new JsonHttpReponse(Status.CONFLICT, response);
+            }
+            
             // verify credentials for the comment
             if (!verifyCommentor(commentId, username)) {
                 response = "You can only edit your own own comment";
