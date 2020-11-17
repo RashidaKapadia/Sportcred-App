@@ -29,7 +29,7 @@ Widget plainButton({String text, fontColor, backgroundColor, onPressed}) {
         ? backgroundColor
         : Color.fromRGBO(180, 180, 220, 1),
     child: Text(
-      'Play!',
+      text,
       style: TextStyle(
           color: (fontColor != null) ? fontColor : Colors.black, fontSize: 20),
       textAlign: TextAlign.center,

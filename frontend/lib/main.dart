@@ -34,7 +34,8 @@ void main() {
         '/trivia/mode': (context) => TriviaModePage("basketball"),
         '/trivia/category': (context) => TriviaPickCategoryPage(),
         '/trivia/solo/result': (context) => TriviaResult(),
-        '/trivia/searchOpponent': (context) => TriviaSearchOpponentPage(),
+        '/trivia/searchOpponent': (context) =>
+            TriviaSearchOpponentPage("basketball"),
         '/settings': (context) => Settings(),
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
         '/notifications': (context) => NotificationBoard(),

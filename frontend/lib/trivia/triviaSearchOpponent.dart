@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/requests/user.dart';
+import 'package:frontend/trivia/triviaOngoing.dart';
+import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/fonts.dart';
 import 'package:frontend/widgets/layout.dart';
 
 class TriviaSearchOpponentPage extends StatefulWidget {
+  String category;
+  TriviaSearchOpponentPage(this.category);
+
   @override
   _TriviaSearchOpponentPageState createState() =>
-      _TriviaSearchOpponentPageState();
+      _TriviaSearchOpponentPageState(category);
 }
 
 class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
+  String category;
+  _TriviaSearchOpponentPageState(this.category);
+
   Future<List<UserInfo>> _futureUsers;
   TextEditingController editingController = TextEditingController();
   List<UserInfo> filteredUsers = List<UserInfo>();
-  String selected;
+  String selectedUsername;
 
   var isSelected = false;
   String username = "";
@@ -78,35 +86,70 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
   }
 
   Widget listUsers() {
-    return Expanded(
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: filteredUsers.length,
-        physics: ScrollPhysics(),
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(
-                '${filteredUsers[index].firstname} ${filteredUsers[index].lastname}'),
-          );
-        },
-      ),
-    );
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: filteredUsers.length,
+            padding: EdgeInsets.all(0),
+            // physics: ScrollPhysics(),
+            itemBuilder: (context, index) {
+              return ListTile(
+                  contentPadding: EdgeInsets.all(0),
+                  title: FlatButton(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                                '${filteredUsers[index].firstname} ${filteredUsers[index].lastname}'),
+                            Text('${filteredUsers[index].username}',
+                                style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.black54,
+                                ))
+                          ]),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(3.0)),
+                      onPressed: () {
+                        setState(() {
+                          selectedUsername = filteredUsers[index].username;
+                        });
+                      }));
+            }));
+  }
+
+  goToTrivia() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) =>
+            TriviaOngoing(category: category, opponent: selectedUsername)));
   }
 
   Widget body(BuildContext context, List<UserInfo> users) {
-    return Container(
-      width: double.infinity,
-      child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          // crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            vmargin30(h1("Choose your Opponent!", color: Colors.deepOrange)),
-            h1("You"),
-            h3("vs", color: Colors.grey),
-            searchBar(users),
-            listUsers(),
-          ]),
-    );
+    return Center(
+        child: Container(
+      width: MediaQuery.of(context).size.width * 0.80,
+      child: Column(children: [
+        vmargin20(h1("Choose your Opponent!",
+            color: Colors.deepOrange, textAlign: TextAlign.center)),
+        h1("You"),
+        h3("vs", color: Colors.grey),
+        // Because if nesting issues, we have this inefficiency
+        (selectedUsername == null) ? searchBar(users) : h2(selectedUsername),
+        (selectedUsername == null)
+            ? listUsers()
+            : margin10(greyButtonFullWidth(() {
+                setState(() {
+                  selectedUsername = null;
+                });
+              }, Text("Change Opponent"))),
+        (selectedUsername != null)
+            ? orangeButtonLarge(text: "Play!", onPressed: () => goToTrivia())
+            : Text("..."),
+      ]),
+    ));
   }
 
   Widget loadUsers(BuildContext context) {
