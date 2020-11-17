@@ -33,7 +33,8 @@ class _TriviaHomePageState extends State<TriviaModePage> {
     await _futureTriviaQuestions.then((snapshot) {
       if (snapshot.isNotEmpty) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => OnGoingTrivia(category, snapshot)));
+            builder: (context) => OnGoingTrivia(
+                category: category, questions: snapshot, opponent: null)));
       }
     });
   }

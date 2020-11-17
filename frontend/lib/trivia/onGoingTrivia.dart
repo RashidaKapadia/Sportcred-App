@@ -7,26 +7,30 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/requests/trivia.dart';
 import 'package:frontend/trivia/triviaResult.dart';
 import 'dart:async';
-import 'package:frontend/trivia/pickTriviaCategory.dart';
 import 'package:frontend/widgets/fonts.dart';
 import 'package:simple_timer/simple_timer.dart';
 
 class OnGoingTrivia extends StatelessWidget {
   String category;
-  List<TriviaQuestion> triviaQuestions;
-  OnGoingTrivia(this.category, this.triviaQuestions);
+  List<TriviaQuestion> questions;
+  String opponent;
+  OnGoingTrivia({this.category, this.questions, this.opponent});
 
   @override
   Widget build(BuildContext context) {
-    return (triviaQuestions == null)
+    return (questions == null)
         ? Text("Loading")
-        : quizPage(questions: triviaQuestions);
+        : quizPage(
+            questions: questions, category: category, opponent: opponent);
   }
 }
 
 class quizPage extends StatefulWidget {
   var questions;
-  quizPage({Key key, @required this.questions}) : super(key: key);
+  String category;
+  String opponent;
+  quizPage({Key key, @required this.questions, this.category, this.opponent})
+      : super(key: key);
 
   @override
   _quizpageState createState() => _quizpageState(questions);

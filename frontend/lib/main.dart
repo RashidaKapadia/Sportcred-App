@@ -33,7 +33,6 @@ void main() {
         "/test": (context) => HTTPRequestExample(),
         '/trivia/mode': (context) => TriviaModePage("basketball"),
         '/trivia/category': (context) => PickTriviaCategoryPage(),
-        '/quizPage': (context) => OnGoingTrivia("basketball", null),
         '/settings': (context) => Settings(),
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
         '/trivia/solo/result': (context) => TriviaResult(),
