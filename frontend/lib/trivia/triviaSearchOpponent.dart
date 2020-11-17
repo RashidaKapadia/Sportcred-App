@@ -13,16 +13,14 @@ class TriviaSearchOpponentPage extends StatefulWidget {
 class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
   Future<List<UserInfo>> _futureUsers;
   TextEditingController editingController = TextEditingController();
-
-  final duplicateItems = List<String>.generate(10000, (i) => "$i");
-  var items = List<String>();
+  List<UserInfo> filteredUsers = List<UserInfo>();
+  String selected;
 
   var isSelected = false;
   String username = "";
 
   @override
   void initState() {
-    items.addAll(duplicateItems);
     loadUsername();
     _futureUsers = getUsers();
     super.initState();
@@ -36,35 +34,37 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
     });
   }
 
-  void filterSearchResults(String query) {
-    List<String> dummySearchList = List<String>();
-    dummySearchList.addAll(duplicateItems);
+  void filterSearchResults(String query, List<UserInfo> users) {
+    List<UserInfo> dummySearchList = List<UserInfo>();
+    dummySearchList.addAll(users);
     if (query.isNotEmpty) {
-      List<String> dummyListData = List<String>();
+      List<UserInfo> dummyListData = List<UserInfo>();
       dummySearchList.forEach((item) {
-        if (item.contains(query)) {
+        if (item.firstname.toLowerCase().contains(query.toLowerCase()) ||
+            item.lastname.toLowerCase().contains(query.toLowerCase()) ||
+            item.username.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        items.clear();
-        items.addAll(dummyListData);
+        filteredUsers.clear();
+        filteredUsers.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        items.clear();
-        items.addAll(duplicateItems);
+        filteredUsers.clear();
+        filteredUsers.addAll(users);
       });
     }
   }
 
-  Widget searchBar() {
+  Widget searchBar(List<UserInfo> users) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         onChanged: (value) {
-          filterSearchResults(value);
+          filterSearchResults(value, users);
         },
         controller: editingController,
         decoration: InputDecoration(
@@ -81,50 +81,44 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
     return Expanded(
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: items.length,
+        itemCount: filteredUsers.length,
+        physics: ScrollPhysics(),
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text('${items[index]}'),
+            title: Text(
+                '${filteredUsers[index].firstname} ${filteredUsers[index].lastname}'),
           );
         },
       ),
     );
   }
 
-  Widget searchList(List<UserInfo> users) {
-    for (UserInfo user in users) {
-      print(user.firstname);
-    }
-    return Text("hi");
-  }
-
-  Widget loadUsers() {
-    return FutureBuilder<List<UserInfo>>(
-      future: _futureUsers,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return searchList(snapshot.data);
-        } else {
-          return margin10(CircularProgressIndicator());
-        }
-      },
-    );
-  }
-
-  Widget body(BuildContext context) {
+  Widget body(BuildContext context, List<UserInfo> users) {
     return Container(
       width: double.infinity,
       child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            vmargin30(h1("Choose your Opponent!")),
+            vmargin30(h1("Choose your Opponent!", color: Colors.deepOrange)),
             h1("You"),
             h3("vs", color: Colors.grey),
-            loadUsers(),
-            searchBar(),
+            searchBar(users),
             listUsers(),
           ]),
+    );
+  }
+
+  Widget loadUsers(BuildContext context) {
+    return FutureBuilder<List<UserInfo>>(
+      future: _futureUsers,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return body(context, snapshot.data);
+        } else {
+          return margin10(CircularProgressIndicator());
+        }
+      },
     );
   }
 
@@ -139,7 +133,7 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
           title: Text("1-1 Trivia", style: TextStyle(color: Colors.white)),
           centerTitle: true,
           backgroundColor: Colors.deepOrange),
-      body: body(context),
+      body: loadUsers(context),
     );
   }
 }
