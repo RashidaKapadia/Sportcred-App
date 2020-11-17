@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/requests/user.dart';
-import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
 import 'triviaOngoing.dart';
 

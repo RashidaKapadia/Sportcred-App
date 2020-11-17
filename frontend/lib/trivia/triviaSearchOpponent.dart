@@ -5,9 +5,6 @@ import 'package:frontend/widgets/fonts.dart';
 import 'package:frontend/widgets/layout.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
@@ -47,37 +44,45 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Widget searchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        onChanged: (value) {
+          filterSearchResults(value);
+        },
+        controller: editingController,
+        decoration: InputDecoration(
+            labelText: "Search",
+            hintText: "Search",
+            prefixIcon: Icon(Icons.search),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(25.0)))),
+      ),
+    );
+  }
+
+  Widget listUsers() {
+    return Expanded(
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text('${items[index]}'),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              onChanged: (value) {
-                filterSearchResults(value);
-              },
-              controller: editingController,
-              decoration: InputDecoration(
-                  labelText: "Search",
-                  hintText: "Search",
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(25.0)))),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text('${items[index]}'),
-                );
-              },
-            ),
-          ),
+          searchBar(),
+          listUsers(),
         ],
       ),
     );
@@ -136,7 +141,8 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
   Widget body(BuildContext context) {
     return Container(
       width: double.infinity,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
+          // mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             vmargin30(h1("Choose your Opponent!")),
@@ -151,16 +157,16 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          leading: BackButton(
-              color: Colors.white,
-              onPressed: () => Navigator.of(context).pushNamed("/trivia/mode")),
-          title: Text("1-1 Trivia", style: TextStyle(color: Colors.white)),
-          centerTitle: true,
-          backgroundColor: Colors.deepOrange),
-      body:
-          // MyHomePage(title: "test")
-          body(context),
-    );
+        appBar: AppBar(
+            leading: BackButton(
+                color: Colors.white,
+                onPressed: () =>
+                    Navigator.of(context).pushNamed("/trivia/mode")),
+            title: Text("1-1 Trivia", style: TextStyle(color: Colors.white)),
+            centerTitle: true,
+            backgroundColor: Colors.deepOrange),
+        body: MyHomePage()
+        // body(context),
+        );
   }
 }
