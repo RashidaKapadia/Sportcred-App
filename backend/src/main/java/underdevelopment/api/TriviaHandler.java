@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.Status;
+import underdevelopment.db.DBNotifications;
 import underdevelopment.db.DBQuestion;
 import underdevelopment.db.DBTrivia;
 import underdevelopment.db.DBUserInfo;
@@ -243,7 +244,30 @@ public class TriviaHandler {
         return (JSONObject jsonObj) -> {
 
             System.out.println("getting user list");
-            String username;
+            /*
+            ArrayList<ArrayList<String>> notificationList = DBNotifications.getNotification(username );
+        	for(int i = 0; i < notificationList.size(); i++) {
+        		for (int j = 0; j < notificationList.get(i).size(); j++) {
+        			System.out.println(notificationList.get(i).get(j));
+        		}
+        	}
+        	response = "";
+            JSONObject jsonResponse  = new JSONObject();
+            for(int i = 0; i < notificationList.get(0).size(); i++) {
+	    		String oneResponse = new JSONObject().put("ID", notificationList.get(0).get(i))
+	    			.put("type", notificationList.get(1).get(i))
+	    			.put("category",  notificationList.get(2).get(i))
+	    			.put("title",  notificationList.get(3).get(i))
+	    			.put("infoID", notificationList.get(4).get(i))
+	    			.put("read", notificationList.get(5).get(i))
+	    			.toString();
+	    		response += oneResponse;
+            }
+            
+        	//response = new JSONObject()
+            //        .put("Response:", "Contact Info changed")
+            //        .toString();
+            */
             // Get questions from the db
             ArrayList<String>[] users = DBUserInfo.returnUsers();
             
@@ -251,11 +275,16 @@ public class TriviaHandler {
                 JSONArray questionsJSON = new JSONArray();
                 // Build the json array of questions
                 // Create the json response
-                String response = new JSONObject()
-                	.put("username", users[0])
-                	.put("firstname", users[1])
-                	.put("lastname", users[2])
-                    .toString();
+                String response = "";
+                for(int i = 0; i < users[0].size(); i++) {
+                	String oneResponse = new JSONObject()
+                        	.put("username", users[0].get(i))
+                        	.put("firstname", users[1].get(i))
+                        	.put("lastname", users[2].get(i))
+                            .toString();
+                	response += oneResponse;
+                }
+             
                 return new JsonHttpReponse(Status.OK, response);
             } catch (JSONException e) {
                 e.printStackTrace();
