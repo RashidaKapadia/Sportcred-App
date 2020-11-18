@@ -113,5 +113,36 @@ public class NotificationHandler {
     }
 
 
+    public static JsonRequestHandler deleteNot() {
+        return (JSONObject jsonObj) -> {
+        	 JSONArray IDs;
+
+             // Get and validate input
+             try {
+            	 IDs = jsonObj.getJSONArray("notifications");
+             } catch (Exception e) {
+                 e.printStackTrace();
+                 return new JsonHttpReponse(Status.BADREQUEST);
+             }
+
+             int[] arrayIDs=new int[IDs.length()];
+             for(int i=0; i<arrayIDs.length; i++) {
+            	 arrayIDs[i]=IDs.optInt(i);
+             }
+            String response;
+            // Run DB command            
+            try {
+            	int success = DBNotifications.deleteNotification(arrayIDs);
+            	if(success == 1) {
+                    return new JsonHttpReponse(Status.OK, null);
+            	}else {
+                    return new JsonHttpReponse(Status.BADREQUEST);
+            	}
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
+        };
+    }
    
 }

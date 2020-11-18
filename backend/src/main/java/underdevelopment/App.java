@@ -106,6 +106,8 @@ public class App
                 new HttpRequestHandler("POST", NotificationHandler.getNotifications(), authorized));
         server.createContext("/api/notifications/mark-read",
                 new HttpRequestHandler("POST", NotificationHandler.markRead(), authorized));
+        server.createContext("/api/notifications/delete",
+                new HttpRequestHandler("POST", NotificationHandler.deleteNot(), authorized));
         
         // Test routes
         server.createContext("/api/test/authorized-route", 

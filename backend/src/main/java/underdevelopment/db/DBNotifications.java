@@ -119,5 +119,42 @@ public class DBNotifications {
 		 
 		 return retVal; 
 	 }
+	
+	
+	public static int deleteNotification( int[] IDs) {
+		int notifID = 1;
+
+		try (Session session = Connect.driver.session()) {
+			try (Transaction tx = session.beginTransaction()) {
+				for(int i = 0; i < IDs.length; i++) {
+					System.out.println("hello tere");
+					Result result = tx.run(String.format("MATCH (n:notification) WHERE ID(n) = %d OPTIONAL MATCH (n)-[r:hasANotification]->(a) RETURN  CASE WHEN a is null THEN False ELSE True End As hasNext" , IDs[i]));
+					Record record= result.next();
+					Boolean found = record.get("hasNext").asBoolean();
+					// found is true if they are in the middle
+					if(found) {
+						tx.run(String.format("MATCH (n:notification) WHERE ID(n) = %d "
+								+ "MATCH (n)-[r:hasANotification]->(a) "
+								+ "MATCH (n)<-[r2:hasANotification]-(p) "
+								+ "DELETE r, r2, n "
+								+ "CREATE (p)-[:hasANotification]->(a) "
+								+ "", IDs[i]));
+					}else {
+						tx.run(String.format("MATCH (n:notification) WHERE ID(n) = %d MATCH (n)<-[r:hasANotification]-(p) DELETE r, n ", IDs[i]));
+					}
+				}
+				tx.commit();
+				tx.close();
+				session.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return -1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return notifID;
+	}
 
 }
