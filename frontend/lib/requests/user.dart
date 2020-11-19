@@ -58,7 +58,7 @@ class UserDailyPlays {
 Future<UserDailyPlays> getDailyPlays(String username, String activity) async {
   // Make the request and store the response
   final http.Response response = await http.post(
-    'http://localhost:8080/api/trivia/has-daily-play',
+    'http://localhost:8080/api/has-daily-play',
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Accept': 'text/plain; charset=utf-8',

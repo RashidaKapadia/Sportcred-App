@@ -18,11 +18,15 @@ class TriviaOngoing extends StatefulWidget {
   String category;
   String opponent;
   int gameId;
-  TriviaOngoing({this.category, this.opponent, this.gameId, this.triviaMode});
+  TriviaOngoing(
+      {this.category, this.opponent, this.gameId, @required this.triviaMode});
 
   @override
   State<StatefulWidget> createState() => _TriviaOngoingState(
-      category: category, opponent: opponent, gameId: gameId);
+      category: category,
+      opponent: opponent,
+      gameId: gameId,
+      triviaMode: triviaMode);
 }
 
 // Get questions, then call the actually quiz page after questions are recieved
@@ -34,7 +38,7 @@ class _TriviaOngoingState extends State<TriviaOngoing> {
   String token = "";
   int gameId;
   _TriviaOngoingState(
-      {this.category, this.opponent, this.gameId, this.triviaMode});
+      {this.category, this.opponent, this.gameId, @required this.triviaMode});
   Future<List<TriviaQuestion>> _futureTriviaQuestions;
 
   @override
@@ -106,6 +110,7 @@ class QuizPage extends StatefulWidget {
       username: username,
       token: token,
       questions: questions,
+      triviaMode: triviaMode,
       opponent: opponent);
 }
 
@@ -113,12 +118,14 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
   List<TriviaQuestion> questions;
   String username = "";
   String token = "";
-  String category;
-  String opponent;
+  String category = "";
+  String opponent = "<unknown>";
+  TriviaMode triviaMode;
   _QuizpageState(
       {@required this.username,
       @required this.token,
       @required this.questions,
+      @required this.triviaMode,
       this.opponent});
 
   TimerController _timerController;
@@ -149,6 +156,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    print("Mode: " + triviaMode.toString());
     super.initState();
     correctlyAnswered = 0;
     notAnswered = questions.length;
@@ -334,7 +342,17 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
               margin: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
               child: Column(
                 children: <Widget>[
-                  h3("Good luck " + username),
+                  (triviaMode == TriviaMode.SOLO)
+                      ? Row(children: [
+                          h3("Good luck "),
+                          h3(username, color: Colors.deepOrange),
+                          h3("!")
+                        ])
+                      : Row(children: [
+                          h3("You", color: Colors.deepOrange),
+                          h3(" vs "),
+                          h3(opponent, color: Colors.redAccent)
+                        ]),
                   timer,
                   question,
                   options,
