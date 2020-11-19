@@ -13,6 +13,7 @@ import './HTTPRequestExample.dart';
 import './profile_page.dart';
 import './ACSHistory_page.dart';
 import './trivia.dart';
+import 'ZoneSearchBar.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -33,7 +34,8 @@ void main() {
         '/soloTrivia': (context) => SoloTriviaPage(),
         '/quizPage': (context) => OnGoingTrivia("Basketball", null),
         '/settings': (context) => Settings(),
-        "/profile/ACSHistory": (context) => ACSHistoryPage()
+        "/profile/ACSHistory": (context) => ACSHistoryPage(),
+        "/zone/search": (context) => ZoneSearchBar()
       }));
 }
 
@@ -46,6 +48,6 @@ class _SportCredAppState extends State<SportCredApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return LoginPage();
+    return ZoneSearchBar();
   }
 }
