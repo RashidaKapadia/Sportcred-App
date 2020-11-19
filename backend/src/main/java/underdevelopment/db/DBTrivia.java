@@ -74,7 +74,7 @@ public class DBTrivia{
 	        		
 	        		// Create the notifications
 	        		//DBNotifications.createNotification(username, "trivia", "triviaMultiPlays", ID, "new trivia game");
-	        		DBNotifications.createNotification(oppUsername, "trivia", "triviaMultiPlays", ID, "new trivia game");
+	        		DBNotifications.createNotification(oppUsername, "invite", "trivia", ID, username + " has invited you to play multiplayer trivia! Are you up for the challenge?");
 
 					tx.commit();
 					tx.close();
@@ -177,8 +177,8 @@ public class DBTrivia{
 	        				// opponent loses 5 points
 	        				DBAcs.editACS(oppUsername, 0, inviterUsername, "trivia", curDate);
 	        			}
-        				DBNotifications.createNotification(inviterUsername, "multiTrivia", "multiTrivia", gameID, "Multiplayer trivia");
-        				DBNotifications.createNotification(oppUsername, "multiTrivia", "multiTrivia", gameID, "Multiplayer trivia");
+        				DBNotifications.createNotification(inviterUsername, "results", "trivia", gameID, "Multiplayer trivia results between " + inviterUsername + " and " + oppUsername + " are in!");
+        				DBNotifications.createNotification(oppUsername, "results", "trivia", gameID, "Multiplayer trivia results between " + inviterUsername + " and " + oppUsername + " are in!");
 
 	        		}
 	        		// Send frotend the game 

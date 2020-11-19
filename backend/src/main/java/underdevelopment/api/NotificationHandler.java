@@ -60,7 +60,8 @@ public class NotificationHandler {
             	response = "[";
                 JSONObject jsonResponse  = new JSONObject();
                 for(int i = 0; i < notificationList.get(0).size(); i++) {
-		    		String oneResponse = new JSONObject().put("ID", notificationList.get(0).get(i))
+                    String oneResponse = new JSONObject()
+                        .put("notificationId", notificationList.get(0).get(i))
 		    			.put("type", notificationList.get(1).get(i))
 		    			.put("category",  notificationList.get(2).get(i))
 		    			.put("title",  notificationList.get(3).get(i))

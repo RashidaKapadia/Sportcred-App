@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class Notification {
+class UserNotification {
   final int notificationId;
   final String type;
   final String category;
@@ -9,7 +9,7 @@ class Notification {
   final int infoId;
   final bool read;
 
-  Notification({
+  UserNotification({
     this.notificationId,
     this.type,
     this.category,
@@ -19,8 +19,8 @@ class Notification {
   });
 
   // converts json to Notifications object
-  factory Notification.fromJson(Map<String, dynamic> json) {
-    return Notification(
+  factory UserNotification.fromJson(Map<String, dynamic> json) {
+    return UserNotification(
       notificationId: json['notificationId'],
       type: json['type'],
       category: json['category'],
@@ -31,7 +31,7 @@ class Notification {
   }
 }
 
-Future<List<Notification>> getNotifications(String username) async {
+Future<List<UserNotification>> getNotifications(String username) async {
   final http.Response response = await http.post(
     'http://localhost:8080/api/notifications/get',
     headers: {
@@ -42,11 +42,11 @@ Future<List<Notification>> getNotifications(String username) async {
     body: jsonEncode(<String, String>{'username': username}),
   );
 
-  List<Notification> notifications = [];
+  List<UserNotification> notifications = [];
   if (response.statusCode == 200) {
     for (Map<String, dynamic> notification
         in jsonDecode(response.body) as List) {
-      notifications.add(Notification.fromJson(notification));
+      notifications.add(UserNotification.fromJson(notification));
     }
   }
   return notifications;
