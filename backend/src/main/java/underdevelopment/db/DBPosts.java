@@ -23,11 +23,11 @@ public class DBPosts {
             Result result = session.run("MATCH (p:post ) RETURN p ORDER By p.timestamp DESC",
                                         parameters());
 
-            ArrayList<Map<String, Object>> questions = new ArrayList<>();
+            ArrayList<Map<String, Object>> posts = new ArrayList<>();
             while (result.hasNext()) {
-                questions.add(result.next().get("p").asMap());
+                posts.add(result.next().get("p").asMap());
             }
-            return questions;
+            return posts;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -53,9 +53,9 @@ public class DBPosts {
         //create a post node
         try(Session session = Connect.driver.session()){
             session.writeTransaction(tx->tx.run("MERGE (p: post{ uniqueIdentifier: $z,username: $x, content: $y, title: $u,"+
-            "profileName: $a, peopleAgree: $b, peopleDisagree: $c, comments: $d, timestamp: datetime()})",
+            "profileName: $a, peopleAgree: $b, peopleDisagree: $c, timestamp: datetime()})",
             parameters("z", id, "x", username,"y", content, "u", title,"a",
-            profileName, "b", new HashSet<Object>(), "c", new HashSet<Object>(),"d", new ArrayList<String>())));// COMMENTS INITIALIAZATION NEEDS TO BE UPDATED
+            profileName, "b", new HashSet<Object>(), "c", new HashSet<Object>())));// COMMENTS INITIALIAZATION NEEDS TO BE UPDATED
             session.close();
             return id;
         }
@@ -233,9 +233,9 @@ public class DBPosts {
         }
     }
     
-    public static List<JSONObject> getPostsGivenTitle(String title){
+    public static ArrayList<Map<String, Object>> getPostsGivenTitle(String title){
         // Initialize list to store all the posts
-        List<JSONObject> posts = new ArrayList<JSONObject>();
+        ArrayList<Map<String, Object>> posts = new ArrayList<>();
 
         try (Session session = Connect.driver.session()) {
             System.out.println("in getPosts by Title method: Running query!");
@@ -246,26 +246,12 @@ public class DBPosts {
             System.out.println("FINISHED RUNNING QUERY!");
             System.out.println(result.hasNext());
 
-            // Loop through each post in the result and add that post to the list
-            while (result.hasNext()) {
-                Value post = result.next().get("p");
-                JSONObject postJson = new JSONObject();
-
-                // Add the data for this post in the postJson
-                postJson.put("uniqueIdentifier", post.get("uniqueIdentifier").asString());
-                postJson.put("timestamp", post.get("timestamp").asObject().toString());
-                postJson.put("username", post.get("username").asString());
-                postJson.put("content", post.get("content").asString());
-                postJson.put("profileName", post.get("profileName").asString());
-                postJson.put("title", post.get("title").asString());
-                postJson.put("peopleAgree", post.get("peopleAgree").asString());
-                postJson.put("peopleDisAgree", post.get("peopleDisAgree").asString());
-                
-                // Add it to the list of all comments
-                posts.add(postJson);
-            } 
-            return posts;
             
+            while (result.hasNext()) {
+                posts.add(result.next().get("p").asMap());
+            }
+
+            return posts;
         } catch (Exception e) {
             e.printStackTrace();
             return posts;

@@ -36,11 +36,33 @@ public class PostHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
-            // Get posts from the db
-            List<JSONObject> posts = DBPosts.getPostsGivenTitle(title);
+            ArrayList<Map<String, Object>> posts = DBPosts.getPostsGivenTitle(title);
 
-            // Return the response with list of all comments
-            return new JsonHttpReponse(Status.OK, posts.toString());
+            try {
+                JSONArray postsJSON = new JSONArray();
+
+                // Build the json array of posts
+                Iterator<Map<String, Object>> it = posts.iterator();
+                while (it.hasNext()) {
+                    Map<String, Object> postNode = it.next();
+                    postsJSON.put(new JSONObject().put("username", postNode.get("username").toString())
+                            .put("content", postNode.get("content").toString())
+                            .put("title", postNode.get("title").toString())
+                            .put("profileName", postNode.get("profileName").toString())
+                            .put("peopleAgree", postNode.get("peopleAgree").toString())
+                            .put("peopleDisagree", postNode.get("peopleDisagree").toString())
+                            .put("uniqueIdentifier", postNode.get("uniqueIdentifier").toString())
+                            .put("timestamp", postNode.get("timestamp").toString()));
+
+                }
+                // Create the json response
+                response = new JSONObject().put("posts", postsJSON).toString();
+
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
         };
     }
 
@@ -67,7 +89,6 @@ public class PostHandler {
                             .put("profileName", postNode.get("profileName").toString())
                             .put("peopleAgree", postNode.get("peopleAgree").toString())
                             .put("peopleDisagree", postNode.get("peopleDisagree").toString())
-                            .put("comments", postNode.get("comments").toString())
                             .put("uniqueIdentifier", postNode.get("uniqueIdentifier").toString())
                             .put("timestamp", postNode.get("timestamp").toString()));
 
