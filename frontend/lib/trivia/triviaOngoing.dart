@@ -127,6 +127,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
   int correctlyAnswered; // number of questions answered
   int notAnswered; // number of questions not answered
   int numQuestions; // number of questions
+  List<String> selectedAnswers = [];
 
   int i = 0; // question index
   int timer = 10;
@@ -158,6 +159,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
 
   gotoResults(context) {
     int score = correctlyAnswered - (numQuestions - correctlyAnswered);
+    print(selectedAnswers);
     updateACS(token, username, score);
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => TriviaResult(
@@ -181,6 +183,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
           t.cancel();
           _timerController.stop();
         } else if (timer < 1) {
+          selectedAnswers.add(null);
           nextQuestion();
         } else {
           timer--;
@@ -219,6 +222,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
           colorToDisplay = incorrectAnsColor;
         }
         notAnswered--;
+        selectedAnswers.add(questions[i].options[t]);
         disableAnswer = true;
       });
     }
