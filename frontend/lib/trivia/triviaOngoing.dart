@@ -11,11 +11,14 @@ import 'package:frontend/widgets/fonts.dart';
 import 'package:frontend/widgets/layout.dart';
 import 'package:simple_timer/simple_timer.dart';
 
+enum TriviaMode { SOLO, MULTI_INVITER, MULTI_ACCEPTER }
+
 class TriviaOngoing extends StatefulWidget {
+  TriviaMode triviaMode;
   String category;
   String opponent;
   int gameId;
-  TriviaOngoing({this.category, this.opponent, this.gameId});
+  TriviaOngoing({this.category, this.opponent, this.gameId, this.triviaMode});
 
   @override
   State<StatefulWidget> createState() => _TriviaOngoingState(
@@ -24,12 +27,14 @@ class TriviaOngoing extends StatefulWidget {
 
 // Get questions, then call the actually quiz page after questions are recieved
 class _TriviaOngoingState extends State<TriviaOngoing> {
+  TriviaMode triviaMode;
   String category = "";
   String opponent = "";
   String username = "";
   String token = "";
   int gameId;
-  _TriviaOngoingState({this.category, this.opponent, this.gameId});
+  _TriviaOngoingState(
+      {this.category, this.opponent, this.gameId, this.triviaMode});
   Future<List<TriviaQuestion>> _futureTriviaQuestions;
 
   @override
@@ -64,6 +69,7 @@ class _TriviaOngoingState extends State<TriviaOngoing> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return QuizPage(
+              triviaMode: triviaMode,
               username: username,
               token: token,
               questions: snapshot.data,
@@ -85,11 +91,13 @@ class QuizPage extends StatefulWidget {
   String username = "";
   String token = "";
   String opponent;
+  TriviaMode triviaMode;
   QuizPage(
       {Key key,
       @required this.username,
       @required this.token,
       @required this.questions,
+      @required this.triviaMode,
       this.opponent})
       : super(key: key);
 

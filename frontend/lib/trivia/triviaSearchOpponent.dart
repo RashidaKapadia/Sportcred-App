@@ -123,8 +123,10 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
 
   goToTrivia() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) =>
-            TriviaOngoing(category: category, opponent: selectedUsername)));
+        builder: (context) => TriviaOngoing(
+            category: category,
+            opponent: selectedUsername,
+            triviaMode: TriviaMode.MULTI_INVITER)));
   }
 
   Widget body(BuildContext context, List<UserInfo> users) {
