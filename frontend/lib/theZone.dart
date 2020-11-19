@@ -20,10 +20,10 @@ class PostNode {
   final String content;
   final String title;
   final String profileName;
-  final Set peopleAgree;
-  final Set peopleDisagree;
+  final String peopleAgree;
+  final String peopleDisagree;
   final bool reqStatus;
-  final List comments; // TYPE TO BE CHANGED TO COMMENT NODE
+  final String comments; // TYPE TO BE CHANGED TO COMMENT NODE
 
   PostNode(
       {this.timestamp,
@@ -54,10 +54,13 @@ class PostNode {
       title: json['title'],
       profileName: json['profileName'],
       peopleAgree: json['peopleAgree'],
+      peopleDisagree: json['peopleDisagree'],
       comments: json['comments'],
     );
   }
 }
+
+List<PostNode> allZonePosts = [];
 
 class _TheZoneState extends State<TheZone> {
   bool _status = true;
@@ -77,10 +80,10 @@ class _TheZoneState extends State<TheZone> {
     );
 
     if (response.statusCode == 200) {
+      List<PostNode> allPosts = [];
       // Store the session token
       //print("Post GET -> RESPONSE:" + response.body.toString());
       //print(jsonDecode(response.body)['questions']);
-      List<PostNode> allPosts = [];
       // Get the questions, options and correctAnswers and store them in the class variables
       for (Map<String, dynamic> postNode
           in jsonDecode(response.body)["posts"] as List) {
@@ -89,13 +92,17 @@ class _TheZoneState extends State<TheZone> {
         print("*********************");
 
         allPosts += [PostNode.fromJson(true, postNode)];
+        print(allPosts[0].content);
       }
       // DEBUGGING STATEMENTS
       print('DEBUGGING: Post Node Get');
       print("\n\nPostNodes: " + allPosts[0].timestamp);
-
+      print(allPosts.length);
+      setState(() {
+        allZonePosts = allPosts;
+        print("in api" + allZonePosts.toString());
+      });
       // Return posts data
-      return allPosts;
     } else {
       return null;
     }
@@ -108,18 +115,8 @@ class _TheZoneState extends State<TheZone> {
     super.initState();
     setState(() {
       _futurePosts = getPosts();
-      print(_futurePosts);
-      getPostsList();
-    });
-  }
-
-  List<PostNode> postsList;
-  void getPostsList() async {
-    await _futurePosts.then((snapshot) {
-      if (snapshot.isNotEmpty) {
-        print("SANPSHOT " + snapshot.toString());
-        postsList = snapshot;
-      }
+      print("FUTURE POSTS" + _futurePosts.toString());
+      print("init" + allZonePosts.toString());
     });
   }
 
@@ -177,7 +174,7 @@ class _TheZoneState extends State<TheZone> {
                       height: 20,
                     ),
                     Wrap(
-                        children: List.generate(postsList.length, (index) {
+                        children: List.generate(allZonePosts.length, (index) {
                       return makeFeed(index);
                     })),
                     // makeFeed(
@@ -233,8 +230,8 @@ class _TheZoneState extends State<TheZone> {
   }
 
   Widget makeFeed(int index) {
-    int rank = postsList[index].peopleAgree.length -
-        postsList[index].peopleDisagree.length;
+    int rank = allZonePosts[index].peopleAgree.length -
+        allZonePosts[index].peopleDisagree.length;
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
@@ -257,19 +254,19 @@ class _TheZoneState extends State<TheZone> {
             ),
             ListTile(
               leading: Icon(Icons.sentiment_satisfied_alt),
-              title: const Text('Post Title'),
+              title: Text(allZonePosts[index].title),
               subtitle: Text(
                 'Posted by ' +
-                    postsList[index].username +
+                    allZonePosts[index].username +
                     ': ' +
-                    postsList[index].timestamp,
+                    allZonePosts[index].timestamp,
                 style: TextStyle(color: Colors.black.withOpacity(0.6)),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                postsList[index].content,
+                allZonePosts[index].content,
                 style: TextStyle(color: Colors.black.withOpacity(0.6)),
               ),
             ),
@@ -306,7 +303,7 @@ class _TheZoneState extends State<TheZone> {
                   icon: Icon(Icons.comment),
                   onPressed: () {},
                 ),
-                Text(postsList[index].comments.toString()),
+                Text(allZonePosts[index].comments.toString()),
 
                 // TODO: Edit this to only be visible to user of that profile
                 // IconButton(
