@@ -14,11 +14,12 @@ import 'package:simple_timer/simple_timer.dart';
 class TriviaOngoing extends StatefulWidget {
   String category;
   String opponent;
-  TriviaOngoing({@required this.category, this.opponent});
+  int gameId;
+  TriviaOngoing({this.category, this.opponent, this.gameId});
 
   @override
-  State<StatefulWidget> createState() =>
-      _TriviaOngoingState(category: category, opponent: opponent);
+  State<StatefulWidget> createState() => _TriviaOngoingState(
+      category: category, opponent: opponent, gameId: gameId);
 }
 
 // Get questions, then call the actually quiz page after questions are recieved
@@ -27,7 +28,8 @@ class _TriviaOngoingState extends State<TriviaOngoing> {
   String opponent = "";
   String username = "";
   String token = "";
-  _TriviaOngoingState({this.category, this.opponent});
+  int gameId;
+  _TriviaOngoingState({this.category, this.opponent, this.gameId});
   Future<List<TriviaQuestion>> _futureTriviaQuestions;
 
   @override
@@ -65,7 +67,6 @@ class _TriviaOngoingState extends State<TriviaOngoing> {
               username: username,
               token: token,
               questions: snapshot.data,
-              category: category,
               opponent: opponent);
         } else {
           return margin10(CircularProgressIndicator());
@@ -83,14 +84,12 @@ class QuizPage extends StatefulWidget {
   List<TriviaQuestion> questions;
   String username = "";
   String token = "";
-  String category;
   String opponent;
   QuizPage(
       {Key key,
       @required this.username,
       @required this.token,
       @required this.questions,
-      this.category,
       this.opponent})
       : super(key: key);
 
@@ -99,7 +98,6 @@ class QuizPage extends StatefulWidget {
       username: username,
       token: token,
       questions: questions,
-      category: category,
       opponent: opponent);
 }
 
@@ -113,7 +111,6 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
       {@required this.username,
       @required this.token,
       @required this.questions,
-      this.category,
       this.opponent});
 
   TimerController _timerController;

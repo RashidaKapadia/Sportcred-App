@@ -11,6 +11,9 @@ import org.neo4j.driver.Transaction;
 
 public class DBNotifications {
 	
+	// give category: "multiTrivia" for trivia
+	// infoID is for the trivia ID
+	// title is well a title.
 	public static int createNotification(String username, String type, String category, int ID, String title) {
 		int notifID = -1;
 
@@ -25,13 +28,13 @@ public class DBNotifications {
 				if(hasNotification) {
 					tx.run(String.format(
 							"MATCH(m {username: '%s'}) -[r:hasANotification]->(o)" +  
-							"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False" + 
+							"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False " + 
 							"CREATE ((m)-[h:hasANotification]-> (n))" + 
 							"CREATE ((n)-[i:hasANotification]-> (o))" + 
 							"DELETE r", username, type, category, ID, title));
 				}else {
 					tx.run(String.format("MATCH(u:user) WHERE (u.username = '%s')" +
-									"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False" + 
+									"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False " + 
 									"CREATE(u)-[r:hasANotification]->(n) ", username, type, category, ID, title));	
 				}
 			
@@ -119,5 +122,42 @@ public class DBNotifications {
 		 
 		 return retVal; 
 	 }
+	
+	
+	public static int deleteNotification( int[] IDs) {
+		int notifID = 1;
+
+		try (Session session = Connect.driver.session()) {
+			try (Transaction tx = session.beginTransaction()) {
+				for(int i = 0; i < IDs.length; i++) {
+					System.out.println("hello tere");
+					Result result = tx.run(String.format("MATCH (n:notification) WHERE ID(n) = %d OPTIONAL MATCH (n)-[r:hasANotification]->(a) RETURN  CASE WHEN a is null THEN False ELSE True End As hasNext" , IDs[i]));
+					Record record= result.next();
+					Boolean found = record.get("hasNext").asBoolean();
+					// found is true if they are in the middle
+					if(found) {
+						tx.run(String.format("MATCH (n:notification) WHERE ID(n) = %d "
+								+ "MATCH (n)-[r:hasANotification]->(a) "
+								+ "MATCH (n)<-[r2:hasANotification]-(p) "
+								+ "DELETE r, r2, n "
+								+ "CREATE (p)-[:hasANotification]->(a) "
+								+ "", IDs[i]));
+					}else {
+						tx.run(String.format("MATCH (n:notification) WHERE ID(n) = %d MATCH (n)<-[r:hasANotification]-(p) DELETE r, n ", IDs[i]));
+					}
+				}
+				tx.commit();
+				tx.close();
+				session.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return -1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return notifID;
+	}
 
 }
