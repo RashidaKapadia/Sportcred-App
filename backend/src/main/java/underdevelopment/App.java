@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import underdevelopment.api.ACSHandler;
 import underdevelopment.api.LoginHandler;
+import underdevelopment.api.PostCommentsHandler;
 import underdevelopment.api.PostHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
@@ -106,6 +107,28 @@ public class App
 
         server.createContext("/api/agreedOrDisagreedPost", 
                 new HttpRequestHandler("POST", PostHandler.handlePostAgreeDisAgree(), authorized));
+
+        server.createContext("/api/getPosts", 
+                new HttpRequestHandler("POST", PostHandler.handleGetPosts(), authorized));
+
+        // Create Comment API
+        server.createContext("/api/addComment", 
+                new HttpRequestHandler("POST", PostCommentsHandler.handleCreateComment(), authorized));
+        // Delete Comment API 
+        server.createContext("/api/deleteComment", 
+                new HttpRequestHandler("DELETE", PostCommentsHandler.handleDeleteComment(), authorized));
+        
+        server.createContext("/api/editComment", 
+                new HttpRequestHandler("POST", PostCommentsHandler.handleEditComment(), authorized));
+
+        server.createContext("/api/getComments", 
+                new HttpRequestHandler("GET", PostCommentsHandler.handleGetComments(), authorized));
+        
+        
+        // Search Bar API to get posts given title
+        server.createContext("/api/getPostsForSearch", 
+                new HttpRequestHandler("POST", PostHandler.handleGetPostsForSearchBar(), authorized));
+
         // Start Server
         server.start();
     }

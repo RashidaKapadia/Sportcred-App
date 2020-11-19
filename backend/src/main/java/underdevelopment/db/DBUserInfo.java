@@ -46,6 +46,25 @@ public class DBUserInfo {
 
   }
 
+  public static String getUserFullName(String username){
+    String fullName = "";
+    // Run query to check if a user with given username already exists
+    try (Session session = Connect.driver.session()) {
+      try (Transaction tx = session.beginTransaction()) {
+        Result names = tx.run("MATCH (u:user {username: $x}) RETURN u.firstname as first, u.lastname as last", parameters("x", username));
+
+        // If any results have been returned, it means user exists already
+        if (names.hasNext()) {
+          Record data = names.single();
+
+           fullName = data.get("first").asString() + ", " + data.get("last").asString();
+        }
+      }
+    }
+
+    // Return false if user with given username does not exist
+    return fullName;
+  }
   /**
    * Return true if and only if a user with the given username already exists
    * 
