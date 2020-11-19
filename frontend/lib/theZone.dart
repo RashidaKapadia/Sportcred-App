@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -8,9 +9,38 @@ void main() => runApp(MaterialApp(
       home: TheZone(),
     ));
 
+String old_content, old_title, store_username;
+
+TextEditingController _contentController = TextEditingController()..text = '';
+TextEditingController _titleController = TextEditingController()..text = '';
+
 class TheZone extends StatefulWidget {
   @override
   _TheZoneState createState() => _TheZoneState();
+}
+
+class PostInfo {
+  final String username;
+  final String content;
+  final String title;
+  final bool reqStatus;
+
+  PostInfo({this.username, this.content, this.title, @required this.reqStatus});
+
+  // converts json to UserInfo object
+  factory PostInfo.fromJson(bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return PostInfo(
+        reqStatus: status,
+      );
+    }
+
+    return PostInfo(
+        reqStatus: status,
+        username: json['username'],
+        content: json['content'],
+        title: json['title']);
+  }
 }
 
 class PostNode {
@@ -19,7 +49,6 @@ class PostNode {
   final String username;
   final String content;
   final String title;
-  final String profileName;
   final String peopleAgree;
   final String peopleDisagree;
   final bool reqStatus;
@@ -31,7 +60,6 @@ class PostNode {
       this.username,
       this.content,
       this.title,
-      this.profileName,
       this.peopleAgree,
       this.peopleDisagree,
       this.comments,
@@ -52,12 +80,16 @@ class PostNode {
       username: json['username'],
       content: json['content'],
       title: json['title'],
-      profileName: json['profileName'],
       peopleAgree: json['peopleAgree'],
       peopleDisagree: json['peopleDisagree'],
       comments: json['comments'],
     );
   }
+}
+
+void storePrevValues() {
+  old_content = _contentController.text;
+  old_title = _titleController.text;
 }
 
 List<PostNode> allZonePosts = [];
@@ -66,6 +98,47 @@ class _TheZoneState extends State<TheZone> {
   bool _status = true;
   List data;
   Future<PostNode> _futurePostNode;
+
+  String username = "";
+
+  String content = "";
+
+  String title = "";
+
+  Future<PostInfo> createPost(String content, String title) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/addPost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{
+        'username': store_username,
+        'content': content,
+        'title': title,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      PostInfo userData = PostInfo.fromJson(true, jsonDecode(response.body));
+      setState(() {
+        this.username = userData.username;
+        this.content = userData.content;
+        this.title = userData.title;
+
+        _contentController..text = userData.content;
+        _titleController..text = userData.title;
+        print(userData.content);
+
+        storePrevValues();
+      });
+      // Return posts data
+    } else {
+      return null;
+    }
+  }
 
   Future<List<PostNode>> getPosts() async {
     // Make the request and store the response
@@ -113,7 +186,15 @@ class _TheZoneState extends State<TheZone> {
   @override
   void initState() {
     super.initState();
+    FlutterSession().get('token').then((token) {
+      FlutterSession().get('username').then((username) => {
+            setState(() {
+              String store_username = username.toString();
+            })
+          });
+    });
     setState(() {
+      print(store_username);
       _futurePosts = getPosts();
       print("FUTURE POSTS" + _futurePosts.toString());
       print("init" + allZonePosts.toString());
