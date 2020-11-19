@@ -92,7 +92,12 @@ public class App
                 new HttpRequestHandler("POST", TriviaHandler.generateQuestions(), authorized));
         server.createContext("/api/trivia/get-specific-questions", 
                 new HttpRequestHandler("POST", TriviaHandler.getQuesionsByID(), authorized));
-
+        server.createContext("/api/trivia/start-multiplayer-game", 
+                new HttpRequestHandler("POST", TriviaHandler.startMultiTrivia(), authorized));
+        server.createContext("/api/trivia/end-multiplayer-game", 
+                new HttpRequestHandler("POST", TriviaHandler.endMultiTrivia(), authorized));
+        
+        
         // Count resetting
         server.createContext("/api/reset-count", 
                 new HttpRequestHandler("POST", DailyCountHandler.resetCount(), authorized));

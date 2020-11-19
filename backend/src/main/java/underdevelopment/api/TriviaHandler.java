@@ -159,5 +159,82 @@ public class TriviaHandler {
                 return new JsonHttpReponse(Status.SERVERERROR);
             }
         };
-    }   
+    } 
+    
+    
+    // Multiplayer trivia stuff
+    public static JsonRequestHandler startMultiTrivia() {
+        return (JSONObject jsonObj) -> {
+
+	        System.out.println("starting multiplayer trivia");
+	        String username, oppUsername;
+	
+	        // Get and validate input
+	        try {
+	        	username = jsonObj.getString("username");
+	        	oppUsername = jsonObj.getString("oppUsername");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return new JsonHttpReponse(Status.BADREQUEST);
+	        }
+	        // Get questions from the db and make sure query was run properly
+	       int gameID = DBTrivia.startMultiplayerTrivia(username, oppUsername);
+	       
+	       if(gameID == -1) {
+	    	   System.out.println("error with the query");
+	    	   return new JsonHttpReponse(Status.SERVERERROR);
+	       }
+	       
+	       
+	        try {
+	            JSONArray questionsJSON = new JSONArray();
+	            // Build the json array of questions
+	            // Create the json response
+	            String response =new JSONObject().put("gameID", gameID).toString();
+
+	            return new JsonHttpReponse(Status.OK, response);
+	        } catch (JSONException e) {
+	            e.printStackTrace();
+	            return new JsonHttpReponse(Status.SERVERERROR);
+	        }
+	    };
+    } 
+    
+    // Multiplayer trivia stuff
+    public static JsonRequestHandler endMultiTrivia() {
+        return (JSONObject jsonObj) -> {
+
+	        System.out.println("ending multiplayer trivia");
+	        String username;
+	        int gameID;
+	        JSONArray answers;
+	        int gameScore;
+	
+	        // Get and validate input
+	        try {
+	        	username = jsonObj.getString("username");
+	        	gameID = jsonObj.getInt("gameID");
+	        	answers = jsonObj.getJSONArray("answers");
+	        	gameScore = jsonObj.getInt("gameScore");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return new JsonHttpReponse(Status.BADREQUEST);
+	        }
+	        String[] arrayAnswers=new String[answers.length()];
+            for(int i=0; i<arrayAnswers.length; i++) {
+            	arrayAnswers[i]=answers.optString(i);
+            }
+	        
+	        // Get questions from the db and make sure query was run properly
+            int success = DBTrivia.endMultiplayerTrivia(username, gameID, arrayAnswers, gameScore);
+ 	       if(success == -1) {
+	    	   System.out.println("error with the query");
+	    	   return new JsonHttpReponse(Status.SERVERERROR);
+	       }else {
+		        return new JsonHttpReponse(Status.OK, null);
+	       }
+	      
+	    };
+    } 
+    
 }
