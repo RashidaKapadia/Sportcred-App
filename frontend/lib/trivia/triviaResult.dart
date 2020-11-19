@@ -24,15 +24,6 @@ class _TriviaResultState extends State<TriviaResult> {
   _TriviaResultState(this.score, this.incorrect, this.correct, this.notAnswered,
       this.numQuestions);
 
-  Widget headerBanner(Widget title) {
-    return Container(
-        width: double.infinity,
-        color: Colors.blueGrey[900],
-        height: 200,
-        padding: EdgeInsets.all(20.0),
-        child: title);
-  }
-
   TableRow scoreRow(Icon icon, String field, int score) {
     return TableRow(children: [
       TableCell(child: Row(children: [hmargin5(icon), Text(field)])),

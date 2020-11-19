@@ -67,7 +67,7 @@ Widget superLargeHeading(String text, {color}) {
   return Text(
     'Result',
     style: TextStyle(
-        fontSize: 50.0,
+        fontSize: 45.0,
         fontWeight: FontWeight.bold,
         color: (color != null) ? color : Colors.black),
   );
