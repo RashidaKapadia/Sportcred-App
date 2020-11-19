@@ -43,12 +43,11 @@ public class DBQuestion {
      					questions.add(rec.get("n").asMap());
      					//System.out.println(rec.asMap());
      					//Map map = rec.asMap();
-
      				}
          		}
  				tx.close(); 
  				session.close();
- 				System.out.println(questions.toArray().toString());
+ 				//System.out.println(questions.toArray().toString());
  				System.out.println("returning questions");
          		return questions;
          	}catch(Exception e) {

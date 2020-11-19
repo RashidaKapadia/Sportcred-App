@@ -270,4 +270,52 @@ public class TriviaHandler {
 	    };
     } 
     
+    public static JsonRequestHandler joinMultiTrivia() {
+        return (JSONObject jsonObj) -> {
+
+	        System.out.println("getting multiplayer trivia");
+	        int gameID;
+	
+	        // Get and validate input
+	        try {
+	        	gameID = jsonObj.getInt("gameID");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return new JsonHttpReponse(Status.BADREQUEST);
+	        }	        
+	        // Get questions from the db and make sure query was run properly
+	        ArrayList<Map<String, Object>> questions = DBTrivia.joinMultiplayerTrivia(gameID);
+            
+            try {
+                JSONArray questionsJSON = new JSONArray();
+
+                // Build the json array of questions
+                Iterator<Map<String, Object>> it = questions.iterator();
+                while (it.hasNext()) {
+                	System.out.println("hello there");
+                    Map<String, Object> question = it.next();
+                    questionsJSON
+                        .put(new JSONObject()
+                            .put("questionId", question.get("questionId").toString())
+                            .put("question", question.get("question").toString())
+                            .put("answer", question.get("answer").toString())
+                            .put("choices", new JSONArray(question.get("choices").toString()))
+                        );
+                }
+                // Create the json response
+                String response = new JSONObject()
+                    .put("questions", questionsJSON)
+                    .toString();
+
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }catch(Exception f) {
+            	f.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
+	      
+	    };
+    } 
 }

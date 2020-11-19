@@ -5,6 +5,7 @@ import static org.neo4j.driver.Values.parameters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.neo4j.driver.Record;
@@ -265,27 +266,21 @@ public class DBTrivia{
 	}
 	
 	
-	public static ArrayList<Map<String, String>> joinMultiplayerTrivia(int gameID) {
-		ArrayList<Map<String, String>> retVal = new ArrayList<Map<String, String>>();
+	public static ArrayList<Map<String, Object>>  joinMultiplayerTrivia(int gameID) {
+		ArrayList<Map<String, Object>> retVal = new ArrayList<Map<String, Object>>();
 		
 		 try (Session session = Connect.driver.session()){
 	        	try (Transaction tx = session.beginTransaction()) {
 	        		// Find out if we are the inviter or opponent
-	        		Result result = tx.run(String.format("match(n:triviaInProgress) WHERE ID(n) = %d RETURN n.inviterUsername as  inviterUsername, "
-	        				+ " n.oppUsername as oppUsername, "
-	        				+ "n.inviterScore as inviterScore,"
-	        				+ "n.accepterScore as oppScore, "
-	        				+ "n.inviterAnswers as inviterAnswers, "
-	        				+ "n.oppAnswers as oppAnswers", gameID));
+	        		Result result = tx.run(String.format("match(n:triviaInProgress) WHERE ID(n) = %d RETURN n.questionSequence as questionSequence", gameID));
 	        		Record record = result.next();
-	        		String inviterUsername = record.get("inviterUsername").asString();
-	        		String oppUsername = record.get("oppUsername").asString();
-	        		int inviterScore = record.get("inviterScore").asInt();
-	        		int oppScore = record.get("oppScore").asInt();
-	        		String inviterAnswers = record.get("inviterAnswers").asString();
-	        		String oppAnswers = record.get("oppAnswers").asString();	        		
-
-	        		
+	        		List questionSequence = record.get("questionSequence").asList();
+	        		int questions[] = new int[questionSequence.size()];
+	        		for(int i =0; i < questions.length; i++) {
+	        			questions[i] = Integer.valueOf(String.valueOf(questionSequence.get(i)));
+	        			System.out.println(questions[i]);
+	        		}
+	        		retVal = DBQuestion.getSpecificQuestions(questions);
 					tx.commit();
 					tx.close();
 					session.close();
