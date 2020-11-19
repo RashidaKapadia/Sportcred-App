@@ -41,7 +41,7 @@ public class DBTrivia{
 	        			 System.out.println(questionSequence[i]);
 	        		 }
 	        		// removes 1 daily invite from the user
-	        		DBDailyCounts.subtractTriviaCount(username, "multiTriviaPlays");
+	        		DBDailyCounts.subtractTriviaCount(username, "triviaMultiPlays");
 	        		
 	        		// Get current date
 	        		String curDate = LocalDate.now().toString();
@@ -71,6 +71,11 @@ public class DBTrivia{
 	        				+ "RETURN ID(n) As ID", Arrays.toString(questionSequence), username, oppUsername, curDate ));
 	        		// Send frotend the game 
 	        		ID = result.next().get("ID").asInt();
+	        		
+	        		// Create the notifications
+	        		DBNotifications.createNotification(username, "trivia", "triviaMultiPlays", ID, "new trivia game");
+	        		DBNotifications.createNotification(oppUsername, "trivia", "triviaMultiPlays", ID, "new trivia game");
+
 					tx.commit();
 					tx.close();
 					session.close();
