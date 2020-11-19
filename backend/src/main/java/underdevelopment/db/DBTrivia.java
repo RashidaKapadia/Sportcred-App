@@ -100,7 +100,7 @@ public class DBTrivia{
 		Updates ACS history for players
 
 	 */
-	public static int endMultiplayerTrivia(String username, int gameID, String[] answers, int gameScore) {
+	public static int endMultiplayerTrivia(String username, int gameID,  int gameScore, String answerString) {
 		int success = -1;
 		
 		 try (Session session = Connect.driver.session()){
@@ -131,11 +131,11 @@ public class DBTrivia{
 	        		if(username.equals(inviterUsername)) {
 	        			System.out.println("we are the inbiter");
 	        			// Update inviterAnswers and inviterScore
-	        			tx.run(String.format("match(n:triviaInProgress) WHERE ID(n) = %d SET n.inviterAnswers = '%s', n.inviterScore = %d", gameID, Arrays.toString(answers), gameScore));
+	        			tx.run(String.format("match(n:triviaInProgress) WHERE ID(n) = %d SET n.inviterAnswers = '%s', n.inviterScore = %d", gameID, answerString, gameScore));
 	        		}else if(username.equals(oppUsername)) {
 	        			System.out.println("we are the opponent");
 	        			// Update opponentAnswers, opponentScore and acceptDate
-	        			tx.run(String.format("match(n:triviaInProgress) WHERE ID(n) = %d SET n.oppAnswers = '%s', n.oppScore = %d, n.acceptDate = '%s'", gameID, Arrays.toString(answers), gameScore,curDate));
+	        			tx.run(String.format("match(n:triviaInProgress) WHERE ID(n) = %d SET n.oppAnswers = '%s', n.oppScore = %d, n.acceptDate = '%s'", gameID, answerString, gameScore,curDate));
 	        		}else {
 	        			return -1;
 	        		}
