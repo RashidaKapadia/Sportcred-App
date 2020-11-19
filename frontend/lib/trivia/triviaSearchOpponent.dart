@@ -146,7 +146,7 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
       child: Column(children: [
         vmargin20(h1("Choose your Opponent!",
             color: Colors.deepOrange, textAlign: TextAlign.center)),
-        h1("You: " + username),
+        h1("" + username),
         h3("vs", color: Colors.grey),
         // Because if nesting issues, we have this inefficiency
         (selectedUsername == null) ? searchBar(users) : h2(selectedUsername),
