@@ -35,26 +35,33 @@ class _TriviaResultMultiState extends State<TriviaResultMulti> {
 
   Widget temp() {
     return Scaffold(
-        body: ListView(children: [
-      Text("Dummy"),
-      Container(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        bold("Question 1"),
-        ListView.builder(
-            shrinkWrap: true,
-            itemCount: 5,
-            itemBuilder: (context, index) => Column(children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("You  ->"),
-                        Text("• " + index.toString()),
-                        Text("<- Them")
-                      ])
+      body: ListView(children: [
+        headerBanner(superLargeHeading("Result", color: Colors.white)),
+        Container(
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  bold("Question 1"),
+                  ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 5,
+                      itemBuilder: (context, index) => Column(children: [
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("You  ->"),
+                                  Container(
+                                      width: 150,
+                                      child: Text("• " + index.toString(),
+                                          textAlign: TextAlign.left)),
+                                  Text("<- Them")
+                                ])
+                          ])),
                 ])),
-      ])),
-    ]));
+      ]),
+    );
   }
 
   Widget loadTrivia() {
