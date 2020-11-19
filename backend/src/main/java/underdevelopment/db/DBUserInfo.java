@@ -2,11 +2,7 @@ package underdevelopment.db;
 
 import static org.neo4j.driver.Values.parameters;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
-
-=======
->>>>>>> zone
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -117,7 +113,6 @@ public class DBUserInfo {
     return false;
 
   }
-<<<<<<< HEAD
   
   
   // Returns an array of arraylists of uers
@@ -152,7 +147,6 @@ public class DBUserInfo {
  	}
         return users;
   }
-=======
 
   /**
    * Return the count of posts for this user
@@ -204,5 +198,4 @@ public class DBUserInfo {
   }
 
 
->>>>>>> zone
 }
