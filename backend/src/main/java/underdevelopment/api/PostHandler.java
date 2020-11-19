@@ -1,15 +1,67 @@
 package underdevelopment.api;
+import java.util.Iterator;
+import java.util.Map;
 
+
+import underdevelopment.api.utils.JsonRequestHandler;
+import underdevelopment.api.utils.JsonHttpReponse;
+import underdevelopment.api.utils.Status;
+
+import java.util.ArrayList;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import underdevelopment.api.utils.JsonHttpReponse;
-import underdevelopment.api.utils.JsonRequestHandler;
-import underdevelopment.api.utils.Status;
 import underdevelopment.db.DBPosts;
 import underdevelopment.db.DBUserInfo;
 
 public class PostHandler {
+
+    public static JsonRequestHandler handleGetPosts() {
+        return (JSONObject jsonObj) -> {
+
+            System.out.println("Getting all posts");
+
+            // Get and validate input
+
+            // Get questions from the db
+            ArrayList<Map<String, Object>> posts = DBPosts.getPosts();
+            
+            try {
+                JSONArray postsJSON = new JSONArray();
+
+                // Build the json array of posts
+                Iterator<Map<String, Object>> it = posts.iterator();
+                while (it.hasNext()) {
+                    Map<String, Object> postNode = it.next();
+                    postsJSON
+                        .put(new JSONObject()
+                            .put("username", postNode.get("username").toString())
+                            .put("content", postNode.get("content").toString())
+                            .put("title", postNode.get("title").toString())
+                            .put("profileName", postNode.get("profileName").toString())
+                            .put("peopleAgree", postNode.get("peopleAgree").toString())
+                            .put("peopleDisagree", postNode.get("peopleDisagree").toString())
+                            .put("comments", postNode.get("comments").toString())
+                            .put("uniqueIdentifier", postNode.get("uniqueIdentifier").toString())
+                            .put("timestamp", postNode.get("timestamp").toString()));
+
+                }
+
+                // Create the json response
+                String response = new JSONObject()
+                    .put("posts", postsJSON)
+                    .toString();
+
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
+        };
+    }   
+
 
     public static JsonRequestHandler handlePostCreation() {
         return (JSONObject jsonObj) -> {
