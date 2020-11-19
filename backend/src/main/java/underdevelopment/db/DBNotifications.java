@@ -11,6 +11,9 @@ import org.neo4j.driver.Transaction;
 
 public class DBNotifications {
 	
+	// give category: "multiTrivia" for trivia
+	// infoID is for the trivia ID
+	// title is well a title.
 	public static int createNotification(String username, String type, String category, int ID, String title) {
 		int notifID = -1;
 
@@ -25,13 +28,13 @@ public class DBNotifications {
 				if(hasNotification) {
 					tx.run(String.format(
 							"MATCH(m {username: '%s'}) -[r:hasANotification]->(o)" +  
-							"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False" + 
+							"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False " + 
 							"CREATE ((m)-[h:hasANotification]-> (n))" + 
 							"CREATE ((n)-[i:hasANotification]-> (o))" + 
 							"DELETE r", username, type, category, ID, title));
 				}else {
 					tx.run(String.format("MATCH(u:user) WHERE (u.username = '%s')" +
-									"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False" + 
+									"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False " + 
 									"CREATE(u)-[r:hasANotification]->(n) ", username, type, category, ID, title));	
 				}
 			
