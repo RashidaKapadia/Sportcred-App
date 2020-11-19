@@ -225,26 +225,22 @@ public class TriviaHandler {
 	        System.out.println("ending multiplayer trivia");
 	        String username;
 	        int gameID;
-	        JSONArray answers;
 	        int gameScore;
-	
+	        String answerString;
 	        // Get and validate input
 	        try {
 	        	username = jsonObj.getString("username");
 	        	gameID = jsonObj.getInt("gameID");
-	        	answers = jsonObj.getJSONArray("answers");
 	        	gameScore = jsonObj.getInt("gameScore");
+	        	answerString = jsonObj.getString("answers");
+	        	//System.out.println(answerString);
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	            return new JsonHttpReponse(Status.BADREQUEST);
 	        }
-	        String[] arrayAnswers=new String[answers.length()];
-            for(int i=0; i<arrayAnswers.length; i++) {
-            	arrayAnswers[i]=answers.optString(i);
-            }
-	        
+
 	        // Get questions from the db and make sure query was run properly
-            int success = DBTrivia.endMultiplayerTrivia(username, gameID, arrayAnswers, gameScore);
+            int success = DBTrivia.endMultiplayerTrivia(username, gameID, gameScore, answerString);
  	       if(success == -1) {
 	    	   System.out.println("error with the query");
 	    	   return new JsonHttpReponse(Status.SERVERERROR);
