@@ -292,7 +292,6 @@ public class TriviaHandler {
 						.put("questions", questions)
 						.toString();
 			  	return new JsonHttpReponse(Status.OK, response);
-
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

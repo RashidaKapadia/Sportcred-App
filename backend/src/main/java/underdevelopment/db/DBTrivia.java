@@ -219,7 +219,7 @@ public class DBTrivia{
 	        		Result result = tx.run(String.format("match(n:triviaInProgress) WHERE ID(n) = %d RETURN n.inviterUsername as  inviterUsername, "
 	        				+ " n.oppUsername as oppUsername, "
 	        				+ "n.inviterScore as inviterScore,"
-	        				+ "n.accepterScore as oppScore, "
+	        				+ "n.oppScore as oppScore, "
 	        				+ "n.inviterAnswers as inviterAnswers, "
 	        				+ "n.oppAnswers as oppAnswers", gameID));
 	        		Record record = result.next();
