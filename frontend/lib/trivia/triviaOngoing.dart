@@ -62,7 +62,7 @@ class _TriviaOngoingState extends State<TriviaOngoing> {
       } else if (triviaMode == TriviaMode.MULTI_ACCEPTER) {
         _future = joinMultiplayerTrivia(gameId);
       } else {
-        print("NO FUTURE FOR ONGOING TRIVIA!");
+        // print("NO FUTURE FOR ONGOING TRIVIA!");
       }
     });
     super.initState();
@@ -180,7 +180,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    print("Mode: " + triviaMode.toString());
+    // print("Mode: " + triviaMode.toString());
     super.initState();
     correctlyAnswered = 0;
     notAnswered = questions.length;
@@ -196,7 +196,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
 
   gotoResults(context) {
     int score = correctlyAnswered - (numQuestions - correctlyAnswered);
-    print(selectedAnswers);
+    // print(selectedAnswers);
 
     if (triviaMode == TriviaMode.SOLO) {
       updateACS(token, username, score);
@@ -216,13 +216,13 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
   void startTimer() async {
     const onesec = Duration(seconds: 1);
     Timer.periodic(onesec, (Timer t) {
-      print("start time set state");
-      print("timer: " + timer.toString());
+      // print("start time set state");
+      // print("timer: " + timer.toString());
 
-      print(cancelTimer);
+      // print(cancelTimer);
       if (cancelTimer) {
         setState(() {
-          print("cancelling");
+          // print("cancelling");
           t.cancel();
           _timerController.stop();
         });
@@ -242,11 +242,11 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
   }
 
   void nextQuestion() {
-    print("next question set state");
+    // print("next question set state");
     setState(() {
       timer = 10;
       // NOTE: i is inclusive TODO:
-      print("i: " + i.toString());
+      // print("i: " + i.toString());
       if (i < numQuestions - 1) {
         i++;
         _timerController.reset();
@@ -262,7 +262,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
 
   void validateAnswer(int t, bool val) {
     if (val == true) {
-      print("validate set state");
+      // print("validate set state");
       setState(() {
         if (questions[i].answer == questions[i].options[t]) {
           correctlyAnswered++;
