@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
 // import 'package:frontend/InitialPage.dart';
 import 'package:frontend/trivia/pickTriviaCategory.dart';
@@ -13,6 +11,7 @@ import './welcome_page.dart';
 import './loginPage.dart';
 import './homepage.dart';
 import './settings.dart';
+import './theZone.dart';
 import './HTTPRequestExample.dart';
 import './profile_page.dart';
 import './ACSHistory_page.dart';
@@ -40,6 +39,7 @@ void main() {
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
         '/trivia/solo/result': (context) => TriviaResult(),
         '/notifications': (context) => NotificationBoard(),
+        '/theZone': (context) => TheZone()
       }));
 }
 
