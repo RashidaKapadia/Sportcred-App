@@ -140,6 +140,54 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
+  Future deletePost(String postId) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/deletePost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{
+        'uniqueIdentifier': postId,
+        'username': store_username,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("Post is deleted");
+      // Return posts data
+    } else {
+      return null;
+    }
+  }
+
+  Future editPost(String postId, String username) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/editPost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{
+        'uniqueIdentifier': postId,
+        'username': store_username,
+        'content': content,
+        'title': title
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("Post is deleted");
+      // Return posts data
+    } else {
+      return null;
+    }
+  }
+
   Future<List<PostNode>> getPosts() async {
     // Make the request and store the response
     final http.Response response = await http.post(
@@ -173,6 +221,7 @@ class _TheZoneState extends State<TheZone> {
       print(allPosts.length);
       setState(() {
         allZonePosts = allPosts;
+        print("in api" + allPosts.toString());
         print("in api" + allZonePosts.toString());
       });
       // Return posts data
@@ -301,6 +350,7 @@ class _TheZoneState extends State<TheZone> {
             foregroundColor: Colors.white,
             onPressed: () {
               // Respond to button press
+              _createPost();
             },
             tooltip: 'Create Post',
             child: Icon(Icons.add),
@@ -412,6 +462,118 @@ class _TheZoneState extends State<TheZone> {
       case 'Delete':
         break;
     }
+  }
+
+  Widget _createPost() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          String newTitle = '';
+          String newContent = '';
+          return SizedBox(
+              height: 10,
+              width: 100,
+              child: Card(
+                margin: EdgeInsets.all(10),
+                elevation: 5,
+                child: Column(
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          "Create Post",
+                          style: new TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ListTile(
+                          title: TextField(
+                              decoration: InputDecoration(
+                                  hintText: "Title",
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(32.0))),
+                              onChanged: (value) {
+                                setState(() {
+                                  newTitle = value;
+                                });
+                              }),
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: TextField(
+                            style: TextStyle(fontSize: 16),
+                            decoration: InputDecoration(
+                                hintText: "Content",
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5))),
+                            onChanged: (value) {
+                              setState(() {
+                                newContent = value;
+                              });
+                            },
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null)),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        child: Text("Submit"),
+                        onPressed: () {
+                          // Call createPost API
+                          createPost(newContent, newTitle);
+                          getPosts();
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ));
+          // return AlertDialog(
+          //   content: Stack(
+          //     overflow: Overflow.visible,
+          //     children: <Widget>[
+          //       Positioned(
+          //         right: -30.0,
+          //         top: -30.0,
+          //         child: InkResponse(
+          //           onTap: () {
+          //             Navigator.of(context).pop();
+          //           },
+          //           child: CircleAvatar(
+          //             child: Icon(Icons.close),
+          //             backgroundColor: Colors.red,
+          //           ),
+          //         ),
+          //       ),
+          //       Form(
+          //         child: Column(
+          //           mainAxisSize: MainAxisSize.min,
+          //           children: <Widget>[
+          //             Padding(
+          //               padding: EdgeInsets.all(8.0),
+          //               child: TextFormField(),
+          //             ),
+          //             Padding(
+          //               padding: EdgeInsets.all(8.0),
+          //               child: TextFormField(),
+          //             ),
+          //             Padding(
+          //               padding: const EdgeInsets.all(8.0),
+          //               child: RaisedButton(
+          //                 child: Text("Create Post"),
+          //                 onPressed: () {},
+          //               ),
+          //             )
+          //           ],
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // );
+        });
   }
 
   Widget makeAgree() {
