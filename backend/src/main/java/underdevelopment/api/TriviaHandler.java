@@ -237,4 +237,37 @@ public class TriviaHandler {
 	    };
     } 
     
+    public static JsonRequestHandler getMultiTrivia() {
+        return (JSONObject jsonObj) -> {
+
+	        System.out.println("getting multiplayer trivia");
+	        String username;
+	        int gameID;
+	
+	        // Get and validate input
+	        try {
+	        	username = jsonObj.getString("username");
+	        	gameID = jsonObj.getInt("gameID");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return new JsonHttpReponse(Status.BADREQUEST);
+	        }	        
+	        // Get questions from the db and make sure query was run properly
+	        ArrayList<Map<String, String>> results = DBTrivia.getMultiplayerTrivia(gameID, username);
+ 	       if(results == null) {
+	    	   System.out.println("error with the query");
+	    	   return new JsonHttpReponse(Status.SERVERERROR);
+	       }else {
+	    	   JSONArray resultsJSON = new JSONArray();
+			resultsJSON.put(
+						new JSONObject(results.get(0)
+								)).put(new JSONObject(results.get(1)));
+			String response = resultsJSON.toString();
+			
+			  	return new JsonHttpReponse(Status.OK, response);
+	       }
+	      
+	    };
+    } 
+    
 }

@@ -4,6 +4,7 @@ import static org.neo4j.driver.Values.parameters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.neo4j.driver.Record;
@@ -108,7 +109,7 @@ public class DBTrivia{
 	        		 * 	> inviterAnswers	- answers
 	        		 * 	> oppAnswers		- Create empty?
 	        		 * 	> inviterScore		- gameScore
-	        		 * 	> accepterScore		- Create empty?
+	        		 * 	> oppScore		- Create empty?
 	        		 * 	> inviteDate		- Already Exists
 	        		 * 	> acceptDate		- Today's date (if we are the opponent)
 	        		 */
@@ -189,6 +190,112 @@ public class DBTrivia{
 	        return success;
 	}
 	
+	// Create TriviaInProgressMulti node
+	/*	TriviaInProgressMulti
+	 * 	> ID				- We find using this
+	 * 	> questionSequence	- Already Exists
+	 * 	> inviterUsername	- Username
+	 * 	> oppUsername		- Given
+	 * 	> inviterAnswers	- answers
+	 * 	> oppAnswers		- Create empty?
+	 * 	> inviterScore		- gameScore
+	 * 	> oppScore			- Create empty?
+	 * 	> inviteDate		- Already Exists
+	 * 	> acceptDate		- Today's date (if we are the opponent)
+	 */
 	
+	public static ArrayList<Map<String, String>> getMultiplayerTrivia(int gameID, String username) {
+		ArrayList<Map<String, String>> retVal = new ArrayList<Map<String, String>>();
+		
+		 try (Session session = Connect.driver.session()){
+	        	try (Transaction tx = session.beginTransaction()) {
+	        		// Find out if we are the inviter or opponent
+	        		Result result = tx.run(String.format("match(n:triviaInProgress) WHERE ID(n) = %d RETURN n.inviterUsername as  inviterUsername, "
+	        				+ " n.oppUsername as oppUsername, "
+	        				+ "n.inviterScore as inviterScore,"
+	        				+ "n.accepterScore as oppScore, "
+	        				+ "n.inviterAnswers as inviterAnswers, "
+	        				+ "n.oppAnswers as oppAnswers", gameID));
+	        		Record record = result.next();
+	        		String inviterUsername = record.get("inviterUsername").asString();
+	        		String oppUsername = record.get("oppUsername").asString();
+	        		int inviterScore = record.get("inviterScore").asInt();
+	        		int oppScore = record.get("oppScore").asInt();
+	        		String inviterAnswers = record.get("inviterAnswers").asString();
+	        		String oppAnswers = record.get("oppAnswers").asString();	        		
+	        		
+	        		System.out.println(inviterAnswers);
+	        		System.out.println(oppAnswers);
+
+	        		// The first element is "you"
+	        		// Find and insert the username, gameScore and answers
+	        		// The second element is "otherPlayer"
+        			HashMap<String, String> you = new HashMap<String, String>();
+        			HashMap<String, String> opponent = new HashMap<String, String>();
+	        		if(username.equals(inviterUsername)) {
+	        			you.put("username", inviterUsername);
+	        			you.put("gameScore", Integer.toString(inviterScore));
+	        			you.put("answers", inviterAnswers);
+	        			opponent.put("username", oppUsername);
+	        			opponent.put("gameScore", Integer.toString(oppScore));
+	        			opponent.put("answers", oppAnswers);
+	        		}else if(username.equals(oppUsername)) {
+	        			opponent.put("username", inviterUsername);
+	        			opponent.put("gameScore", Integer.toString(inviterScore));
+	        			opponent.put("answers", inviterAnswers);
+	        			you.put("username", oppUsername);
+	        			you.put("gameScore", Integer.toString(oppScore));
+	        			you.put("answers", oppAnswers);
+	        		}else {
+	        			return null;
+	        		}
+	        		retVal.add(you);
+	        		retVal.add(opponent);
+	        		
+					tx.commit();
+					tx.close();
+					session.close();
+	        	}catch(Exception e) {
+	        		e.printStackTrace();
+	        	}
+	        }catch(Exception e) {
+        		e.printStackTrace();
+        	}
+	        return retVal;
+	}
+	
+	
+	public static ArrayList<Map<String, String>> joinMultiplayerTrivia(int gameID) {
+		ArrayList<Map<String, String>> retVal = new ArrayList<Map<String, String>>();
+		
+		 try (Session session = Connect.driver.session()){
+	        	try (Transaction tx = session.beginTransaction()) {
+	        		// Find out if we are the inviter or opponent
+	        		Result result = tx.run(String.format("match(n:triviaInProgress) WHERE ID(n) = %d RETURN n.inviterUsername as  inviterUsername, "
+	        				+ " n.oppUsername as oppUsername, "
+	        				+ "n.inviterScore as inviterScore,"
+	        				+ "n.accepterScore as oppScore, "
+	        				+ "n.inviterAnswers as inviterAnswers, "
+	        				+ "n.oppAnswers as oppAnswers", gameID));
+	        		Record record = result.next();
+	        		String inviterUsername = record.get("inviterUsername").asString();
+	        		String oppUsername = record.get("oppUsername").asString();
+	        		int inviterScore = record.get("inviterScore").asInt();
+	        		int oppScore = record.get("oppScore").asInt();
+	        		String inviterAnswers = record.get("inviterAnswers").asString();
+	        		String oppAnswers = record.get("oppAnswers").asString();	        		
+
+	        		
+					tx.commit();
+					tx.close();
+					session.close();
+	        	}catch(Exception e) {
+	        		e.printStackTrace();
+	        	}
+	        }catch(Exception e) {
+        		e.printStackTrace();
+        	}
+	        return retVal;
+	}
     
 }

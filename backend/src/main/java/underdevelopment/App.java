@@ -96,7 +96,8 @@ public class App
                 new HttpRequestHandler("POST", TriviaHandler.startMultiTrivia(), authorized));
         server.createContext("/api/trivia/end-multiplayer-game", 
                 new HttpRequestHandler("POST", TriviaHandler.endMultiTrivia(), authorized));
-        
+        server.createContext("/api/trivia/multiplayer-result", 
+                new HttpRequestHandler("POST", TriviaHandler.getMultiTrivia(), authorized));
         
         // Count resetting
         server.createContext("/api/reset-count", 
