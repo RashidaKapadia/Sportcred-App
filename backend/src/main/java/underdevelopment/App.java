@@ -86,6 +86,16 @@ public class App
         // Trivia route
         server.createContext("/api/trivia/get-questions", 
                 new HttpRequestHandler("POST", TriviaHandler.generateQuestions(), authorized));
+        server.createContext("/api/trivia/reset-trivia-count", 
+                new HttpRequestHandler("POST", TriviaHandler.resetTriviaCount(), authorized));
+        server.createContext("/api/trivia/subtract-trivia-count", 
+                new HttpRequestHandler("POST", TriviaHandler.subtractTriviaCount(), authorized));
+        server.createContext("/api/trivia/has-daily-play", 
+                new HttpRequestHandler("POST", TriviaHandler.getTriviaCount(), authorized));
+        server.createContext("/api/trivia/get-users-list", 
+                new HttpRequestHandler("POST", TriviaHandler.getUserList(), authorized));
+        server.createContext("/api/trivia/get-specific-questions", 
+                new HttpRequestHandler("POST", TriviaHandler.getQuesionsByID(), authorized));
 
         // Test routes
         server.createContext("/api/test/authorized-route", 
