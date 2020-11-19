@@ -27,7 +27,7 @@ public class App
     {
         // Dev settings
         String dbUsername = "neo4j";
-        String dbPassword = "1234";
+        String dbPassword = "jimmy";
         
         // Connect to the database
         Connect.connectDB(dbUsername, dbPassword);
@@ -124,13 +124,13 @@ public class App
                 new HttpRequestHandler("POST", PostCommentsHandler.handleCreateComment(), authorized));
         // Delete Comment API 
         server.createContext("/api/deleteComment", 
-                new HttpRequestHandler("DELETE", PostCommentsHandler.handleDeleteComment(), authorized));
+                new HttpRequestHandler("POST", PostCommentsHandler.handleDeleteComment(), authorized));
         
         server.createContext("/api/editComment", 
                 new HttpRequestHandler("POST", PostCommentsHandler.handleEditComment(), authorized));
 
         server.createContext("/api/getComments", 
-                new HttpRequestHandler("GET", PostCommentsHandler.handleGetComments(), authorized));
+                new HttpRequestHandler("POST", PostCommentsHandler.handleGetComments(), authorized));
         
         server.createContext("/api/getPosts", 
                 new HttpRequestHandler("POST", PostHandler.handleGetPosts(), authorized));

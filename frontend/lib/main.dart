@@ -17,6 +17,7 @@ import './HTTPRequestExample.dart';
 import './profile_page.dart';
 import './ACSHistory_page.dart';
 import 'notificationBoard.dart';
+import 'CommentsPage.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -40,6 +41,7 @@ void main() {
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
         '/trivia/solo/result': (context) => TriviaResult(),
         '/notifications': (context) => NotificationBoard(),
+        '/zone/comments': (context) => CommentsPage()
       }));
 }
 
@@ -52,6 +54,6 @@ class _SportCredAppState extends State<SportCredApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return LoginPage();
+    return CommentsPage();
   }
 }
