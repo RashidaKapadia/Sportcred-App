@@ -132,6 +132,7 @@ class QuizPage extends StatefulWidget {
       token: token,
       questions: questions,
       triviaMode: triviaMode,
+      gameId: gameId,
       opponent: opponent);
 }
 

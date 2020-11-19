@@ -132,7 +132,7 @@ class _NotificationBoardState extends State<NotificationBoard> {
               id: 0,
               type: "invite",
               category: "trivia",
-              actionId: 100,
+              actionId: 79,
               title: "You got an invitation from Bob"),
           notification(
               context: context,
