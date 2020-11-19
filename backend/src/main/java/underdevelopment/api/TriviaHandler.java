@@ -203,8 +203,8 @@ public class TriviaHandler {
                         .put(new JSONObject()
                             .put("questionId", question.get("questionId").toString())
                             .put("question", question.get("question").toString())
-                            .put("answer", new JSONArray(question.get("answer").toString()))
-                            .put("choices", new JSONArray(question.get("choices").toString()))
+                            .put("answer", question.get("answer"))
+                            .put("choices", question.get("choices"))
                         );
                 }
                 
