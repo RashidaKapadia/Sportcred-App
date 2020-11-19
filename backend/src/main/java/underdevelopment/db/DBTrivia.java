@@ -210,8 +210,8 @@ public class DBTrivia{
 	 * 	> acceptDate		- Today's date (if we are the opponent)
 	 */
 	
-	public static ArrayList<Map<String, String>> getMultiplayerTrivia(int gameID, String username) {
-		ArrayList<Map<String, String>> retVal = new ArrayList<Map<String, String>>();
+	public static ArrayList<Map<String, Object>> getMultiplayerTrivia(int gameID, String username) {
+		ArrayList<Map<String, Object>> retVal = new ArrayList<Map<String, Object>>();
 		
 		 try (Session session = Connect.driver.session()){
 	        	try (Transaction tx = session.beginTransaction()) {
@@ -236,8 +236,8 @@ public class DBTrivia{
 	        		// The first element is "you"
 	        		// Find and insert the username, gameScore and answers
 	        		// The second element is "otherPlayer"
-        			HashMap<String, String> you = new HashMap<String, String>();
-        			HashMap<String, String> opponent = new HashMap<String, String>();
+        			Map<String, Object> you = new HashMap<String, Object>();
+        			HashMap<String, Object> opponent = new HashMap<String, Object>();
 	        		if(username.equals(inviterUsername)) {
 	        			you.put("username", inviterUsername);
 	        			you.put("gameScore", Integer.toString(inviterScore));

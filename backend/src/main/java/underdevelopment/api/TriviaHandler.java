@@ -271,7 +271,7 @@ public class TriviaHandler {
 	            return new JsonHttpReponse(Status.BADREQUEST);
 	        }	        
 	        // Get questions from the db and make sure query was run properly
-	        ArrayList<Map<String, String>> results = DBTrivia.getMultiplayerTrivia(gameID, username);
+	        ArrayList<Map<String, Object>> results = DBTrivia.getMultiplayerTrivia(gameID, username);
 	        ArrayList<Map<String, Object>> questions = DBTrivia.joinMultiplayerTrivia(gameID);
 
 	        String acceptDate = DBTrivia.getMultiplayerTriviaAcceptDate(gameID);
