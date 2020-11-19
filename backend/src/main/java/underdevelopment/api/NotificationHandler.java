@@ -65,7 +65,7 @@ public class NotificationHandler {
 		    			.put("type", notificationList.get(1).get(i))
 		    			.put("category",  notificationList.get(2).get(i))
 		    			.put("title",  notificationList.get(3).get(i))
-		    			.put("infoID", Integer.valueOf(notificationList.get(4).get(i)))
+		    			.put("infoId", Integer.valueOf(notificationList.get(4).get(i)))
 		    			.put("read", Boolean.valueOf(notificationList.get(5).get(i)))
 		    			.toString();
 		    		response += oneResponse + ',';
