@@ -24,7 +24,7 @@ class UserNotification {
       notificationId: json['notificationId'],
       type: json['type'],
       category: json['category'],
-      message: json['message'],
+      message: json['title'],
       infoId: json['infoId'],
       read: json['read'],
     );

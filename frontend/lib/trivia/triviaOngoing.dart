@@ -294,6 +294,9 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
         onPressed: () {
           setState(() {
             cancelTimer = true;
+            for (int k = i; k < numQuestions; k++) {
+              selectedAnswers.add(null);
+            }
           });
           Navigator.of(context).pop();
           gotoResults(context);

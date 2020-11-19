@@ -92,11 +92,13 @@ class _NotificationBoardState extends State<NotificationBoard> {
       ])),
       GestureDetector(
           child: Icon(Icons.delete, color: Colors.red[300], size: 20),
-          onTap: () => deleteNotifications(username, [id]))
+          onTap: () {
+            deleteNotifications(username, [id]);
+          })
     ]);
   }
 
-  TableRow notification({
+  Widget notification({
     BuildContext context,
     String type,
     String category,
@@ -105,67 +107,46 @@ class _NotificationBoardState extends State<NotificationBoard> {
     int actionId,
   }) {
     //
-    return TableRow(
-        decoration: BoxDecoration(
-          border: Border.symmetric(
-              horizontal: BorderSide(color: Colors.grey[200], width: 1)),
-        ),
-        children: [
-          TableCell(
-              verticalAlignment: TableCellVerticalAlignment.middle,
-              child: margin10(Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    notificationHeader(id, type, category),
-                    hmargin5(bold(title)),
-                    vmargin5(getActions(context, id, actionId, type, category))
-                  ])))
-        ]);
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.symmetric(
+            horizontal: BorderSide(color: Colors.grey[200], width: 1)),
+      ),
+      child: margin10(
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          notificationHeader(id, type, category),
+          hmargin5(bold(title)),
+          Text("N-id: " + id.toString() + " gameId: " + actionId.toString()),
+          vmargin5(getActions(context, id, actionId, type, category))
+        ]),
+      ),
+    );
   }
 
   Widget notificationsList(
       BuildContext context, List<UserNotification> notifications) {
     return Container(
-        margin: EdgeInsets.symmetric(horizontal: 10),
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: notifications.length,
-            padding: EdgeInsets.all(0),
-            // physics: ScrollPhysics(),
-            itemBuilder: (context, index) {
-              return ListTile(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: (notifications.length == 0)
+          ? Center(child: margin20(Text("No new notifications")))
+          : ListView.builder(
+              shrinkWrap: true,
+              itemCount: notifications.length,
+              padding: EdgeInsets.all(0),
+              // physics: ScrollPhysics(),
+              itemBuilder: (context, index) {
+                return ListTile(
                   contentPadding: EdgeInsets.all(0),
-                  title: Text(notifications[index].message));
-            }));
-    // return SingleChildScrollView(
-    //     child: Table(
-    //         border: TableBorder.all(
-    //             color: Colors.black26, width: 1, style: BorderStyle.none),
-    //         children: [
-    //       notification(
-    //           context: context,
-    //           id: 0,
-    //           type: "invite",
-    //           category: "trivia",
-    //           actionId: 79,
-    //           title: "You got an invitation from Bob"),
-    //       notification(
-    //           context: context,
-    //           id: 1,
-    //           type: "results",
-    //           category: "trivia",
-    //           actionId: 100,
-    //           title:
-    //               "You got an invitation from Bob he would like to play 1 on 1 trivia with you. Would you like to join?"),
-    //       notification(
-    //           context: context,
-    //           id: 2,
-    //           type: "other",
-    //           category: "other",
-    //           actionId: 100,
-    //           title: "aew afe waefi faefj oafweif oawfj aefoi awefijfa wef A?"),
-    //     ]));
+                  title: notification(
+                      context: context,
+                      id: notifications[index].notificationId,
+                      type: notifications[index].type,
+                      category: notifications[index].category,
+                      actionId: notifications[index].infoId,
+                      title: notifications[index].message),
+                );
+              }),
+    );
   }
 
   Widget body(BuildContext context) {
