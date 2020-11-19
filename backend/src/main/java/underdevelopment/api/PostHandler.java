@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import underdevelopment.db.DBPostComments;
 import underdevelopment.db.DBPosts;
 import underdevelopment.db.DBUserInfo;
 
@@ -320,7 +321,7 @@ public class PostHandler {
             boolean isUpdated ;
             switch (toUpdate){
                 case "comments":
-                isUpdated =DBPosts.editPostComments(postId, newData);
+                isUpdated =DBPostComments.editComment(postId, newData);
                 if(!isUpdated){
                     try {
                         response = new JSONObject().put("Couldn't edit comments", isUpdated).toString();
