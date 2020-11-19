@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/trivia/triviaResultMultiplayer.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/widgets/fonts.dart';
@@ -28,12 +29,22 @@ class _NotificationBoardState extends State<NotificationBoard> {
     loadUsername();
   }
 
+  gotoTriviaResults(BuildContext context, int actionId) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) =>
+            TriviaResultMulti(username: username, gameId: actionId)));
+  }
+
   // Action factory
-  Widget getActions(String type, String category) {
+  Widget getActions(
+      BuildContext context, String type, String category, int actionId) {
     if (type == "invite" && category == "trivia") {
       return greyButtonFullWidth(() {}, Text("Accept Invitation"));
     } else if (type == "results" && category == "trivia") {
-      return greyButtonFullWidth(() {}, Text("See Results"));
+      return greyButtonFullWidth(
+        () => gotoTriviaResults(context, actionId),
+        Text("See Results"),
+      );
     } else {
       return Text("");
     }
@@ -78,7 +89,7 @@ class _NotificationBoardState extends State<NotificationBoard> {
                   children: [
                     notificationHeader(type, category),
                     hmargin5(bold(title)),
-                    vmargin5(getActions(type, category))
+                    vmargin5(getActions(context, type, category, 0))
                   ])))
         ]);
   }
