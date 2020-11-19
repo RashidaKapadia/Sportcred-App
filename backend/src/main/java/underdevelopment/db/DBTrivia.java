@@ -243,17 +243,17 @@ public class DBTrivia{
         			HashMap<String, Object> opponent = new HashMap<String, Object>();
 	        		if(username.equals(inviterUsername)) {
 	        			you.put("username", inviterUsername);
-	        			you.put("gameScore", Integer.toString(inviterScore));
+	        			you.put("gameScore", inviterScore);
 	        			you.put("answers", new JSONArray(inviterAnswers));
 	        			opponent.put("username", oppUsername);
-	        			opponent.put("gameScore", Integer.toString(oppScore));
+	        			opponent.put("gameScore", oppScore);
 	        			opponent.put("answers", new JSONArray(oppAnswers));
 	        		}else if(username.equals(oppUsername)) {
 	        			opponent.put("username", inviterUsername);
-	        			opponent.put("gameScore", Integer.toString(inviterScore));
+	        			opponent.put("gameScore", inviterScore);
 	        			opponent.put("answers", new JSONArray(inviterAnswers));
 	        			you.put("username", oppUsername);
-	        			you.put("gameScore", Integer.toString(oppScore));
+	        			you.put("gameScore", oppScore);
 	        			you.put("answers", new JSONArray(oppAnswers));
 	        		}else {
 	        			return null;

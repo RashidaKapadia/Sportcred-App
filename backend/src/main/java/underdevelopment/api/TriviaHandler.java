@@ -285,7 +285,7 @@ public class TriviaHandler {
 						.put("otherPlayer", results.get(1))
 						.put("inviteDate", inviteDate)
 						.put("acceptDate", acceptDate)
-						.put("questions", questions)
+						.put("questions", new JSONArray(questions))
 						.toString();
 			  	return new JsonHttpReponse(Status.OK, response);
 			} catch (JSONException e) {
@@ -326,11 +326,12 @@ public class TriviaHandler {
                     Map<String, Object> question = it.next();
                     questionsJSON
                         .put(new JSONObject()
-                            .put("questionId", question.get("questionId").toString())
-                            .put("question", new JSONArray(question.get("question").toString()))
-                            .put("answer", new JSONArray(question.get("answer").toString()))
-                            .put("choices", new JSONArray(question.get("choices").toString()))
-                        );
+                            .put("questionId", question.get("questionId"))
+                            .put("question", new JSONArray(question.get("question")))
+                            .put("answer", new JSONArray(question.get("answer")))
+                            .put("choices", new JSONArray(question.get("choices")))
+                        ).toString();
+                    System.out.println("the choices is: " + new JSONArray(question.get("choices")).toString());
                 }
                 // Create the json response
                 String response = new JSONObject()

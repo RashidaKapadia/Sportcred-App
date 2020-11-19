@@ -3,8 +3,10 @@ package underdevelopment.db;
 import static org.neo4j.driver.Values.parameters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -40,9 +42,20 @@ public class DBQuestion {
          			Result result = tx.run(String.format("match(n:Question {questionId:%d})  return n", IDList[i]));
      				while(result.hasNext()) {
      					Record rec = result.next();
-     					questions.add(rec.get("n").asMap());
-     					//System.out.println(rec.asMap());
-     					//Map map = rec.asMap();
+     					Map<String, Object> curQuestion = rec.get("n").asMap();
+     					HashMap question = new HashMap<String,Object>();
+     					question.put("questionID", curQuestion.get("questionID"));
+     					question.put("question", curQuestion.get("question"));
+     					question.put("star", curQuestion.get("star"));
+     					question.put("answer", curQuestion.get("answer"));
+     					question.put("category", curQuestion.get("category"));
+     					question.put("choices", new JSONArray(curQuestion.get("choices").toString()));
+     					question.put("version", curQuestion.get("version"));
+
+     					
+     					questions.add(question);
+     					//questions.add(rec.get("n").asMap());
+     					// 
      				}
          		}
  				tx.close(); 
