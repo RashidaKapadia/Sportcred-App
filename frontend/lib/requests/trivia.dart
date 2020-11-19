@@ -31,11 +31,15 @@ List<TriviaQuestion> makeQuestionsList(List<dynamic> list) {
 }
 
 class TriviaPlayerResult {
-  final List<String> answers;
-  final String gameScore;
+  final List<dynamic> answers;
+  final int gameScore;
   final String username;
 
-  TriviaPlayerResult({this.answers, this.gameScore, this.username});
+  TriviaPlayerResult({
+    this.answers,
+    this.gameScore,
+    this.username,
+  });
   factory TriviaPlayerResult.fromJson(Map<String, dynamic> json) {
     return TriviaPlayerResult(
         answers: json['answers'],
@@ -45,13 +49,23 @@ class TriviaPlayerResult {
 }
 
 class TriviaGameResult {
+  final String acceptDate;
+  final String inviteDate;
   final List<TriviaQuestion> questions;
   final TriviaPlayerResult you, otherPlayer;
 
-  TriviaGameResult({this.questions, this.you, this.otherPlayer});
+  TriviaGameResult({
+    this.acceptDate,
+    this.inviteDate,
+    this.questions,
+    this.you,
+    this.otherPlayer,
+  });
 
   factory TriviaGameResult.fromJson(Map<String, dynamic> json) {
     return TriviaGameResult(
+      acceptDate: json['acceptDate'],
+      inviteDate: json['inviteDate'],
       questions: makeQuestionsList(json['questions']),
       you: TriviaPlayerResult.fromJson(json['you']),
       otherPlayer: TriviaPlayerResult.fromJson(json['otherPlayer']),

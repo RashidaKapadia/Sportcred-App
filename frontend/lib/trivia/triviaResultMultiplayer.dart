@@ -33,37 +33,6 @@ class _TriviaResultMultiState extends State<TriviaResultMulti> {
     });
   }
 
-  Widget temp() {
-    return Scaffold(
-      body: ListView(children: [
-        headerBanner(superLargeHeading("Result", color: Colors.white)),
-        Container(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  bold("Question 1"),
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: 5,
-                      itemBuilder: (context, index) => Column(children: [
-                            Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("You  ->"),
-                                  Container(
-                                      width: 150,
-                                      child: Text("• " + index.toString(),
-                                          textAlign: TextAlign.left)),
-                                  Text("<- Them")
-                                ])
-                          ])),
-                ])),
-      ]),
-    );
-  }
-
   Widget loadTrivia() {
     return FutureBuilder<TriviaGameResult>(
       future: _futureTriviaGameResults,
@@ -74,8 +43,7 @@ class _TriviaResultMultiState extends State<TriviaResultMulti> {
             game: snapshot.data,
           );
         } else {
-          return temp();
-          // return margin10(CircularProgressIndicator());
+          return margin10(CircularProgressIndicator());
         }
       },
     );
@@ -107,8 +75,123 @@ class _PageBodyState extends State<PageBody> with TickerProviderStateMixin {
     super.initState();
   }
 
+  Widget listSelectedAnswers(BuildContext context, int qindex) {
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: game.questions[qindex].options.length,
+        itemBuilder: (context, index) {
+          bool youPicked =
+              game.you.answers[qindex] == game.questions[qindex].options[index];
+          bool theyPicked = game.otherPlayer.answers[qindex] ==
+              game.questions[qindex].options[index];
+          bool isAnswer = game.questions[qindex].options[index] ==
+              game.questions[qindex].answer;
+          return Column(children: [
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  (youPicked)
+                      ? tag("You", 190, 220, 230, width: 50)
+                      : SizedBox(width: 50),
+                  Container(
+                      width: 200,
+                      child: Text(
+                        "• " + game.questions[qindex].options[index],
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: (youPicked || theyPicked)
+                                ? (isAnswer)
+                                    ? Color.fromRGBO(90, 160, 20, 1)
+                                    : Colors.red
+                                : Colors.black38),
+                      )),
+                  (theyPicked)
+                      ? tag("Them", 230, 210, 190, width: 50)
+                      : SizedBox(width: 50),
+                ])
+          ]);
+        });
+  }
+
+  Widget listQuestions(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: game.questions.length,
+            padding: EdgeInsets.all(0),
+            // physics: ScrollPhysics(),
+            itemBuilder: (context, index) {
+              return ListTile(
+                contentPadding: EdgeInsets.all(0),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    vmargin10(bold(game.questions[index].question,
+                        align: TextAlign.left)),
+                    listSelectedAnswers(context, index)
+                  ],
+                ),
+              );
+            }));
+  }
+
+  Widget displaySummary(BuildContext context) {
+    bool win = game.you.gameScore > game.otherPlayer.gameScore;
+    String winner;
+    if (game.you.gameScore > game.otherPlayer.gameScore) {
+      winner = game.you.username;
+    } else if (game.you.gameScore < game.otherPlayer.gameScore) {
+      winner = game.otherPlayer.username;
+    } else {
+      winner = "tie";
+    }
+    return margin20(Column(
+      children: [
+        h3("Summary"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                h2(game.you.username),
+                h3(game.you.gameScore.toString(),
+                    color: (win) ? Colors.greenAccent : Colors.red)
+              ],
+            ),
+            Column(
+              children: [
+                h2(game.otherPlayer.username),
+                h3(game.you.gameScore.toString(),
+                    color: (win) ? Colors.greenAccent : Colors.red)
+              ],
+            ),
+          ],
+        ),
+        h3("Winner:"),
+        h2(winner),
+      ],
+    ));
+  }
+
   Widget body(BuildContext context) {
-    return Text("TODO");
+    return Center(
+        child: Container(
+      child: Column(children: [
+        headerBanner(Column(
+          children: [
+            superLargeHeading("Trivia Results", color: Colors.white),
+            heading(game.you.username + " vs " + game.otherPlayer.username,
+                size: 25, color: Colors.deepOrange)
+          ],
+        )),
+        listQuestions(context),
+        displaySummary(context),
+      ]),
+    ));
   }
 
   @override
@@ -122,6 +205,8 @@ class _PageBodyState extends State<PageBody> with TickerProviderStateMixin {
             centerTitle: true,
             backgroundColor: Colors.brown[300]),
         // bottomNavigationBar: NavBar(1),
-        body: body(context));
+        body: SingleChildScrollView(
+          child: Stack(children: [body(context)]),
+        ));
   }
 }

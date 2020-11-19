@@ -5,7 +5,7 @@ Color negateColor(int r, int g, int b, double rate) {
   return Color.fromRGBO(nColor(r, rate), nColor(g, rate), nColor(r, rate), 1);
 }
 
-Widget tag(String text, int r, int g, int b) {
+Widget tag(String text, int r, int g, int b, {double width}) {
   // background color
   var c1 = Color.fromRGBO(r, g, b, 1);
   // text color
@@ -15,6 +15,7 @@ Widget tag(String text, int r, int g, int b) {
 
   return Container(
       // color: (color != null) ? color : Colors.lightBlue,
+      width: width,
       padding: EdgeInsets.symmetric(vertical: 3, horizontal: 6),
       decoration: BoxDecoration(
         border: Border.all(color: c3, width: 1.2),
@@ -27,8 +28,9 @@ Widget tag(String text, int r, int g, int b) {
               TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: c2)));
 }
 
-Widget bold(String text) {
+Widget bold(String text, {TextAlign align}) {
   return Text(text,
+      textAlign: (align != null) ? align : TextAlign.left,
       style: TextStyle(
         fontWeight: FontWeight.bold,
       ));
