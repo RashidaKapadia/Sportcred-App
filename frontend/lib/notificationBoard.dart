@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/requests/notifications.dart';
+import 'package:frontend/trivia/triviaOngoing.dart';
 import 'package:frontend/trivia/triviaResultMultiplayer.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:flutter_session/flutter_session.dart';
@@ -29,6 +31,11 @@ class _NotificationBoardState extends State<NotificationBoard> {
     loadUsername();
   }
 
+  gotoTrivia(BuildContext context, int actionId) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => TriviaOngoing(gameId: actionId)));
+  }
+
   gotoTriviaResults(BuildContext context, int actionId) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) =>
@@ -36,13 +43,22 @@ class _NotificationBoardState extends State<NotificationBoard> {
   }
 
   // Action factory
-  Widget getActions(
-      BuildContext context, String type, String category, int actionId) {
+  Widget getActions(BuildContext context, int id, int actionId, String type,
+      String category) {
     if (type == "invite" && category == "trivia") {
-      return greyButtonFullWidth(() {}, Text("Accept Invitation"));
+      return greyButtonFullWidth(
+        () {
+          deleteNotifications(username, [id]);
+          gotoTrivia(context, actionId);
+        },
+        Text("Accept Invitation"),
+      );
     } else if (type == "results" && category == "trivia") {
       return greyButtonFullWidth(
-        () => gotoTriviaResults(context, actionId),
+        () {
+          markReadNotifications(username, [id]);
+          gotoTriviaResults(context, actionId);
+        },
         Text("See Results"),
       );
     } else {
@@ -63,18 +79,26 @@ class _NotificationBoardState extends State<NotificationBoard> {
     }
   }
 
-  Widget notificationHeader(String type, String category) {
+  Widget notificationHeader(int id, String type, String category) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       vmargin5(Row(children: [
         getTag(type),
         hmargin5(getTag(category)),
       ])),
-      Icon(Icons.delete, color: Colors.red[300], size: 20)
+      GestureDetector(
+          child: Icon(Icons.delete, color: Colors.red[300], size: 20),
+          onTap: () => deleteNotifications(username, [id]))
     ]);
   }
 
-  TableRow notification(
-      BuildContext context, String type, String category, String title) {
+  TableRow notification({
+    BuildContext context,
+    String type,
+    String category,
+    String title,
+    int id,
+    int actionId,
+  }) {
     //
     return TableRow(
         decoration: BoxDecoration(
@@ -87,9 +111,9 @@ class _NotificationBoardState extends State<NotificationBoard> {
               child: margin10(Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    notificationHeader(type, category),
+                    notificationHeader(id, type, category),
                     hmargin5(bold(title)),
-                    vmargin5(getActions(context, type, category, 0))
+                    vmargin5(getActions(context, id, actionId, type, category))
                   ])))
         ]);
   }
@@ -101,21 +125,27 @@ class _NotificationBoardState extends State<NotificationBoard> {
                 color: Colors.black26, width: 1, style: BorderStyle.none),
             children: [
           notification(
-              context, "invite", "trivia", "You got an invitation from Bob"),
-          notification(context, "invite", "trivia",
-              "You got an invitation from Bob he would like to play 1 on 1 trivia with you. Would you like to join?"),
-          notification(context, "results", "trivia",
-              "You got an invitation from Bob he would like to play 1 on 1 trivia with you. Would you like to join?"),
-          notification(context, "invite", "debate",
-              "You got an invitation from Bob he would like to play 1 on 1 trivia with you. Would you like to join?"),
-          notification(context, "invite", "trivia",
-              "You got an invitation from Bob he would like to play 1 on 1 trivia with you. Would you like to join?"),
-          notification(context, "results", "debate",
-              "You got an invitation from Bob he would like to play 1 on 1 trivia with you. Would you like to join?"),
-          notification(context, "invite", "trivia",
-              "You got an invitation from Bob he would like to play 1 on 1 trivia with you. Would you like to join?"),
-          notification(context, "invite", "trivia",
-              "You got an invitation from Bob he would like to play 1 on 1 trivia with you. Would you like to join?"),
+              context: context,
+              id: 0,
+              type: "invite",
+              category: "trivia",
+              actionId: 100,
+              title: "You got an invitation from Bob"),
+          notification(
+              context: context,
+              id: 1,
+              type: "results",
+              category: "trivia",
+              actionId: 100,
+              title:
+                  "You got an invitation from Bob he would like to play 1 on 1 trivia with you. Would you like to join?"),
+          notification(
+              context: context,
+              id: 2,
+              type: "other",
+              category: "other",
+              actionId: 100,
+              title: "aew afe waefi faefj oafweif oawfj aefoi awefijfa wef A?"),
         ]));
   }
 
