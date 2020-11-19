@@ -73,7 +73,7 @@ public class DBTrivia{
 	        		ID = result.next().get("ID").asInt();
 	        		
 	        		// Create the notifications
-	        		DBNotifications.createNotification(username, "trivia", "triviaMultiPlays", ID, "new trivia game");
+	        		//DBNotifications.createNotification(username, "trivia", "triviaMultiPlays", ID, "new trivia game");
 	        		DBNotifications.createNotification(oppUsername, "trivia", "triviaMultiPlays", ID, "new trivia game");
 
 					tx.commit();

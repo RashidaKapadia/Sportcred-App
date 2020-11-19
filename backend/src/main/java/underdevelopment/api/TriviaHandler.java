@@ -179,6 +179,7 @@ public class TriviaHandler {
 	        }
 	        // Get questions from the db and make sure query was run properly
 	       int gameID = DBTrivia.startMultiplayerTrivia(username, oppUsername);
+	       ArrayList<Map<String, Object>> questionList = DBTrivia.joinMultiplayerTrivia(gameID);
 	       
 	       if(gameID == -1) {
 	    	   System.out.println("error with the query");
@@ -187,11 +188,28 @@ public class TriviaHandler {
 	       
 	       
 	        try {
-	            JSONArray questionsJSON = new JSONArray();
 	            // Build the json array of questions
 	            // Create the json response
-	            String response =new JSONObject().put("gameID", gameID).toString();
-
+	            
+	            JSONArray questionsJSON = new JSONArray();
+	            
+		        ArrayList<Map<String, Object>> questions = DBTrivia.joinMultiplayerTrivia(gameID);
+                // Build the json array of questions
+                Iterator<Map<String, Object>> it = questions.iterator();
+                while (it.hasNext()) {
+                	System.out.println("hello there");
+                    Map<String, Object> question = it.next();
+                    questionsJSON
+                        .put(new JSONObject()
+                            .put("questionId", question.get("questionId").toString())
+                            .put("question", question.get("question").toString())
+                            .put("answer", question.get("answer").toString())
+                            .put("choices", new JSONArray(question.get("choices").toString()))
+                        );
+                }
+                
+	            String response =new JSONObject().put("gameID", gameID).put("questions", questionsJSON).toString();
+	            
 	            return new JsonHttpReponse(Status.OK, response);
 	        } catch (JSONException e) {
 	            e.printStackTrace();
