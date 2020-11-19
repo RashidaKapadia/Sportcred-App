@@ -68,11 +68,11 @@ class _TriviaOngoingState extends State<TriviaOngoing> {
     super.initState();
   }
 
-  Widget loadTrivia() {
-    if (triviaMode == TriviaMode.SOLO) {
-    } else if (triviaMode == TriviaMode.MULTI_INVITER) {
-    } else {}
-  }
+  // Widget loadTrivia() {
+  //   if (triviaMode == TriviaMode.SOLO) {
+  //   } else if (triviaMode == TriviaMode.MULTI_INVITER) {
+  //   } else {}
+  // }
 
   Widget loadTrivia() {
     return FutureBuilder<dynamic>(
@@ -83,11 +83,11 @@ class _TriviaOngoingState extends State<TriviaOngoing> {
           if (triviaMode == TriviaMode.SOLO) {
             triviaQns = snapshot.data;
           } else if (triviaMode == TriviaMode.MULTI_INVITER) {
-            List qnsNgameId = snapshot.data as List;
+            List qnsNgameId = snapshot.data as List<dynamic>;
             triviaQns = qnsNgameId[0];
             gameId = qnsNgameId[1];
           } else {
-            List qnsNopponent = snapshot.data as List;
+            List qnsNopponent = snapshot.data as List<dynamic>;
             triviaQns = qnsNopponent[0];
             opponent = qnsNopponent[1];
           }

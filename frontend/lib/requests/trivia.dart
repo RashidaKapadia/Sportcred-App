@@ -85,7 +85,7 @@ Future startMultiplayerTrivia(String username, String opponent) async {
   return [triviaQs, gameId];
 }
 
-Future joinMultiplayerTrivia(int gameId) async {
+Future<List<dynamic>> joinMultiplayerTrivia(int gameId) async {
   final http.Response response =
       await http.post('http://localhost:8080/api/trivia/join-multiplayer-game',
           headers: defaultHeaders,
@@ -106,7 +106,7 @@ Future joinMultiplayerTrivia(int gameId) async {
   return [triviaQs, opponent];
 }
 
-Future endMultiplayerTrivia(
+Future<bool> endMultiplayerTrivia(
     String username, int gameId, List<String> answers, int gameScore) async {
   final http.Response response =
       await http.post('http://localhost:8080/api/trivia/end-multiplayer-game',
