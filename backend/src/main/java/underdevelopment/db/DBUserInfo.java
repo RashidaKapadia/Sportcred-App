@@ -2,6 +2,8 @@ package underdevelopment.db;
 
 import static org.neo4j.driver.Values.parameters;
 
+import java.util.ArrayList;
+
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -163,4 +165,38 @@ public class DBUserInfo {
   }
 
 
+  
+  
+  // Returns an array of arraylists of uers
+  public static ArrayList<String>[] returnUsers( ) {
+	  ArrayList<String> users[] = new ArrayList[3];
+	  users[0] = new ArrayList<String>();
+	  users[1] = new ArrayList<String>();
+	  users[2] = new ArrayList<String>();
+
+	 try (Session session = Connect.driver.session()){
+        	try (Transaction tx = session.beginTransaction()) {
+        		int plays;
+    	        System.out.println("getting trivia Count");
+				Result result = tx.run("match(n:user) return n.username as username, n.lastname as lastname, n.firstname as firstname");
+				while(result.hasNext()) {
+					Record rec = result.next();
+					//System.out.println(rec.get("username"));
+					//System.out.println(rec.get("lastname"));
+					//System.out.println(rec.get("firstname"));
+
+					users[0].add(rec.get("username").asString());
+					users[1].add(rec.get("lastname").asString());
+					users[2].add(rec.get("firstname").asString());
+				}
+				tx.close();
+				session.close();
+        	}catch(Exception e) {
+        		e.printStackTrace();
+        	}
+        }catch(Exception e) {
+ 		e.printStackTrace();
+ 	}
+        return users;
+  }
 }

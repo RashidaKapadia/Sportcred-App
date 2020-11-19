@@ -212,7 +212,7 @@ class _ProfilePageState extends State<ProfilePage>
                 onPressed: () => Navigator.of(context).pushNamed("/homepage")),
             title: Text("Profile", style: TextStyle(color: Colors.white)),
             centerTitle: true,
-            backgroundColor: Colors.black),
+            backgroundColor: Colors.blueGrey),
         bottomNavigationBar: NavBar(2),
         body: Container(
           color: Colors.white,
