@@ -92,7 +92,7 @@ class _PageBodyState extends State<PageBody> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   (youPicked)
-                      ? tag("You", 190, 220, 230, width: 50)
+                      ? tag("You", 190, 220, 240, width: 50)
                       : SizedBox(width: 50),
                   Container(
                       width: 200,
@@ -107,7 +107,7 @@ class _PageBodyState extends State<PageBody> with TickerProviderStateMixin {
                                 : Colors.black38),
                       )),
                   (theyPicked)
-                      ? tag("Them", 230, 210, 190, width: 50)
+                      ? tag("Them", 240, 220, 180, width: 50)
                       : SizedBox(width: 50),
                 ])
           ]);
@@ -185,7 +185,7 @@ class _PageBodyState extends State<PageBody> with TickerProviderStateMixin {
           children: [
             superLargeHeading("Trivia Results", color: Colors.white),
             heading(game.you.username + " vs " + game.otherPlayer.username,
-                size: 25, color: Colors.deepOrange)
+                size: 25, color: Colors.orange)
           ],
         )),
         listQuestions(context),
@@ -200,10 +200,11 @@ class _PageBodyState extends State<PageBody> with TickerProviderStateMixin {
         appBar: AppBar(
             leading: BackButton(
                 color: Colors.white,
-                onPressed: () => Navigator.of(context).pushNamed("/homepage")),
+                onPressed: () =>
+                    Navigator.of(context).pushNamed("/notifications")),
             title: Text("Notifications", style: TextStyle(color: Colors.white)),
             centerTitle: true,
-            backgroundColor: Colors.brown[300]),
+            backgroundColor: Colors.brown),
         // bottomNavigationBar: NavBar(1),
         body: SingleChildScrollView(
           child: Stack(children: [body(context)]),
