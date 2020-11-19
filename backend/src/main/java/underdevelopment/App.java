@@ -113,7 +113,7 @@ public class App
                 new HttpRequestHandler("DELETE", PostHandler.handleDeletePost(), authorized));
         
         server.createContext("/api/editPost", 
-                new HttpRequestHandler("POST", PostHandler.handleEditPost(), authorized));
+                new HttpRequestHandler("POST", PostHandler.updatePost(), authorized));
 
         server.createContext("/api/agreedOrDisagreedPost", 
                 new HttpRequestHandler("POST", PostHandler.handlePostAgreeDisAgree(), authorized));
