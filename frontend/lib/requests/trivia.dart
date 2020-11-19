@@ -14,12 +14,48 @@ class TriviaQuestion {
 
   TriviaQuestion({this.question, this.options, this.answer});
 
-  // converts json to TriviaQuestions object
   factory TriviaQuestion.fromJson(Map<String, dynamic> json) {
     return TriviaQuestion(
         question: json['question'],
         options: json['choices'],
         answer: json['answer']);
+  }
+}
+
+List<TriviaQuestion> makeQuestionsList(List<dynamic> list) {
+  List<TriviaQuestion> triviaQs = [];
+  for (Map<String, dynamic> question in list) {
+    triviaQs.add(TriviaQuestion.fromJson(question));
+  }
+  return triviaQs;
+}
+
+class TriviaPlayerResult {
+  final List<String> answers;
+  final String gameScore;
+  final String username;
+
+  TriviaPlayerResult({this.answers, this.gameScore, this.username});
+  factory TriviaPlayerResult.fromJson(Map<String, dynamic> json) {
+    return TriviaPlayerResult(
+        answers: json['answers'],
+        gameScore: json['gameScore'],
+        username: json['username']);
+  }
+}
+
+class TriviaGameResult {
+  final List<TriviaQuestion> questions;
+  final TriviaPlayerResult you, otherPlayer;
+
+  TriviaGameResult({this.questions, this.you, this.otherPlayer});
+
+  factory TriviaGameResult.fromJson(Map<String, dynamic> json) {
+    return TriviaGameResult(
+      questions: makeQuestionsList(json['questions']),
+      you: TriviaPlayerResult.fromJson(json['you']),
+      otherPlayer: TriviaPlayerResult.fromJson(json['otherPlayer']),
+    );
   }
 }
 
@@ -33,13 +69,7 @@ Future<List<TriviaQuestion>> getQuestions(String category) async {
   );
 
   if (response.statusCode == 200) {
-    List<TriviaQuestion> triviaQs = [];
-    // Get the questions, options and correctAnswers and store them in the class variables
-    for (Map<String, dynamic> question
-        in jsonDecode(response.body)["questions"] as List) {
-      triviaQs += [TriviaQuestion.fromJson(question)];
-    }
-    return triviaQs;
+    return makeQuestionsList(jsonDecode(response.body)["questions"]);
   } else {
     return null;
   }
@@ -78,9 +108,7 @@ Future startMultiplayerTrivia(String username, String opponent) async {
   if (response.statusCode == 200) {
     Map<String, dynamic> json = jsonDecode(response.body);
     gameId = json["gameID"];
-    for (Map<String, dynamic> question in json["questions"] as List) {
-      triviaQs.add(TriviaQuestion.fromJson(question));
-    }
+    triviaQs = makeQuestionsList(json["questions"]);
   }
   return [triviaQs, gameId];
 }
@@ -99,9 +127,7 @@ Future<List<dynamic>> joinMultiplayerTrivia(int gameId) async {
   if (response.statusCode == 200) {
     Map<String, dynamic> json = jsonDecode(response.body);
     opponent = json["inviter"];
-    for (Map<String, dynamic> question in json["questions"] as List) {
-      triviaQs.add(TriviaQuestion.fromJson(question));
-    }
+    triviaQs = makeQuestionsList(json["questions"]);
   }
   return [triviaQs, opponent];
 }
@@ -118,4 +144,19 @@ Future<bool> endMultiplayerTrivia(
             "gameScore": gameScore
           }));
   return (response.statusCode == 200);
+}
+
+Future<TriviaGameResult> resultsMultiplayerTrivia(
+    String username, int gameId) async {
+  final http.Response response =
+      await http.post('http://localhost:8080/api/trivia/multiplayer-result',
+          headers: defaultHeaders,
+          body: jsonEncode(<String, dynamic>{
+            "gameID": gameId,
+            "username": username,
+          }));
+  if (response.statusCode == 200) {
+    return TriviaGameResult.fromJson(jsonDecode(response.body));
+  }
+  return null;
 }

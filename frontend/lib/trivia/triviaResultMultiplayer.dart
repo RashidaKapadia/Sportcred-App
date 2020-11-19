@@ -23,26 +23,52 @@ class _TriviaResultMultiState extends State<TriviaResultMulti> {
   String username = "";
   int gameId;
   _TriviaResultMultiState({@required this.username, @required this.gameId});
-  Future<List<TriviaQuestion>> _futureTriviaQuestions;
+  Future<TriviaGameResult> _futureTriviaGameResults;
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      // _futureTriviaQuestions = getQuestions(category);
+      _futureTriviaGameResults = resultsMultiplayerTrivia(username, gameId);
     });
   }
 
+  Widget temp() {
+    return Scaffold(
+        body: ListView(children: [
+      Text("Dummy"),
+      Container(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        bold("Question 1"),
+        ListView.builder(
+            shrinkWrap: true,
+            itemCount: 5,
+            itemBuilder: (context, index) => Column(children: [
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("You  ->"),
+                        Text("• " + index.toString()),
+                        Text("<- Them")
+                      ])
+                ])),
+      ])),
+    ]));
+  }
+
   Widget loadTrivia() {
-    return FutureBuilder<List<TriviaQuestion>>(
-      future: _futureTriviaQuestions,
+    return FutureBuilder<TriviaGameResult>(
+      future: _futureTriviaGameResults,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return PageBody(
             username: username,
+            game: snapshot.data,
           );
         } else {
-          return margin10(CircularProgressIndicator());
+          return temp();
+          // return margin10(CircularProgressIndicator());
         }
       },
     );
@@ -55,19 +81,19 @@ class _TriviaResultMultiState extends State<TriviaResultMulti> {
 // Page with changing questions
 class PageBody extends StatefulWidget {
   String username = "";
-  PageBody({Key key, @required this.username}) : super(key: key);
+  TriviaGameResult game;
+  PageBody({Key key, @required this.username, @required this.game})
+      : super(key: key);
 
   @override
-  _PageBodyState createState() => _PageBodyState(
-        username: username,
-      );
+  _PageBodyState createState() =>
+      _PageBodyState(username: username, game: game);
 }
 
 class _PageBodyState extends State<PageBody> with TickerProviderStateMixin {
   String username = "";
-  _PageBodyState({
-    @required this.username,
-  });
+  TriviaGameResult game;
+  _PageBodyState({@required this.username, @required this.game});
 
   @override
   void initState() {
@@ -75,24 +101,7 @@ class _PageBodyState extends State<PageBody> with TickerProviderStateMixin {
   }
 
   Widget body(BuildContext context) {
-    return SingleChildScrollView(
-        child: Table(
-      border: TableBorder.all(
-          color: Colors.black26, width: 1, style: BorderStyle.none),
-      children: [
-        TableRow(
-            decoration: BoxDecoration(
-              border: Border.symmetric(
-                  horizontal: BorderSide(color: Colors.grey[200], width: 1)),
-            ),
-            children: [
-              TableCell(
-                verticalAlignment: TableCellVerticalAlignment.middle,
-                child: Text("Hi " + username),
-              )
-            ]),
-      ],
-    ));
+    return Text("TODO");
   }
 
   @override
