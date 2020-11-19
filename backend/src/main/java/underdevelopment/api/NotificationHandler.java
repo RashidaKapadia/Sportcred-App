@@ -61,12 +61,12 @@ public class NotificationHandler {
                 JSONObject jsonResponse  = new JSONObject();
                 for(int i = 0; i < notificationList.get(0).size(); i++) {
                     String oneResponse = new JSONObject()
-                        .put("notificationId", notificationList.get(0).get(i))
+                        .put("notificationId",Integer.valueOf(notificationList.get(0).get(i)))
 		    			.put("type", notificationList.get(1).get(i))
 		    			.put("category",  notificationList.get(2).get(i))
 		    			.put("title",  notificationList.get(3).get(i))
-		    			.put("infoID", notificationList.get(4).get(i))
-		    			.put("read", notificationList.get(5).get(i))
+		    			.put("infoID", Integer.valueOf(notificationList.get(4).get(i)))
+		    			.put("read", Boolean.valueOf(notificationList.get(5).get(i)))
 		    			.toString();
 		    		response += oneResponse + ',';
                 }
