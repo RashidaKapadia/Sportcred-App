@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 // import 'package:frontend/InitialPage.dart';
-import 'package:frontend/SoloTriviaPage.dart';
+import 'package:frontend/trivia/pickTriviaCategory.dart';
+import 'package:frontend/trivia/onGoingTrivia.dart';
+import 'package:frontend/trivia/triviaStart.dart';
 import 'package:frontend/changePassword.dart';
+import 'package:frontend/trivia/triviaResult.dart';
 import 'changeContact.dart';
-import 'onGoingTrivia.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
 import './loginPage.dart';
 import './homepage.dart';
 import './settings.dart';
+import './theZone.dart';
 import './HTTPRequestExample.dart';
 import './profile_page.dart';
 import './ACSHistory_page.dart';
-import './trivia.dart';
+import 'notificationBoard.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -30,10 +33,13 @@ void main() {
         '/changeContact': (context) => ChangeContact(),
         "/test": (context) => HTTPRequestExample(),
         '/trivia': (context) => TriviaHomePage(),
-        '/soloTrivia': (context) => SoloTriviaPage(),
+        '/soloTrivia': (context) => PickTriviaCategoryPage(),
         '/quizPage': (context) => OnGoingTrivia("Basketball", null),
         '/settings': (context) => Settings(),
-        "/profile/ACSHistory": (context) => ACSHistoryPage()
+        "/profile/ACSHistory": (context) => ACSHistoryPage(),
+        '/trivia/solo/result': (context) => TriviaResult(),
+        '/notifications': (context) => NotificationBoard(),
+        '/theZone': (context) => TheZone()
       }));
 }
 

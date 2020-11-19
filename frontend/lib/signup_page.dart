@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/buttons.dart';
+import 'package:frontend/widgets/fonts.dart';
+import 'package:frontend/widgets/layout.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -354,27 +357,19 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
               child: Column(children: [
                 SizedBox(height: 20.0),
-                Image.asset('assets/Logo.png',
-                    width: 250, height: 325, fit: BoxFit.cover),
-                Text(
-                  "Sign Up!",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: (_futureSignUpStatus != null)
-                    ? getStatus(context, _futureSignUpStatus)
-                    : Text("Enter your information below:"),),
+                logoBanner(),
+                Center(child: h2('Signup!!', color: Colors.deepOrange)),
+                Center(
+                    child: (_futureSignUpStatus != null)
+                        ? getStatus(context, _futureSignUpStatus)
+                        : Text("Enter your information below:",
+                            style: TextStyle(color: Colors.black87))),
                 //SizedBox(height: 20.0),
                 getFirstname(),
                 SizedBox(height: 20.0),
@@ -400,41 +395,34 @@ class _SignUpPageState extends State<SignUpPage> {
                 SizedBox(height: 20.0),
                 getFavouriteTeam(),
                 SizedBox(height: 20.0),
-                RaisedButton(
-                    color: mainColour,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)
-                        ),
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        print("Fields validated successfully!");
+                vmargin10(
+                  orangeButtonLarge(
+                      text: "Signup",
+                      onPressed: () {
+                        if (_formKey.currentState.validate()) {
+                          print("Fields validated successfully!");
+                          _formKey.currentState.save();
+                          // For debugging
+                          print(username);
+                          print(password1);
+                          print(email);
+                          print(phoneNumber);
+                          print(favSport);
+                          print(sportLevel);
+                          print(sportToLearn);
+                          print(favTeam);
+                          print('${dateFormatter.format(this.dob)}');
 
-                        _formKey.currentState.save();
+                          // Display confirmation pop-up
+                          confirmationPopup();
 
-                        // For debugging
-                        print(username);
-                        print(password1);
-                        print(email);
-                        print(phoneNumber);
-                        print(favSport);
-                        print(sportLevel);
-                        print(sportToLearn);
-                        print(favTeam);
-                        print('${dateFormatter.format(this.dob)}');
-
-                        // Display confirmation pop-up
-                        confirmationPopup();
-
-                        // Set signup status to true
-                      } else {
-                        errorPopup(
-                            context, "Please fill in all fields properly!");
-                      }
-                    }),
+                          // Set signup status to true
+                        } else {
+                          errorPopup(
+                              context, "Please fill in all fields properly!");
+                        }
+                      }),
+                )
               ]),
             ),
           )),
