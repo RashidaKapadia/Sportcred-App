@@ -320,7 +320,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
         context: context,
         builder: (context) => AlertDialog(
             content: Text(
-              "You sure want to leave? You will forfeit the remaining numQuestions!",
+              "You sure want to leave? You will forfeit the remaining number of questions!",
             ),
             actions: [leaveButton, resumeButton]));
   }

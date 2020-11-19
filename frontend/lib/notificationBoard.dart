@@ -94,6 +94,7 @@ class _NotificationBoardState extends State<NotificationBoard> {
           child: Icon(Icons.delete, color: Colors.red[300], size: 20),
           onTap: () {
             deleteNotifications(username, [id]);
+            Navigator.of(context).pushNamed("/notifications");
           })
     ]);
   }
@@ -115,7 +116,7 @@ class _NotificationBoardState extends State<NotificationBoard> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         notificationHeader(id, type, category),
         hmargin5(bold(title)),
-        Text("N-id: " + id.toString() + " gameId: " + actionId.toString()),
+        // Text("N-id: " + id.toString() + " gameId: " + actionId.toString()),
         vmargin5(getActions(context, id, actionId, type, category))
       ]),
     );
