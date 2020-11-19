@@ -15,6 +15,25 @@ import org.neo4j.driver.Transaction;
 public class DBPosts {
 
 
+    public static ArrayList<Map<String, Object>> getPosts() {
+        try (Session session = Connect.driver.session()) {
+            Result result = session.run("MATCH (p:post ) RETURN p ORDER By p.timestamp",
+                                        parameters());
+
+            ArrayList<Map<String, Object>> questions = new ArrayList<>();
+            while (result.hasNext()) {
+                questions.add(result.next().get("p").asMap());
+            }
+            return questions;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+
+
     /***
      * create a post using following parameters
      */
@@ -29,9 +48,9 @@ public class DBPosts {
         //create a post node
         try(Session session = Connect.driver.session()){
             session.writeTransaction(tx->tx.run("MERGE (p: post{ uniqueIdentifier: $z,username: $x, content: $y, title: $u,"+
-            "profileName: $a, peopleAgree: $b, peopleDisagree: $c, comments: $d})",
+            "profileName: $a, peopleAgree: $b, peopleDisagree: $c, comments: $d, timestamp: $e})",
             parameters("z", id, "x", username,"y", content, "u", title,"a",
-            profileName, "b", new HashSet<Object>(), "c", new HashSet<Object>(),"d", new ArrayList<String>())));// COMMENTS INITIALIAZATION NEEDS TO BE UPDATED
+            profileName, "b", new HashSet<Object>(), "c", new HashSet<Object>(),"d", new ArrayList<String>(), "e", timestamp.toString())));// COMMENTS INITIALIAZATION NEEDS TO BE UPDATED
             session.close();
             return id;
         }
@@ -40,11 +59,6 @@ public class DBPosts {
             return "";
 
         }
-
-    }
-
-    public static boolean editPostComments(String username, String newData){
-        return true;
 
     }
 
@@ -89,31 +103,6 @@ public class DBPosts {
 		}catch (Exception e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    public static Map<String, Object> getPost(String id){
-        try (Session session = Connect.driver.session()) {
-            Result result = session.run("MATCH (p:post {uniqueIdentifier: $x}) RETURN p",
-                                        parameters("x", id));
-                                        Map<String, Object> postMap = new HashMap<>();
-            if(result.hasNext()){
-                postMap.put("username", result.next().get("username").asString());
-                postMap.put("content", result.next().get("content").asString());
-                postMap.put("title", result.next().get("title").asString());
-                postMap.put("profileName", result.next().get("profileName").asString());
-                postMap.put("peopleAgree", result.next().get("peopleAgree").asList());
-                postMap.put("peopleDisagree", result.next().get("peopleDisagree").asList());
-                postMap.put("comments", result.next().get("comments").asList());// UNSURE ABOUT THIS
-                return postMap;
-            }
-            else{
-                return postMap;
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-            return null;
-
         }
     }
                             
@@ -200,6 +189,43 @@ public class DBPosts {
             return false;
         }
     }
+
+    public static int getNumberOfLikes(String postId){
+        int numLikes = 0;
+
+        try (Session session = Connect.driver.session()) {            
+            Result result = session.run("MATCH (p:post{uniqueIdentifier: $x})" 
+            + "RETURN p.peopleAgree as peopleAgree", parameters("x", postId));
+            // Get number of comments for this post
+            if (result.hasNext()) {
+                List<Object> agreeList = result.single().get("peopleAgree").asList();
+                Set<Object> agreeSet = new HashSet<Object>(agreeList);
+                return agreeSet.size();
+            }
+            return numLikes;          
+        } catch (Exception e) {
+            e.printStackTrace();
+            return numLikes;
+        }
+    }
     
+    public static int getNumberOfDisLikes(String postId){
+        int numDislikes = 0;
+
+        try (Session session = Connect.driver.session()) {            
+            Result result = session.run("MATCH (p:post{uniqueIdentifier: $x})" 
+            + "RETURN p.peopleDisagree as peopleDisagree", parameters("x", postId));
+            // Get number of comments for this post
+            if (result.hasNext()) {
+                List<Object> agreeList = result.single().get("peopleDisagree").asList();
+                Set<Object> agreeSet = new HashSet<Object>(agreeList);
+                return agreeSet.size();
+            }
+            return numDislikes;          
+        } catch (Exception e) {
+            e.printStackTrace();
+            return numDislikes;
+        }
+    }
     
 }

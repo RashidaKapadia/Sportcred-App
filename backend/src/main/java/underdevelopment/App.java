@@ -131,6 +131,10 @@ public class App
 
         server.createContext("/api/getComments", 
                 new HttpRequestHandler("GET", PostCommentsHandler.handleGetComments(), authorized));
+        
+        server.createContext("/api/getPosts", 
+                new HttpRequestHandler("POST", PostHandler.handleGetPosts(), authorized));
+        
 
         // Start Server
         server.start();
