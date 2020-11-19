@@ -37,7 +37,7 @@ public class DBPosts {
     /***
      * create a post using following parameters
      */
-    public static String createPost(String username, String content, String title, String profileName){
+    public static String createPost(String username, String content, String title){
         //
         System.out.println("creating post for user: " + username);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -48,9 +48,8 @@ public class DBPosts {
         //create a post node
         try(Session session = Connect.driver.session()){
             session.writeTransaction(tx->tx.run("MERGE (p: post{ uniqueIdentifier: $z,username: $x, content: $y, title: $u,"+
-            "profileName: $a, peopleAgree: $b, peopleDisagree: $c, comments: $d, timestamp: $e})",
-            parameters("z", id, "x", username,"y", content, "u", title,"a",
-            profileName, "b", new HashSet<Object>(), "c", new HashSet<Object>(),"d", new ArrayList<String>(), "e", timestamp.toString())));// COMMENTS INITIALIAZATION NEEDS TO BE UPDATED
+            "peopleAgree: $b, peopleDisagree: $c, comments: $d, timestamp: $e})",
+            parameters("z", id, "x", username,"y", content, "u", title,"a", new HashSet<Object>(), "c", new HashSet<Object>(),"d", new ArrayList<String>(), "e", timestamp.toString())));// COMMENTS INITIALIAZATION NEEDS TO BE UPDATED
             session.close();
             return id;
         }
