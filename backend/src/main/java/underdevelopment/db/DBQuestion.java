@@ -43,8 +43,8 @@ public class DBQuestion {
      				while(result.hasNext()) {
      					Record rec = result.next();
      					Map<String, Object> curQuestion = rec.get("n").asMap();
-     					HashMap question = new HashMap<String,Object>();
-     					question.put("questionID", curQuestion.get("questionID"));
+     					HashMap<String, Object> question = new HashMap<String,Object>();
+     					question.put("questionID", curQuestion.get("questionId"));
      					question.put("question", curQuestion.get("question"));
      					question.put("star", curQuestion.get("star"));
      					question.put("answer", curQuestion.get("answer"));
