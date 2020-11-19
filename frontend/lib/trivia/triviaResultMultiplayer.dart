@@ -159,14 +159,14 @@ class _PageBodyState extends State<PageBody> with TickerProviderStateMixin {
               children: [
                 h2(game.you.username),
                 h3(game.you.gameScore.toString(),
-                    color: (win) ? Colors.greenAccent : Colors.red)
+                    color: (win) ? Colors.green : Colors.red)
               ],
             ),
             Column(
               children: [
                 h2(game.otherPlayer.username),
-                h3(game.you.gameScore.toString(),
-                    color: (win) ? Colors.greenAccent : Colors.red)
+                h3(game.otherPlayer.gameScore.toString(),
+                    color: (win) ? Colors.red : Colors.greenAccent)
               ],
             ),
           ],
