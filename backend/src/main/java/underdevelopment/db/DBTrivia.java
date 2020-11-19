@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -227,7 +228,9 @@ public class DBTrivia{
 	        		String oppUsername = record.get("oppUsername").asString();
 	        		int inviterScore = record.get("inviterScore").asInt();
 	        		int oppScore = record.get("oppScore").asInt();
+	        		
 	        		String inviterAnswers = record.get("inviterAnswers").asString();
+	        		System.out.println(inviterAnswers);
 	        		String oppAnswers = record.get("oppAnswers").asString();	        		
 	        		
 	        		System.out.println(inviterAnswers);
@@ -241,17 +244,17 @@ public class DBTrivia{
 	        		if(username.equals(inviterUsername)) {
 	        			you.put("username", inviterUsername);
 	        			you.put("gameScore", Integer.toString(inviterScore));
-	        			you.put("answers", inviterAnswers);
+	        			you.put("answers", new JSONArray(inviterAnswers));
 	        			opponent.put("username", oppUsername);
 	        			opponent.put("gameScore", Integer.toString(oppScore));
-	        			opponent.put("answers", oppAnswers);
+	        			opponent.put("answers", new JSONArray(oppAnswers));
 	        		}else if(username.equals(oppUsername)) {
 	        			opponent.put("username", inviterUsername);
 	        			opponent.put("gameScore", Integer.toString(inviterScore));
-	        			opponent.put("answers", inviterAnswers);
+	        			opponent.put("answers", new JSONArray(inviterAnswers));
 	        			you.put("username", oppUsername);
 	        			you.put("gameScore", Integer.toString(oppScore));
-	        			you.put("answers", oppAnswers);
+	        			you.put("answers", new JSONArray(oppAnswers));
 	        		}else {
 	        			return null;
 	        		}

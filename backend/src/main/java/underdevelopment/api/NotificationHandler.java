@@ -134,10 +134,11 @@ public class NotificationHandler {
             // Run DB command            
             try {
             	int success = DBNotifications.deleteNotification(arrayIDs);
+            	
             	if(success == 1) {
                     return new JsonHttpReponse(Status.OK, null);
             	}else {
-                    return new JsonHttpReponse(Status.BADREQUEST);
+                    return new JsonHttpReponse(Status.SERVERERROR);
             	}
             } catch (Exception e) {
                 e.printStackTrace();
