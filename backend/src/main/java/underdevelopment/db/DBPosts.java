@@ -62,11 +62,6 @@ public class DBPosts {
 
     }
 
-    public static boolean editPostComments(String username, String newData){
-        return true;
-
-    }
-
     public static boolean editPostTitle(String postId, String newData){
         System.out.println("Was here!:");
         try (Session session = Connect.driver.session()){
@@ -194,6 +189,43 @@ public class DBPosts {
             return false;
         }
     }
+
+    public static int getNumberOfLikes(String postId){
+        int numLikes = 0;
+
+        try (Session session = Connect.driver.session()) {            
+            Result result = session.run("MATCH (p:post{uniqueIdentifier: $x})" 
+            + "RETURN p.peopleAgree as peopleAgree", parameters("x", postId));
+            // Get number of comments for this post
+            if (result.hasNext()) {
+                List<Object> agreeList = result.single().get("peopleAgree").asList();
+                Set<Object> agreeSet = new HashSet<Object>(agreeList);
+                return agreeSet.size();
+            }
+            return numLikes;          
+        } catch (Exception e) {
+            e.printStackTrace();
+            return numLikes;
+        }
+    }
     
+    public static int getNumberOfDisLikes(String postId){
+        int numDislikes = 0;
+
+        try (Session session = Connect.driver.session()) {            
+            Result result = session.run("MATCH (p:post{uniqueIdentifier: $x})" 
+            + "RETURN p.peopleDisagree as peopleDisagree", parameters("x", postId));
+            // Get number of comments for this post
+            if (result.hasNext()) {
+                List<Object> agreeList = result.single().get("peopleDisagree").asList();
+                Set<Object> agreeSet = new HashSet<Object>(agreeList);
+                return agreeSet.size();
+            }
+            return numDislikes;          
+        } catch (Exception e) {
+            e.printStackTrace();
+            return numDislikes;
+        }
+    }
     
 }
