@@ -89,6 +89,7 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
     return Container(
         margin: EdgeInsets.symmetric(horizontal: 10),
         padding: EdgeInsets.symmetric(horizontal: 20),
+        height: 200,
         child: ListView.builder(
             shrinkWrap: true,
             itemCount: filteredUsers.length,
@@ -191,7 +192,7 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
           title: Text("1-1 Trivia", style: TextStyle(color: Colors.white)),
           centerTitle: true,
           backgroundColor: Colors.deepOrange),
-      body: loadUsers(context),
+      body: SingleChildScrollView(child: Stack(children: [loadUsers(context)])),
     );
   }
 }
