@@ -21,8 +21,8 @@ class PostNode {
   final String content;
   final String title;
   final String profileName;
-  final Set peopleAgree;
-  final Set peopleDisagree;
+  final List<dynamic> peopleAgree;
+  final List<dynamic> peopleDisagree;
   final bool reqStatus;
   final List comments; // TYPE TO BE CHANGED TO COMMENT NODE
 
@@ -100,6 +100,8 @@ class _PostPageState extends State<PostsPage> {
       return null;
     }
   }
+
+  
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -103,6 +104,34 @@ class _TheZoneState extends State<TheZone> {
         print("in api" + allZonePosts.toString());
       });
       // Return posts data
+    } else {
+      return null;
+    }
+  }
+
+  Future<dynamic> createPost(
+      String creatorUsername, String content, String title) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/addPost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{
+        'username': creatorUsername,
+        'content': content,
+        'title': title,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _futurePosts = getPosts();
+      });
+
+      return true;
     } else {
       return null;
     }
@@ -393,7 +422,13 @@ class _TheZoneState extends State<TheZone> {
                         child: Text("Submit"),
                         onPressed: () {
                           // Call createPost API
-                          //_createPost(newContent, title);
+                          print("CREATING POST!");
+                          FlutterSession()
+                              .get('username')
+                              .then((username) => {
+                                createPost(username.toString(), newContent, newTitle)});
+                          Navigator.of(context, rootNavigator: true).pop();                        
+                            print("FINISHED CREATING POST!");
                         },
                       ),
                     )
