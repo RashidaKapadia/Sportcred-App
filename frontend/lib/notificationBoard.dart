@@ -109,24 +109,21 @@ class _NotificationBoardState extends State<NotificationBoard> {
     //
     return Container(
       decoration: BoxDecoration(
-        border: Border.symmetric(
-            horizontal: BorderSide(color: Colors.grey[200], width: 1)),
+        border: Border(top: BorderSide(color: Colors.grey[200], width: 1)),
       ),
-      child: margin10(
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          notificationHeader(id, type, category),
-          hmargin5(bold(title)),
-          Text("N-id: " + id.toString() + " gameId: " + actionId.toString()),
-          vmargin5(getActions(context, id, actionId, type, category))
-        ]),
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        notificationHeader(id, type, category),
+        hmargin5(bold(title)),
+        Text("N-id: " + id.toString() + " gameId: " + actionId.toString()),
+        vmargin5(getActions(context, id, actionId, type, category))
+      ]),
     );
   }
 
   Widget notificationsList(
       BuildContext context, List<UserNotification> notifications) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
       child: (notifications.length == 0)
           ? Center(child: margin20(Text("No new notifications")))
           : ListView.builder(
@@ -136,6 +133,9 @@ class _NotificationBoardState extends State<NotificationBoard> {
               // physics: ScrollPhysics(),
               itemBuilder: (context, index) {
                 return ListTile(
+                  tileColor: (notifications[index].read)
+                      ? Colors.grey[200]
+                      : Colors.white,
                   contentPadding: EdgeInsets.all(0),
                   title: notification(
                       context: context,
