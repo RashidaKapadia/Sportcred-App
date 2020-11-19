@@ -49,8 +49,8 @@ public class PostHandler {
                             .put("content", postNode.get("content").toString())
                             .put("title", postNode.get("title").toString())
                             .put("profileName", postNode.get("profileName").toString())
-                            .put("peopleAgree", postNode.get("peopleAgree").toString())
-                            .put("peopleDisagree", postNode.get("peopleDisagree").toString())
+                            .put("peopleAgree", postNode.get("peopleAgree"))
+                            .put("peopleDisagree", postNode.get("peopleDisagree"))
                             .put("uniqueIdentifier", postNode.get("uniqueIdentifier").toString())
                             .put("timestamp", postNode.get("timestamp").toString())
                             .put("comments", DBPostComments.getComments(postNode.get("uniqueIdentifier").toString())));
@@ -88,8 +88,8 @@ public class PostHandler {
                             .put("content", postNode.get("content").toString())
                             .put("title", postNode.get("title").toString())
                             .put("profileName", postNode.get("profileName").toString())
-                            .put("peopleAgree", postNode.get("peopleAgree").toString())
-                            .put("peopleDisagree", postNode.get("peopleDisagree").toString())
+                            .put("peopleAgree", postNode.get("peopleAgree"))
+                            .put("peopleDisagree", postNode.get("peopleDisagree"))
                             .put("uniqueIdentifier", postNode.get("uniqueIdentifier").toString())
                             .put("timestamp", postNode.get("timestamp").toString())
                             .put("comments", DBPostComments.getComments(postNode.get("uniqueIdentifier").toString())));
