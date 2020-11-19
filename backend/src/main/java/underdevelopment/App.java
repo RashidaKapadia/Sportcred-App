@@ -124,6 +124,7 @@ public class App
         
         server.createContext("/api/getPosts", 
                 new HttpRequestHandler("POST", PostHandler.handleGetPosts(), authorized));
+        
 
         // Start Server
         server.start();
