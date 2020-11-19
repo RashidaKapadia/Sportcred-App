@@ -327,11 +327,11 @@ public class TriviaHandler {
                     questionsJSON
                         .put(new JSONObject()
                             .put("questionId", question.get("questionId"))
-                            .put("question", new JSONArray(question.get("question")))
-                            .put("answer", new JSONArray(question.get("answer")))
-                            .put("choices", new JSONArray(question.get("choices")))
+                            .put("question", question.get("question"))
+                            .put("answer", question.get("answer"))
+                            .put("choices", question.get("choices"))
                         ).toString();
-                    System.out.println("the choices is: " + new JSONArray(question.get("choices")).toString());
+                    //System.out.println("the choices is: " + new JSONArray(question.get("choices")).toString());
                 }
                 // Create the json response
                 String response = new JSONObject()
