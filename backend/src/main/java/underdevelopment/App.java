@@ -118,6 +118,8 @@ public class App
         server.createContext("/api/agreedOrDisagreedPost", 
                 new HttpRequestHandler("POST", PostHandler.handlePostAgreeDisAgree(), authorized));
 
+        server.createContext("/api/getPosts", 
+                new HttpRequestHandler("POST", PostHandler.handleGetPosts(), authorized));
 
         // Create Comment API
         server.createContext("/api/addComment", 
@@ -132,9 +134,10 @@ public class App
         server.createContext("/api/getComments", 
                 new HttpRequestHandler("POST", PostCommentsHandler.handleGetComments(), authorized));
         
-        server.createContext("/api/getPosts", 
-                new HttpRequestHandler("POST", PostHandler.handleGetPosts(), authorized));
         
+        // Search Bar API to get posts given title
+        server.createContext("/api/getPostsForSearch", 
+                new HttpRequestHandler("POST", PostHandler.handleGetPostsForSearchBar(), authorized));
 
         // Start Server
         server.start();

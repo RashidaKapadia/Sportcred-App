@@ -162,7 +162,6 @@ public class PostCommentsHandler {
 
             // Return the response with list of all comments
             return new JsonHttpReponse(Status.OK, allComments.toString());
-
         };
     }
 

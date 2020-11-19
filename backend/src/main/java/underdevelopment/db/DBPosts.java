@@ -8,23 +8,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import static org.neo4j.driver.Values.parameters;
+
+import org.json.JSONObject;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
+import org.neo4j.driver.Value;
 
 public class DBPosts {
 
 
     public static ArrayList<Map<String, Object>> getPosts() {
         try (Session session = Connect.driver.session()) {
-            Result result = session.run("MATCH (p:post ) RETURN p ORDER By p.timestamp",
+            Result result = session.run("MATCH (p:post ) RETURN p ORDER By p.timestamp DESC",
                                         parameters());
 
-            ArrayList<Map<String, Object>> questions = new ArrayList<>();
+            ArrayList<Map<String, Object>> posts = new ArrayList<>();
             while (result.hasNext()) {
-                questions.add(result.next().get("p").asMap());
+                posts.add(result.next().get("p").asMap());
             }
-            return questions;
+            return posts;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -37,20 +40,22 @@ public class DBPosts {
     /***
      * create a post using following parameters
      */
-    public static String createPost(String username, String content, String title, String profileName){
+    public static String createPost(String username, String content, String title){
         //
         System.out.println("creating post for user: " + username);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         //String id = username.concat("."+ Integer.toString(postsCount+1));
-        String id = username.concat("."+ timestamp);
+        String id = username.concat("."+ timestamp);        
+        String profileName = DBUserInfo.getUserFullName(username);
+
         System.out.println("id:"+ id);
 
         //create a post node
         try(Session session = Connect.driver.session()){
             session.writeTransaction(tx->tx.run("MERGE (p: post{ uniqueIdentifier: $z,username: $x, content: $y, title: $u,"+
-            "profileName: $a, peopleAgree: $b, peopleDisagree: $c, comments: $d, timestamp: $e})",
+            "profileName: $a, peopleAgree: $b, peopleDisagree: $c, timestamp: datetime()})",
             parameters("z", id, "x", username,"y", content, "u", title,"a",
-            profileName, "b", new HashSet<Object>(), "c", new HashSet<Object>(),"d", new ArrayList<String>(), "e", timestamp.toString())));// COMMENTS INITIALIAZATION NEEDS TO BE UPDATED
+            profileName, "b", new HashSet<Object>(), "c", new HashSet<Object>())));// COMMENTS INITIALIAZATION NEEDS TO BE UPDATED
             session.close();
             return id;
         }
@@ -228,4 +233,29 @@ public class DBPosts {
         }
     }
     
+    public static ArrayList<Map<String, Object>> getPostsGivenTitle(String title){
+        // Initialize list to store all the posts
+        ArrayList<Map<String, Object>> posts = new ArrayList<>();
+
+        try (Session session = Connect.driver.session()) {
+            System.out.println("in getPosts by Title method: Running query!");
+            // Run query to get all posts with given title ordered by their timestamp
+            Result result = session.run("MATCH (p:post) WHERE toLower(p.title) CONTAINS toLower($x) " 
+            + "RETURN p ORDER BY p.timestamp DESC", parameters("x", title));
+
+            System.out.println("FINISHED RUNNING QUERY!");
+            System.out.println(result.hasNext());
+
+            
+            while (result.hasNext()) {
+                posts.add(result.next().get("p").asMap());
+            }
+
+            return posts;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return posts;
+
+        }
+    }
 }
