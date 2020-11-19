@@ -77,7 +77,7 @@ public class PostHandler {
                 username = jsonObj.getString("username");
                 content = jsonObj.getString("content");
                 title = jsonObj.getString("title");
-                profileName = jsonObj.getString("profileName");
+                //profileName = jsonObj.getString("profileName");
             } catch (Exception e) {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
@@ -98,7 +98,7 @@ public class PostHandler {
                 }
             }
             // create Post
-            String postId = DBPosts.createPost(username, content, title, profileName);
+            String postId = DBPosts.createPost(username, content, title);
             if(postId == ""){
                 try {
                     response = new JSONObject().put("Couldn't create the post!", "").toString();
