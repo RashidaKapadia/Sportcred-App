@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import './navbar.dart';
 import 'package:http/http.dart' as http;
@@ -42,6 +43,8 @@ class _CommentsPageState extends State<CommentsPage> {
   String storeUsername;
   Future<bool> postSucess;
   Future<bool> deleteSucess;
+  bool _postSucess;
+  bool _deleteSucess = false;
 
   // Http post request to get post's comments
   Future<List<Comment>> getComments(String postId) async {
@@ -117,7 +120,13 @@ class _CommentsPageState extends State<CommentsPage> {
 
     if (response.statusCode == 200) {
       print("delete comment!");
+      _deleteSucess = true;
       return true;
+    } else if (response.statusCode == 409) {
+      _deleteSucess = false;
+      print("users dont match!");
+      print(_deleteSucess);
+      return false;
     } else {
       return false;
     }
@@ -155,9 +164,30 @@ class _CommentsPageState extends State<CommentsPage> {
                 case 'Delete':
                   deleteSucess = deleteComment(
                       "null", //change to this.storeUsername
-                      "null.2020-11-19 14:28:35.032");
-                  _futureComments =
-                      getComments("jimmy.2020-11-19 02:39:34.234");
+                      allComments[i].id);
+                  if (!_deleteSucess) {
+                    // print("delete failed");
+                    showCupertinoDialog(
+                      context: context,
+                      builder: (alertContext) {
+                        return CupertinoAlertDialog(
+                          title: Text("Cannot delete comment"),
+                          actions: [
+                            CupertinoDialogAction(
+                                child: Text("Okay"),
+                                onPressed: () {
+                                  Navigator.of(alertContext,
+                                          rootNavigator: true)
+                                      .pop('dialog');
+                                }),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    _futureComments =
+                        getComments("jimmy.2020-11-19 02:39:34.234");
+                  }
                   break;
                 case 'Edit':
                   break;
