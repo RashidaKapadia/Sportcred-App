@@ -44,7 +44,7 @@ public class DBQuestion {
      					Record rec = result.next();
      					Map<String, Object> curQuestion = rec.get("n").asMap();
      					HashMap<String, Object> question = new HashMap<String,Object>();
-     					question.put("questionID", curQuestion.get("questionId"));
+     					question.put("questionId", curQuestion.get("questionId"));
      					question.put("question", curQuestion.get("question"));
      					question.put("star", curQuestion.get("star"));
      					question.put("answer", curQuestion.get("answer"));
