@@ -218,20 +218,26 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
     Timer.periodic(onesec, (Timer t) {
       print("start time set state");
       print("timer: " + timer.toString());
+
       print(cancelTimer);
-      setState(() {
-        _timerController.start();
-        if (cancelTimer) {
+      if (cancelTimer) {
+        setState(() {
           print("cancelling");
           t.cancel();
           _timerController.stop();
-        } else if (timer < 1) {
+        });
+      } else if (timer < 1) {
+        setState(() {
+          _timerController.start();
           selectedAnswers.add(null);
           nextQuestion();
-        } else {
+        });
+      } else {
+        setState(() {
+          _timerController.start();
           timer--;
-        }
-      });
+        });
+      }
     });
   }
 
@@ -284,6 +290,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
           color: colorToDisplay,
           minWidth: 200.0,
           height: 45.0,
+          animationDuration: Duration(seconds: 1),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         ));
@@ -294,6 +301,9 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
         onPressed: () {
           setState(() {
             cancelTimer = true;
+            for (int k = i; k < numQuestions; k++) {
+              selectedAnswers.add(null);
+            }
           });
           Navigator.of(context).pop();
           gotoResults(context);
