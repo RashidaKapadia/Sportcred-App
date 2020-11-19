@@ -21,10 +21,10 @@ class PostNode {
   final String content;
   final String title;
   final String profileName;
-  final Set peopleAgree;
-  final Set peopleDisagree;
+  final List<dynamic> peopleAgree;
+  final List<dynamic> peopleDisagree;
   final bool reqStatus;
-  final List comments; // TYPE TO BE CHANGED TO COMMENT NODE
+  final List<dynamic> comments; // TYPE TO BE CHANGED TO COMMENT NODE
 
   PostNode(
       {this.timestamp,
