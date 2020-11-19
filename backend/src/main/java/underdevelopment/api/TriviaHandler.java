@@ -172,7 +172,7 @@ public class TriviaHandler {
 	        // Get and validate input
 	        try {
 	        	username = jsonObj.getString("username");
-	        	oppUsername = jsonObj.getString("oppUsername");
+	        	oppUsername = jsonObj.getString("opponent");
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	            return new JsonHttpReponse(Status.BADREQUEST);

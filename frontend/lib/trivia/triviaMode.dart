@@ -36,7 +36,9 @@ class _TriviaHomePageState extends State<TriviaModePage> {
   goToTrivia() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => TriviaOngoing(
-            category: category, opponent: null, triviaMode: TriviaMode.SOLO)));
+            username: username,
+            category: category,
+            triviaMode: TriviaMode.SOLO)));
   }
 
   selectUser() {

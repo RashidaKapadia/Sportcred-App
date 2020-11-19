@@ -73,10 +73,16 @@ Future startMultiplayerTrivia(String username, String opponent) async {
             "opponent": opponent,
           }));
 
+  List<TriviaQuestion> triviaQs = [];
+  int gameId = -1;
   if (response.statusCode == 200) {
-    return jsonDecode(response.body)['gameID'];
+    Map<String, dynamic> json = jsonDecode(response.body);
+    gameId = json["gameID"];
+    for (Map<String, dynamic> question in json["questions"] as List) {
+      triviaQs.add(TriviaQuestion.fromJson(question));
+    }
   }
-  return -1;
+  return [triviaQs, gameId];
 }
 
 Future joinMultiplayerTrivia(int gameId) async {

@@ -15,14 +15,20 @@ enum TriviaMode { SOLO, MULTI_INVITER, MULTI_ACCEPTER }
 
 class TriviaOngoing extends StatefulWidget {
   TriviaMode triviaMode;
+  String username;
   String category;
   String opponent;
   int gameId;
   TriviaOngoing(
-      {this.category, this.opponent, this.gameId, @required this.triviaMode});
+      {this.category,
+      this.opponent,
+      this.gameId,
+      @required this.triviaMode,
+      @required this.username});
 
   @override
   State<StatefulWidget> createState() => _TriviaOngoingState(
+      username: username,
       category: category,
       opponent: opponent,
       gameId: gameId,
@@ -38,45 +44,58 @@ class _TriviaOngoingState extends State<TriviaOngoing> {
   String token = "";
   int gameId;
   _TriviaOngoingState(
-      {this.category, this.opponent, this.gameId, @required this.triviaMode});
-  Future<List<TriviaQuestion>> _futureTriviaQuestions;
+      {this.category,
+      this.opponent,
+      this.gameId,
+      @required this.triviaMode,
+      @required this.username});
+  var _future;
 
   @override
   void initState() {
-    super.initState();
     setState(() {
-      loadToken();
-      loadUsername();
-      _futureTriviaQuestions = getQuestions(category);
+      // Get game data depending on the mode
+      if (triviaMode == TriviaMode.SOLO) {
+        _future = getQuestions(category);
+      } else if (triviaMode == TriviaMode.MULTI_INVITER) {
+        _future = startMultiplayerTrivia(username, opponent);
+      } else if (triviaMode == TriviaMode.MULTI_ACCEPTER) {
+        _future = joinMultiplayerTrivia(gameId);
+      } else {
+        print("NO FUTURE FOR ONGOING TRIVIA!");
+      }
     });
-  }
-
-  void loadUsername() {
-    FlutterSession().get('username').then((value) {
-      this.setState(() {
-        username = value.toString();
-      });
-    });
-  }
-
-  void loadToken() {
-    FlutterSession().get('token').then((value) {
-      this.setState(() {
-        token = value.toString();
-      });
-    });
+    super.initState();
   }
 
   Widget loadTrivia() {
-    return FutureBuilder<List<TriviaQuestion>>(
-      future: _futureTriviaQuestions,
+    if (triviaMode == TriviaMode.SOLO) {
+    } else if (triviaMode == TriviaMode.MULTI_INVITER) {
+    } else {}
+  }
+
+  Widget loadTrivia() {
+    return FutureBuilder<dynamic>(
+      future: _future,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          List<TriviaQuestion> triviaQns;
+          if (triviaMode == TriviaMode.SOLO) {
+            triviaQns = snapshot.data;
+          } else if (triviaMode == TriviaMode.MULTI_INVITER) {
+            List qnsNgameId = snapshot.data as List;
+            triviaQns = qnsNgameId[0];
+            gameId = qnsNgameId[1];
+          } else {
+            List qnsNopponent = snapshot.data as List;
+            triviaQns = qnsNopponent[0];
+            opponent = qnsNopponent[1];
+          }
           return QuizPage(
               triviaMode: triviaMode,
               username: username,
-              token: token,
-              questions: snapshot.data,
+              questions: triviaQns,
+              gameId: gameId,
               opponent: opponent);
         } else {
           return margin10(CircularProgressIndicator());
@@ -86,11 +105,13 @@ class _TriviaOngoingState extends State<TriviaOngoing> {
   }
 
   @override
-  Widget build(BuildContext context) => loadTrivia();
+  Widget build(BuildContext context) =>
+      (_future != null) ? loadTrivia() : Text("Game loading....");
 }
 
 // Page with changing questions
 class QuizPage extends StatefulWidget {
+  int gameId;
   List<TriviaQuestion> questions;
   String username = "";
   String token = "";
@@ -99,9 +120,9 @@ class QuizPage extends StatefulWidget {
   QuizPage(
       {Key key,
       @required this.username,
-      @required this.token,
       @required this.questions,
       @required this.triviaMode,
+      this.gameId,
       this.opponent})
       : super(key: key);
 
@@ -115,6 +136,7 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
+  int gameId;
   List<TriviaQuestion> questions;
   String username = "";
   String token = "";
@@ -126,6 +148,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
       @required this.token,
       @required this.questions,
       @required this.triviaMode,
+      this.gameId,
       this.opponent});
 
   TimerController _timerController;
@@ -173,7 +196,13 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
   gotoResults(context) {
     int score = correctlyAnswered - (numQuestions - correctlyAnswered);
     print(selectedAnswers);
-    updateACS(token, username, score);
+
+    if (triviaMode == TriviaMode.SOLO) {
+      updateACS(token, username, score);
+    } else {
+      endMultiplayerTrivia(username, gameId, selectedAnswers, score);
+    }
+
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => TriviaResult(
             score: score,

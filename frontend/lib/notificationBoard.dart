@@ -34,7 +34,9 @@ class _NotificationBoardState extends State<NotificationBoard> {
   gotoTrivia(BuildContext context, int actionId) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => TriviaOngoing(
-            gameId: actionId, triviaMode: TriviaMode.MULTI_ACCEPTER)));
+            username: username,
+            gameId: actionId,
+            triviaMode: TriviaMode.MULTI_ACCEPTER)));
   }
 
   gotoTriviaResults(BuildContext context, int actionId) {
