@@ -70,7 +70,7 @@ Future markReadNotifications(String username, List<int> notifications) async {
 
 Future deleteNotifications(String username, List<int> notifications) async {
   final http.Response response = await http.post(
-      'http://localhost:8080//api/notifications/delete',
+      'http://localhost:8080/api/notifications/delete',
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
         'Accept': 'text/plain; charset=utf-8',
