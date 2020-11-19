@@ -272,17 +272,33 @@ public class TriviaHandler {
 	        }	        
 	        // Get questions from the db and make sure query was run properly
 	        ArrayList<Map<String, String>> results = DBTrivia.getMultiplayerTrivia(gameID, username);
+	        ArrayList<Map<String, Object>> questions = DBTrivia.joinMultiplayerTrivia(gameID);
+
+	        String acceptDate = DBTrivia.getMultiplayerTriviaAcceptDate(gameID);
+	        String inviteDate = DBTrivia.getMultiplayerTriviaInviteDate(gameID);
+	        
  	       if(results == null) {
 	    	   System.out.println("error with the query");
 	    	   return new JsonHttpReponse(Status.SERVERERROR);
 	       }else {
 	    	   JSONArray resultsJSON = new JSONArray();
-			resultsJSON.put(
-						new JSONObject(results.get(0)
-								)).put(new JSONObject(results.get(1)));
-			String response = resultsJSON.toString();
 			
+			String response;
+			try {
+				response = new JSONObject().put("you", results.get(0))
+						.put("otherPlayer", results.get(1))
+						.put("inviteDate", inviteDate)
+						.put("acceptDate", acceptDate)
+						.put("questions", questions)
+						.toString();
 			  	return new JsonHttpReponse(Status.OK, response);
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return new JsonHttpReponse(Status.SERVERERROR);
+			}
+			
 	       }
 	      
 	    };
