@@ -61,6 +61,21 @@ public class DBPosts {
         }
 
     }
+    public static boolean editPost(String postId, String content, String title){
+        try (Session session = Connect.driver.session()) {
+            session.writeTransaction(tx -> tx.run(
+                "MATCH (p:post) WHERE p.uniqueIdentifier = $id SET p.content = $content, p.title = $title",
+                parameters("id", postId, "content", content, "title",title)));
+
+           session.close();
+           return true;
+}
+       catch (Exception e){
+      // FOR DEBUG
+            e.printStackTrace();
+            return false;
+       }
+    }
 
     public static boolean editPostTitle(String postId, String newData){
         System.out.println("Was here!:");
