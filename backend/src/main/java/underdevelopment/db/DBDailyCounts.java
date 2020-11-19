@@ -12,7 +12,7 @@ public class DBDailyCounts{
 	
 	public static int getCount(String username, String activity) {
 		int remainingPlays = 0;
-		
+		// If his last played for trivia was ystd, then we reset their plays.
 		 try (Session session = Connect.driver.session()){
 	        	try (Transaction tx = session.beginTransaction()) {
 	        		int plays;
