@@ -305,8 +305,9 @@ public class TriviaHandler {
 	        ArrayList<Map<String, Object>> questions = DBTrivia.joinMultiplayerTrivia(gameID);
             
             try {
+            	String oppUsername = DBTrivia.getMultiplayerTriviaInviter(gameID);
+            	
                 JSONArray questionsJSON = new JSONArray();
-
                 // Build the json array of questions
                 Iterator<Map<String, Object>> it = questions.iterator();
                 while (it.hasNext()) {
@@ -323,6 +324,7 @@ public class TriviaHandler {
                 // Create the json response
                 String response = new JSONObject()
                     .put("questions", questionsJSON)
+                    .put("inviter", oppUsername)
                     .toString();
 
                 return new JsonHttpReponse(Status.OK, response);

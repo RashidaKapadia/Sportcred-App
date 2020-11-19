@@ -297,5 +297,26 @@ public class DBTrivia{
         	}
 	        return retVal;
 	}
+	
+	public static String  getMultiplayerTriviaInviter(int gameID) {
+		String retVal = null;
+		
+		 try (Session session = Connect.driver.session()){
+	        	try (Transaction tx = session.beginTransaction()) {
+	        		// Find out if we are the inviter or opponent
+	        		Result result = tx.run(String.format("match(n:triviaInProgress) WHERE ID(n) = %d RETURN n.inviterUsername as inviterUsername", gameID));
+	        		Record record = result.next();
+	        		retVal = record.get("inviterUsername").asString();
+					tx.commit();
+					tx.close();
+					session.close();
+	        	}catch(Exception e) {
+	        		e.printStackTrace();
+	        	}
+	        }catch(Exception e) {
+        		e.printStackTrace();
+        	}
+	        return retVal;
+	}
     
 }
