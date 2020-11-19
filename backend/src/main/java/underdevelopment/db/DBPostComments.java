@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import static org.neo4j.driver.Values.parameters;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;

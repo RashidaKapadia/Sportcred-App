@@ -39,20 +39,21 @@ public class PostHandler {
             ArrayList<Map<String, Object>> posts = DBPosts.getPostsGivenTitle(title);
 
             try {
-                JSONArray postsJSON = new JSONArray();
-
+                List<JSONObject> postsJSON = new ArrayList<JSONObject>();
+                
                 // Build the json array of posts
                 Iterator<Map<String, Object>> it = posts.iterator();
                 while (it.hasNext()) {
                     Map<String, Object> postNode = it.next();
-                    postsJSON.put(new JSONObject().put("username", postNode.get("username").toString())
+                    postsJSON.add(new JSONObject().put("username", postNode.get("username").toString())
                             .put("content", postNode.get("content").toString())
                             .put("title", postNode.get("title").toString())
                             .put("profileName", postNode.get("profileName").toString())
                             .put("peopleAgree", postNode.get("peopleAgree").toString())
                             .put("peopleDisagree", postNode.get("peopleDisagree").toString())
                             .put("uniqueIdentifier", postNode.get("uniqueIdentifier").toString())
-                            .put("timestamp", postNode.get("timestamp").toString()));
+                            .put("timestamp", postNode.get("timestamp").toString())
+                            .put("comments", DBPostComments.getComments(postNode.get("uniqueIdentifier").toString())));
 
                 }
                 // Create the json response
@@ -90,7 +91,8 @@ public class PostHandler {
                             .put("peopleAgree", postNode.get("peopleAgree").toString())
                             .put("peopleDisagree", postNode.get("peopleDisagree").toString())
                             .put("uniqueIdentifier", postNode.get("uniqueIdentifier").toString())
-                            .put("timestamp", postNode.get("timestamp").toString()));
+                            .put("timestamp", postNode.get("timestamp").toString())
+                            .put("comments", DBPostComments.getComments(postNode.get("uniqueIdentifier").toString())));
 
                 }
 
