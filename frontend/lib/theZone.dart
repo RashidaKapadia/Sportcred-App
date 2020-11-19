@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 void main() => runApp(MaterialApp(
@@ -10,7 +13,116 @@ class TheZone extends StatefulWidget {
   _TheZoneState createState() => _TheZoneState();
 }
 
+class PostNode {
+  final String timestamp;
+  final String uniqueIdentifier;
+  final String username;
+  final String content;
+  final String title;
+  final String profileName;
+  final Set peopleAgree;
+  final Set peopleDisagree;
+  final bool reqStatus;
+  final List comments; // TYPE TO BE CHANGED TO COMMENT NODE
+
+  PostNode(
+      {this.timestamp,
+      this.uniqueIdentifier,
+      this.username,
+      this.content,
+      this.title,
+      this.profileName,
+      this.peopleAgree,
+      this.peopleDisagree,
+      this.comments,
+      @required this.reqStatus});
+
+  // converts json to post node object
+  factory PostNode.fromJson(bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return PostNode(
+        reqStatus: status,
+      );
+    }
+
+    return PostNode(
+      reqStatus: status,
+      timestamp: json["timestamp"],
+      uniqueIdentifier: json['uniqueIdentifier'],
+      username: json['username'],
+      content: json['content'],
+      title: json['title'],
+      profileName: json['profileName'],
+      peopleAgree: json['peopleAgree'],
+      comments: json['comments'],
+    );
+  }
+}
+
 class _TheZoneState extends State<TheZone> {
+  bool _status = true;
+  List data;
+  Future<PostNode> _futurePostNode;
+
+  Future<List<PostNode>> getPosts() async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/getPosts',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{}),
+    );
+
+    if (response.statusCode == 200) {
+      // Store the session token
+      //print("Post GET -> RESPONSE:" + response.body.toString());
+      //print(jsonDecode(response.body)['questions']);
+      List<PostNode> allPosts = [];
+      // Get the questions, options and correctAnswers and store them in the class variables
+      for (Map<String, dynamic> postNode
+          in jsonDecode(response.body)["posts"] as List) {
+        print("*********************");
+        print(PostNode.fromJson(true, postNode).uniqueIdentifier);
+        print("*********************");
+
+        allPosts += [PostNode.fromJson(true, postNode)];
+      }
+      // DEBUGGING STATEMENTS
+      print('DEBUGGING: Post Node Get');
+      print("\n\nPostNodes: " + allPosts[0].timestamp);
+
+      // Return posts data
+      return allPosts;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<PostNode>> _futurePosts;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _futurePosts = getPosts();
+      print(_futurePosts);
+      getPostsList();
+    });
+  }
+
+  List<PostNode> postsList;
+  void getPostsList() async {
+    await _futurePosts.then((snapshot) {
+      if (snapshot.isNotEmpty) {
+        print("SANPSHOT " + snapshot.toString());
+        postsList = snapshot;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,33 +176,37 @@ class _TheZoneState extends State<TheZone> {
                     SizedBox(
                       height: 20,
                     ),
-                    makeFeed(
-                        userName: 'Aiony Haust',
-                        userImage: 'profile_icon.png',
-                        feedTime: '1 hr ago',
-                        feedText:
-                            'All the Lorem Ipsum generators on the Internet tend to repeat predefined.',
-                        feedImage: 'assets/images/SportsCred_logo.png',
-                        postRank: '3000',
-                        comments: '322'),
-                    makeFeed(
-                        userName: 'Azamat Zhanisov',
-                        userImage: 'profile_icon.png',
-                        feedTime: '3 mins ago',
-                        feedText:
-                            "All the Lorem Ipsum generators on the Internet tend to repeat predefined.All the Lorem Ipsum generators on the Internet tend to repeat predefined.All the Lorem Ipsum generators on the Internet tend to repeat predefined.",
-                        feedImage: 'assets/images/SportsCred_logo.png',
-                        postRank: '309',
-                        comments: '22'),
-                    makeFeed(
-                        userName: 'Azamat Zhanisov',
-                        userImage: 'profile_icon.png',
-                        feedTime: '3 mins ago',
-                        feedText:
-                            "All the Lorem Ipsum generators on the Internet tend to repeat predefined.",
-                        feedImage: 'assets/images/SportsCred_logo.png',
-                        postRank: '3',
-                        comments: '0'),
+                    Wrap(
+                        children: List.generate(postsList.length, (index) {
+                      return makeFeed(index);
+                    })),
+                    // makeFeed(
+                    //     userName: 'Aiony Haust',
+                    //     userImage: 'profile_icon.png',
+                    //     feedTime: '1 hr ago',
+                    //     feedText:
+                    //         'All the Lorem Ipsum generators on the Internet tend to repeat predefined.',
+                    //     feedImage: 'assets/images/SportsCred_logo.png',
+                    //     postRank: '3000',
+                    //     comments: '322'),
+                    // makeFeed(
+                    //     userName: 'Azamat Zhanisov',
+                    //     userImage: 'profile_icon.png',
+                    //     feedTime: '3 mins ago',
+                    //     feedText:
+                    //         "All the Lorem Ipsum generators on the Internet tend to repeat predefined.All the Lorem Ipsum generators on the Internet tend to repeat predefined.All the Lorem Ipsum generators on the Internet tend to repeat predefined.",
+                    //     feedImage: 'assets/images/SportsCred_logo.png',
+                    //     postRank: '309',
+                    //     comments: '22'),
+                    // makeFeed(
+                    //     userName: 'Azamat Zhanisov',
+                    //     userImage: 'profile_icon.png',
+                    //     feedTime: '3 mins ago',
+                    //     feedText:
+                    //         "All the Lorem Ipsum generators on the Internet tend to repeat predefined.",
+                    //     feedImage: 'assets/images/SportsCred_logo.png',
+                    //     postRank: '3',
+                    //     comments: '0'),
                     Center(
                         child: Text(
                       "All Caught Up!",
@@ -116,14 +232,9 @@ class _TheZoneState extends State<TheZone> {
     );
   }
 
-  Widget makeFeed(
-      {userName,
-      userImage,
-      feedTime,
-      feedText,
-      feedImage,
-      postRank,
-      comments}) {
+  Widget makeFeed(int index) {
+    int rank = postsList[index].peopleAgree.length -
+        postsList[index].peopleDisagree.length;
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
@@ -148,14 +259,17 @@ class _TheZoneState extends State<TheZone> {
               leading: Icon(Icons.sentiment_satisfied_alt),
               title: const Text('Post Title'),
               subtitle: Text(
-                'Posted by ' + userName + ': ' + feedTime,
+                'Posted by ' +
+                    postsList[index].username +
+                    ': ' +
+                    postsList[index].timestamp,
                 style: TextStyle(color: Colors.black.withOpacity(0.6)),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                feedText,
+                postsList[index].content,
                 style: TextStyle(color: Colors.black.withOpacity(0.6)),
               ),
             ),
@@ -182,7 +296,7 @@ class _TheZoneState extends State<TheZone> {
                     onPressed: () {
                       //editPost();
                     }),
-                Text(postRank),
+                Text(rank.toString()),
                 IconButton(
                     icon: new Icon(Icons.arrow_downward_sharp),
                     onPressed: () {
@@ -192,7 +306,7 @@ class _TheZoneState extends State<TheZone> {
                   icon: Icon(Icons.comment),
                   onPressed: () {},
                 ),
-                Text(comments),
+                Text(postsList[index].comments.toString()),
 
                 // TODO: Edit this to only be visible to user of that profile
                 // IconButton(
