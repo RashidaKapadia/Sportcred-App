@@ -104,7 +104,13 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                                '${filteredUsers[index].firstname} ${filteredUsers[index].lastname}'),
+                                '${filteredUsers[index].firstname} ${filteredUsers[index].lastname}',
+                                style: TextStyle(
+                                  color: (filteredUsers[index].username ==
+                                          username)
+                                      ? Colors.grey
+                                      : Colors.black,
+                                )),
                             Text('${filteredUsers[index].username}',
                                 style: TextStyle(
                                   fontStyle: FontStyle.italic,
@@ -115,7 +121,9 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
                           borderRadius: new BorderRadius.circular(3.0)),
                       onPressed: () {
                         setState(() {
-                          selectedUsername = filteredUsers[index].username;
+                          if (filteredUsers[index].username != username) {
+                            selectedUsername = filteredUsers[index].username;
+                          }
                         });
                       }));
             }));
@@ -138,7 +146,7 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
       child: Column(children: [
         vmargin20(h1("Choose your Opponent!",
             color: Colors.deepOrange, textAlign: TextAlign.center)),
-        h1("You"),
+        h1("You: " + username),
         h3("vs", color: Colors.grey),
         // Because if nesting issues, we have this inefficiency
         (selectedUsername == null) ? searchBar(users) : h2(selectedUsername),
