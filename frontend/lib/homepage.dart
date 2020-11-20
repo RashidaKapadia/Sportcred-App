@@ -54,10 +54,11 @@ class _HomePageState extends State<HomePage> {
                   crossAxisCount: 2,
                   primary: false,
                   children: <Widget>[
-                    homepageTile("/homepage", "The Zone", Colors.redAccent),
+                    homepageTile("/theZone", "The Zone", Colors.redAccent),
                     homepageTile("/homepage", "Picks & Predictions",
                         Colors.orangeAccent),
-                    homepageTile("/trivia", "Trivia", Colors.yellowAccent[100]),
+                    homepageTile(
+                        "/trivia/category", "Trivia", Colors.yellowAccent[100]),
                     homepageTile(
                         "/homepage", "Analyze & Debate", Colors.greenAccent),
                   ],

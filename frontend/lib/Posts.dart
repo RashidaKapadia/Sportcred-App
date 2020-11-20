@@ -21,8 +21,8 @@ class PostNode {
   final String content;
   final String title;
   final String profileName;
-  final Set peopleAgree;
-  final Set peopleDisagree;
+  final List<dynamic> peopleAgree;
+  final List<dynamic> peopleDisagree;
   final bool reqStatus;
   final List comments; // TYPE TO BE CHANGED TO COMMENT NODE
 
@@ -64,20 +64,10 @@ class _PostPageState extends State<PostsPage> {
   bool _status = true;
   Future<PostNode> _futurePostNode;
 
-  Future<List<PostNode>> getPosts(
-    String timestamp,
-    String uniqueIdentifier,
-    String username,
-    String content,
-    String title,
-    String profileName,
-    Set peopleAgree,
-    Set peopleDisagree,
-    List comments,
-  ) async {
+  Future<List<PostNode>> getPosts() async {
     // Make the request and store the response
     final http.Response response = await http.post(
-      'http://localhost:8080/api/trivia/get-questions',
+      'http://localhost:8080/api/getPosts',
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
         'Accept': 'text/plain; charset=utf-8',
@@ -100,20 +90,18 @@ class _PostPageState extends State<PostsPage> {
 
         allPosts += [PostNode.fromJson(true, postNode)];
       }
-      //setState(() {
-      //this.triviaData = triviaQs;
-      //});
-
       // DEBUGGING STATEMENTS
       print('DEBUGGING: Post Node Get');
       print("\n\nPostNodes: " + allPosts[0].timestamp);
 
-      // Return trivia data
+      // Return posts data
       return allPosts;
     } else {
       return null;
     }
   }
+
+  
 
   @override
   Widget build(BuildContext context) {

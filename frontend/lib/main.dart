@@ -1,18 +1,17 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
 // import 'package:frontend/InitialPage.dart';
-import 'package:frontend/trivia/pickTriviaCategory.dart';
-import 'package:frontend/trivia/onGoingTrivia.dart';
-import 'package:frontend/trivia/triviaStart.dart';
+import 'package:frontend/trivia/triviaPickCategory.dart';
+import 'package:frontend/trivia/triviaMode.dart';
 import 'package:frontend/changePassword.dart';
 import 'package:frontend/trivia/triviaResult.dart';
+import 'package:frontend/trivia/triviaSearchOpponent.dart';
 import 'changeContact.dart';
 import './signup_page.dart';
 import './welcome_page.dart';
 import './loginPage.dart';
 import './homepage.dart';
 import './settings.dart';
+import './theZone.dart';
 import './HTTPRequestExample.dart';
 import './profile_page.dart';
 import './ACSHistory_page.dart';
@@ -34,14 +33,16 @@ void main() {
         '/changePassword': (context) => ChangePassword(),
         '/changeContact': (context) => ChangeContact(),
         "/test": (context) => HTTPRequestExample(),
-        '/trivia': (context) => TriviaHomePage(),
-        '/soloTrivia': (context) => PickTriviaCategoryPage(),
-        '/quizPage': (context) => OnGoingTrivia("Basketball", null),
+        '/trivia/mode': (context) => TriviaModePage("basketball"),
+        '/trivia/category': (context) => TriviaPickCategoryPage(),
+        '/trivia/solo/result': (context) => TriviaResult(),
+        '/trivia/searchOpponent': (context) =>
+            TriviaSearchOpponentPage("basketball"),
         '/settings': (context) => Settings(),
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
-        '/trivia/solo/result': (context) => TriviaResult(),
         '/notifications': (context) => NotificationBoard(),
-        '/zone/comments': (context) => CommentsPage()
+        '/zone/comments': (context) => CommentsPage(),
+        '/theZone': (context) => TheZone()
       }));
 }
 
