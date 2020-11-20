@@ -325,7 +325,60 @@ public class PostHandler {
 
     }
 
-    public static JsonRequestHandler handleEditPost() {
+    public static JsonRequestHandler updatePost() {
+        return (JSONObject jsonObj) -> {
+
+            String postId, content, title, username;
+            String response;
+            // Get input
+            try {
+                username = jsonObj.getString("username"); 
+                postId = jsonObj.getString("uniqueIdentifier");
+                content = jsonObj.getString("content");
+                title = jsonObj.getString("title");
+            } catch (Exception e) {
+                return new JsonHttpReponse(Status.BADREQUEST);
+            }
+             // verify credentials for the post
+             int splitArray = postId.indexOf(".");
+             //System.out.println(splitArray);
+             String subString = postId.substring(0, splitArray); 
+             //String subString1 = postId.substring(splitArray+1, postId.length());
+             //System.out.println(subString1);
+             //System.out.println(subString);
+             System.out.println(subString.equals(username));
+             if (!subString.equals(username)){
+                 try {
+                     System.out.println("The post does not belong to the current user");
+                     response = new JSONObject().put("You can only edit your own own post", false).toString();
+                     return new JsonHttpReponse(Status.CONFLICT, response);
+                 } catch (JSONException e) {
+                     e.printStackTrace();
+                 } 
+             }
+
+            // Run DB command
+            boolean isUpdated = DBPosts.editPost(postId, content, title);
+            if(!isUpdated){
+                try {
+                    response = new JSONObject().put("Couldn't edit post", isUpdated).toString();
+                    return new JsonHttpReponse(Status.SERVERERROR, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                response = new JSONObject().put("Successfully deleted the post!", jsonObj).toString();
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (JSONException e) {
+                    e.printStackTrace();
+                    return new JsonHttpReponse(Status.SERVERERROR);
+            }
+
+        };
+    }
+
+    /*public static JsonRequestHandler handleEditPost() {
         return (JSONObject jsonObj) -> {
 
             System.out.println("Running the Post Edit handler.");
@@ -416,6 +469,6 @@ public class PostHandler {
                 return new JsonHttpReponse(Status.SERVERERROR);
             }
         };
-    }
+    }*/
 
 }
