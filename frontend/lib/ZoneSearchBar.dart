@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -66,6 +67,8 @@ class _ZoneSearchBarState extends State<ZoneSearchBar> {
   bool _status = true;
   List data;
   Future<PostNode> _futurePostNode;
+  TextEditingController searchController = TextEditingController();
+  String searchTitle;
 
   Future<List<PostNode>> getPosts() async {
     // Make the request and store the response
@@ -109,6 +112,7 @@ class _ZoneSearchBarState extends State<ZoneSearchBar> {
   }
 
   Future<List<PostNode>> getPostsForSearch(String title) async {
+    print(title);
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/getPosts',
@@ -136,7 +140,7 @@ class _ZoneSearchBarState extends State<ZoneSearchBar> {
         print(allPosts[0].content);
       }
       // DEBUGGING STATEMENTS
-      print('DEBUGGING: Post Node Get');
+      print('DEBUGGING: Post Node GetForSearch');
       print("\n\nPostNodes: " + allPosts[0].timestamp);
       print(allPosts.length);
       setState(() {
@@ -144,6 +148,35 @@ class _ZoneSearchBarState extends State<ZoneSearchBar> {
         print("in api" + allZonePosts.toString());
       });
       // Return posts data
+      // return _futurePostNode;
+    } else {
+      return null;
+    }
+  }
+
+  Future<dynamic> createPost(
+      String creatorUsername, String content, String title) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/addPost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{
+        'username': creatorUsername,
+        'content': content,
+        'title': title,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _futurePosts = getPosts();
+      });
+
+      return true;
     } else {
       return null;
     }
@@ -155,9 +188,9 @@ class _ZoneSearchBarState extends State<ZoneSearchBar> {
   void initState() {
     super.initState();
     setState(() {
-      _futurePosts = getPostsForSearch("Basketball");
+      _futurePosts = getPostsForSearch("cat");
       print("FUTURE POSTS" + _futurePosts.toString());
-      print("init" + allZonePosts.toString());
+      print("init:" + allZonePosts.toString());
     });
   }
 
@@ -180,23 +213,40 @@ class _ZoneSearchBarState extends State<ZoneSearchBar> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: Colors.grey[200]),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.grey,
-                        ),
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(color: Colors.grey),
-                        hintText: "Search",
-                      ),
+                    child: ListTile(
+                  // decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(50),
+                  //     color: Colors.grey[200]),
+                  title: TextFormField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      // prefixIcon: Icon(
+                      //   Icons.search,
+                      //   color: Colors.grey,
+                      // ),
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
+                      hintText: "Search",
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        this.searchTitle = value;
+                      });
+                    },
                   ),
-                ),
+                  leading: OutlineButton(
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                      ),
+                      borderSide: BorderSide.none,
+                      onPressed: () {
+                        setState(() {
+                          _futurePosts = getPostsForSearch(this.searchTitle);
+                          searchController.clear();
+                        });
+                      }),
+                )),
                 SizedBox(
                   width: 20,
                 )
@@ -434,7 +484,13 @@ class _ZoneSearchBarState extends State<ZoneSearchBar> {
                         child: Text("Submit"),
                         onPressed: () {
                           // Call createPost API
-                          //_createPost(newContent, title);
+                          print("CREATING POST!");
+                          FlutterSession().get('username').then((username) => {
+                                createPost(
+                                    username.toString(), newContent, newTitle)
+                              });
+                          Navigator.of(context, rootNavigator: true).pop();
+                          print("FINISHED CREATING POST!");
                         },
                       ),
                     )
