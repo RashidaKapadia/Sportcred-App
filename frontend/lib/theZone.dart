@@ -443,9 +443,11 @@ class _TheZoneState extends State<TheZone> {
                     }),
                 IconButton(
                   icon: Icon(Icons.comment),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/comments");
+                  },
                 ),
-                Text(allZonePosts[index].comments.toString()),
+                // Text(allZonePosts[index].comments.toString()),
 
                 // TODO: Edit this to only be visible to user of that profile
                 // IconButton(

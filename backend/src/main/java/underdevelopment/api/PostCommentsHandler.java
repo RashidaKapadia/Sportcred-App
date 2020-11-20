@@ -81,7 +81,7 @@ public class PostCommentsHandler {
             }
 
             // Check that the given user is the one that created the comment
-            if (verifyCommentor(commentId, username)) {
+            if (!verifyCommentor(commentId, username)) {
                 response = "You can only delete your own comment";
                 return new JsonHttpReponse(Status.CONFLICT, response);
             }
