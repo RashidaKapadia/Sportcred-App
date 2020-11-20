@@ -150,13 +150,13 @@ public class App
                 new HttpRequestHandler("POST", PostCommentsHandler.handleCreateComment(), authorized));
         // Delete Comment API 
         server.createContext("/api/deleteComment", 
-                new HttpRequestHandler("DELETE", PostCommentsHandler.handleDeleteComment(), authorized));
+                new HttpRequestHandler("POST", PostCommentsHandler.handleDeleteComment(), authorized));
         
         server.createContext("/api/editComment", 
                 new HttpRequestHandler("POST", PostCommentsHandler.handleEditComment(), authorized));
 
         server.createContext("/api/getComments", 
-                new HttpRequestHandler("GET", PostCommentsHandler.handleGetComments(), authorized));
+                new HttpRequestHandler("POST", PostCommentsHandler.handleGetComments(), authorized));
         
         
         // Search Bar API to get posts given title
