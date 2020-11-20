@@ -6,40 +6,12 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: TheZone(),
+      home: ZoneSearchBar(),
     ));
 
-String old_content, old_title;
-TextEditingController _contentController = TextEditingController()..text = '';
-TextEditingController _titleController = TextEditingController()..text = '';
-
-class TheZone extends StatefulWidget {
+class ZoneSearchBar extends StatefulWidget {
   @override
-  _TheZoneState createState() => _TheZoneState();
-}
-
-class PostInfo {
-  final String username;
-  final String content;
-  final String title;
-  final bool reqStatus;
-
-  PostInfo({this.username, this.content, this.title, @required this.reqStatus});
-
-  // converts json to UserInfo object
-  factory PostInfo.fromJson(bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return PostInfo(
-        reqStatus: status,
-      );
-    }
-
-    return PostInfo(
-        reqStatus: status,
-        username: json['username'],
-        content: json['content'],
-        title: json['title']);
-  }
+  _ZoneSearchBarState createState() => _ZoneSearchBarState();
 }
 
 class PostNode {
@@ -89,17 +61,14 @@ class PostNode {
   }
 }
 
-void storePrevValues() {
-  old_content = _contentController.text;
-  old_title = _titleController.text;
-}
-
 List<PostNode> allZonePosts = [];
 
-class _TheZoneState extends State<TheZone> {
+class _ZoneSearchBarState extends State<ZoneSearchBar> {
   bool _status = true;
   List data;
   Future<PostNode> _futurePostNode;
+  TextEditingController searchController = TextEditingController();
+  String searchTitle;
 
   Future<List<PostNode>> getPosts() async {
     // Make the request and store the response
@@ -142,6 +111,49 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
+  Future<List<PostNode>> getPostsForSearch(String title) async {
+    print(title);
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/getPosts',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{'title': title}),
+    );
+
+    if (response.statusCode == 200) {
+      List<PostNode> allPosts = [];
+      // Store the session token
+      //print("Post GET -> RESPONSE:" + response.body.toString());
+      //print(jsonDecode(response.body)['questions']);
+      // Get the questions, options and correctAnswers and store them in the class variables
+      for (Map<String, dynamic> postNode
+          in jsonDecode(response.body)["posts"] as List) {
+        print("*********************");
+        print(PostNode.fromJson(true, postNode).uniqueIdentifier);
+        print("*********************");
+
+        allPosts += [PostNode.fromJson(true, postNode)];
+        print(allPosts[0].content);
+      }
+      // DEBUGGING STATEMENTS
+      print('DEBUGGING: Post Node GetForSearch');
+      print("\n\nPostNodes: " + allPosts[0].timestamp);
+      print(allPosts.length);
+      setState(() {
+        allZonePosts = allPosts;
+        print("in api" + allZonePosts.toString());
+      });
+      // Return posts data
+      // return _futurePostNode;
+    } else {
+      return null;
+    }
+  }
+
   Future<dynamic> createPost(
       String creatorUsername, String content, String title) async {
     // Make the request and store the response
@@ -170,78 +182,15 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
-  Future<dynamic> agreeOrDisagreeToPost(
-      String username, String postId, bool agree) async {
-    // Make the request and store the response
-    final http.Response response = await http.post(
-      'http://localhost:8080/api/agreedOrDisagreedPost',
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Accept': 'text/plain; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: jsonEncode(<String, Object>{
-        'postId': postId,
-        'username': username,
-        'agreed': agree
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      setState(() {
-        _futurePosts = getPosts();
-      });
-
-      return true;
-    } else {
-      return null;
-    }
-  }
-
   Future<List<PostNode>> _futurePosts;
-
-  Future editPost(String postId, String currentUsername, String content,
-      String title) async {
-    // Make the request and store the response
-    final http.Response response = await http.post(
-      'http://localhost:8080/api/editPost',
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Accept': 'text/plain; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: jsonEncode(<String, String>{
-        'uniqueIdentifier': postId,
-        'username': currentUsername,
-        'content': content,
-        'title': title
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      print("Post is edited");
-      setState(() {
-        //this.username = userData.username;
-        //this.acs = userData.acs;
-        //this.tier = userData.tier;
-
-        //_usernameController..text = this.username;
-        //_firstnameController..text = userData.firstname;
-        _futurePosts = getPosts();
-        // Return posts data
-      });
-    } else {
-      return null;
-    }
-  }
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      _futurePosts = getPosts();
+      _futurePosts = getPostsForSearch("cat");
       print("FUTURE POSTS" + _futurePosts.toString());
-      print("init" + allZonePosts.toString());
+      print("init:" + allZonePosts.toString());
     });
   }
 
@@ -264,23 +213,40 @@ class _TheZoneState extends State<TheZone> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: Colors.grey[200]),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.grey,
-                        ),
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(color: Colors.grey),
-                        hintText: "Search",
-                      ),
+                    child: ListTile(
+                  // decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(50),
+                  //     color: Colors.grey[200]),
+                  title: TextFormField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      // prefixIcon: Icon(
+                      //   Icons.search,
+                      //   color: Colors.grey,
+                      // ),
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
+                      hintText: "Search",
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        this.searchTitle = value;
+                      });
+                    },
                   ),
-                ),
+                  leading: OutlineButton(
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                      ),
+                      borderSide: BorderSide.none,
+                      onPressed: () {
+                        setState(() {
+                          _futurePosts = getPostsForSearch(this.searchTitle);
+                          searchController.clear();
+                        });
+                      }),
+                )),
                 SizedBox(
                   width: 20,
                 )
@@ -356,8 +322,8 @@ class _TheZoneState extends State<TheZone> {
   }
 
   Widget makeFeed(int index) {
-    int rank = (allZonePosts[index].peopleAgree.length -
-        allZonePosts[index].peopleDisagree.length);
+    int rank = allZonePosts[index].peopleAgree.length -
+        allZonePosts[index].peopleDisagree.length;
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
@@ -417,37 +383,19 @@ class _TheZoneState extends State<TheZone> {
                     alignment: Alignment.bottomLeft,
                     icon: new Icon(Icons.arrow_upward_sharp),
                     onPressed: () {
-                      print("LIKE THE POST");
-                      FlutterSession().get('username').then((username) => {
-                            agreeOrDisagreeToPost(
-                                username.toString(),
-                                allZonePosts[index].uniqueIdentifier.toString(),
-                                true)
-                          });
                       //editPost();
-                      print("LIKED THE POST");
                     }),
                 Text(rank.toString()),
                 IconButton(
                     icon: new Icon(Icons.arrow_downward_sharp),
                     onPressed: () {
-                      print("DISLIKE THE POST");
-                      FlutterSession().get('username').then((username) => {
-                            agreeOrDisagreeToPost(
-                                username.toString(),
-                                allZonePosts[index].uniqueIdentifier.toString(),
-                                false)
-                          });
-                      print("DISLIKED THE POST!");
                       //editPost();
                     }),
                 IconButton(
                   icon: Icon(Icons.comment),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed("/comments");
-                  },
+                  onPressed: () {},
                 ),
-                // Text(allZonePosts[index].comments.toString()),
+                Text(allZonePosts[index].comments.toString()),
 
                 // TODO: Edit this to only be visible to user of that profile
                 // IconButton(

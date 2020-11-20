@@ -163,7 +163,7 @@ class _CommentsPageState extends State<CommentsPage> {
               switch (value) {
                 case 'Delete':
                   deleteSucess = deleteComment(
-                      "null", //change to this.storeUsername
+                      "jimmy", //change to this.storeUsername
                       allComments[i].id);
                   if (!_deleteSucess) {
                     // print("delete failed");

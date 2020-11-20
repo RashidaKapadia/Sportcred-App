@@ -41,8 +41,8 @@ void main() {
         '/settings': (context) => Settings(),
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
         '/notifications': (context) => NotificationBoard(),
-        '/zone/comments': (context) => CommentsPage(),
-        '/theZone': (context) => TheZone()
+        '/theZone': (context) => TheZone(),
+        '/comments': (context) => CommentsPage()
       }));
 }
 
