@@ -160,23 +160,23 @@ public class DBTrivia{
 	        			if(inviterScore < oppScore) {
 	        				System.out.println("opponent wins");
 	        				// inviter loses 5 points
-	        				DBAcs.editACS(inviterUsername, -5, oppUsername, "trivia", curDate);
+	        				DBAcs.editACS(inviterUsername, -5, oppUsername, "Trivia Multi", curDate);
 	        				// opponent gets 5 points
-	        				DBAcs.editACS(oppUsername, 5, inviterUsername, "trivia", curDate);
+	        				DBAcs.editACS(oppUsername, 5, inviterUsername, "Trivia Multi", curDate);
 	        				
 	        				//createNotification(String username, String type, String category, int ID, String title) 
 	        			}else if(inviterScore > oppScore) {
 	        				System.out.println("inviter wins");
 	        				// inviter gets 5 points
-	        				DBAcs.editACS(inviterUsername, 5, oppUsername, "trivia", curDate);
+	        				DBAcs.editACS(inviterUsername, 5, oppUsername, "Trivia Multi", curDate);
 	        				// opponent loses 5 points
-	        				DBAcs.editACS(oppUsername, -5, inviterUsername, "trivia", curDate);
+	        				DBAcs.editACS(oppUsername, -5, inviterUsername, "Trivia Multi", curDate);
 	        			}else {
 	        				System.out.println("draw");
 	        				// both get 0 points
-	        				DBAcs.editACS(inviterUsername, 0, oppUsername, "trivia", curDate);
+	        				DBAcs.editACS(inviterUsername, 0, oppUsername, "Trivia Multi", curDate);
 	        				// opponent loses 5 points
-	        				DBAcs.editACS(oppUsername, 0, inviterUsername, "trivia", curDate);
+	        				DBAcs.editACS(oppUsername, 0, inviterUsername, "Trivia Multi", curDate);
 	        			}
         				DBNotifications.createNotification(inviterUsername, "results", "trivia", gameID, "Multiplayer trivia results between " + inviterUsername + " and " + oppUsername + " are in!");
         				DBNotifications.createNotification(oppUsername, "results", "trivia", gameID, "Multiplayer trivia results between " + inviterUsername + " and " + oppUsername + " are in!");
