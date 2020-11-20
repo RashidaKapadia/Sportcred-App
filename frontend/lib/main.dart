@@ -11,10 +11,12 @@ import './welcome_page.dart';
 import './loginPage.dart';
 import './homepage.dart';
 import './settings.dart';
+import './theZone.dart';
 import './HTTPRequestExample.dart';
 import './profile_page.dart';
 import './ACSHistory_page.dart';
 import 'notificationBoard.dart';
+import 'CommentsPage.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -39,6 +41,8 @@ void main() {
         '/settings': (context) => Settings(),
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
         '/notifications': (context) => NotificationBoard(),
+        '/theZone': (context) => TheZone(),
+        '/comments': (context) => CommentsPage()
       }));
 }
 

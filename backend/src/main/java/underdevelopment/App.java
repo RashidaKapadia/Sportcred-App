@@ -8,6 +8,8 @@ import com.sun.net.httpserver.HttpServer;
 import underdevelopment.api.ACSHandler;
 import underdevelopment.api.DailyCountHandler;
 import underdevelopment.api.LoginHandler;
+import underdevelopment.api.PostCommentsHandler;
+import underdevelopment.api.PostHandler;
 import underdevelopment.api.NotificationHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
@@ -126,6 +128,40 @@ public class App
         server.createContext("/api/test/non-authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testNonAuthorizedRoute(), false)
                 .addHandler("GET", LoginHandler.testGet(), false));
+                        
+        // Post API test
+        server.createContext("/api/addPost", 
+                new HttpRequestHandler("POST", PostHandler.handlePostCreation(), false));
+        // Delete Post API test
+        server.createContext("/api/deletePost", 
+                new HttpRequestHandler("DELETE", PostHandler.handleDeletePost(), authorized));
+        
+        server.createContext("/api/editPost", 
+                new HttpRequestHandler("POST", PostHandler.updatePost(), authorized));
+
+        server.createContext("/api/agreedOrDisagreedPost", 
+                new HttpRequestHandler("POST", PostHandler.handlePostAgreeDisAgree(), authorized));
+
+        server.createContext("/api/getPosts", 
+                new HttpRequestHandler("POST", PostHandler.handleGetPosts(), authorized));
+
+        // Create Comment API
+        server.createContext("/api/addComment", 
+                new HttpRequestHandler("POST", PostCommentsHandler.handleCreateComment(), authorized));
+        // Delete Comment API 
+        server.createContext("/api/deleteComment", 
+                new HttpRequestHandler("POST", PostCommentsHandler.handleDeleteComment(), authorized));
+        
+        server.createContext("/api/editComment", 
+                new HttpRequestHandler("POST", PostCommentsHandler.handleEditComment(), authorized));
+
+        server.createContext("/api/getComments", 
+                new HttpRequestHandler("POST", PostCommentsHandler.handleGetComments(), authorized));
+        
+        
+        // Search Bar API to get posts given title
+        server.createContext("/api/getPostsForSearch", 
+                new HttpRequestHandler("POST", PostHandler.handleGetPostsForSearchBar(), authorized));
 
         // Start Server
         server.start();
