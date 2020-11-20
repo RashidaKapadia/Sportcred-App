@@ -6,6 +6,15 @@ Widget logoBanner() {
       child: Image.asset('assets/Logo.png'));
 }
 
+Widget headerBanner(Widget title) {
+  return Container(
+      width: double.infinity,
+      color: Colors.blueGrey[900],
+      height: 150,
+      padding: EdgeInsets.all(20.0),
+      child: title);
+}
+
 // All margin
 
 Widget margin20(Widget body) {

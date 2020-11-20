@@ -5,39 +5,30 @@ import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
 
 class TriviaResult extends StatefulWidget {
-  int score, incorrect, correct, notAnswered, questions;
+  int score, incorrect, correct, notAnswered, numQuestions;
   TriviaResult({
     Key key,
     this.score,
     this.incorrect,
     this.correct,
     this.notAnswered,
-    this.questions,
+    this.numQuestions,
   }) : super(key: key);
   @override
   _TriviaResultState createState() =>
-      _TriviaResultState(score, incorrect, correct, notAnswered, questions);
+      _TriviaResultState(score, incorrect, correct, notAnswered, numQuestions);
 }
 
 class _TriviaResultState extends State<TriviaResult> {
-  int score, incorrect, correct, notAnswered, questions;
+  int score, incorrect, correct, notAnswered, numQuestions;
   _TriviaResultState(this.score, this.incorrect, this.correct, this.notAnswered,
-      this.questions);
-
-  Widget headerBanner(Widget title) {
-    return Container(
-        width: double.infinity,
-        color: Colors.blueGrey[900],
-        height: 200,
-        padding: EdgeInsets.all(20.0),
-        child: title);
-  }
+      this.numQuestions);
 
   TableRow scoreRow(Icon icon, String field, int score) {
     return TableRow(children: [
       TableCell(child: Row(children: [hmargin5(icon), Text(field)])),
       TableCell(
-          child: Text(score.toString() + '/' + questions.toString(),
+          child: Text(score.toString() + '/' + numQuestions.toString(),
               textAlign: TextAlign.right))
     ]);
   }

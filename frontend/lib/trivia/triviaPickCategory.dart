@@ -1,20 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
-
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:frontend/requests/trivia.dart';
-import 'package:frontend/trivia/onGoingTrivia.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
 
-class PickTriviaCategoryPage extends StatefulWidget {
+class TriviaPickCategoryPage extends StatefulWidget {
   @override
   _TriviaState createState() => _TriviaState();
 }
 
-class _TriviaState extends State<PickTriviaCategoryPage> {
+class _TriviaState extends State<TriviaPickCategoryPage> {
   // key is the cetgory of the trivia and ist value is its route
   // add more categories here
   final categories = {
@@ -23,20 +19,8 @@ class _TriviaState extends State<PickTriviaCategoryPage> {
     'Basketball': '/homepage'
   };
 
-  // TODO: FIX should not hardcode to basketball
+  // TODO: Temp hardcoding
   String chosenCategory = 'basketball';
-
-  Future<List<TriviaQuestion>> _futureTriviaQuestions;
-  List<TriviaQuestion> triviaData;
-  Timer _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _futureTriviaQuestions = getQuestions(chosenCategory);
-    });
-  }
 
   Widget build(BuildContext context) {
     //final appState = AppStateProvider.of<AppState>(context);
@@ -74,11 +58,9 @@ class _TriviaState extends State<PickTriviaCategoryPage> {
                             text: "Play!",
                             fontColor: Colors.white,
                             backgroundColor: Colors.lightGreen[700],
-                            onPressed: () {
-                              if (_futureTriviaQuestions != null) {
-                                goToTrivia();
-                              }
-                            })),
+                            onPressed: () => Navigator.of(context).pushNamed(
+                                "/trivia/mode",
+                                arguments: {category: chosenCategory}))),
                       ],
                     )),
               ),
@@ -103,14 +85,5 @@ class _TriviaState extends State<PickTriviaCategoryPage> {
               ])),
               categoryCarousel,
             ])));
-  }
-
-  void goToTrivia() async {
-    await _futureTriviaQuestions.then((snapshot) {
-      if (snapshot.isNotEmpty) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => OnGoingTrivia('Basketball', snapshot)));
-      }
-    });
   }
 }

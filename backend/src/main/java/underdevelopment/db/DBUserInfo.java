@@ -33,11 +33,11 @@ public class DBUserInfo {
     // Create a user node in DB for the user with the provided data
     try (Session session = Connect.driver.session()) {
       session.writeTransaction(tx -> tx.run(String.format(
-          "MERGE (a:user {firstname: \"%s\", lastname: \"%s\", email: \"%s\", username: \"%s\", password: \"%s\", "
-              + "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\","
-              + "favTeam: \"%s\", dob: \"%s\", acs: %d, about: \"%s\", status: \"%s\", numberOfPosts: %d})",
-          firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob,
-          100, "N/A","Hungry for basketball", 0)));
+        "MERGE (a:user {firstname: \"%s\", lastname: \"%s\", email: \"%s\", username: \"%s\", password: \"%s\", "
+        + "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\","
+        + "favTeam: \"%s\", dob: \"%s\", acs: %d, about: \"%s\", status: \"%s\", numberOfPosts: %d, triviaMultiPlays: 5})",
+    firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob,
+    100, "N/A","Hungry for basketball", 0)));
       // System.out.println("finished adding the user");
       session.close();
       return true;
