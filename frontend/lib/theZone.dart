@@ -137,7 +137,7 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
-Future<dynamic> agreeOrDisagreeToPost(
+  Future<dynamic> agreeOrDisagreeToPost(
       String username, String postId, bool agree) async {
     // Make the request and store the response
     final http.Response response = await http.post(
@@ -288,8 +288,9 @@ Future<dynamic> agreeOrDisagreeToPost(
   }
 
   Widget makeFeed(int index) {
-    int rank = allZonePosts[index].peopleAgree.length -
-        allZonePosts[index].peopleDisagree.length;
+    int rank = (allZonePosts[index].peopleAgree.length -
+            allZonePosts[index].peopleDisagree.length)
+        .abs();
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
@@ -350,23 +351,26 @@ Future<dynamic> agreeOrDisagreeToPost(
                     icon: new Icon(Icons.arrow_upward_sharp),
                     onPressed: () {
                       print("LIKE THE POST");
-                      FlutterSession()
-                              .get('username')
-                              .then((username) => {
-                                agreeOrDisagreeToPost(username.toString(), allZonePosts[index].uniqueIdentifier.toString(), true)});
+                      FlutterSession().get('username').then((username) => {
+                            agreeOrDisagreeToPost(
+                                username.toString(),
+                                allZonePosts[index].uniqueIdentifier.toString(),
+                                true)
+                          });
                       //editPost();
                       print("LIKED THE POST");
-
                     }),
                 Text(rank.toString()),
                 IconButton(
                     icon: new Icon(Icons.arrow_downward_sharp),
                     onPressed: () {
                       print("DISLIKE THE POST");
-                      FlutterSession()
-                              .get('username')
-                              .then((username) => {
-                                agreeOrDisagreeToPost(username.toString(), allZonePosts[index].uniqueIdentifier.toString(), false)});
+                      FlutterSession().get('username').then((username) => {
+                            agreeOrDisagreeToPost(
+                                username.toString(),
+                                allZonePosts[index].uniqueIdentifier.toString(),
+                                false)
+                          });
                       print("DISLIKED THE POST!");
                       //editPost();
                     }),
@@ -464,12 +468,12 @@ Future<dynamic> agreeOrDisagreeToPost(
                         onPressed: () {
                           // Call createPost API
                           print("CREATING POST!");
-                          FlutterSession()
-                              .get('username')
-                              .then((username) => {
-                                createPost(username.toString(), newContent, newTitle)});
-                          Navigator.of(context, rootNavigator: true).pop();                        
-                            print("FINISHED CREATING POST!");
+                          FlutterSession().get('username').then((username) => {
+                                createPost(
+                                    username.toString(), newContent, newTitle)
+                              });
+                          Navigator.of(context, rootNavigator: true).pop();
+                          print("FINISHED CREATING POST!");
                         },
                       ),
                     )
