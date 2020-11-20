@@ -29,7 +29,7 @@ public class App
     {
         // Dev settings
         String dbUsername = "neo4j";
-        String dbPassword = "jimmy";
+        String dbPassword = "1234";
         
         // Connect to the database
         Connect.connectDB(dbUsername, dbPassword);
