@@ -165,6 +165,32 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
+  Future editPost(String postId, String currentUsername, String content,
+      String title) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/editPost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{
+        'uniqueIdentifier': postId,
+        'username': currentUsername,
+        'content': content,
+        'title': title
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("Post is edited");
+      // Return posts data
+    } else {
+      return null;
+    }
+  }
+
   Future<List<PostNode>> _futurePosts;
 
   @override
@@ -289,8 +315,7 @@ class _TheZoneState extends State<TheZone> {
 
   Widget makeFeed(int index) {
     int rank = (allZonePosts[index].peopleAgree.length -
-            allZonePosts[index].peopleDisagree.length)
-        .abs();
+        allZonePosts[index].peopleDisagree.length);
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
