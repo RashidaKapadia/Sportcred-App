@@ -6,7 +6,11 @@ import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpServer;
 
 import underdevelopment.api.ACSHandler;
+import underdevelopment.api.DailyCountHandler;
 import underdevelopment.api.LoginHandler;
+import underdevelopment.api.PostCommentsHandler;
+import underdevelopment.api.PostHandler;
+import underdevelopment.api.NotificationHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.TriviaHandler;
@@ -62,9 +66,9 @@ public class App
 
         // Profile APIs
         server.createContext("/api/updateUserPassword",
-                new HttpRequestHandler("POST", ProfileHandler.updateUserPassword(), false));
+                new HttpRequestHandler("POST", ProfileHandler.updateUserPassword(), authorized));
         server.createContext("/api/updateUserContact",
-                new HttpRequestHandler("POST", ProfileHandler.updateUserContact(), false));
+                new HttpRequestHandler("POST", ProfileHandler.updateUserContact(), authorized));
         
         server.createContext("/api/updateUserInfo",
             new HttpRequestHandler("POST", ProfileHandler.updateUserInfo(), authorized));
@@ -74,7 +78,11 @@ public class App
         // Sign Up API
         server.createContext("/api/signup", 
                 new HttpRequestHandler("POST", SignUpHandler.handleSignUp(), false));
-              
+
+        // Users
+        server.createContext("/api/get-users-list", 
+                new HttpRequestHandler("POST", TriviaHandler.getUserList(), authorized));
+
         // ACS API (mostly for testing)
         server.createContext("/api/editACS", 
                 new HttpRequestHandler("POST", ACSHandler.handleACS(), authorized));
@@ -84,7 +92,35 @@ public class App
         // Trivia route
         server.createContext("/api/trivia/get-questions", 
                 new HttpRequestHandler("POST", TriviaHandler.generateQuestions(), authorized));
-
+        server.createContext("/api/trivia/get-specific-questions", 
+                new HttpRequestHandler("POST", TriviaHandler.getQuesionsByID(), authorized));
+        server.createContext("/api/trivia/start-multiplayer-game", 
+                new HttpRequestHandler("POST", TriviaHandler.startMultiTrivia(), authorized));
+        server.createContext("/api/trivia/end-multiplayer-game", 
+                new HttpRequestHandler("POST", TriviaHandler.endMultiTrivia(), authorized));
+        server.createContext("/api/trivia/multiplayer-result", 
+                new HttpRequestHandler("POST", TriviaHandler.getMultiTrivia(), authorized));
+        server.createContext("/api/trivia/join-multiplayer-game", 
+                new HttpRequestHandler("POST", TriviaHandler.joinMultiTrivia(), authorized));
+        
+        
+        
+        // Count resetting
+        server.createContext("/api/reset-count", 
+                new HttpRequestHandler("POST", DailyCountHandler.resetCount(), authorized));
+        server.createContext("/api/subtract-count", 
+                new HttpRequestHandler("POST", DailyCountHandler.subtractCount(), authorized));
+        server.createContext("/api/has-daily-play", 
+                new HttpRequestHandler("POST", DailyCountHandler.getCount(), authorized));
+        
+        // Notification routes
+        server.createContext("/api/notifications/get",
+                new HttpRequestHandler("POST", NotificationHandler.getNotifications(), authorized));
+        server.createContext("/api/notifications/mark-read",
+                new HttpRequestHandler("POST", NotificationHandler.markRead(), authorized));
+        server.createContext("/api/notifications/delete",
+                new HttpRequestHandler("POST", NotificationHandler.deleteNot(), authorized));
+        
         // Test routes
         server.createContext("/api/test/authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testAuthorizedRoute(), authorized)
@@ -92,6 +128,40 @@ public class App
         server.createContext("/api/test/non-authorized-route", 
             new HttpRequestHandler("POST", LoginHandler.testNonAuthorizedRoute(), false)
                 .addHandler("GET", LoginHandler.testGet(), false));
+                        
+        // Post API test
+        server.createContext("/api/addPost", 
+                new HttpRequestHandler("POST", PostHandler.handlePostCreation(), false));
+        // Delete Post API test
+        server.createContext("/api/deletePost", 
+                new HttpRequestHandler("DELETE", PostHandler.handleDeletePost(), authorized));
+        
+        server.createContext("/api/editPost", 
+                new HttpRequestHandler("POST", PostHandler.updatePost(), authorized));
+
+        server.createContext("/api/agreedOrDisagreedPost", 
+                new HttpRequestHandler("POST", PostHandler.handlePostAgreeDisAgree(), authorized));
+
+        server.createContext("/api/getPosts", 
+                new HttpRequestHandler("POST", PostHandler.handleGetPosts(), authorized));
+
+        // Create Comment API
+        server.createContext("/api/addComment", 
+                new HttpRequestHandler("POST", PostCommentsHandler.handleCreateComment(), authorized));
+        // Delete Comment API 
+        server.createContext("/api/deleteComment", 
+                new HttpRequestHandler("POST", PostCommentsHandler.handleDeleteComment(), authorized));
+        
+        server.createContext("/api/editComment", 
+                new HttpRequestHandler("POST", PostCommentsHandler.handleEditComment(), authorized));
+
+        server.createContext("/api/getComments", 
+                new HttpRequestHandler("POST", PostCommentsHandler.handleGetComments(), authorized));
+        
+        
+        // Search Bar API to get posts given title
+        server.createContext("/api/getPostsForSearch", 
+                new HttpRequestHandler("POST", PostHandler.handleGetPostsForSearchBar(), authorized));
 
         // Start Server
         server.start();
