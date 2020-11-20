@@ -9,9 +9,37 @@ void main() => runApp(MaterialApp(
       home: TheZone(),
     ));
 
+String old_content, old_title;
+TextEditingController _contentController = TextEditingController()..text = '';
+TextEditingController _titleController = TextEditingController()..text = '';
+
 class TheZone extends StatefulWidget {
   @override
   _TheZoneState createState() => _TheZoneState();
+}
+
+class PostInfo {
+  final String username;
+  final String content;
+  final String title;
+  final bool reqStatus;
+
+  PostInfo({this.username, this.content, this.title, @required this.reqStatus});
+
+  // converts json to UserInfo object
+  factory PostInfo.fromJson(bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return PostInfo(
+        reqStatus: status,
+      );
+    }
+
+    return PostInfo(
+        reqStatus: status,
+        username: json['username'],
+        content: json['content'],
+        title: json['title']);
+  }
 }
 
 class PostNode {
@@ -59,6 +87,11 @@ class PostNode {
       comments: json['comments'],
     );
   }
+}
+
+void storePrevValues() {
+  old_content = _contentController.text;
+  old_title = _titleController.text;
 }
 
 List<PostNode> allZonePosts = [];
@@ -165,6 +198,8 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
+  Future<List<PostNode>> _futurePosts;
+
   Future editPost(String postId, String currentUsername, String content,
       String title) async {
     // Make the request and store the response
@@ -185,13 +220,20 @@ class _TheZoneState extends State<TheZone> {
 
     if (response.statusCode == 200) {
       print("Post is edited");
-      // Return posts data
+      setState(() {
+        //this.username = userData.username;
+        //this.acs = userData.acs;
+        //this.tier = userData.tier;
+
+        //_usernameController..text = this.username;
+        //_firstnameController..text = userData.firstname;
+        _futurePosts = getPosts();
+        // Return posts data
+      });
     } else {
       return null;
     }
   }
-
-  Future<List<PostNode>> _futurePosts;
 
   @override
   void initState() {
