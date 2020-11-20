@@ -137,6 +137,34 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
+Future<dynamic> agreeOrDisagreeToPost(
+      String username, String postId, bool agree) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/agreedOrDisagreedPost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, Object>{
+        'postId': postId,
+        'username': username,
+        'agreed': agree
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _futurePosts = getPosts();
+      });
+
+      return true;
+    } else {
+      return null;
+    }
+  }
+
   Future<List<PostNode>> _futurePosts;
 
   @override
@@ -321,12 +349,25 @@ class _TheZoneState extends State<TheZone> {
                     alignment: Alignment.bottomLeft,
                     icon: new Icon(Icons.arrow_upward_sharp),
                     onPressed: () {
+                      print("LIKE THE POST");
+                      FlutterSession()
+                              .get('username')
+                              .then((username) => {
+                                agreeOrDisagreeToPost(username.toString(), allZonePosts[index].uniqueIdentifier.toString(), true)});
                       //editPost();
+                      print("LIKED THE POST");
+
                     }),
                 Text(rank.toString()),
                 IconButton(
                     icon: new Icon(Icons.arrow_downward_sharp),
                     onPressed: () {
+                      print("DISLIKE THE POST");
+                      FlutterSession()
+                              .get('username')
+                              .then((username) => {
+                                agreeOrDisagreeToPost(username.toString(), allZonePosts[index].uniqueIdentifier.toString(), false)});
+                      print("DISLIKED THE POST!");
                       //editPost();
                     }),
                 IconButton(
