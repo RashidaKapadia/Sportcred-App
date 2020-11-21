@@ -35,9 +35,9 @@ Team capacity = 6*4*10*0.7 = 252 hours
 
 ## Spikes
 1. Trivia
-  - Refactoring solo player trivia for multiplayer trivia
+   - Refactoring solo player trivia for multiplayer trivia
 2. Connecting the frontend and backend
- - Flutter has a lot of issues with Null exceptions with vague messages when we try to call and get data from the backend. It is also very difficult and time consuming to debug. 
+   - Flutter has a lot of issues with Null exceptions with vague messages when we try to call and get data from the backend. It is also very difficult and time consuming to debug. 
 
     
 ## User Stories and Breakdown of Tasks
