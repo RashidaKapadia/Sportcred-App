@@ -69,6 +69,8 @@ public class PostCommentsHandler {
                 username = jsonObj.getString("username");
                 commentId = jsonObj.getString("commentId");
                 System.out.println("Got the required info");
+                System.out.println(username);
+                System.out.println(commentId);
             } catch (Exception e) {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
@@ -81,7 +83,7 @@ public class PostCommentsHandler {
             }
 
             // Check that the given user is the one that created the comment
-            if (verifyCommentor(commentId, username)) {
+            if (!verifyCommentor(commentId, username)) {
                 response = "You can only delete your own comment";
                 return new JsonHttpReponse(Status.CONFLICT, response);
             }
@@ -167,6 +169,10 @@ public class PostCommentsHandler {
         // verify credentials for the post
         int splitArray = commentId.indexOf(".");
         String subString = commentId.substring(0, splitArray);
+        System.out.println("********");
+        System.out.println(username);
+        System.out.println(subString);
+        System.out.println(subString.equals(username));
 
         return subString.equals(username);
     }
