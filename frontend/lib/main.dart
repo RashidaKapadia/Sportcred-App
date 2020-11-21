@@ -55,6 +55,6 @@ class _SportCredAppState extends State<SportCredApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return CommentsPage();
+    return LoginPage();
   }
 }
