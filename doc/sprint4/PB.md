@@ -167,18 +167,17 @@ Given that users are on the debates page, when they click a “view debates” b
 
 
 ## Sprint3 Bugs and new user stories
-__* Investigate null errors that happen with the navigation bar.__
+__* Investigate null errors that happen with page navigation 
 
-__* As a user, my daily count for Trivia and debate should automatically be reset at the start of a new day..__
+__* 3 As a user, my daily count for Trivia and debate should automatically be reset at the start of a new day..__
 
 When the user goes to check the remaining daily counts for trivia or debate, the number should reset if its a new day.
 
-__* As a user, I should always see others user’s ACS score next to their username .__
+__** 4 As a user, I should always see others user’s ACS score next to their username .__
 When a user views another user’s username, they should be able to see their ACS score and rank/title.
 
- __*  As a user, I should be able to edit my own post in The Zone .__
+ __** 4  As a user, I should be able to edit my own post in The Zone .__
 When a user is in The Zone, they should be able to edit their own posts.
 
-  __*  As a user, I should be able to delete my own posts .__
+  __**6 As a user, I should be able to delete my own posts .__
 When a user is in The Zone, they should be able to delete their own posts.
-
