@@ -167,7 +167,7 @@ Given that users are on the debates page, when they click a “view debates” b
 
 
 ## Sprint3 Bugs and new user stories
-__* Investigate null errors that happen with page navigation 
+__* Investigate null errors that happen with the navigation bar.__
 
 __* As a user, my daily count for Trivia and debate should automatically be reset at the start of a new day..__
 
