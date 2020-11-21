@@ -9,6 +9,8 @@ void main() => runApp(MaterialApp(
       home: TheZone(),
     ));
 
+String currentUsername;
+
 class TheZone extends StatefulWidget {
   @override
   _TheZoneState createState() => _TheZoneState();
@@ -137,15 +139,45 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
+  Future deletePost(String postId, String username) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/deletePost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(
+          <String, String>{'uniqueIdentifier': postId, 'username': username}),
+    );
+
+    if (response.statusCode == 200) {
+      print("Post is deleted");
+      // Return posts data
+    } else {
+      return null;
+    }
+  }
+
   Future<List<PostNode>> _futurePosts;
 
   @override
   void initState() {
     super.initState();
     setState(() {
+      loadUsername();
       _futurePosts = getPosts();
       print("FUTURE POSTS" + _futurePosts.toString());
       print("init" + allZonePosts.toString());
+    });
+  }
+
+  void loadUsername() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        currentUsername = value.toString();
+      });
     });
   }
 
@@ -259,6 +291,8 @@ class _TheZoneState extends State<TheZone> {
     );
   }
 
+  static const List<String> choices = ["Edit", "Delete"];
+
   Widget makeFeed(int index) {
     int rank = allZonePosts[index].peopleAgree.length -
         allZonePosts[index].peopleDisagree.length;
@@ -271,7 +305,8 @@ class _TheZoneState extends State<TheZone> {
             Align(
               alignment: Alignment.topRight,
               child: PopupMenuButton<String>(
-                onSelected: handleClick,
+                onSelected: (context) =>
+                    handleClick(context, index, currentUsername),
                 itemBuilder: (BuildContext context) {
                   return {'Edit', 'Delete'}.map((String choice) {
                     return PopupMenuItem<String>(
@@ -333,7 +368,7 @@ class _TheZoneState extends State<TheZone> {
                   icon: Icon(Icons.comment),
                   onPressed: () {},
                 ),
-                Text(allZonePosts[index].comments.toString()),
+                //Text(allZonePosts[index].comments.toString()),
 
                 // TODO: Edit this to only be visible to user of that profile
                 // IconButton(
@@ -354,12 +389,12 @@ class _TheZoneState extends State<TheZone> {
     );
   }
 
-  void handleClick(String value) {
+  void handleClick(String value, int index, String creatorUsername) {
     switch (value) {
       case 'Edit':
         break;
       case 'Delete':
-        break;
+        deletePost(allZonePosts[index].uniqueIdentifier, currentUsername);
     }
   }
 
@@ -423,60 +458,18 @@ class _TheZoneState extends State<TheZone> {
                         onPressed: () {
                           // Call createPost API
                           print("CREATING POST!");
-                          FlutterSession()
-                              .get('username')
-                              .then((username) => {
-                                createPost(username.toString(), newContent, newTitle)});
-                          Navigator.of(context, rootNavigator: true).pop();                        
-                            print("FINISHED CREATING POST!");
+                          FlutterSession().get('username').then((username) => {
+                                createPost(
+                                    username.toString(), newContent, newTitle)
+                              });
+                          Navigator.of(context, rootNavigator: true).pop();
+                          print("FINISHED CREATING POST!");
                         },
                       ),
                     )
                   ],
                 ),
               ));
-          // return AlertDialog(
-          //   content: Stack(
-          //     overflow: Overflow.visible,
-          //     children: <Widget>[
-          //       Positioned(
-          //         right: -30.0,
-          //         top: -30.0,
-          //         child: InkResponse(
-          //           onTap: () {
-          //             Navigator.of(context).pop();
-          //           },
-          //           child: CircleAvatar(
-          //             child: Icon(Icons.close),
-          //             backgroundColor: Colors.red,
-          //           ),
-          //         ),
-          //       ),
-          //       Form(
-          //         child: Column(
-          //           mainAxisSize: MainAxisSize.min,
-          //           children: <Widget>[
-          //             Padding(
-          //               padding: EdgeInsets.all(8.0),
-          //               child: TextFormField(),
-          //             ),
-          //             Padding(
-          //               padding: EdgeInsets.all(8.0),
-          //               child: TextFormField(),
-          //             ),
-          //             Padding(
-          //               padding: const EdgeInsets.all(8.0),
-          //               child: RaisedButton(
-          //                 child: Text("Create Post"),
-          //                 onPressed: () {},
-          //               ),
-          //             )
-          //           ],
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // );
         });
   }
 
@@ -530,85 +523,6 @@ class _TheZoneState extends State<TheZone> {
             Text(
               "Agree",
               style: TextStyle(color: isActive ? Colors.blue : Colors.grey),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget makeDisagreeButton({isActive}) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[200]),
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.thumb_down,
-              color: isActive ? Colors.red : Colors.grey,
-              size: 18,
-            ),
-            SizedBox(
-              width: 5,
-            ),
-            Text(
-              "Disagree",
-              style: TextStyle(color: isActive ? Colors.red : Colors.grey),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget makeCommentButton() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[200]),
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(Icons.chat, color: Colors.grey, size: 18),
-            SizedBox(
-              width: 5,
-            ),
-            Text(
-              "Comment",
-              style: TextStyle(color: Colors.black),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget makeShareButton() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[200]),
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(Icons.share, color: Colors.grey, size: 18),
-            SizedBox(
-              width: 5,
-            ),
-            Text(
-              "Share",
-              style: TextStyle(color: Colors.black),
             )
           ],
         ),
