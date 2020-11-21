@@ -29,6 +29,8 @@ public class DBAcs {
 		 Record record;
 		 Record data = null;
 		 int newACS;
+		 System.out.println("username is: " + username);
+		 System.out.println("opp username is: " + oppUsername);
 		 try (Session session = Connect.driver.session()) {
 	    	try (Transaction tx = session.beginTransaction()) {
 	    		// Update the person's ACS score (MIN: 100, MAX: 1100)
@@ -40,13 +42,9 @@ public class DBAcs {
 	    		record = result.next();
 	    		newACS = record.get("acs").asInt();
     			
-				System.out.println(newACS);
 				
-	    		System.out.println("checking");
 	    		// Check if the person has played any games at all.
 	    		Result result2 = tx.run(String.format("MATCH (n:user {username: '%s'})-[r:ACSRecord]-() RETURN n", username));
-	    		System.out.println("checking 2");
-
 	    		if (result2.hasNext()) {
 	    			System.out.println("has next");
 	    			// Update the person's ACS history 

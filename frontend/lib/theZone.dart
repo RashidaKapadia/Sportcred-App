@@ -9,9 +9,37 @@ void main() => runApp(MaterialApp(
       home: TheZone(),
     ));
 
+String old_content, old_title;
+TextEditingController _contentController = TextEditingController()..text = '';
+TextEditingController _titleController = TextEditingController()..text = '';
+
 class TheZone extends StatefulWidget {
   @override
   _TheZoneState createState() => _TheZoneState();
+}
+
+class PostInfo {
+  final String username;
+  final String content;
+  final String title;
+  final bool reqStatus;
+
+  PostInfo({this.username, this.content, this.title, @required this.reqStatus});
+
+  // converts json to UserInfo object
+  factory PostInfo.fromJson(bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return PostInfo(
+        reqStatus: status,
+      );
+    }
+
+    return PostInfo(
+        reqStatus: status,
+        username: json['username'],
+        content: json['content'],
+        title: json['title']);
+  }
 }
 
 class PostNode {
@@ -59,6 +87,11 @@ class PostNode {
       comments: json['comments'],
     );
   }
+}
+
+void storePrevValues() {
+  old_content = _contentController.text;
+  old_title = _titleController.text;
 }
 
 List<PostNode> allZonePosts = [];
@@ -137,7 +170,70 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
+  Future<dynamic> agreeOrDisagreeToPost(
+      String username, String postId, bool agree) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/agreedOrDisagreedPost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, Object>{
+        'postId': postId,
+        'username': username,
+        'agreed': agree
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _futurePosts = getPosts();
+      });
+
+      return true;
+    } else {
+      return null;
+    }
+  }
+
   Future<List<PostNode>> _futurePosts;
+
+  Future editPost(String postId, String currentUsername, String content,
+      String title) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/editPost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{
+        'uniqueIdentifier': postId,
+        'username': currentUsername,
+        'content': content,
+        'title': title
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("Post is edited");
+      setState(() {
+        //this.username = userData.username;
+        //this.acs = userData.acs;
+        //this.tier = userData.tier;
+
+        //_usernameController..text = this.username;
+        //_firstnameController..text = userData.firstname;
+        _futurePosts = getPosts();
+        // Return posts data
+      });
+    } else {
+      return null;
+    }
+  }
 
   @override
   void initState() {
@@ -260,8 +356,8 @@ class _TheZoneState extends State<TheZone> {
   }
 
   Widget makeFeed(int index) {
-    int rank = allZonePosts[index].peopleAgree.length -
-        allZonePosts[index].peopleDisagree.length;
+    int rank = (allZonePosts[index].peopleAgree.length -
+        allZonePosts[index].peopleDisagree.length);
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
@@ -321,19 +417,37 @@ class _TheZoneState extends State<TheZone> {
                     alignment: Alignment.bottomLeft,
                     icon: new Icon(Icons.arrow_upward_sharp),
                     onPressed: () {
+                      print("LIKE THE POST");
+                      FlutterSession().get('username').then((username) => {
+                            agreeOrDisagreeToPost(
+                                username.toString(),
+                                allZonePosts[index].uniqueIdentifier.toString(),
+                                true)
+                          });
                       //editPost();
+                      print("LIKED THE POST");
                     }),
                 Text(rank.toString()),
                 IconButton(
                     icon: new Icon(Icons.arrow_downward_sharp),
                     onPressed: () {
+                      print("DISLIKE THE POST");
+                      FlutterSession().get('username').then((username) => {
+                            agreeOrDisagreeToPost(
+                                username.toString(),
+                                allZonePosts[index].uniqueIdentifier.toString(),
+                                false)
+                          });
+                      print("DISLIKED THE POST!");
                       //editPost();
                     }),
                 IconButton(
                   icon: Icon(Icons.comment),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/comments");
+                  },
                 ),
-                Text(allZonePosts[index].comments.toString()),
+                // Text(allZonePosts[index].comments.toString()),
 
                 // TODO: Edit this to only be visible to user of that profile
                 // IconButton(
@@ -423,12 +537,12 @@ class _TheZoneState extends State<TheZone> {
                         onPressed: () {
                           // Call createPost API
                           print("CREATING POST!");
-                          FlutterSession()
-                              .get('username')
-                              .then((username) => {
-                                createPost(username.toString(), newContent, newTitle)});
-                          Navigator.of(context, rootNavigator: true).pop();                        
-                            print("FINISHED CREATING POST!");
+                          FlutterSession().get('username').then((username) => {
+                                createPost(
+                                    username.toString(), newContent, newTitle)
+                              });
+                          Navigator.of(context, rootNavigator: true).pop();
+                          print("FINISHED CREATING POST!");
                         },
                       ),
                     )
