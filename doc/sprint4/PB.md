@@ -63,7 +63,7 @@ When the user navigates to their profile page, their ACS score and rank will be 
 
 (Optional) When the user clicks on their rank (or icon near it), they can view a list of ranks and their descriptions.
 
-__\* 12: As a new user, I should be immediately be alerted when I update the profile page with incorrect email or birthday format.__
+__\* 2: As a new user, I should be immediately be alerted when I update the profile page with incorrect email or birthday format.__
 
 When a user clicks the “update” button on the profile to update its user info, if the email or birthday was entered in an incorrect format, a pop up message should appear, letting them know that they must enter the values in a correct format. The user should be able to pick the date using the calendar widget (similar to signup page) instead of typing it to ensure proper format.
 
