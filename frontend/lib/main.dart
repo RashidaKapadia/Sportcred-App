@@ -15,6 +15,8 @@ import './theZone.dart';
 import './HTTPRequestExample.dart';
 import './profile_page.dart';
 import './ACSHistory_page.dart';
+import './requests/trivia.dart';
+import 'ZoneSearchBar.dart';
 import 'notificationBoard.dart';
 import 'CommentsPage.dart';
 
@@ -40,6 +42,7 @@ void main() {
             TriviaSearchOpponentPage("basketball"),
         '/settings': (context) => Settings(),
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
+        "/zone/search": (context) => ZoneSearchBar(),
         '/notifications': (context) => NotificationBoard(),
         '/theZone': (context) => TheZone(),
         '/comments': (context) => CommentsPage()
