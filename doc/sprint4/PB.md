@@ -179,5 +179,5 @@ When a user views another user’s username, they should be able to see their AC
  __** 4  As a user, I should be able to edit my own post in The Zone .__
 When a user is in The Zone, they should be able to edit their own posts.
 
-  __**6 As a user, I should be able to delete my own posts .__
+  __**4 As a user, I should be able to delete my own posts .__
 When a user is in The Zone, they should be able to delete their own posts.
