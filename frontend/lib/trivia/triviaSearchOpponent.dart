@@ -142,7 +142,7 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
   Widget body(BuildContext context, List<UserInfo> users) {
     return Center(
         child: Container(
-      padding: EdgeInsets.symmetric(vertical: 30),
+      padding: EdgeInsets.symmetric(vertical: 28),
       width: MediaQuery.of(context).size.width * 0.80,
       child: Column(children: [
         vmargin20(h1("Choose your Opponent!",

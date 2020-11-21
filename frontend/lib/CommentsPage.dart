@@ -104,7 +104,7 @@ class _CommentsPageState extends State<CommentsPage> {
     }
   }
 
-  // Http post request to get post's comments
+  // Http post request to delete post's comments
   Future<bool> deleteComment(String username, String commentId) async {
     // Make the request and store the response
     final http.Response response = await http.post(
@@ -127,6 +127,32 @@ class _CommentsPageState extends State<CommentsPage> {
       print("users dont match!");
       print(_deleteSucess);
       return false;
+    } else {
+      return false;
+    }
+  }
+
+  // Http post request to edit post's comments
+  Future<bool> editComment(
+      String postId, String username, String newData) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/addComment',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{
+        'postId': postId,
+        'username': username,
+        'content': newData
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("edited comment!");
+      return true;
     } else {
       return false;
     }
