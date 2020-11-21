@@ -41,4 +41,40 @@ Team capacity = 6*4*10*0.7 = 252 hours
 
     
 ## User Stories and Breakdown of Tasks
-Please refer to Jira.
+1. [UN-12] As a user, I want to be able to play trivia head to head with other users so that I can increase my A.C.S. by competing with them.  
+   - API and DB commands to Check/Update Daily trivia plays -  Zhi Hua  
+   - Multiplayer trivia result page (frontend) - Jenny  
+   - API and DB to Create, Store, retrieve game invite and game results  -  Zhi Hua  
+   - Get list of questions for trivia  -  Zhi Hua  
+   - Generalize solo trivia for multiplayer frontend - Jenny  
+  
+2. [UN-105] As a user, I should be able to search of an opponent to play against for multiplayer trivia.  
+   - API and DB to Search for opponents to challenge - Zhi Hua
+   - Frontend to Search for opponents to challenge - Jenny
+
+3. [UN-114] As a user, I should get a notification when challenged by another user, or when someone accepts my challenge. 
+   - Backend Add, Mark Read, Delete, List Notifications - Zhi Hua
+   - Frontend see & delete notifications - Jenny
+
+4. [UN-8] As a user, I want to be able to browse and create basketball posts in the zone.  
+   - Frontend - implement The Zone UI - Rashida
+   - Backend & DB - Add, edit and delete the post in the db - Anmole
+
+5. [UN-10] As a user, I want to give feedback on other users' posts in the zone by commenting so I can be more engaged and involved in the community.  
+    - Backend & DB - Add, edit and delete the comments of posts in the db - Maunica
+    - Front-end: Allow users to add and delete comments to the posts - Devanshi
+
+6. [UN-26] As a user, I want to give feedback on other users' posts in the open court by agreeing/disagreeing so I can be more engaged and involved in the community.  
+   - Frontend - Rashida
+   - Backend - Anmole
+
+7. [UN-103] As a user, I want to be able to search for posts by a category in the zone
+   - Backend & DB - collect posts from db and send them to front end - Maunica
+   - Front-end: Add search bar and display filtered posts - Devanshi
+
+8. [UN-109] Sprint 2 bugs  
+   - Sign up birthday range - Maunica
+   - ACS history range - Maunica
+   - ACS History UI - Devanshi
+   - Null errors with navigation - Rashida
+
