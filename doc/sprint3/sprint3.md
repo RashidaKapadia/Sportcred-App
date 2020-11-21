@@ -12,11 +12,11 @@ Discuss what user stories we want to implement for sprint 3, break them down int
 - Anmole Bajwa
 
 ## Team Capacity
-Total capacity: 6 hours/day
-Number of days in sprint: 10
-Number of team members: 6
-Using focus factor (F.F. - 0.6 - 0.8): 0.7
-Team capacity = 6*4*10*0.7 = 252 hours
+Total capacity: 6 hours/day  
+Number of days in sprint: 10  
+Number of team members: 6  
+Using focus factor (F.F. - 0.6 - 0.8): 0.7  
+Team capacity = 6*4*10*0.7 = 252 hours  
 
 ## Sprint Goals
 - Create multiplayer trivia game, and invite another user play with the same game with the 10 randomized questions
