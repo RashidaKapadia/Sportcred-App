@@ -111,7 +111,7 @@ public class PostHandler {
         return (JSONObject jsonObj) -> {
 
             System.out.println("Running the Post handler.");
-            String username, content, title, profileName;
+            String username, content, title;
 
             String response;
             // Get and validate input
@@ -120,7 +120,6 @@ public class PostHandler {
                 username = jsonObj.getString("username");
                 content = jsonObj.getString("content");
                 title = jsonObj.getString("title");
-               // profileName = jsonObj.getString("profileName");
             } catch (Exception e) {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }

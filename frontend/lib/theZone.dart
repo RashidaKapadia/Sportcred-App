@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_session/flutter_session.dart';
+import 'package:frontend/formHelper.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,6 @@ void main() => runApp(MaterialApp(
       home: TheZone(),
     ));
 
-String currentUsername;
 String old_content, old_title;
 TextEditingController _contentController = TextEditingController()..text = '';
 TextEditingController _titleController = TextEditingController()..text = '';
@@ -167,6 +167,8 @@ class _TheZoneState extends State<TheZone> {
 
       return true;
     } else {
+      print("ERROR - COULD NOT CREATE POST!");
+      errorPopup(context, "Could not create post!");
       return null;
     }
   }
@@ -222,16 +224,11 @@ class _TheZoneState extends State<TheZone> {
     if (response.statusCode == 200) {
       print("Post is edited");
       setState(() {
-        //this.username = userData.username;
-        //this.acs = userData.acs;
-        //this.tier = userData.tier;
-
-        //_usernameController..text = this.username;
-        //_firstnameController..text = userData.firstname;
         _futurePosts = getPosts();
-        // Return posts data
       });
     } else {
+      print("ERROR - COULD NOT EDIT POST!");
+      errorPopup(context, "Could not edit post!");
       return null;
     }
   }
@@ -240,18 +237,9 @@ class _TheZoneState extends State<TheZone> {
   void initState() {
     super.initState();
     setState(() {
-      loadUsername();
       _futurePosts = getPosts();
       print("FUTURE POSTS" + _futurePosts.toString());
       print("init" + allZonePosts.toString());
-    });
-  }
-
-  void loadUsername() {
-    FlutterSession().get('username').then((value) {
-      this.setState(() {
-        currentUsername = value.toString();
-      });
     });
   }
 
@@ -354,8 +342,10 @@ class _TheZoneState extends State<TheZone> {
             backgroundColor: Colors.blueGrey,
             foregroundColor: Colors.white,
             onPressed: () {
-              // Respond to button press
-              _createPost();
+              setState(() {
+                // Respond to button press
+                _createPost();
+              });
             },
             tooltip: 'Create Post',
             child: Icon(Icons.add),
@@ -364,8 +354,6 @@ class _TheZoneState extends State<TheZone> {
       ),
     );
   }
-
-  static const List<String> choices = ["Edit", "Delete"];
 
   Widget makeFeed(int index) {
     int rank = (allZonePosts[index].peopleAgree.length -
@@ -379,8 +367,7 @@ class _TheZoneState extends State<TheZone> {
             Align(
               alignment: Alignment.topRight,
               child: PopupMenuButton<String>(
-                onSelected: (context) =>
-                    handleClick(context, index, currentUsername),
+                onSelected: (value) => handleClick(value, index),
                 itemBuilder: (BuildContext context) {
                   return {'Edit', 'Delete'}.map((String choice) {
                     return PopupMenuItem<String>(
@@ -460,7 +447,7 @@ class _TheZoneState extends State<TheZone> {
                     Navigator.of(context).pushNamed("/comments");
                   },
                 ),
-                // Text(allZonePosts[index].comments.toString()),
+              //  Text(allZonePosts[index].comments.toString()),
 
                 // TODO: Edit this to only be visible to user of that profile
                 // IconButton(
@@ -481,21 +468,108 @@ class _TheZoneState extends State<TheZone> {
     );
   }
 
-  void handleClick(String value, int index, String creatorUsername) {
+  void handleClick(String value, int index) {
     switch (value) {
       case 'Edit':
+        _editPost(
+            allZonePosts[index].username.toString(),
+            allZonePosts[index].uniqueIdentifier.toString(),
+            allZonePosts[index].title.toString(),
+            allZonePosts[index].content.toString());
         break;
       case 'Delete':
-      //deletePost(allZonePosts[index].uniqueIdentifier, currentUsername);
+        break;
     }
   }
 
-  Widget _createPost() {
+  void _editPost(String creatorUsername, String postId, String currTitle,
+      String currContent) {
+    FlutterSession().get('username').then((username) => {
+          if (username.toString() != creatorUsername)
+            {errorPopup(context, "You can only edit your post!!")}
+        });
+
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          String newTitle = '';
-          String newContent = '';
+          // For storing the title and content in text boxes
+          TextEditingController editTitle = TextEditingController()
+            ..text = currTitle;
+          TextEditingController editContent = TextEditingController()
+            ..text = currContent;
+
+          return SizedBox(
+              height: 10,
+              width: 100,
+              child: Card(
+                margin: EdgeInsets.all(10),
+                elevation: 5,
+                child: Column(
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          "Edit Post",
+                          style: new TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ListTile(
+                          title: TextField(
+                            controller: editTitle,
+                            decoration: InputDecoration(
+                                hintText: "Title",
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(32.0))),
+                          ),
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: TextField(
+                            controller: editContent,
+                            style: TextStyle(fontSize: 16),
+                            decoration: InputDecoration(
+                                hintText: "Content",
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5))),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null)),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        child: Text("Submit"),
+                        onPressed: () {
+                          // Call editPost API
+                          print("EDITING POST!");
+                          FlutterSession().get('username').then((username) => {
+                                editPost(
+                                    postId,
+                                    username.toString(),
+                                    editContent.value.text,
+                                    editTitle.value.text)
+                              });
+                          Navigator.of(context, rootNavigator: true).pop();
+                          print("FINISHED EDITING POST!");
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ));
+        });
+  }
+
+  void _createPost() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // For storing the title and content in text boxes
+          String newTitle;
+          String newContent;
+
           return SizedBox(
               height: 10,
               width: 100,
@@ -517,16 +591,16 @@ class _TheZoneState extends State<TheZone> {
                         padding: const EdgeInsets.all(16.0),
                         child: ListTile(
                           title: TextField(
-                              decoration: InputDecoration(
-                                  hintText: "Title",
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(32.0))),
-                              onChanged: (value) {
-                                setState(() {
-                                  newTitle = value;
-                                });
-                              }),
+                            decoration: InputDecoration(
+                                hintText: "Title",
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(32.0))),
+                            onChanged: (value) {
+                              setState(() {
+                                newTitle = value;
+                              });
+                            },
+                          ),
                         )),
                     Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -538,7 +612,7 @@ class _TheZoneState extends State<TheZone> {
                                     borderRadius: BorderRadius.circular(5))),
                             onChanged: (value) {
                               setState(() {
-                                newContent = value;
+                                newTitle = value;
                               });
                             },
                             keyboardType: TextInputType.multiline,
@@ -548,7 +622,7 @@ class _TheZoneState extends State<TheZone> {
                       child: RaisedButton(
                         child: Text("Submit"),
                         onPressed: () {
-                          // Call createPost API
+                          // Call editPost API
                           print("CREATING POST!");
                           FlutterSession().get('username').then((username) => {
                                 createPost(
@@ -564,6 +638,7 @@ class _TheZoneState extends State<TheZone> {
               ));
         });
   }
+
 
   Widget makeAgree() {
     return Container(
@@ -615,6 +690,85 @@ class _TheZoneState extends State<TheZone> {
             Text(
               "Agree",
               style: TextStyle(color: isActive ? Colors.blue : Colors.grey),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget makeDisagreeButton({isActive}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[200]),
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.thumb_down,
+              color: isActive ? Colors.red : Colors.grey,
+              size: 18,
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "Disagree",
+              style: TextStyle(color: isActive ? Colors.red : Colors.grey),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget makeCommentButton() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[200]),
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(Icons.chat, color: Colors.grey, size: 18),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "Comment",
+              style: TextStyle(color: Colors.black),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget makeShareButton() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[200]),
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(Icons.share, color: Colors.grey, size: 18),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "Share",
+              style: TextStyle(color: Colors.black),
             )
           ],
         ),
