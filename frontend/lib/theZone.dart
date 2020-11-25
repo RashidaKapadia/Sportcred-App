@@ -356,8 +356,9 @@ class _TheZoneState extends State<TheZone> {
   }
 
   Widget makeFeed(int index) {
-    int rank = (allZonePosts[index].peopleAgree.length -
-        allZonePosts[index].peopleDisagree.length);
+    // int rank = (allZonePosts[index].peopleAgree.length -
+    //     allZonePosts[index].peopleDisagree.length);
+
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
@@ -399,55 +400,40 @@ class _TheZoneState extends State<TheZone> {
             ButtonBar(
               alignment: MainAxisAlignment.center,
               children: [
-                // FlatButton(
-                //   textColor: const Color(0xFF6200EE),
-                //   onPressed: () {
-                //     // Perform some action
-                //   },
-                //   child: const Text('AGREE'),
-                // ),
-                // FlatButton(
-                //   textColor: const Color(0xFF6200EE),
-                //   onPressed: () {
-                //     // Perform some action
-                //   },
-                //   child: const Text('DISAGREE'),
-                // ),
-                IconButton(
-                    alignment: Alignment.bottomLeft,
-                    icon: new Icon(Icons.arrow_upward_sharp),
-                    onPressed: () {
-                      print("LIKE THE POST");
-                      FlutterSession().get('username').then((username) => {
-                            agreeOrDisagreeToPost(
-                                username.toString(),
-                                allZonePosts[index].uniqueIdentifier.toString(),
-                                true)
-                          });
-                      //editPost();
-                      print("LIKED THE POST");
-                    }),
-                Text(rank.toString()),
-                IconButton(
-                    icon: new Icon(Icons.arrow_downward_sharp),
-                    onPressed: () {
-                      print("DISLIKE THE POST");
-                      FlutterSession().get('username').then((username) => {
-                            agreeOrDisagreeToPost(
-                                username.toString(),
-                                allZonePosts[index].uniqueIdentifier.toString(),
-                                false)
-                          });
-                      print("DISLIKED THE POST!");
-                      //editPost();
-                    }),
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                          icon: new Icon(Icons.thumb_up_alt_rounded),
+                          onPressed: () {
+                            print("LIKE THE POST");
+                            FlutterSession().get('username').then((username) =>
+                                {_agreePost(username.toString(), index, true)});
+                            print("LIKED THE POST");
+                          }),
+                      Text(allZonePosts[index].peopleAgree.length.toString())
+                    ]),
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                          icon: new Icon(Icons.thumb_down_alt_rounded),
+                          onPressed: () {
+                            print("DISLIKE THE POST");
+                            FlutterSession().get('username').then((username) =>
+                                {
+                                  _agreePost(username.toString(), index, false)
+                                });
+                          }),
+                      Text(allZonePosts[index].peopleDisagree.length.toString())
+                    ]),
                 IconButton(
                   icon: Icon(Icons.comment),
                   onPressed: () {
                     Navigator.of(context).pushNamed("/comments");
                   },
                 ),
-              //  Text(allZonePosts[index].comments.toString()),
+                //  Text(allZonePosts[index].comments.toString()),
 
                 // TODO: Edit this to only be visible to user of that profile
                 // IconButton(
@@ -466,6 +452,15 @@ class _TheZoneState extends State<TheZone> {
         ),
       ),
     );
+  }
+
+  void _agreePost(String username, int index, bool agree) {
+    if (username == allZonePosts[index].username.toString()) {
+      errorPopup(context, "You can only like or dislike your own post!");
+    } else {
+      agreeOrDisagreeToPost(username.toString(),
+          allZonePosts[index].uniqueIdentifier.toString(), agree);
+    }
   }
 
   void handleClick(String value, int index) {
@@ -638,7 +633,6 @@ class _TheZoneState extends State<TheZone> {
               ));
         });
   }
-
 
   Widget makeAgree() {
     return Container(

@@ -166,8 +166,9 @@ public class DBPosts {
                 Result disagreeSetResult = tx.run("Match (p:post {uniqueIdentifier: $x}) RETURN p.peopleDisagree as disagreeSet", parameters("x", postId));
                 List<Object> disagreeList = disagreeSetResult.next().get("disagreeSet").asList();
                 Set<Object> disagreeSet = new HashSet<Object>(disagreeList);
-                // if the user agreed to the post, perform the following logic
-                if(agreed == true ){
+
+               // if the user agreed to the post, perform the following logic
+                if(agreed){
                     // user can either agree or diagree,
                     //so if user has disagreed to the post before, remove his name from the disagreed list
                     if(disagreeSet.contains(username)){
