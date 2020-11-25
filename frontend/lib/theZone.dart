@@ -10,9 +10,10 @@ void main() => runApp(MaterialApp(
       home: TheZone(),
     ));
 
-String old_content, old_title;
+String oldContent, oldTitle, searchTitle;
 TextEditingController _contentController = TextEditingController()..text = '';
 TextEditingController _titleController = TextEditingController()..text = '';
+TextEditingController _searchController = TextEditingController();
 
 class TheZone extends StatefulWidget {
   @override
@@ -91,8 +92,8 @@ class PostNode {
 }
 
 void storePrevValues() {
-  old_content = _contentController.text;
-  old_title = _titleController.text;
+  oldContent = _contentController.text;
+  oldTitle = _titleController.text;
 }
 
 List<PostNode> allZonePosts = [];
@@ -233,6 +234,40 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
+  void getPostsForSearch(String title) async {
+    print(title);
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/getPostsForSearch"',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{'title': title}),
+    );
+
+    if (response.statusCode == 200) {
+      List<PostNode> allPosts = [];
+      int count = (jsonDecode(response.body)["posts"]).length;
+      if (count > 0) {
+        for (Map<String, dynamic> postNode
+            in jsonDecode(response.body)["posts"] as List) {
+          allPosts += [PostNode.fromJson(true, postNode)];
+        }
+        setState(() {
+          allZonePosts = allPosts;
+        });
+      } else {
+        setState(() {
+          allZonePosts = allPosts;
+        });
+      }
+    } else {
+      return null;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -262,23 +297,33 @@ class _TheZoneState extends State<TheZone> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: Colors.grey[200]),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.grey,
-                        ),
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(color: Colors.grey),
-                        hintText: "Search",
-                      ),
+                    child: ListTile(
+                  title: TextFormField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
+                      hintText: "Search",
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchTitle = value;
+                      });
+                    },
                   ),
-                ),
+                  leading: OutlineButton(
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                      ),
+                      borderSide: BorderSide.none,
+                      onPressed: () {
+                        setState(() {
+                          getPostsForSearch(searchTitle);
+                          _searchController.clear();
+                        });
+                      }),
+                )),
                 SizedBox(
                   width: 20,
                 )
