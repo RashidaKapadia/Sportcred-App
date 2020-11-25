@@ -247,6 +247,18 @@ public class PostHandler {
                     e.printStackTrace();
                 }
             }
+            boolean isUpdateCountTrue = DBUserInfo.updatePostCount(username, -1);
+            if (!isUpdateCountTrue) {
+                DBPosts.removeRelation(username, postId);
+                DBPosts.deletePost(postId);
+                try {
+                    response = new JSONObject()
+                            .put("Number of Posts did not update for some reason!", isUpdateCountTrue).toString();
+                    return new JsonHttpReponse(Status.SERVERERROR, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
             // decrease the post count for the user
             /*
              * boolean isPostCountUpdated = DBUserInfo.updatePostCount(postId, -1);
