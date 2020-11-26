@@ -120,9 +120,6 @@ class _TheZoneState extends State<TheZone> {
 
     if (response.statusCode == 200) {
       List<PostNode> allPosts = [];
-      // Store the session token
-      //print("Post GET -> RESPONSE:" + response.body.toString());
-      //print(jsonDecode(response.body)['questions']);
       // Get the questions, options and correctAnswers and store them in the class variables
       for (Map<String, dynamic> postNode
           in jsonDecode(response.body)["posts"] as List) {
@@ -360,33 +357,6 @@ class _TheZoneState extends State<TheZone> {
                         children: List.generate(allZonePosts.length, (index) {
                       return makeFeed(index);
                     })),
-                    // makeFeed(
-                    //     userName: 'Aiony Haust',
-                    //     userImage: 'profile_icon.png',
-                    //     feedTime: '1 hr ago',
-                    //     feedText:
-                    //         'All the Lorem Ipsum generators on the Internet tend to repeat predefined.',
-                    //     feedImage: 'assets/images/SportsCred_logo.png',
-                    //     postRank: '3000',
-                    //     comments: '322'),
-                    // makeFeed(
-                    //     userName: 'Azamat Zhanisov',
-                    //     userImage: 'profile_icon.png',
-                    //     feedTime: '3 mins ago',
-                    //     feedText:
-                    //         "All the Lorem Ipsum generators on the Internet tend to repeat predefined.All the Lorem Ipsum generators on the Internet tend to repeat predefined.All the Lorem Ipsum generators on the Internet tend to repeat predefined.",
-                    //     feedImage: 'assets/images/SportsCred_logo.png',
-                    //     postRank: '309',
-                    //     comments: '22'),
-                    // makeFeed(
-                    //     userName: 'Azamat Zhanisov',
-                    //     userImage: 'profile_icon.png',
-                    //     feedTime: '3 mins ago',
-                    //     feedText:
-                    //         "All the Lorem Ipsum generators on the Internet tend to repeat predefined.",
-                    //     feedImage: 'assets/images/SportsCred_logo.png',
-                    //     postRank: '3',
-                    //     comments: '0'),
                     Center(
                         child: Text(
                       "All Caught Up!",
@@ -416,9 +386,6 @@ class _TheZoneState extends State<TheZone> {
   }
 
   Widget makeFeed(int index) {
-    // int rank = (allZonePosts[index].peopleAgree.length -
-    //     allZonePosts[index].peopleDisagree.length);
-
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
