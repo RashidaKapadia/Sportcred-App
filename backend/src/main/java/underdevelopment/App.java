@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import underdevelopment.api.ACSHandler;
 import underdevelopment.api.DailyCountHandler;
+import underdevelopment.api.DailyDebateQuestion;
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.PostCommentsHandler;
 import underdevelopment.api.PostHandler;
@@ -162,6 +163,10 @@ public class App
         // Search Bar API to get posts given title
         server.createContext("/api/getPostsForSearch", 
                 new HttpRequestHandler("POST", PostHandler.handleGetPostsForSearchBar(), authorized));
+
+        // Debate daily question
+        server.createContext("/api/getDailyDebateQuestion", 
+        new HttpRequestHandler("POST", DailyDebateQuestion.handleGetDailyDebateQuestion(), authorized));
 
         // Start Server
         server.start();

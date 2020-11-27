@@ -10,6 +10,8 @@ import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
 import org.neo4j.driver.Value;
 
+import underdevelopment.api.ProfileHandler;
+
 public class DBUserInfo {
 
   /**
@@ -48,6 +50,11 @@ public class DBUserInfo {
 
   }
 
+  /**
+   * Get the user's full name given their username.
+   * @param username
+   * @return
+   */
   public static String getUserFullName(String username){
     String fullName = "";
     // Run query to check if a user with given username already exists
@@ -64,8 +71,44 @@ public class DBUserInfo {
       }
     }
 
-    // Return false if user with given username does not exist
+    // Return "" if user with given username does not exist
     return fullName;
+  }
+
+  /**
+   * Get's user's ACS given username
+   */
+  public static int getUserACS(String username){
+    int acs = -1;
+
+    // Run query to check if a user with given username already exists
+    try (Session session = Connect.driver.session()) {
+      try (Transaction tx = session.beginTransaction()) {
+        Result names = tx.run("MATCH (u:user {username: $x}) RETURN u.acs as acs", parameters("x", username));
+
+        // If any results have been returned, it means user exists already
+        if (names.hasNext()) {
+          Record data = names.single();
+
+           acs = data.get("acs").asInt();
+        }
+      }
+    }
+
+    // Return -1 if user with given username does not exist
+    return acs;
+  }
+
+  public static String getUserTier(String username){
+    String tier = "";
+
+    int acs = getUserACS(username);
+
+    if (acs != -1){
+      tier = ProfileHandler.getTier(acs);
+    }
+
+    return tier;
   }
   /**
    * Return true if and only if a user with the given username already exists
