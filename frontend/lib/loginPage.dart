@@ -109,7 +109,7 @@ class _State_Of_Login_Page extends State<LoginPage> {
                         vmargin10(Center(
                             child: (_futureLoginStatus != null)
                                 ? getStatus(context, _futureLoginStatus)
-                                : Text("Enter your information below:",
+                                : Text("",
                                     style: TextStyle(color: Colors.black54)))),
                         // Username field
                         TextFormField(
