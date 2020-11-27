@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
-import 'navbar.dart';
+import '../navbar.dart';
 
 // variables storing info to display
 class MyDebateResult extends StatefulWidget {

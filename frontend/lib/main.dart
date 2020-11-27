@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/MyDebateResult.dart';
+import 'package:frontend/debate/MyDebateResult.dart';
 // import 'package:frontend/InitialPage.dart';
 import 'package:frontend/trivia/triviaPickCategory.dart';
 import 'package:frontend/trivia/triviaMode.dart';
