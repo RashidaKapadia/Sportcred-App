@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/MyDebateResult.dart';
 // import 'package:frontend/InitialPage.dart';
 import 'package:frontend/trivia/triviaPickCategory.dart';
 import 'package:frontend/trivia/triviaMode.dart';
@@ -45,6 +46,7 @@ void main() {
         '/notifications': (context) => NotificationBoard(),
         '/theZone': (context) => TheZone(),
         '/comments': (context) => CommentsPage(),
+        '/myDebateResult': (context) => MyDebateResult(),
         '/debate/dailyQuestion': (context) => DailyDebateQuestion()
       }));
 }
