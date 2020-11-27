@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                     homepageTile(
                         "/trivia/category", "Trivia", Colors.yellowAccent[100]),
                     homepageTile(
-                        "/homepage", "Analyze & Debate", Colors.greenAccent),
+                        "/debate/dailyQuestion", "Analyze & Debate", Colors.greenAccent),
                   ],
                 );
               },
