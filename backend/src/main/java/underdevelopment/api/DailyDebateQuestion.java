@@ -22,17 +22,17 @@ public class DailyDebateQuestion {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
-            String tier = DBUserInfo.getUserTier(username);
+           // String tier = DBUserInfo.getUserTier(username);
 
             // Check that tier is not empty
-            if (tier == ""){
+           /*  if (tier == ""){
                 try {
                     response = new JSONObject().put("message", "User does not exist!").toString();
                     return new JsonHttpReponse(Status.NOTFOUND, response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
+            } */
 
             // Get the question
 
