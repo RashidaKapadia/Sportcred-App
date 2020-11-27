@@ -185,7 +185,7 @@ public class DBUserInfo {
    */
   public static boolean updatePostCount(String username, int num) {
     System.out.println(num);
-    try(Session session = Connect.driver.session()){
+    /*try(Session session = Connect.driver.session()){
       session.writeTransaction(tx->tx.run("MATCH (u: user{username: $x}) SET u.numberOfPosts = $y + toInteger(u.numberOfPosts) ",
       parameters("x", username, "y", num)));
       session.close();
@@ -196,6 +196,22 @@ public class DBUserInfo {
       return false;
     }
 
+  }*/
+  try (Session session = Connect.driver.session()){
+    try (Transaction tx = session.beginTransaction()){
+      tx.run("MERGE (u: user{username: $x}) SET u.numberOfPosts = $y + toInteger(u.numberOfPosts)",
+                    parameters("x", username, "y", num));
+                    tx.commit();
+                    tx.close();
+
+    }
+    session.close();
+    return true;
+  }catch (Exception e) {
+    e.printStackTrace();
+    return false;
+  
   }
+}
 
 }
