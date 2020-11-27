@@ -16,6 +16,7 @@ import './HTTPRequestExample.dart';
 import './profile_page.dart';
 import './ACSHistory_page.dart';
 import './requests/trivia.dart';
+import 'package:frontend/debate/dailyDebateQuestion.dart';
 import 'notificationBoard.dart';
 import 'CommentsPage.dart';
 
@@ -43,7 +44,8 @@ void main() {
         "/profile/ACSHistory": (context) => ACSHistoryPage(),
         '/notifications': (context) => NotificationBoard(),
         '/theZone': (context) => TheZone(),
-        '/comments': (context) => CommentsPage()
+        '/comments': (context) => CommentsPage(),
+        '/debate/dailyQuestion': (context) => DailyDebateQuestion()
       }));
 }
 
