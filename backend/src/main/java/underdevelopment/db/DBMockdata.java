@@ -20,7 +20,7 @@ import org.json.JSONTokener;
 // TODO: might want to split responsibilities
 public class DBMockdata {
 
-    private final static int VERSION_TIMESTAMP = 21;
+    private final static int VERSION_TIMESTAMP = 23;
 
     public static void checkAndUpdate() {
 
@@ -167,11 +167,11 @@ public class DBMockdata {
             JSONArray questions = (JSONArray) jsonObj.get("questions");
             for (int i = 0; i < questions.length(); i++) {
                 JSONObject q = (JSONObject) questions.get(i);
-                tx.run("create (n:DebateQuestion {question: $q, tier: $t, day: $d, version: $v})",
+                tx.run("create (n:DebateQuestion {question: $q, tier: $t, date: $d, version: $v})",
                     parameters(
                         "q", q.get("question").toString(),
                         "t", q.get("tier").toString(),
-                        "d", (int) q.get("day"),
+                        "d", q.get("date").toString(),
                         "v", VERSION_TIMESTAMP
                     ));
                 System.out.println(q);
