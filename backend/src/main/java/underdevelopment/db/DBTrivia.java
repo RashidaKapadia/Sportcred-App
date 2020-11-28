@@ -160,9 +160,9 @@ public class DBTrivia{
 	        			if(inviterScore < oppScore) {
 	        				System.out.println("opponent wins");
 	        				// inviter loses 5 points
-	        				DBAcs.editACS(inviterUsername, -5, oppUsername, "Trivia Multi", curDate);
+	        				DBAcs.editACS(inviterUsername, -2, oppUsername, "Trivia Multi", curDate);
 	        				// opponent gets 5 points
-	        				DBAcs.editACS(oppUsername, 5, inviterUsername, "Trivia Multi", curDate);
+	        				DBAcs.editACS(oppUsername, 2, inviterUsername, "Trivia Multi", curDate);
 	        				
 	        				//createNotification(String username, String type, String category, int ID, String title) 
 	        			}else if(inviterScore > oppScore) {
