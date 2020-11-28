@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/debate/MyDebateResult.dart';
 import 'package:frontend/debate/debateOngoingQuestionsDisplay.dart';
 import 'package:frontend/debate/debateOngoingResponses.dart';
+import 'package:frontend/debate/debatePreviousQuestionsDisplay.dart';
+import 'package:frontend/debate/debatePreviousQuestionsResults.dart';
 // import 'package:frontend/InitialPage.dart';
 import 'package:frontend/trivia/triviaPickCategory.dart';
 import 'package:frontend/trivia/triviaMode.dart';
@@ -54,6 +56,8 @@ void main() {
         '/debate/dailyQuestion': (context) => DailyDebateQuestion(),
         '/debate/currentDQ': (context) => CurrentDebateQuestions(),
         '/debateCurrentResponses': (context) => CurrentDebateResponses(),
+        '/debatePreviousQuestions': (context) => PreviousDebateQuestions(),
+        '/debatePreviousResults': (context) => PreviousDebateResults(),
       }));
 }
 
