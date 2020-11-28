@@ -16,7 +16,6 @@ public class DBProfile{
 		 try (Session session = Connect.driver.session()){
 	        	try (Transaction tx = session.beginTransaction()) {
 	        		
-	    	        System.out.println("returnindfdf");
 					Result result = tx.run(String.format("MATCH (u:user) WHERE u.username = '%s' RETURN u.password = '%s' as correct", username, password));
 					// We know username exists, so password exists
 					Record record = result.next();
@@ -89,11 +88,12 @@ public class DBProfile{
         }
     }
     
-    // DB command for getting user status
+    // DB command for getting user status. 
+    // Gonna edit this and make it return acs + parcipation for total acs
     public static Record getUserInfo(String username){
         try (Session session = Connect.driver.session()) {
             try (Transaction tx = session.beginTransaction()) {
-              Result node_result = tx.run("MATCH (u:user) WHERE u.username = $username WITH u RETURN u.username as username, u.firstname as firstname, u.lastname as lastname, u.email as email, u.dob as dob, u.about as about, u.phoneNumber as phoneNumber, u.status as status, toInteger(u.acs) as acs",
+              Result node_result = tx.run("MATCH (u:user) WHERE u.username = $username WITH u RETURN u.username as username, u.firstname as firstname, u.lastname as lastname, u.email as email, u.dob as dob, u.about as about, u.phoneNumber as phoneNumber, u.status as status, toInteger(u.acs) + toFloat(u.participation)as acs",
               parameters("username", username));
       
               // If any results have been returned, return the record

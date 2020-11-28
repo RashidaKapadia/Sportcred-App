@@ -214,5 +214,32 @@ public class DBUserInfo {
   
   }
 }
+  
+  // Returns the total ACS (acs + participation ACS) Currently not called anywhere, but i feel like it may be useful in the future.
+  public static double getTotalACS(String username) {
+	  	double retVal = -1;
+	    try (Session session = Connect.driver.session()) {
+	      try (Transaction tx = session.beginTransaction()) {
+	    	  Result result = tx.run(String.format("MATCH(u:user) WHERE (u.username = '%s')"
+						+ "RETURN u.participation as participation, u.acs as acs", username));
+				Record user = result.next();
+				int acs = user.get("acs").asInt();
+				double participation = user.get("participation", 0.0);
+				retVal = acs + participation; 
+				tx.commit();
+				tx.close();
+				session.close();
+	      }
+	        // If any results have been returned, it means user exists already
+	      catch(Exception e){
+	        e.printStackTrace();
+	      }
+	      return retVal;
+	    }
+	    catch(Exception e){
+	      e.printStackTrace();
+	      return -1;
+	    }
+	  }
 
 }
