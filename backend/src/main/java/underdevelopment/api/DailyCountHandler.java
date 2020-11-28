@@ -20,10 +20,7 @@ public class DailyCountHandler {
     // Multiplayer stuff
     public static JsonRequestHandler resetCount() {
         return (JSONObject jsonObj) -> {
-
-            System.out.println("resetting trivia count");
             String username, activity;
-
             // Get and validate input
             try {
                 username = jsonObj.getString("username");
@@ -145,7 +142,7 @@ public class DailyCountHandler {
               }
             }           
             // Get questions from the db
-            int remainingPlays = DBDailyCounts.getCount(username, activity + "Plays");
+            int remainingPlays = DBDailyCounts.getCount(username, activity + "Plays", activity + "Date");
             
             try {
                 JSONArray questionsJSON = new JSONArray();
