@@ -11,6 +11,7 @@ import underdevelopment.api.LoginHandler;
 import underdevelopment.api.PostCommentsHandler;
 import underdevelopment.api.PostHandler;
 import underdevelopment.api.NotificationHandler;
+import underdevelopment.api.ParticipationHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.TriviaHandler;
@@ -157,11 +158,15 @@ public class App
 
         server.createContext("/api/getComments", 
                 new HttpRequestHandler("POST", PostCommentsHandler.handleGetComments(), authorized));
-        
-        
+                
         // Search Bar API to get posts given title
         server.createContext("/api/getPostsForSearch", 
                 new HttpRequestHandler("POST", PostHandler.handleGetPostsForSearchBar(), authorized));
+        
+        
+        // Participation (for testing)
+        server.createContext("/api/participate", 
+                new HttpRequestHandler("POST", ParticipationHandler.editParticipation(), authorized));
 
         // Start Server
         server.start();
