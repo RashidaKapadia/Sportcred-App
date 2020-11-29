@@ -26,7 +26,7 @@ class DebateQuestionNode {
     return DebateQuestionNode(
       reqStatus: status,
       question: json["dailyQuestion"].toString(),
-      id: int.parse(json["id"]),
+     // id: int.parse(json["id"]),
     );
   }
 }
@@ -37,14 +37,15 @@ class DailyDebateQuestion extends StatefulWidget {
 }
 
 class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
+  String question = "";
   String response = "";
   String currentUser = "";
   DebateQuestionNode dailyQuestion;
 
-  Future<DebateQuestionNode> getDailyQuestion() async {
+  Future<DebateQuestionNode> getDailyQuestion(String currentUser) async {
     // Make the request and store the response
     final http.Response response = await http.post(
-      'http://localhost:8080/api/getDailyDebateQuestion',
+      'http://localhost:8080/api/debate/get-daily-question',
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
         'Accept': 'text/plain; charset=utf-8',
@@ -57,9 +58,10 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
       setState(() {
         print(jsonDecode(response.body));
 
-        dailyQuestion =
-            DebateQuestionNode.fromJson(true, jsonDecode(response.body));
+      //  dailyQuestion =
+        //    DebateQuestionNode.fromJson(true, jsonDecode(response.body));
         
+        question = jsonDecode(response.body)["dailyQuestion"].toString();
       });
 
       print("*********************");
@@ -74,17 +76,40 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
     }
   }
 
+ Future<bool> addDebateAnalysis(String analysis) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/debate/add-response',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{'username': currentUser, 'analysis': analysis}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
     setState(() {
-      // Get question
-      getDailyQuestion();
+   
       // get current user's username
       FlutterSession()
           .get('username')
           .then((username) => {currentUser = username.toString()});
+
+      // Get question
+      FlutterSession()
+          .get('username')
+          .then((username) => {getDailyQuestion(username.toString())});
     });
     print(currentUser);
   }
@@ -101,7 +126,7 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
         body: SingleChildScrollView(
             child: margin20(Column(
           children: [
-            vmargin25(Text(dailyQuestion == null ? "" : dailyQuestion.question, style: TextStyle(fontSize: 20))),
+            vmargin25(Text(question, style: TextStyle(fontSize: 20))),
             vmargin20(hmargin15(TextField(
                 style: TextStyle(fontSize: 16),
                 cursorColor: Colors.orange,
@@ -118,8 +143,10 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
                 maxLines: null))),
             vmargin25(orangeButtonLarge(
                 text: "Submit",
-                onPressed: () {
+                onPressed: (value)
+                 {
                   // call send response API
+                  addDebateAnalysis(value);
                 })),
           ],
         ))));
