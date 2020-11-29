@@ -170,8 +170,11 @@ public class App
                 new HttpRequestHandler("POST", ParticipationHandler.editParticipation(), authorized));
 
         // Debate daily question
-        server.createContext("/api/getDailyDebateQuestion", 
+        server.createContext("/api/debate/get-daily-question", 
         new HttpRequestHandler("POST", DailyDebateQuestion.handleGetDailyDebateQuestion(), authorized));
+
+        server.createContext("/api/debate/add-response", 
+        new HttpRequestHandler("POST", DailyDebateQuestion.handleAddResponseToDailyDebateQuestion(), authorized));
 
         // Start Server
         server.start();
