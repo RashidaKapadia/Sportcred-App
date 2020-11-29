@@ -53,17 +53,22 @@ class _CurrentDebateResponseState extends State<CurrentDebateResponses> {
   Widget displayPlayerResponse(int i) {
     return Container(
       child: Card(
+        color: Colors.black54,
         elevation: 10.0,
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(7.0),
               child: Row(children: [
-                Icon(Icons.assignment),
+                Icon(
+                  Icons.assignment,
+                  color: Colors.white,
+                ),
                 Expanded(
                   child: AutoSizeText(
                     "Dogs are the best hands down, they are super energetic and" +
                         "silly, they are great mood boosters when your down!",
+                    style: TextStyle(color: Colors.white),
                     //overflow: TextOverflow.ellipsis,
                   ),
                 )

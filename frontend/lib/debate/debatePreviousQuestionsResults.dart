@@ -125,6 +125,7 @@ class _PreviousDebateResultState extends State<PreviousDebateResults> {
           title: Text("Debate", style: TextStyle(color: Colors.white)),
           centerTitle: true,
           backgroundColor: Colors.blueGrey),
+      backgroundColor: Colors.black54,
       bottomNavigationBar: NavBar(0),
       body: SingleChildScrollView(
           child: resultPage(context)), //resultPage(context),
@@ -147,7 +148,7 @@ class _PreviousDebateResultState extends State<PreviousDebateResults> {
         padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
         child: Column(children: [
           // Description
-          h3("Question : abcefghijklmn"),
+          h3("Question : abcefghijklmn", color: Colors.white),
           // Score breakdown
           Container(
               margin: EdgeInsets.symmetric(vertical: 20),

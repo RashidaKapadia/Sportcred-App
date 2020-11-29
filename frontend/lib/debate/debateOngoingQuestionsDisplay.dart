@@ -146,7 +146,7 @@ Widget displayTiers(int i, BuildContext context) {
             child: Container(
           margin: EdgeInsets.all(15),
           child: ButtonTheme(
-            minWidth: double.infinity,
+            minWidth: 350,
             height: 10.0,
             child: RaisedButton(
               shape: RoundedRectangleBorder(

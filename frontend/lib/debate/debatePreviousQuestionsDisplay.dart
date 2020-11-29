@@ -99,19 +99,23 @@ Widget displayTiers(int i, BuildContext context) {
             child: ButtonTheme(
                 minWidth: 10.0,
                 height: 10.0,
-                child: RaisedButton(
-                    elevation: 10,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(
-                          "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
-                    },
-                    padding: EdgeInsets.all(10.0),
-                    color: Colors.lightGreen,
-                    textColor: Colors.white,
-                    child: Text(tiers[i], style: TextStyle(fontSize: 15)))),
+                child: Tooltip(
+                  message: "Question",
+                  showDuration: Duration(seconds: 5),
+                  child: RaisedButton(
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(
+                            "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
+                      },
+                      padding: EdgeInsets.all(10.0),
+                      color: Colors.lightGreen,
+                      textColor: Colors.white,
+                      child: Text(tiers[i], style: TextStyle(fontSize: 15))),
+                )),
           ),
         );
       }
@@ -124,19 +128,22 @@ Widget displayTiers(int i, BuildContext context) {
             child: ButtonTheme(
               minWidth: 150.0,
               height: 10.0,
-              child: RaisedButton(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
+              child: Tooltip(
+                message: "Question",
+                child: RaisedButton(
+                  elevation: 10,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                        "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
+                  },
+                  padding: EdgeInsets.all(10.0),
+                  color: Colors.yellow[600],
+                  textColor: Colors.white,
+                  child: (Text(tiers[i], style: TextStyle(fontSize: 15))),
                 ),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(
-                      "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
-                },
-                padding: EdgeInsets.all(10.0),
-                color: Colors.yellow[600],
-                textColor: Colors.white,
-                child: Text(tiers[i], style: TextStyle(fontSize: 15)),
               ),
             ),
           ),
@@ -150,19 +157,22 @@ Widget displayTiers(int i, BuildContext context) {
                 child: ButtonTheme(
                     minWidth: 250,
                     height: 10.0,
-                    child: RaisedButton(
-                      elevation: 10,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
+                    child: Tooltip(
+                      message: "Question",
+                      child: RaisedButton(
+                        elevation: 10,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                              "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
+                        },
+                        padding: EdgeInsets.all(10.0),
+                        color: Colors.orange,
+                        textColor: Colors.white,
+                        child: Text(tiers[i], style: TextStyle(fontSize: 15)),
                       ),
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(
-                            "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
-                      },
-                      padding: EdgeInsets.all(10.0),
-                      color: Colors.orange,
-                      textColor: Colors.white,
-                      child: Text(tiers[i], style: TextStyle(fontSize: 15)),
                     ))));
       }
       break;
@@ -172,20 +182,23 @@ Widget displayTiers(int i, BuildContext context) {
             child: Container(
           margin: EdgeInsets.all(20),
           child: ButtonTheme(
-            minWidth: double.infinity,
+            minWidth: 350,
             height: 10.0,
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
+            child: Tooltip(
+              message: "Question",
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                      "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
+                },
+                padding: EdgeInsets.all(10.0),
+                color: Colors.red[800],
+                textColor: Colors.white,
+                child: Text(tiers[i], style: TextStyle(fontSize: 15)),
               ),
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                    "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
-              },
-              padding: EdgeInsets.all(10.0),
-              color: Colors.red[800],
-              textColor: Colors.white,
-              child: Text(tiers[i], style: TextStyle(fontSize: 15)),
             ),
           ),
         ));
