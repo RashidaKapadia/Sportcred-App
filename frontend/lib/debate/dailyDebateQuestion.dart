@@ -37,11 +37,12 @@ class DailyDebateQuestion extends StatefulWidget {
 }
 
 class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
+  String question = "";
   String response = "";
   String currentUser = "";
   DebateQuestionNode dailyQuestion;
 
-  Future<DebateQuestionNode> getDailyQuestion() async {
+  Future<String> getDailyQuestion(String currentUser) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/getDailyDebateQuestion',
@@ -57,17 +58,18 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
       setState(() {
         print(jsonDecode(response.body));
 
-        dailyQuestion =
-            DebateQuestionNode.fromJson(true, jsonDecode(response.body));
+       // dailyQuestion =
+         //   DebateQuestionNode.fromJson(true, jsonDecode(response.body));
+
+         question = jsonDecode(response.body)["dailyQuestion"].toString();
         
       });
 
       print("*********************");
-      print(dailyQuestion.question);
-      print(dailyQuestion.id);
+      print(question);
       print("*********************");
 
-      return dailyQuestion;
+      return question;
       // Return posts data
     } else {
       return null;
@@ -78,15 +80,12 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
   void initState() {
     super.initState();
 
-    setState(() {
-      // Get question
-      getDailyQuestion();
-      // get current user's username
+    setState(() {      
+      // get question for current user
       FlutterSession()
           .get('username')
-          .then((username) => {currentUser = username.toString()});
+          .then((username) => {getDailyQuestion(username.toString())});
     });
-    print(currentUser);
   }
 
   @override
@@ -101,7 +100,7 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
         body: SingleChildScrollView(
             child: margin20(Column(
           children: [
-            vmargin25(Text(dailyQuestion == null ? "" : dailyQuestion.question, style: TextStyle(fontSize: 20))),
+            vmargin25(Text(question, style: TextStyle(fontSize: 20))),
             vmargin20(hmargin15(TextField(
                 style: TextStyle(fontSize: 16),
                 cursorColor: Colors.orange,
