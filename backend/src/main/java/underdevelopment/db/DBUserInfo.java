@@ -2,6 +2,7 @@ package underdevelopment.db;
 
 import static org.neo4j.driver.Values.parameters;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.neo4j.driver.Record;
@@ -32,15 +33,15 @@ public class DBUserInfo {
       String phoneNumber, String favSport, String sportLevel, String sportToLearn, String favTeam, String dob) {
     // set the values for the instance variables
     System.out.println("adding the user: " + username);
-
+    String curDate =  LocalDate.now().toString();
     // Create a user node in DB for the user with the provided data
     try (Session session = Connect.driver.session()) {
       session.writeTransaction(tx -> tx.run(String.format(
         "MERGE (a:user {firstname: \"%s\", lastname: \"%s\", email: \"%s\", username: \"%s\", password: \"%s\", "
         + "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\","
-        + "favTeam: \"%s\", dob: \"%s\", acs: %d, about: \"%s\", status: \"%s\", numberOfPosts: %d, triviaMultiPlays: 5})",
+        + "favTeam: \"%s\", dob: \"%s\", acs: %d, about: \"%s\", status: \"%s\", numberOfPosts: %d, triviaMultiPlays: 5, prevTriviaDate: %s})",
     firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob,
-    100, "N/A","Hungry for basketball", 0)));
+    100, "N/A","Hungry for basketball", 0, curDate)));
       // System.out.println("finished adding the user");
       session.close();
       return true;
