@@ -7,7 +7,6 @@ import 'package:frontend/widgets/fonts.dart';
 import 'package:frontend/widgets/layout.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:after_layout/after_layout.dart';
 
 class DebateQuestionNode {
   final String question;
@@ -155,7 +154,7 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
           .get('username')
           .then((username) => {currentUser = username.toString()});
 
-      _timer = new Timer(const Duration(milliseconds: 500), () {
+      _timer = new Timer(const Duration(milliseconds: 200), () {
         print("USERNAME: " + currentUser);
 
         getDailyQuestion();
@@ -183,7 +182,6 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
             vmargin25(Text(question, style: TextStyle(fontSize: 20))),
             vmargin20(hmargin15(TextFormField(
                 style: TextStyle(fontSize: 16),
-                validator: requiredValidator,
                 controller: responseController,
                 cursorColor: Colors.orange,
                 decoration: InputDecoration(
@@ -203,8 +201,14 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
                       setState(() {
                         print("ADDING RESPONSE");
                         print(responseController.value.text);
+                        if (responseController.value.text.isNotEmpty){
                         addDebateAnalysis(responseController.value.text);
                         print("RESPONSE ADDED");
+
+                        }else {
+                          print("Respomse is empty");
+                          errorPopup(context, "Please provide your analysis!");
+                        }
                       })
                     })),
           ],
