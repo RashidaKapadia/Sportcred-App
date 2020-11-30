@@ -26,7 +26,7 @@ class DebateQuestionNode {
     return DebateQuestionNode(
       reqStatus: status,
       question: json["dailyQuestion"].toString(),
-     // id: int.parse(json["id"]),
+      // id: int.parse(json["id"]),
     );
   }
 }
@@ -58,15 +58,15 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
       setState(() {
         print(jsonDecode(response.body));
 
-      //  dailyQuestion =
+        //  dailyQuestion =
         //    DebateQuestionNode.fromJson(true, jsonDecode(response.body));
-        
+
         question = jsonDecode(response.body)["dailyQuestion"].toString();
       });
 
       print("*********************");
-      print(dailyQuestion.question);
-      print(dailyQuestion.id);
+      print(question);
+      //print(dailyQuestion.id);
       print("*********************");
 
       return dailyQuestion;
@@ -76,7 +76,7 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
     }
   }
 
- Future<bool> addDebateAnalysis(String analysis) async {
+  Future<bool> addDebateAnalysis(String analysis) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/debate/add-response',
@@ -85,9 +85,12 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
         'Accept': 'text/plain; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
-      body: jsonEncode(<String, String>{'username': currentUser, 'analysis': analysis}),
+      body: jsonEncode(
+          <String, String>{'username': currentUser, 'analysis': analysis}),
     );
 
+    print(response.statusCode);
+    
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -100,7 +103,6 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
     super.initState();
 
     setState(() {
-   
       // get current user's username
       FlutterSession()
           .get('username')
@@ -141,13 +143,15 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
                 },
                 keyboardType: TextInputType.multiline,
                 maxLines: null))),
-            vmargin25(orangeButtonLarge(
-                text: "Submit",
-                onPressed: (value)
-                 {
-                  // call send response API
-                  addDebateAnalysis(value);
-                })),
+            vmargin25(RaisedButton(
+                child: Text("Submit"),
+                onPressed: () => {
+                      setState(() {
+                        print("ADDING RESPONSE");
+                        addDebateAnalysis(response);
+                        print("RESPONSE ADDED");
+                      })
+                    })),
           ],
         ))));
   }

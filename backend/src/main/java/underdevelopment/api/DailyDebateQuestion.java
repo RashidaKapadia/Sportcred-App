@@ -103,6 +103,8 @@ public class DailyDebateQuestion {
 
             // Add relationship between response and dailyQuestion of user's tier
             boolean relAdded = DBDebateDailyQuestion.addResponseToQuestion(tier, id);
+            
+            System.out.println(relAdded);
 
             // Check that the relationship is added properly
             if (!relAdded) {
