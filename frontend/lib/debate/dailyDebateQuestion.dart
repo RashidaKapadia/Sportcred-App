@@ -42,10 +42,11 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
   String analysis = "";
   TextEditingController responseController = new TextEditingController()
     ..text = '';
+
   String currentUser = "";
   DebateQuestionNode dailyQuestion;
 
-  Future<DebateQuestionNode> getDailyQuestion() async {
+  Future<String> getDailyQuestion(String currentUser) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/debate/get-daily-question',
@@ -65,14 +66,14 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
         //    DebateQuestionNode.fromJson(true, jsonDecode(response.body));
 
         question = jsonDecode(response.body)["dailyQuestion"].toString();
+
       });
 
       print("*********************");
       print(question);
-      //print(dailyQuestion.id);
       print("*********************");
 
-      return dailyQuestion;
+      return question;
       // Return posts data
     } else {
       return null;
@@ -164,7 +165,6 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
         getResponse();
       });
     });
-    // Get question
   }
 
   @override
