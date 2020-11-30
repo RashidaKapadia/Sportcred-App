@@ -195,9 +195,9 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
                 } */
                 keyboardType: TextInputType.multiline,
                 maxLines: null))),
-            vmargin25(RaisedButton(
-                child: Text("Submit"),
-                onPressed: () => {
+            vmargin25(orangeButtonLarge(
+                text: "Submit",
+                 onPressed: () => {
                       setState(() {
                         print("ADDING RESPONSE");
                         print(responseController.value.text);
