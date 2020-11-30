@@ -26,6 +26,7 @@ import './requests/trivia.dart';
 import 'package:frontend/debate/dailyDebateQuestion.dart';
 import 'notificationBoard.dart';
 import 'CommentsPage.dart';
+import 'debate/debateMain.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -58,6 +59,7 @@ void main() {
         '/debateCurrentResponses': (context) => CurrentDebateResponses(),
         '/debatePreviousQuestions': (context) => PreviousDebateQuestions(),
         '/debatePreviousResults': (context) => PreviousDebateResults(),
+        '/debate': (context) => Debate()
       }));
 }
 
