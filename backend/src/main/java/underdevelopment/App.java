@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpServer;
 import underdevelopment.api.ACSHandler;
 import underdevelopment.api.DailyCountHandler;
 import underdevelopment.api.DailyDebateQuestion;
+import underdevelopment.api.DebateGroups;
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.PostCommentsHandler;
 import underdevelopment.api.PostHandler;
@@ -178,6 +179,9 @@ public class App
 
         server.createContext("/api/debate/get-daily-question-response", 
         new HttpRequestHandler("POST", DailyDebateQuestion.handleGetResponseToDailyDebateQuestion(), authorized));
+
+        server.createContext("/api/debate/create-groups", 
+        new HttpRequestHandler("POST", DebateGroups.createDebateGroups(), authorized));
 
         // Start Server
         server.start();
