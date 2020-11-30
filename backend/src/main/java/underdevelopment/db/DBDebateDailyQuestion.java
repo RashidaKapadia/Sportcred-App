@@ -44,13 +44,19 @@ public class DBDebateDailyQuestion {
     public static int addResponse(String username, String analysis){
         try (Session session = Connect.driver.session()) {
 
-            Result result = session.run("MERGE (r:DebateResponse {username: $u, debateAnalysis: $a} ) RETURN ID(r) as id",
+            Result result = session.run("MERGE (r:DebateResponse {username: $u}) ON CREATE SET r.debateAnalysis = $a " 
+                                      + "ON MATCH SET r.debateAnalysis = $a RETURN ID(r) as id",
                                         parameters("u", username, "a", analysis));
             
             if (result.hasNext()){
                 Record r = result.next();
 
                 int id = r.get("id").asInt();
+
+                System.out.println(id);
+
+                session.close();
+                
                 return id;
 
             }
@@ -64,13 +70,12 @@ public class DBDebateDailyQuestion {
 
     public static boolean addResponseToQuestion(String tier, int id){
         try (Session session = Connect.driver.session()) {
-            Transaction tx = session.beginTransaction();
             
             // NEED TO CHANGE DATE TO LocalDate.now().toString()
-            tx.run("MATCH (q:DebateQuestion {tier: $t, date: $d}), (r:DebateResponse) " 
-            + "WHERE ID(r) = $i MERGE (q)-[:hasResponse]->(r) RETURN r",
-                                        parameters("t", tier, "d", "2020-12-01", "i", id));
-            
+            session.writeTransaction(tx -> tx.run("MATCH (q:DebateQuestion {tier: $t, date: $d}), (a:DebateResponse) " 
+            + "WHERE ID(a) = $i MERGE (q)-[r:hasResponse]->(a) RETURN r",
+                                        parameters("t", tier, "d", "2020-12-01", "i", id)));
+            session.close();
             return true;
         }
         catch (Exception e) {
