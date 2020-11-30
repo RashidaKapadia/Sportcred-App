@@ -55,8 +55,8 @@ public class DBDebateGroups {
      * @return
      */
     private static List<Integer> getResponseIds(String tier) {
-        // ***Change to yesterday's date***
-        String date = "2020-12-01";
+        // ** CHANGE TO minusDays **
+        String date = LocalDate.now().plusDays(1).toString();
 
         try (Session session = Connect.driver.session()) {
             // Query to get ids of the responses to yesterday's question for given tier
@@ -90,10 +90,8 @@ public class DBDebateGroups {
      * @param tx
      */
     private static void createTierGroups(String tier, List<Integer> ids, Transaction tx) {
-
-        System.out.println(LocalDate.now().toString());
-        // ** Change to yesterday's date afte December 1 **
-        String date = "2020-12-01";
+        // ** CHANGE TO minusDays **
+        String date = LocalDate.now().plusDays(1).toString();
 
         // Read questions and insert into the db
         for (int i = 0; i < ids.size(); i += 3) {

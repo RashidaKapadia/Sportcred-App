@@ -46,7 +46,7 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
   String currentUser = "";
   DebateQuestionNode dailyQuestion;
 
-  Future<String> getDailyQuestion(String currentUser) async {
+  Future<String> getDailyQuestion() async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/debate/get-daily-question',

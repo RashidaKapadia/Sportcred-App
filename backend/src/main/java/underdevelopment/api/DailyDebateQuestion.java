@@ -25,6 +25,7 @@ public class DailyDebateQuestion {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
+            // Get the given user's tier
             String tier = DBUserInfo.getUserTier(username);
 
             // Check that tier is not empty
@@ -38,9 +39,11 @@ public class DailyDebateQuestion {
             }
 
             // Get the question
-            Map<String, String> question = DBDebateDailyQuestion.getDailyDebateQuestion(tier);
+            String question = DBDebateDailyQuestion.getDailyDebateQuestion(tier);
+            System.out.println("QUESTION: " + question);
 
-            if (question == null) {
+            // If quesiton is empty, it could not be retrieved
+            if (question == "") {
                 try {
                     response = new JSONObject().put("Could not get daily question", tier).toString();
                     return new JsonHttpReponse(Status.SERVERERROR);
@@ -48,11 +51,10 @@ public class DailyDebateQuestion {
                     e.printStackTrace();
                 }
             }
-            System.out.println(question.toString());
 
             try {
                 // Build the daily question
-                response = new JSONObject().put("dailyQuestion", question.get("question")).toString();
+                response = new JSONObject().put("dailyQuestion", question).toString();
 
                 // Create the json response
                 return new JsonHttpReponse(Status.OK, response);
@@ -92,6 +94,7 @@ public class DailyDebateQuestion {
             // Get the id of the added response
             int id = DBDebateDailyQuestion.addResponse(username, analysis);
 
+            // If id == -1, it means that the response could not be added
             if (id == -1) {
                 try {
                     response = new JSONObject().put("Could not add response", id).toString();
@@ -103,8 +106,6 @@ public class DailyDebateQuestion {
 
             // Add relationship between response and dailyQuestion of user's tier
             boolean relAdded = DBDebateDailyQuestion.addResponseToQuestion(tier, id);
-
-            System.out.println(relAdded);
 
             // Check that the relationship is added properly
             if (!relAdded) {
@@ -134,9 +135,10 @@ public class DailyDebateQuestion {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
+            // Get the current user's tier
             String tier = DBUserInfo.getUserTier(username);
 
-            System.out.println(tier);
+            System.out.println("Tier: " + tier);
 
             // Check that tier is not empty
             if (tier == "") {
@@ -151,8 +153,7 @@ public class DailyDebateQuestion {
             // Get the id of the added response
             String analysis = DBDebateDailyQuestion.getResponseToDailyQuestion(tier, username);
 
-            System.out.println("ANALYSIS: " + analysis);
-
+            // If analysis is an empty string, user did not submit their response yet
             if (analysis == "") {
                 try {
                     response = new JSONObject().put("Error", "No response or could not get response").toString();
@@ -162,12 +163,12 @@ public class DailyDebateQuestion {
                 }
             }
 
+            // Return the analysis of the given user
             try {
                 response = new JSONObject().put("analysis", analysis).toString();
                 // Create the json response
                 return new JsonHttpReponse(Status.OK, response);
             } catch (JSONException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.SERVERERROR);
 
