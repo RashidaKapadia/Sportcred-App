@@ -176,6 +176,9 @@ public class App
         server.createContext("/api/debate/add-response", 
         new HttpRequestHandler("POST", DailyDebateQuestion.handleAddResponseToDailyDebateQuestion(), authorized));
 
+        server.createContext("/api/debate/get-daily-question-response", 
+        new HttpRequestHandler("POST", DailyDebateQuestion.handleGetResponseToDailyDebateQuestion(), authorized));
+
         // Start Server
         server.start();
     }

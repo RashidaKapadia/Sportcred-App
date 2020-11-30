@@ -56,7 +56,7 @@ public class DBDebateDailyQuestion {
                 System.out.println(id);
 
                 session.close();
-                
+
                 return id;
 
             }
@@ -65,6 +65,34 @@ public class DBDebateDailyQuestion {
         catch (Exception e) {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    public static String getResponseToDailyQuestion(String tier, String username){
+        try (Session session = Connect.driver.session()) {
+
+            Result result = session.run("MATCH (q:DebateQuestion {tier: $t, date: $d})-[:hasResponse]->"
+                                      + "(r:DebateResponse {username: $u}) " 
+                                      + "RETURN r.debateAnalysis as analysis",
+                                        parameters("t", tier, "d", "2020-12-01", "u", username));
+            
+            if (result.hasNext()){
+                Record r = result.next();
+
+                String analysis = r.get("analysis").asString();
+
+                System.out.println(analysis);
+
+                session.close();
+                
+                return analysis;
+
+            }
+            return "";
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return "";
         }
     }
 

@@ -7,6 +7,7 @@ import 'package:frontend/widgets/fonts.dart';
 import 'package:frontend/widgets/layout.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:after_layout/after_layout.dart';
 
 class DebateQuestionNode {
   final String question;
@@ -37,12 +38,15 @@ class DailyDebateQuestion extends StatefulWidget {
 }
 
 class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
+  Timer _timer;
   String question = "";
-  String response = "";
+  String analysis = "";
+  TextEditingController responseController = new TextEditingController()
+    ..text = '';
   String currentUser = "";
   DebateQuestionNode dailyQuestion;
 
-  Future<DebateQuestionNode> getDailyQuestion(String currentUser) async {
+  Future<DebateQuestionNode> getDailyQuestion() async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/debate/get-daily-question',
@@ -76,6 +80,44 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
     }
   }
 
+  Future<String> getResponse() async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/debate/get-daily-question-response',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{'username': currentUser}),
+    );
+
+    print(response.statusCode);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        print("Response: " + jsonDecode(response.body)["analysis"].toString());
+
+        //  dailyQuestion =
+        //    DebateQuestionNode.fromJson(true, jsonDecode(response.body));
+
+        responseController
+          ..text = jsonDecode(response.body)["analysis"].toString();
+      });
+
+      print("*********************");
+      print(responseController.value.text);
+      //print(dailyQuestion.id);
+      print("*********************");
+
+      return analysis;
+      // Return posts data
+    } else {
+      return "";
+    }
+  }
+
   Future<bool> addDebateAnalysis(String analysis) async {
     // Make the request and store the response
     final http.Response response = await http.post(
@@ -90,10 +132,15 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
     );
 
     print(response.statusCode);
-    
+
     if (response.statusCode == 200) {
+      setState(() {
+        getResponse();
+      });
+      popUp(context, "Confirmation", "Analysis submitted successfully!");
       return true;
     } else {
+      errorPopup(context, "Could not submit analysis!");
       return false;
     }
   }
@@ -108,12 +155,17 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
           .get('username')
           .then((username) => {currentUser = username.toString()});
 
-      // Get question
-      FlutterSession()
-          .get('username')
-          .then((username) => {getDailyQuestion(username.toString())});
+      _timer = new Timer(const Duration(milliseconds: 500), () {
+        print("USERNAME: " + currentUser);
+
+        getDailyQuestion();
+
+        print("GETTING RESPONSE");
+        // Get question
+        getResponse();
+      });
     });
-    print(currentUser);
+    // Get question
   }
 
   @override
@@ -129,18 +181,20 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
             child: margin20(Column(
           children: [
             vmargin25(Text(question, style: TextStyle(fontSize: 20))),
-            vmargin20(hmargin15(TextField(
+            vmargin20(hmargin15(TextFormField(
                 style: TextStyle(fontSize: 16),
+                validator: requiredValidator,
+                controller: responseController,
                 cursorColor: Colors.orange,
                 decoration: InputDecoration(
                     hintText: "Response",
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5))),
-                onChanged: (value) {
+                /* onChanged: (value) {
                   setState(() {
-                    response = value;
+                    analysis = value;
                   });
-                },
+                } */
                 keyboardType: TextInputType.multiline,
                 maxLines: null))),
             vmargin25(RaisedButton(
@@ -148,7 +202,8 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
                 onPressed: () => {
                       setState(() {
                         print("ADDING RESPONSE");
-                        addDebateAnalysis(response);
+                        print(responseController.value.text);
+                        addDebateAnalysis(responseController.value.text);
                         print("RESPONSE ADDED");
                       })
                     })),

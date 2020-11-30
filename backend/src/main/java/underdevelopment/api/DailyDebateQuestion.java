@@ -103,7 +103,7 @@ public class DailyDebateQuestion {
 
             // Add relationship between response and dailyQuestion of user's tier
             boolean relAdded = DBDebateDailyQuestion.addResponseToQuestion(tier, id);
-            
+
             System.out.println(relAdded);
 
             // Check that the relationship is added properly
@@ -118,6 +118,60 @@ public class DailyDebateQuestion {
 
             // Create the json response
             return new JsonHttpReponse(Status.OK);
+
+        };
+    }
+
+    public static JsonRequestHandler handleGetResponseToDailyDebateQuestion() {
+        return (JSONObject jsonObj) -> {
+            String username;
+            String response;
+
+            // Get and validate input
+            try {
+                username = jsonObj.getString("username");
+            } catch (Exception e) {
+                return new JsonHttpReponse(Status.BADREQUEST);
+            }
+
+            String tier = DBUserInfo.getUserTier(username);
+
+            System.out.println(tier);
+
+            // Check that tier is not empty
+            if (tier == "") {
+                try {
+                    response = new JSONObject().put("message", "User does not exist!").toString();
+                    return new JsonHttpReponse(Status.NOTFOUND, response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // Get the id of the added response
+            String analysis = DBDebateDailyQuestion.getResponseToDailyQuestion(tier, username);
+
+            System.out.println("ANALYSIS: " + analysis);
+
+            if (analysis == "") {
+                try {
+                    response = new JSONObject().put("Error", "No response or could not get response").toString();
+                    return new JsonHttpReponse(Status.SERVERERROR);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                response = new JSONObject().put("analysis", analysis).toString();
+                // Create the json response
+                return new JsonHttpReponse(Status.OK, response);
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+
+            }
 
         };
     }
