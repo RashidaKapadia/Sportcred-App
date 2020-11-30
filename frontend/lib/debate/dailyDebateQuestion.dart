@@ -15,13 +15,13 @@ class DailyDebateQuestion extends StatefulWidget {
 
 class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
   Timer _timer;
+  
   String question = "";
   String analysis = "";
+  String currentUser = "";
+
   TextEditingController responseController = new TextEditingController()
     ..text = '';
-
-  String currentUser = "";
-  DebateQuestionNode dailyQuestion;
 
   Future<String> getDailyQuestion() async {
     // Make the request and store the response
