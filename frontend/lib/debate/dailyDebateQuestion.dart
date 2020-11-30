@@ -8,29 +8,6 @@ import 'package:frontend/widgets/layout.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
-class DebateQuestionNode {
-  final String question;
-  final int id;
-  final bool reqStatus;
-
-  DebateQuestionNode({this.question, this.id, this.reqStatus});
-
-  // converts json to post node object
-  factory DebateQuestionNode.fromJson(bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return DebateQuestionNode(
-        reqStatus: status,
-      );
-    }
-
-    return DebateQuestionNode(
-      reqStatus: status,
-      question: json["dailyQuestion"].toString(),
-      // id: int.parse(json["id"]),
-    );
-  }
-}
-
 class DailyDebateQuestion extends StatefulWidget {
   @override
   _DailyDebateQuestionState createState() => _DailyDebateQuestionState();
@@ -62,11 +39,7 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
       setState(() {
         print(jsonDecode(response.body));
 
-        //  dailyQuestion =
-        //    DebateQuestionNode.fromJson(true, jsonDecode(response.body));
-
         question = jsonDecode(response.body)["dailyQuestion"].toString();
-
       });
 
       print("*********************");
@@ -99,16 +72,12 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
       setState(() {
         print("Response: " + jsonDecode(response.body)["analysis"].toString());
 
-        //  dailyQuestion =
-        //    DebateQuestionNode.fromJson(true, jsonDecode(response.body));
-
         responseController
           ..text = jsonDecode(response.body)["analysis"].toString();
       });
 
       print("*********************");
       print(responseController.value.text);
-      //print(dailyQuestion.id);
       print("*********************");
 
       return analysis;
@@ -158,10 +127,12 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
       _timer = new Timer(const Duration(milliseconds: 200), () {
         print("USERNAME: " + currentUser);
 
+        // Get the daily debate question for this user
         getDailyQuestion();
 
         print("GETTING RESPONSE");
-        // Get question
+
+        // Get the user's response (in case if they have previously answered the question)
         getResponse();
       });
     });
@@ -187,25 +158,20 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
                 decoration: InputDecoration(
                     hintText: "Response",
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5))),
-                /* onChanged: (value) {
-                  setState(() {
-                    analysis = value;
-                  });
-                } */
+                        borderRadius: BorderRadius.circular(5))),             
                 keyboardType: TextInputType.multiline,
                 maxLines: null))),
             vmargin25(orangeButtonLarge(
                 text: "Submit",
-                 onPressed: () => {
+                onPressed: () => {
                       setState(() {
                         print("ADDING RESPONSE");
                         print(responseController.value.text);
-                        if (responseController.value.text.isNotEmpty){
-                        addDebateAnalysis(responseController.value.text);
-                        print("RESPONSE ADDED");
-
-                        }else {
+                        if (responseController.value.text.isNotEmpty) {
+                          // Add debate analysis
+                          addDebateAnalysis(responseController.value.text);
+                          print("RESPONSE ADDED");
+                        } else {
                           print("Respomse is empty");
                           errorPopup(context, "Please provide your analysis!");
                         }
