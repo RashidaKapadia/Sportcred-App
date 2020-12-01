@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpServer;
 import underdevelopment.api.ACSHandler;
 import underdevelopment.api.DailyCountHandler;
 import underdevelopment.api.DailyDebateQuestion;
+import underdevelopment.api.DebateGroups;
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.PostCommentsHandler;
 import underdevelopment.api.PostHandler;
@@ -16,6 +17,7 @@ import underdevelopment.api.ParticipationHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.TriviaHandler;
+import underdevelopment.api.VoteResponseHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
 
 
@@ -165,13 +167,24 @@ public class App
                 new HttpRequestHandler("POST", PostHandler.handleGetPostsForSearchBar(), authorized));
         
         
-        // Participation (for testing)
-        server.createContext("/api/participate", 
-                new HttpRequestHandler("POST", ParticipationHandler.editParticipation(), authorized));
+        // Participation (for testing) and voting
+        server.createContext("/api/debate/vote-response", 
+                new HttpRequestHandler("POST", VoteResponseHandler.voteResponse(), authorized));
+        //server.createContext("/api/participate", 
+               // new HttpRequestHandler("POST", ParticipationHandler.editParticipation(), authorized));
 
         // Debate daily question
-        server.createContext("/api/getDailyDebateQuestion", 
+        server.createContext("/api/debate/get-daily-question", 
         new HttpRequestHandler("POST", DailyDebateQuestion.handleGetDailyDebateQuestion(), authorized));
+
+        server.createContext("/api/debate/add-response", 
+        new HttpRequestHandler("POST", DailyDebateQuestion.handleAddResponseToDailyDebateQuestion(), authorized));
+
+        server.createContext("/api/debate/get-daily-question-response", 
+        new HttpRequestHandler("POST", DailyDebateQuestion.handleGetResponseToDailyDebateQuestion(), authorized));
+
+        server.createContext("/api/debate/create-groups", 
+        new HttpRequestHandler("POST", DebateGroups.createDebateGroups(), authorized));
 
         // Start Server
         server.start();

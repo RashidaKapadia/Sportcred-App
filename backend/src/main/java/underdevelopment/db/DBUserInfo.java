@@ -90,8 +90,8 @@ public class DBUserInfo {
         // If any results have been returned, it means user exists already
         if (names.hasNext()) {
           Record data = names.single();
-
            acs = data.get("acs").asInt();
+
         }
       }
     }
@@ -104,6 +104,7 @@ public class DBUserInfo {
     String tier = "";
 
     int acs = getUserACS(username);
+
 
     if (acs != -1){
       tier = ProfileHandler.getTier(acs);
