@@ -21,7 +21,6 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
     ..text = '';
 
   String currentUser = "";
-  DebateQuestionNode dailyQuestion;
 
   Future<String> getDailyQuestion() async {
     // Make the request and store the response
