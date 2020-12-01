@@ -9,6 +9,7 @@ import underdevelopment.api.ACSHandler;
 import underdevelopment.api.DailyCountHandler;
 import underdevelopment.api.DailyDebateQuestion;
 import underdevelopment.api.DebateGroups;
+import underdevelopment.api.DebateHandler;
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.PostCommentsHandler;
 import underdevelopment.api.PostHandler;
@@ -173,7 +174,7 @@ public class App
         //server.createContext("/api/participate", 
                // new HttpRequestHandler("POST", ParticipationHandler.editParticipation(), authorized));
 
-        // Debate daily question
+        // Debate
         server.createContext("/api/debate/get-daily-question", 
         new HttpRequestHandler("POST", DailyDebateQuestion.handleGetDailyDebateQuestion(), authorized));
 
@@ -185,6 +186,24 @@ public class App
 
         server.createContext("/api/debate/create-groups", 
         new HttpRequestHandler("POST", DebateGroups.createDebateGroups(), authorized));
+
+        server.createContext("/api/debate/get-ongoing-questions", 
+        new HttpRequestHandler("POST", DebateHandler.getOngoingQuesions(), authorized));
+
+        server.createContext("/api/debate/get-finished-questions", 
+        new HttpRequestHandler("POST", DebateHandler.getFinishedQuesions(), authorized));
+
+        server.createContext("/api/debate/get-group-responses-my-question", 
+        new HttpRequestHandler("POST", DebateHandler.getResponsesMyQuestion(), authorized));
+
+        server.createContext("/api/debate/get-previous-topic-result", 
+        new HttpRequestHandler("POST", DebateHandler.getResultMyPreviousQuestion(), authorized));
+
+        server.createContext("/api/debate/get-group-responses", 
+        new HttpRequestHandler("POST", DebateHandler.getResponsesOngoing(), authorized));
+
+        server.createContext("/api/debate/get-debate-group-responses-n-results", 
+        new HttpRequestHandler("POST", DebateHandler.getResponsesFinished(), authorized));
 
         // Start Server
         server.start();
