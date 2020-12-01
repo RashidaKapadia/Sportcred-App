@@ -53,7 +53,7 @@ class _CurrentDebateResponseState extends State<CurrentDebateResponses> {
   Widget displayPlayerResponse(int i) {
     return Container(
       child: Card(
-        color: Colors.black54,
+        color: Colors.white,
         elevation: 10.0,
         child: Column(
           children: [
@@ -62,13 +62,13 @@ class _CurrentDebateResponseState extends State<CurrentDebateResponses> {
               child: Row(children: [
                 Icon(
                   Icons.assignment,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
                 Expanded(
                   child: AutoSizeText(
                     "Dogs are the best hands down, they are super energetic and" +
                         "silly, they are great mood boosters when your down!",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.black),
                     //overflow: TextOverflow.ellipsis,
                   ),
                 )
@@ -87,7 +87,7 @@ class _CurrentDebateResponseState extends State<CurrentDebateResponses> {
               color: Colors.white,
               onPressed: () =>
                   Navigator.of(context).pushNamed("/debate/currentDQ")),
-          title: Text("Fanalyst Response",
+          title: Text("Response",
               style: TextStyle(
                   color: Colors
                       .white)), // ***TO BE CHANGED INTO "category response'
