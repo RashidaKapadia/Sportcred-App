@@ -10,57 +10,10 @@ import 'package:frontend/requests/debate.dart';
 import '../navbar.dart';
 
 import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class DebateVote extends StatefulWidget {
   @override
   _DebateVoteState createState() => _DebateVoteState();
-}
-
-class GroupNode {
-  final String groupId;
-  List<Group_ResponsesNode> responses;
-  final bool reqStatus;
-
-  GroupNode({this.groupId, this.responses, @required this.reqStatus});
-
-  // converts json to post node object
-  factory GroupNode.fromJson(bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return GroupNode(
-        reqStatus: status,
-      );
-    }
-
-    return GroupNode(
-      reqStatus: status,
-      //responses: json['responses'],
-      groupId: json['groupId'],
-    );
-  }
-}
-
-class Group_ResponsesNode {
-  final String response;
-  final int responseId;
-  final bool reqStatus;
-
-  Group_ResponsesNode(
-      {this.response, this.responseId, @required this.reqStatus});
-
-  // converts json to post node object
-  factory Group_ResponsesNode.fromJson(bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return Group_ResponsesNode(reqStatus: status);
-    }
-
-    return Group_ResponsesNode(
-      reqStatus: status,
-      response: json['response'],
-      responseId: json['groupId'],
-    );
-  }
 }
 
 List<GroupNode> allGroupResponses = [];
@@ -75,48 +28,25 @@ class _DebateVoteState extends State<DebateVote> {
   List sliderValues = [];
 
   Future<List<GroupNode>> _futureGroupResponses;
-
   String currentUser = "";
 
-  Future getGroupResponses(String username) async {
-    final http.Response response = await http.post(
-        'http://localhost:8080//api/debate/get-group-responses-my-question',
-        headers: defaultHeaders,
-        body: jsonEncode(<String, Object>{
-          "username": username,
-        }));
-    print("made the postman call");
-    if (response.statusCode == 200) {
-      // Store the session token
-      //print("Post GET -> RESPONSE:" + response.body.toString());
-      //print(jsonDecode(response.body)['questions']);
-      print("response status code = 200");
-      List<GroupNode> allGroups = [];
-      // Get the questions, options and correctAnswers and store them in the class variables
-      for (Map<String, dynamic> groupNode
-          in jsonDecode(response.body)["groups"] as List) {
-        print("*********************");
-        print(GroupNode.fromJson(true, groupNode).groupId);
-        print("*********************");
-        List<Group_ResponsesNode> allGroupResponses = [];
-        for (Map<String, dynamic> group_responsesNode
-            in jsonDecode(response.body)["responses"] as List) {
-          allGroupResponses += [
-            Group_ResponsesNode.fromJson(true, group_responsesNode)
-          ];
-        }
-        allGroups += [GroupNode.fromJson(true, groupNode)];
-        allGroups.last.responses = allGroupResponses;
-      }
-      // DEBUGGING STATEMENTS
-      print('DEBUGGING: Group Node Get');
-      //print("\n\nGroupNodes: " + allGroups[0].responses[0]);
+  void loadfutures() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        print("Gonna call GetGroupResponses");
 
-      // Return posts data
-      return allGroups;
-    } else {
-      return null;
-    }
+        currentUser = value.toString();
+        _futureGroupResponses = getGroupResponses(currentUser);
+
+        print("FUTURE Group Responses" + _futureGroupResponses.toString());
+        print("init" + allGroupResponses.toString());
+      });
+    });
+  }
+
+  void initState() {
+    super.initState();
+    loadfutures();
   }
 
   initializeSlider() {
@@ -210,20 +140,6 @@ class _DebateVoteState extends State<DebateVote> {
                     })))
               ])),
         ));
-  }
-
-  void initState() {
-    super.initState();
-    setState(() {
-      print("Gonna call GetGroupResponses");
-      _futureGroupResponses = getGroupResponses(currentUser); // TO BE CHANGED
-      print("FUTURE Group Responses" + _futureGroupResponses.toString());
-      print("init" + allGroupResponses.toString());
-
-      FlutterSession()
-          .get('username')
-          .then((username) => {currentUser = username.toString()});
-    });
   }
 
   Widget build(BuildContext context) {
