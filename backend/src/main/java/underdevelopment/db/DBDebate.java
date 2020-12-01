@@ -17,7 +17,6 @@ public class DBDebate {
 
         try (Session session = Connect.driver.session()) {
             Result result = session.run(query, value);
-
             ArrayList<Map<String, Object>> questions = new ArrayList<>();
             while (result.hasNext()) {
                 questions.add(result.next().get("question").asMap());
@@ -45,7 +44,7 @@ public class DBDebate {
         return getQuestionByDate(LocalDate.now().minusDays(1).toString());
     }
 
-    private static String getTier(int acs) {
+    public static String getTier(int acs) {
         if (acs <= 300) {
             return "FANALYST";
         } else if (acs <= 600) {
@@ -74,25 +73,21 @@ public class DBDebate {
     }
 
     // TODO: /api/debate/get-group-responses-my-question
-    public static ArrayList<Map<String, Object>> getResponsesMyQuestion(String username) {
+    public static ArrayList<Record> getResponsesMyQuestion(String username) {
         
         try (Session session = Connect.driver.session()) {
-            Result result = session.run("match (n:DebateQuestion {tier: $t, date: $d})-[:hasGroup]-(g:DebateGroup) with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect(r) as responses", 
+            Result result = session.run("match (n:DebateQuestion {tier: $t, date: $d})-[:hasGroup]-(g:DebateGroup) with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect({response: r.debateAnalysis, responseId: ID(r)}) as responses", 
                                         parameters("d", LocalDate.now().toString(), "t", getTier(getACS(username))));
-
-            ArrayList<Map<String, Object>> groups = new ArrayList<>();
+            ArrayList<Record> reponseGroups = new ArrayList<>();
             while (result.hasNext()) {
-
-                // questions.add(result.next().get("question").asMap());
-                
+                reponseGroups.add(result.next());
             }
-            // return questions;
+            return reponseGroups;
         }
         catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-        return null;
     }
 
     // TODO: /api/debate/get-previous-topic-result
