@@ -51,11 +51,12 @@ public class DBDebateDailyQuestion {
      */
     public static int addResponse(String username, String analysis){
         try (Session session = Connect.driver.session()) {
-
+            String date = LocalDate.now().toString();
+            
             // Query to create response node for the analysis of the user with given username
-            Result result = session.run("MERGE (r:DebateResponse {username: $u}) ON CREATE SET r.debateAnalysis = $a " 
+            Result result = session.run("MERGE (r:DebateResponse {username: $u, date: $d}) ON CREATE SET r.debateAnalysis = $a " 
                                       + "ON MATCH SET r.debateAnalysis = $a RETURN ID(r) as id",
-                                        parameters("u", username, "a", analysis));
+                                        parameters("u", username, "d", date, "a", analysis));
             
             if (result.hasNext()){
                 Record r = result.next();
