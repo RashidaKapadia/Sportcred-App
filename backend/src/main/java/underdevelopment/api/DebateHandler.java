@@ -133,59 +133,27 @@ public class DebateHandler {
         };
     }
 
-    // TODO: /api/debate/get-group-responses
+    // /api/debate/get-group-responses
     public static JsonRequestHandler getResponsesOngoing() {
         return (JSONObject jsonObj) -> {
-
-            String questionId;
-
-            // Get and validate input
+            int questionId;
             try {
-                questionId = jsonObj.getString("questionId");
+                questionId = jsonObj.getInt("questionId");
+                return makeGroupResponses(DBDebate.getResponsesOngoing(questionId));
             } catch (Exception e) {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
-
-            // Get questions from the db
-            // ArrayList<Map<String, Object>> questions = DBQuestion.getQuestions(questionId, LIMIT);
-            
-            try {
-                JSONArray questionsJSON = new JSONArray();
-
-                // Build the json array of questions
-                // Iterator<Map<String, Object>> it = questions.iterator();
-                // while (it.hasNext()) {
-                    // Map<String, Object> question = it.next();
-                    // questionsJSON
-                    //     .put(new JSONObject()
-                    //         .put("questionId", question.get("questionId").toString())
-                    //         .put("question", question.get("question").toString())
-                    //         .put("answer", question.get("answer").toString())
-                    //         .put("choices", new JSONArray(question.get("choices").toString()))
-                    //     );
-                // }
-
-                // Create the json response
-                String response = new JSONObject()
-                    .put("questions", questionsJSON)
-                    .toString();
-
-                return new JsonHttpReponse(Status.OK, response);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return new JsonHttpReponse(Status.SERVERERROR);
-            }
         };
-    }  
+    }
 
     // TODO: /api/debate/get-debate-group-responses-n-results
     public static JsonRequestHandler getResponsesFinished() {
         return (JSONObject jsonObj) -> {
-            String questionId;
+            int questionId;
             // Get and validate input
             try {
-                questionId = jsonObj.getString("questionId");
+                questionId = jsonObj.getInt("questionId");
             } catch (Exception e) {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
