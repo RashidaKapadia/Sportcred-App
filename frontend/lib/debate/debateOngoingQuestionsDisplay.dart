@@ -185,7 +185,7 @@ class _CurrentDebateQuestionsState extends State<CurrentDebateQuestions> {
         appBar: AppBar(
             leading: BackButton(
                 color: Colors.white,
-                onPressed: () => Navigator.of(context).pushNamed("/homepage")),
+                onPressed: () => Navigator.of(context).pushNamed("/debate")),
             title: Text("Debate", style: TextStyle(color: Colors.white)),
             centerTitle: true,
             backgroundColor: Colors.blueGrey),

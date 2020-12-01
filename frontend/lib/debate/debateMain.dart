@@ -35,8 +35,7 @@ class _Debate extends State<Debate> {
           ),
         ),
         GestureDetector(
-          onTap: () =>
-              Navigator.of(context).pushNamed('/debateCurrentResponses'),
+          onTap: () => Navigator.of(context).pushNamed('/debateVote'),
           child: Card(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -51,8 +50,7 @@ class _Debate extends State<Debate> {
           ),
         ),
         GestureDetector(
-          onTap: () =>
-              Navigator.of(context).pushNamed('/debatePreviousResults'),
+          onTap: () => Navigator.of(context).pushNamed('/myDebateResult'),
           child: Card(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -67,8 +65,7 @@ class _Debate extends State<Debate> {
           ),
         ),
         GestureDetector(
-          onTap: () =>
-              Navigator.of(context).pushNamed('/debateCurrentResponses'),
+          onTap: () => Navigator.of(context).pushNamed('/debate/currentDQ'),
           child: Card(
             child: Column(
               mainAxisSize: MainAxisSize.min,

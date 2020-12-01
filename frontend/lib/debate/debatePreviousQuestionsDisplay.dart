@@ -187,6 +187,7 @@ Widget displayTiers(int i, BuildContext context) {
             child: Tooltip(
               message: "Question",
               child: RaisedButton(
+                elevation: 10,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                 ),
@@ -220,7 +221,7 @@ class _PreviousDebateQuestionsState extends State<PreviousDebateQuestions> {
         appBar: AppBar(
             leading: BackButton(
                 color: Colors.white,
-                onPressed: () => Navigator.of(context).pushNamed("/homepage")),
+                onPressed: () => Navigator.of(context).pushNamed("/debate")),
             title: Text("Debate", style: TextStyle(color: Colors.white)),
             centerTitle: true,
             backgroundColor: Colors.blueGrey),

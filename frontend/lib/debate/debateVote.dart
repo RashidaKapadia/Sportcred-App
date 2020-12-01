@@ -164,8 +164,7 @@ class _DebateVoteState extends State<DebateVote> {
         appBar: AppBar(
             leading: BackButton(
                 color: Colors.white,
-                onPressed: () => Navigator.of(context)
-                    .pushNamed("/debatePreviousQuestions")),
+                onPressed: () => Navigator.of(context).pushNamed("/debate")),
             title:
                 Text("Voting is Open", style: TextStyle(color: Colors.white)),
             centerTitle: true,

@@ -141,6 +141,13 @@ class _MyDebateResultState extends State<MyDebateResult> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          leading: BackButton(
+              color: Colors.white,
+              onPressed: () => Navigator.of(context).pushNamed("/debate")),
+          title: Text("Results Are In!", style: TextStyle(color: Colors.white)),
+          centerTitle: true,
+          backgroundColor: Colors.blueGrey),
       bottomNavigationBar: NavBar(0),
       body: SingleChildScrollView(
           child: resultPage(context)), //resultPage(context),
@@ -193,8 +200,8 @@ class _MyDebateResultState extends State<MyDebateResult> {
             ], // manually specify the colors to be used
           ),
         ),
-        headerBanner(superLargeHeading("Your Debate result is as follows:",
-            color: Colors.white)),
+        //headerBanner(superLargeHeading("Your Debate result is as follows:",
+        //  color: Colors.white)),
         pagebody(),
       ]),
     );
@@ -281,7 +288,7 @@ class _MyDebateResultState extends State<MyDebateResult> {
                 Container(
                   padding: EdgeInsets.all(10),
                   child: Column(
-                    children: List.generate(5, (index) {
+                    children: List.generate(2, (index) {
                       // HARDCODED FOR NOW; CHANGE TO data.length
                       return displayPlayerResult(index);
                     }),
