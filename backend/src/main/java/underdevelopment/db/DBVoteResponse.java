@@ -19,65 +19,36 @@ public class DBVoteResponse {
 	/*
 	 * /api/debate/vote-response
 
-	Parameters
-	{
-	Id: “response123”,
-		usernames: [ bob, alice, mallory],
-	ratings: [0.4, 0.5, 0.3]
-	}
-	
-	Return 
-	{
-	avgRating: 0.48
-	}
 
 	 */
 	// Find the appropriate response
-	// Add the list of usernames to the record
-	// Calculate new average rating
-	// Call participation for all 3 users.
-	public static double voteResponse(String group, List<String> usernames, List<Double> ratings) {
+	// Calculate new average rating for that response
+	// Call participation for the voter.
+	public static double voteResponse(String group, List<Long> IDs, List<Double> ratings, String voter) {
 		double retVal = -1;
 		try (Session session = Connect.driver.session()) {
 			try (Transaction tx = session.beginTransaction()) {
+				// Make sure he hasn't voted yet.
+				boolean valid = checkVotedUsers(tx, group, voter);
+				if(! valid) {
+					return -1;
+				}
+				// Change the ratings.
+				for(int i = 0; i < IDs.size(); i++) {
+					Result response = tx.run(String.format("match(n:DebateResponse) WHERE ID(n) = %d RETURN n.avgScore as avgScore,  n.count as count", IDs.get(i)));
+					Record rating = response.next();
+					double avgScore = rating.get("avgScore", 0.0);
+					int count = rating.get("count", 0);
+					double totalScore = avgScore * count + ratings.get(i);
+					count++;
+					avgScore = totalScore / count;
+					tx.run(String.format("Match(n:DebateResponse) WHERE ID(n) = %d SET n.avgScore  = %f, n.count = %d ", IDs.get(i), avgScore, count));
+				}
+				DBParticipation.editParticipation(voter, 0.5, tx);
+
+				
 				System.out.println("Adding the vote response");
-				
-				// Find the appropriate response group
-				Result tgtGroup = tx.run(String.format("MATCH(u:DebateGroup) WHERE (u.id = '%s')"
-						+ "RETURN u.userList as userList, u.avgScore as avgScore", group));
-				Record record = tgtGroup.next();
-				List<String> users = (List<String>) record.get("userList", new ArrayList<String>());
-				List<String> curUsernames = new ArrayList<String>();
-				for(int i = 0; i < users.size(); i++) {
-					curUsernames.add(users.get(i));
-				}
-				double avgScore = record.get("avgScore",0.0);
-				long size = curUsernames.size();
-				double totalScore = avgScore * size;
-				boolean contains = false;
-				// Check if usernames is in our list already. Return -1 if it is.
-				// We add all the ratings to total score and calculate new average
-				// Also add that user
-				for(int i = 0; i < usernames.size(); i++) {
-					if(curUsernames.contains(usernames.get(i))) {
-						return -1;
-					}else {
-						totalScore += ratings.get(i);
-						curUsernames.add(usernames.get(i).toString());
-					}
-				}
-				JSONArray jsonArr = new JSONArray();
-				
-				for(int i = 0; i < curUsernames.size(); i++) {
-					jsonArr.put(curUsernames.get(i));
-				}
-				tx.run(String.format("MATCH(u:DebateGroup) WHERE (u.id = '%s')"
-						+ "SET u.userList = %s, u.avgScore = %f", group, jsonArr.toString(), totalScore/curUsernames.size()));
-				retVal = totalScore/curUsernames.size();
-				// Give everyone a participation mark
-				for(int i = 0; i < usernames.size(); i++) {
-					DBParticipation.editParticipation(usernames.get(i), 0.5, tx);
-				}
+				retVal = 1;
 				
 				tx.commit();
 				tx.close();
@@ -91,6 +62,35 @@ public class DBVoteResponse {
 		}
 		
 		return retVal;
+	}
+	
+	private static boolean checkVotedUsers(Transaction tx, String group, String voter) {
+		// Find the appropriate response group
+		Result tgtGroup = tx.run(String.format("MATCH(u:DebateGroup) WHERE (u.id = '%s')"
+				+ " RETURN u.userList as userList", group));
+		Record record = tgtGroup.next();
+		List<String> users = (List<String>) record.get("userList", new ArrayList<String>());
+		List<String> curUsernames = new ArrayList<String>();
+		for(int i = 0; i < users.size(); i++) {
+			curUsernames.add(users.get(i));
+		}
+		long size = curUsernames.size();
+		boolean contains = false;
+		// Check if our voter is in our list already. Return -1 if it is.
+		// Also add that user
+		if(curUsernames.contains(voter)) {
+			return false;
+		}else {
+			curUsernames.add(voter);
+		}
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		for(int i = 0; i < curUsernames.size(); i++) {
+			jsonArr.put(curUsernames.get(i));
+		}
+		tx.run(String.format("MATCH(u:DebateGroup) WHERE (u.id = '%s') SET u.userList = %s", group, jsonArr.toString()));
+		return true;
 	}
 
 
