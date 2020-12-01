@@ -72,12 +72,9 @@ public class DBDebate {
         return acs;
     }
 
-    // TODO: /api/debate/get-group-responses-my-question
-    public static ArrayList<Record> getResponsesMyQuestion(String username) {
-        
+    private static ArrayList<Record> getResponsesByQuery(String query, Value value) {
         try (Session session = Connect.driver.session()) {
-            Result result = session.run("match (n:DebateQuestion {tier: $t, date: $d})-[:hasGroup]-(g:DebateGroup) with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect({response: r.debateAnalysis, responseId: ID(r)}) as responses", 
-                                        parameters("d", LocalDate.now().toString(), "t", getTier(getACS(username))));
+            Result result = session.run(query, value);
             ArrayList<Record> reponseGroups = new ArrayList<>();
             while (result.hasNext()) {
                 reponseGroups.add(result.next());
@@ -88,6 +85,12 @@ public class DBDebate {
             e.printStackTrace();
             return null;
         }
+    } 
+
+    // /api/debate/get-group-responses-my-question
+    public static ArrayList<Record> getResponsesMyQuestion(String username) {
+        return getResponsesByQuery("match (n:DebateQuestion {tier: $t, date: $d})-[:hasGroup]-(g:DebateGroup) with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect({response: r.debateAnalysis, responseId: ID(r)}) as responses", 
+                                    parameters("d", LocalDate.now().toString(), "t", getTier(getACS(username))));
     }
 
     // TODO: /api/debate/get-previous-topic-result
@@ -95,15 +98,16 @@ public class DBDebate {
 
     }  
 
-    // TODO: /api/debate/get-group-responses
-    public static void getResponsesOngoing(String questionId) {
-        /*
-         match (n:DebateQuestion)-[:hasGroup]-(g:DebateGroup) where ID(n)=49 with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect(r) as responses
-         */
+    // /api/debate/get-group-responses
+    public static ArrayList<Record> getResponsesOngoing(int questionId) {
+        return getResponsesByQuery("match (n:DebateQuestion)-[:hasGroup]-(g:DebateGroup) where ID(n) = $q with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect({response: r.debateAnalysis, responseId: ID(r)}) as responses", 
+                                    parameters("q", questionId));
     }
 
     // TODO: /api/debate/get-debate-group-responses-n-results
-    public static void getResponsesFinished(String questionId) {
-        
+    public static void getResponsesFinished(int questionId) {
+        /*
+         match (n:DebateQuestion)-[:hasGroup]-(g:DebateGroup) where ID(n)=49 with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect(r) as responses
+         */
     }
 }
