@@ -30,44 +30,46 @@ public class VoteResponseHandler {
 	 */
     public static JsonRequestHandler voteResponse() {
         return (JSONObject jsonObj) -> {
-        	String groupID;
-        	JSONArray usernames;
+        	String groupID, voter;
+        	JSONArray responseIDs;
         	JSONArray ratings;
-        	List<String> usernameList = new ArrayList<String>();
+        	List<Long> responseIDsList = new ArrayList<Long>();
         	List<Double> ratingsList = new ArrayList<Double>();
         	
             // Get input
             try {
-                groupID = jsonObj.getString("Id");
-                usernames =  jsonObj.getJSONArray("usernames");
+                groupID = jsonObj.getString("groupId");
+                voter = jsonObj.getString("voter");
+                responseIDs =  jsonObj.getJSONArray("responseIds");
                 ratings = jsonObj.getJSONArray("ratings");
-                for(int i = 0; i < usernames.length(); i++) {
-                	usernameList.add(usernames.getString(i));
+                for(int i = 0; i < responseIDs.length(); i++) {
+                	responseIDsList.add(responseIDs.getLong(i));
                 	ratingsList.add(ratings.getDouble(i));
                 }
             } catch (Exception e) {
+            	e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
             String response;
 
             // Run DB command            
             try {
-            	// First, we gotta check to make sure our usernames aren't in the list
+            	// First, we gotta check to make sure our voter isn't one of the responders
             	List<String> groupOwners = DBDebateGroups.getUserList(groupID);
-            	for(int j = 0; j < groupOwners.size(); j++) {
-            		System.out.println(groupOwners.get(j));
+        		if(groupOwners.contains( "\"" + voter + "\"")){
+        			response = new JSONObject()
+  	                      .put("Error", "You cannot vote in a group you are in")
+  	                      .toString();
+                    return new JsonHttpReponse(Status.UNAUTHORIZED, response);
+        		}
+   
+            	// Vote
+            	double newScore = DBVoteResponse.voteResponse(groupID, responseIDsList, ratingsList, voter); 
+            	if(newScore != -1) {
+                    return new JsonHttpReponse(Status.OK);
+            	}else {
+                    return new JsonHttpReponse(Status.SERVERERROR);
             	}
-            	for(int i = 0; i < usernameList.size(); i++) {
-            		if(groupOwners.contains("\"" + usernameList.get(i).toString() + "\"")){
-                        return new JsonHttpReponse(Status.UNAUTHORIZED);
-            		}
-            	}
-            	// Insert the usernames in
-            	double newScore = DBVoteResponse.voteResponse(groupID, usernameList, ratingsList); 
-            	response = new JSONObject()
-	                      .put("participation score", newScore)
-	                      .toString();
-                return new JsonHttpReponse(Status.OK, response);
             } catch (Exception e) {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.SERVERERROR);
