@@ -6,6 +6,7 @@ import 'package:frontend/debate/debateOngoingQuestionsDisplay.dart';
 import 'package:frontend/debate/debateOngoingResponses.dart';
 import 'package:frontend/debate/debatePreviousQuestionsDisplay.dart';
 import 'package:frontend/debate/debatePreviousQuestionsResults.dart';
+import 'package:frontend/debate/debateVote.dart';
 // import 'package:frontend/InitialPage.dart';
 import 'package:frontend/trivia/triviaPickCategory.dart';
 import 'package:frontend/trivia/triviaMode.dart';
@@ -59,7 +60,9 @@ void main() {
         '/debateCurrentResponses': (context) => CurrentDebateResponses(),
         '/debatePreviousQuestions': (context) => PreviousDebateQuestions(),
         '/debatePreviousResults': (context) => PreviousDebateResults(),
+        '/debateVote': (context) => DebateVote(),
         '/debate': (context) => Debate()
+
       }));
 }
 
