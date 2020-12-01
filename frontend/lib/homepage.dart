@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/widgets/layout.dart';
 import './navbar.dart';
+import 'debate/debateMain.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -60,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                     homepageTile(
                         "/trivia/category", "Trivia", Colors.yellowAccent[100]),
                     homepageTile(
-                        "/debate/dailyQuestion", "Analyze & Debate", Colors.greenAccent),
+                        "/debate", "Analyze & Debate", Colors.greenAccent),
                   ],
                 );
               },
