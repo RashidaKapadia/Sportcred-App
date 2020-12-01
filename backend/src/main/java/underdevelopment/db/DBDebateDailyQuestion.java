@@ -1,15 +1,10 @@
 package underdevelopment.db;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
-import org.neo4j.driver.Transaction;
-
 import static org.neo4j.driver.Values.parameters;
 
 
@@ -30,7 +25,7 @@ public class DBDebateDailyQuestion {
 
             // Query to get the daily debate question for the given tier
             Result result = session.run("MATCH (q:DebateQuestion {tier: $t, date: $d} ) RETURN q",
-                                        parameters("t", tier, "d", "2020-12-02"));
+                                        parameters("t", tier, "d", date));
             
             if (result.hasNext()){
                 Record r = result.single();
@@ -92,7 +87,7 @@ public class DBDebateDailyQuestion {
             Result result = session.run("MATCH (q:DebateQuestion {tier: $t, date: $d})-[:hasResponse]->"
                                       + "(r:DebateResponse {username: $u}) " 
                                       + "RETURN r.debateAnalysis as analysis",
-                                        parameters("t", tier, "d", "2020-12-01", "u", username));
+                                        parameters("t", tier, "d", date, "u", username));
             
             if (result.hasNext()){
                 Record r = result.next();
@@ -128,7 +123,7 @@ public class DBDebateDailyQuestion {
             // Query to add relationship between the given tier's daily debate question and the reponse with the given id
             session.writeTransaction(tx -> tx.run("MATCH (q:DebateQuestion {tier: $t, date: $d}), (a:DebateResponse) " 
             + "WHERE ID(a) = $i MERGE (q)-[r:hasResponse]->(a) RETURN r",
-                                        parameters("t", tier, "d", "2020-12-01", "i", id)));
+                                        parameters("t", tier, "d", date, "i", id)));
             session.close();
             return true;
         }
