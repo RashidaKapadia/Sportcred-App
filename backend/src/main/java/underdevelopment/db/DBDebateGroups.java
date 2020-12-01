@@ -113,6 +113,26 @@ public class DBDebateGroups {
             }
 
         }
-
     }
+    
+    
+    //MATCH (n:DebateResponse)<-[:hasResponse]-(u:DebateGroup) WHERE u.id = "2020-12-01-FANALYST-0" RETURN n.username
+    
+    // Used to get the users in a group, to make sure the person cant vote on his own.
+    public static List<String> getUserList(String groupID) {
+        // Get yesterday's date
+		List<String> retVal = new ArrayList<String> ();
+		try (Session session = Connect.driver.session()) {
+	    	try (Transaction tx = session.beginTransaction()) {
+	    		Result result = tx.run(String.format("MATCH (n:DebateResponse)<-[:hasResponse]-(u:DebateGroup) WHERE u.id = '%s' RETURN n.username as username", groupID));
+	    		while(result.hasNext()) {
+		    		Record user = result.next();
+		    		retVal.add(user.get("username").toString());
+	    		}
+	    	}
+		}
+		return retVal;
+		
+    }
+    
 }

@@ -17,7 +17,8 @@ import underdevelopment.db.DBUserInfo;
 
 public class ParticipationHandler {
 	
-
+	// This was just for testing. not used anymore
+	/*
     public static JsonRequestHandler editParticipation() {
         return (JSONObject jsonObj) -> {
         	String username;
@@ -42,5 +43,5 @@ public class ParticipationHandler {
             }
         };
     }
-   
+   */
 }
