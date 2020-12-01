@@ -3,10 +3,14 @@ package underdevelopment.api;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Value;
 
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;
@@ -58,24 +62,57 @@ public class DebateHandler {
         };
     }
 
+    private static String groupResponsesToJson(ArrayList<Record> reponseGroups) throws JSONException {
+        
+        JSONArray groups = new JSONArray();
+
+        // Make array of groups
+        for (Record record : reponseGroups) {
+            // System.out.println("Next: " + record.toString());
+
+            // Make array of responses for the group
+            JSONArray responses = new JSONArray();
+            for (Map<String,Object> response : record.get("responses").asList(
+                (Function <Value, Map<String, Object>>) (Value v) -> {return v.asMap();}
+            )){
+                responses.put(new JSONObject()
+                    .put("responseId",  response.get("responseId"))
+                    .put("response",    response.get("response"))
+                );
+            }
+
+            // Make groups of responses
+            groups.put(new JSONObject()
+                .put("groupId", record.get("groupId").asString())
+                .put("responses", responses)
+            );
+        }
+
+        // Makes json of question and responses by group
+        return new JSONObject().put("groups", groups).toString();
+    }
+
+    private static JsonHttpReponse makeGroupResponses(ArrayList<Record> reponseGroups) {
+        try {
+            return new JsonHttpReponse(Status.OK, groupResponsesToJson(reponseGroups));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new JsonHttpReponse(Status.SERVERERROR);
+        }
+    }
+
     // TODO: /api/debate/get-group-responses-my-question
     public static JsonRequestHandler getResponsesMyQuestion() {
 
         return (JSONObject jsonObj) -> {
             String username;
-
-            // Get and validate input
             try {
                 username = jsonObj.getString("username");
+                return makeGroupResponses(DBDebate.getResponsesMyQuestion(username));
             } catch (Exception e) {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
-
-            ArrayList<Map<String, Object>> questions = DBDebate.getResponsesMyQuestion(username);
-            System.out.println(questions);
-
-            return new JsonHttpReponse(Status.OK);
         };
     }
     
