@@ -1,5 +1,12 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
-import 'package:frontend/MyDebateResult.dart';
+import 'package:frontend/debate/MyDebateResult.dart';
+import 'package:frontend/debate/debateOngoingQuestionsDisplay.dart';
+import 'package:frontend/debate/debateOngoingResponses.dart';
+import 'package:frontend/debate/debatePreviousQuestionsDisplay.dart';
+import 'package:frontend/debate/debatePreviousQuestionsResults.dart';
+import 'package:frontend/debate/debateVote.dart';
 // import 'package:frontend/InitialPage.dart';
 import 'package:frontend/trivia/triviaPickCategory.dart';
 import 'package:frontend/trivia/triviaMode.dart';
@@ -20,6 +27,7 @@ import './requests/trivia.dart';
 import 'package:frontend/debate/dailyDebateQuestion.dart';
 import 'notificationBoard.dart';
 import 'CommentsPage.dart';
+import 'debate/debateMain.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -47,7 +55,14 @@ void main() {
         '/theZone': (context) => TheZone(),
         '/comments': (context) => CommentsPage(),
         '/myDebateResult': (context) => MyDebateResult(),
-        '/debate/dailyQuestion': (context) => DailyDebateQuestion()
+        '/debate/dailyQuestion': (context) => DailyDebateQuestion(),
+        '/debate/currentDQ': (context) => CurrentDebateQuestions(),
+        '/debateCurrentResponses': (context) => CurrentDebateResponses(),
+        '/debatePreviousQuestions': (context) => PreviousDebateQuestions(),
+        '/debatePreviousResults': (context) => PreviousDebateResults(),
+        '/debateVote': (context) => DebateVote(),
+        '/debate': (context) => Debate()
+
       }));
 }
 

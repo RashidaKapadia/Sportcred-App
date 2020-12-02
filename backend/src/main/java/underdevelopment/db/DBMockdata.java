@@ -20,7 +20,7 @@ import org.json.JSONTokener;
 // TODO: might want to split responsibilities
 public class DBMockdata {
 
-    private final static int VERSION_TIMESTAMP = 17;
+    private final static int VERSION_TIMESTAMP = 23;
 
     public static void checkAndUpdate() {
 
@@ -80,6 +80,7 @@ public class DBMockdata {
             // Remove old mock data and create new mock data and update the timestamp
             removeOldMockTriviaQuestions(tx, oldTimestamp);
             createMockTriviaQuestions(tx);
+            createMockDebateQuestions(tx);
             updateTimeStamp(tx);
 
             tx.commit();
@@ -133,6 +134,45 @@ public class DBMockdata {
                         "a", q.get("answer").toString(),
                         "o", q.get("choices").toString(),    
                         "t", VERSION_TIMESTAMP
+                    ));
+                System.out.println(q);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            throw new NullPointerException("Error reading questions from " + resource);
+        }
+        return false;
+    }
+
+    private static boolean createMockDebateQuestions(Transaction tx) {
+        
+        String resource = "mockdata/debateQuestions.json";
+        JSONObject jsonObj;
+        
+        // Get json file
+        InputStream is = DBMockdata.class.getClassLoader().getResourceAsStream(resource);
+        Reader reader = new InputStreamReader(is);
+        JSONTokener tokener = new JSONTokener(reader);
+        
+        // Parse json file
+        try {
+            jsonObj = new JSONObject(tokener);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            throw new NullPointerException("Cannot parse json resource file " + resource);
+        }
+
+        // Read questions and insert into the db
+        try {
+            JSONArray questions = (JSONArray) jsonObj.get("questions");
+            for (int i = 0; i < questions.length(); i++) {
+                JSONObject q = (JSONObject) questions.get(i);
+                tx.run("create (n:DebateQuestion {question: $q, tier: $t, date: $d, version: $v})",
+                    parameters(
+                        "q", q.get("question").toString(),
+                        "t", q.get("tier").toString(),
+                        "d", q.get("date").toString(),
+                        "v", VERSION_TIMESTAMP
                     ));
                 System.out.println(q);
             }

@@ -165,8 +165,9 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
   int numQuestions; // number of questions
   List<String> selectedAnswers = [];
 
-  int i = 0; // question index
-  int timer = 10;
+  int i; // question index
+  int timer;
+  int maxTime;
 
   bool disableAnswer = false;
   bool cancelTimer = false;
@@ -180,8 +181,11 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // print("Mode: " + triviaMode.toString());
+    print("Playing Trivia on: " + triviaMode.toString());
     super.initState();
+    i = 0;
+    maxTime = (triviaMode == TriviaMode.SOLO) ? 14 : 10;
+    timer = maxTime;
     correctlyAnswered = 0;
     notAnswered = questions.length;
     numQuestions = questions.length;
@@ -217,12 +221,8 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
     const onesec = Duration(seconds: 1);
     Timer.periodic(onesec, (Timer t) {
       // print("start time set state");
-      // print("timer: " + timer.toString());
-
-      // print(cancelTimer);
       if (cancelTimer) {
         setState(() {
-          // print("cancelling");
           t.cancel();
           _timerController.stop();
         });
@@ -244,9 +244,8 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
   void nextQuestion() {
     // print("next question set state");
     setState(() {
-      timer = 10;
+      timer = maxTime;
       // NOTE: i is inclusive TODO:
-      // print("i: " + i.toString());
       if (i < numQuestions - 1) {
         i++;
         _timerController.reset();
@@ -262,7 +261,6 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
 
   void validateAnswer(int t, bool val) {
     if (val == true) {
-      // print("validate set state");
       setState(() {
         if (questions[i].answer == questions[i].options[t]) {
           correctlyAnswered++;
@@ -332,7 +330,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
             margin: EdgeInsets.symmetric(vertical: 5.0),
             child: SimpleTimer(
               controller: _timerController,
-              duration: Duration(seconds: 10),
+              duration: Duration(seconds: maxTime),
               timerStyle: TimerStyle.expanding_sector,
             )));
 

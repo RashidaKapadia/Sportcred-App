@@ -22,19 +22,19 @@ public class DBNotifications {
 				System.out.println("getting trivia Count");
 				
 				// See if the person has any notifications
-				Result result = tx.run(String.format("MATCH(u:user) WHERE (u.username = '%s')"
+				Result result = tx.run(String.format("MATCH(u:user) WHERE (u.username = \"%s\")"
 						+ "RETURN EXISTS((u)-[:hasANotification]->()) as notification", username));
 				Boolean hasNotification = result.next().get("notification").asBoolean();
 				if(hasNotification) {
 					tx.run(String.format(
 							"MATCH(m {username: '%s'}) -[r:hasANotification]->(o)" +  
-							"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False " + 
+							"CREATE (n:notification) SET n.type = \"%s\", n.category = \"%s\", n.infoID = %d, n.title = \"%s\", n.read = False " + 
 							"CREATE ((m)-[h:hasANotification]-> (n))" + 
 							"CREATE ((n)-[i:hasANotification]-> (o))" + 
 							"DELETE r", username, type, category, ID, title));
 				}else {
 					tx.run(String.format("MATCH(u:user) WHERE (u.username = '%s')" +
-									"CREATE (n:notification) SET n.type = '%s', n.category = '%s', n.infoID = %d, n.title = '%s', n.read = False " + 
+									"CREATE (n:notification) SET n.type = \"%s\", n.category = \"%s\", n.infoID = %d, n.title = \"%s\", n.read = False " + 
 									"CREATE(u)-[r:hasANotification]->(n) ", username, type, category, ID, title));	
 				}
 			

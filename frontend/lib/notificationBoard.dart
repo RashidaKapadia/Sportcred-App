@@ -66,6 +66,22 @@ class _NotificationBoardState extends State<NotificationBoard> {
         },
         Text("See Results"),
       );
+    } else if (type == "invite" && category == "debate") {
+      return greyButtonFullWidth(
+        () {
+          markReadNotifications(username, [id]);
+          Navigator.of(context).pushNamed("/debate/dailyQuestion");
+        },
+        Text("Give Your Analysis!"),
+      );
+    } else if (type == "results" && category == "debate") {
+      return greyButtonFullWidth(
+        () {
+          markReadNotifications(username, [id]);
+          Navigator.of(context).pushNamed("/myDebateResult");
+        },
+        Text("See Your Debate Analysis Score"),
+      );
     } else {
       return Text("");
     }
@@ -79,8 +95,10 @@ class _NotificationBoardState extends State<NotificationBoard> {
       return tag(value, 190, 200, 250); // blue
     } else if (value == "results") {
       return tag(value, 190, 245, 160); // green
+    } else if (value == "debate") {
+      return tag(value, 180, 230, 240); // torquoise
     } else {
-      return tag(value, 220, 220, 220); // grey
+      return tag(value, 150, 180, 130); // grey
     }
   }
 

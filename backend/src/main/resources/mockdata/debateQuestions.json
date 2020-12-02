@@ -1,0 +1,214 @@
+{
+    "questions":[
+        {
+            "question":"Who is the greatest of all time?",
+            "tier":"FANALYST",
+            "date":"2020-12-01"
+        },
+        {
+            "question":"Is Dwight Howard a HOF'er",
+            "tier":"FANALYST",
+            "date":"2020-12-02"
+        },
+        {
+            "question":"What should be the criteria for the HOF? Rings or accolades?",
+            "tier":"FANALYST",
+            "date":"2020-12-03"
+        },
+        {
+            "question":"Is Carmelo Anthony a HOF'er?",
+            "tier":"FANALYST",
+            "date":"2020-12-04"
+        },
+        {
+            "question":"Does Ja Morant win ROY if Zion plays a full season based on the numbers he put up in the games before and after the bubble?",
+            "tier":"FANALYST",
+            "date":"2020-12-05"
+        },
+        {
+            "question":"Should college basketball players be paid?",
+            "tier":"FANALYST",
+            "date":"2020-12-06"
+        },
+        {
+            "question":"Best team ever?",
+            "tier":"FANALYST",
+            "date":"2020-12-07"
+        },
+        {
+            "question":"Who would you rather build around? Giannis Antetokounmpo or Ben Simmons?",
+            "tier":"FANALYST",
+            "date":"2020-12-08"
+        },
+        {
+            "question":"Kyle Lowry or Russell Westbrook?",
+            "tier":"FANALYST",
+            "date":"2020-12-09"
+        },
+        {
+            "question":"Should WNBA players be paid more?",
+            "tier":"FANALYST",
+            "date":"2020-12-10"
+        },
+        {
+            "question":"Who is the greatest of all time?",
+            "tier":"ANALYST",
+            "date":"2020-12-01"
+        },
+        {
+            "question":"In the modern era 1990-2020 who is the best coach? Phil Jackson or Gregg Popovich",
+            "tier":"ANALYST",
+            "date":"2020-12-02"
+        },
+        {
+            "question":"Who's A Better Point Guard: Kyrie, Steph, Westbrook or CP3?",
+            "tier":"ANALYST",
+            "date":"2020-12-03"
+        },
+        {
+            "question":"Who was the real MVP Shaq or Kobe",
+            "tier":"ANALYST",
+            "date":"2020-12-04"
+        },
+        {
+            "question":"What should be the criteria for the HOF? Rings or accolades?",
+            "tier":"ANALYST",
+            "date":"2020-12-05"
+        },
+        {
+            "question":"Did Kobe Bryant deserve MVP in 2006-07 over Dirk?",
+            "tier":"ANALYST",
+            "date":"2020-12-06"
+        },
+        {
+            "question":"Should college basketball players be paid?",
+            "tier":"ANALYST",
+            "date":"2020-12-07"
+        },
+        {
+            "question":"Who was better of these two: Magic or Bird?",
+            "tier":"ANALYST",
+            "date":"2020-12-08"
+        },
+        {
+            "question":"Is Chris Paul over or underrated?",
+            "tier":"ANALYST",
+            "date":"2020-12-09"
+        },
+        {
+            "question":"Are Lebron's teammates really that bad or are they never credited?",
+            "tier":"ANALYST",
+            "date":"2020-12-10"
+        },
+        {
+            "question":"Who is the greatest of all time?",
+            "tier":"PRO ANALYST",
+            "date":"2020-12-01"
+        },
+        {
+            "question":"Who's A Better Point Guard: Kyrie, Steph, Westbrook or CP3?",
+            "tier":"PRO ANALYST",
+            "date":"2020-12-02"
+        },
+        {
+            "question":"What should be the criteria for the HOF? Rings or accolades?",
+            "tier":"PRO Analyst",
+            "date":"2020-12-03"
+        },
+        {
+            "question":"Did Kobe Bryant deserve MVP in 2006-07 over Dirk?",
+            "tier":"PRO ANALYST",
+            "date":"2020-12-04"
+        },
+        {
+            "question":"Who is the best Centre to ever play basketball?",
+            "tier":"PRO ANALYST",
+            "date":"2020-12-05"
+        },
+        {
+            "question":"Should college basketball players be paid?",
+            "tier":"PRO ANALYST",
+            "date":"2020-12-06"
+        },
+        {
+            "question":"Who was better of these two: Magic or Bird?",
+            "tier":"PRO ANALYST",
+            "date":"2020-12-07"
+        },
+        {
+            "question":"Most underrated player ever?",
+            "tier":"PRO ANALYST",
+            "date":"2020-12-08"
+        },
+        {
+            "question":"Most overrated player ever?",
+            "tier":"PRO ANALYST",
+            "date":"2020-12-09"
+        },
+        {
+            "question":"Are Lebron's teammates really that bad or are they never credited?",
+            "tier":"PRO ANALYST",
+            "date":"2020-12-10"
+        },
+        {
+            "question":"Who is the greatest of all time?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-01"
+        },
+        {
+            "question":"Who's A Better Point Guard: Kyrie, Steph, Westbrook or CP3?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-02"
+        },
+        {
+            "question":"Which brand of basketball was better 1990-2005 or 2005-2020?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-03"
+        },
+        {
+            "question":"Is Carmelo Anthony a HOF'er?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-04"
+        },
+        {
+            "question":"Who was the real MVP Shaq or Kobe?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-05"
+        },
+        {
+            "question":"What should be the criteria for the HOF? Rings or accolades?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-06"
+        },
+        {
+            "question":"Who is the best Centre to ever play basketball?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-07"
+        },
+        {
+            "question":"Should college basketball players be paid?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-08"
+        },
+        {
+            "question":"Who was better of these two: Magic or Bird?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-09"
+        },
+        {
+            "question":"Most underrated player ever?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-10"
+        },
+        {
+            "question":"Most overrated player ever?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-11"
+        },
+        {
+            "question":"Are Lebron's teammates that bad or are they never credited?",
+            "tier":"EXPERT ANALYST",
+            "date":"2020-12-12"
+        }
+    ]
+ }
