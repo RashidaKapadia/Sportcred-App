@@ -223,7 +223,7 @@ class _TheZoneState extends State<TheZone> {
         'Access-Control-Allow-Origin': '*',
       },
       body: jsonEncode(<String, String>{
-        'uniqueIdentifier': postId,
+        'postId': postId,
         'username': currentUsername,
         'content': content,
         'title': title
@@ -238,6 +238,31 @@ class _TheZoneState extends State<TheZone> {
     } else {
       print("ERROR - COULD NOT EDIT POST!");
       errorPopup(context, "Could not edit post!");
+      return null;
+    }
+  }
+
+  Future deletePost(String postId, String currentUsername) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/deletePost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(
+          <String, String>{'postId': postId, 'username': currentUsername}),
+    );
+
+    if (response.statusCode == 200) {
+      print("Post is deleted");
+      setState(() {
+        _futurePosts = getPosts();
+      });
+    } else {
+      print("ERROR - COULD NOT DELETE POST!");
+      errorPopup(context, "Could not delete post!");
       return null;
     }
   }
@@ -468,19 +493,6 @@ class _TheZoneState extends State<TheZone> {
                     Navigator.of(context).pushNamed("/comments");
                   },
                 ),
-                //  Text(allZonePosts[index].comments.toString()),
-
-                // TODO: Edit this to only be visible to user of that profile
-                // IconButton(
-                //     icon: new Icon(Icons.edit),
-                //     onPressed: () {
-                //       //editPost();
-                //     }),
-                // IconButton(
-                //     icon: new Icon(Icons.delete),
-                //     onPressed: () {
-                //       //editPost();
-                //     })
               ],
             ),
           ],
@@ -508,7 +520,48 @@ class _TheZoneState extends State<TheZone> {
             allZonePosts[index].content.toString());
         break;
       case 'Delete':
+        _deletePost(allZonePosts[index].username.toString(),
+            allZonePosts[index].uniqueIdentifier.toString());
         break;
+    }
+  }
+
+  void _deletePost(String creatorUsername, String postId) {
+    if (currentUser != creatorUsername) {
+      errorPopup(context, "You can only delete your post!!");
+    } else {
+      showDialog(
+          context: context,
+          builder: (alertContext) {
+            return AlertDialog(
+              title: Text("Confirmation"),
+              content: Text("Are you sure you want to delete this post?"),
+              actions: [
+                TextButton(
+                  child: Text("Yes"),
+                  onPressed: () {
+                    setState(() {
+                      print("DELETING POST");
+                      // Delete post
+                      deletePost(postId, currentUser);
+                      print("POST DELETED");
+
+                      Navigator.of(alertContext, rootNavigator: true)
+                          .pop('dialog');
+                    });
+                  },
+                ),
+                TextButton(
+                  child: Text("No"),
+                  onPressed: () {
+                    // Close the dialog
+                    Navigator.of(alertContext, rootNavigator: true)
+                        .pop('dialog');
+                  },
+                )
+              ],
+            );
+          });
     }
   }
 

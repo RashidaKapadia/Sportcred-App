@@ -140,7 +140,7 @@ public class App
                 new HttpRequestHandler("POST", PostHandler.handlePostCreation(), false));
         // Delete Post API test
         server.createContext("/api/deletePost", 
-                new HttpRequestHandler("DELETE", PostHandler.handleDeletePost(), authorized));
+                new HttpRequestHandler("POST", PostHandler.handleDeletePost(), authorized));
         
         server.createContext("/api/editPost", 
                 new HttpRequestHandler("POST", PostHandler.updatePost(), authorized));

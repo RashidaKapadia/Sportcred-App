@@ -164,7 +164,7 @@ class _CommentsPageState extends State<CommentsPage> {
     FlutterSession().get('token').then((token) {
       FlutterSession().get('username').then((username) => {
             setState(() {
-              String store_token = token.toString();
+              String storeToken = token.toString();
               this.storeUsername = username.toString();
               _futureComments = getComments("jimmy.2020-11-19 02:39:34.234");
               print("init" + allComments.toString());
