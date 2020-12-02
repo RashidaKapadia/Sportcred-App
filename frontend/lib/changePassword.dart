@@ -79,7 +79,7 @@ Future<PasswordStatus> passwordUpdate(
 
 class _ChangePasswordState extends State<ChangePassword>
     with SingleTickerProviderStateMixin {
-  String input_old, input_new = "";
+  String inputOld, inputNew = "";
   String username = "";
   @override
   void initState() {
@@ -108,7 +108,7 @@ class _ChangePasswordState extends State<ChangePassword>
                 OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
         onChanged: (value) {
           setState(() {
-            this.input_old = value;
+            this.inputOld = value;
           });
         });
     final newPassword = TextField(
@@ -121,7 +121,7 @@ class _ChangePasswordState extends State<ChangePassword>
                 OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
         onChanged: (value) {
           setState(() {
-            this.input_new = value;
+            this.inputNew = value;
           });
         });
     final newPasswordConfirm = TextField(
@@ -145,14 +145,14 @@ class _ChangePasswordState extends State<ChangePassword>
           minWidth: MediaQuery.of(context).size.width,
           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           onPressed: () {
-            if (confirmPassword != this.input_new) {
+            if (confirmPassword != this.inputNew) {
               errorPopup(context, "New Passwords must match");
-            } else if (this.input_new.length < 8) {
+            } else if (this.inputNew.length < 8) {
               errorPopup(context, "Password must be atleast 8 characters long");
             } else {
               // Call API
               _futurePassword =
-                  passwordUpdate(this.username, input_new, input_old);
+                  passwordUpdate(this.username, inputNew, inputOld);
               if (_futurePassword != null) {
                 checkStatus(context, _futurePassword);
               }

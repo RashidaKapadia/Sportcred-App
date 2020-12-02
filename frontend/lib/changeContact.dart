@@ -47,7 +47,6 @@ class Contact {
         username: json['username'],
         oldEmail: json['email'],
         oldPhone: json['phoneNumber']);
-    ;
   }
 }
 
@@ -66,8 +65,8 @@ class _ChangeContactState extends State<ChangeContact>
       FlutterSession().get('username').then((username) => {
             setState(() {
               this.username = username.toString();
-              String store_token = token.toString();
-              _futureContact = contactGet(username.toString(), store_token);
+              String storeToken = token.toString();
+              _futureContact = contactGet(username.toString(), storeToken);
             })
           });
     });
