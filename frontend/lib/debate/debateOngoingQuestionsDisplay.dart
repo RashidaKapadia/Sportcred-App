@@ -193,21 +193,6 @@ class _CurrentDebateQuestionsState extends State<CurrentDebateQuestions> {
   List data;
   String currentUser = '';
   //Future<QuestionNode> _futureQuestionNode;
-  Future<List<QuestionNode>> _futureQuestions;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _futureQuestions = getQuestions();
-      print("FUTURE QUESTIONS" + _futureQuestions.toString());
-      print("init" + questionsList.toString());
-
-      FlutterSession()
-          .get('username')
-          .then((username) => {currentUser = username.toString()});
-    });
-  }
 
   Future<List<QuestionNode>> getQuestions() async {
     // Make the request and store the response
@@ -221,8 +206,8 @@ class _CurrentDebateQuestionsState extends State<CurrentDebateQuestions> {
       body: jsonEncode(<String, String>{}),
     );
 
-    print(response.statusCode);
     if (response.statusCode == 200) {
+      print(response.statusCode);
       List<QuestionNode> allQuestions = [];
       // Get the questions, options and correctAnswers and store them in the class variables
       for (Map<String, dynamic> questionNode
@@ -242,11 +227,28 @@ class _CurrentDebateQuestionsState extends State<CurrentDebateQuestions> {
         questionsList = allQuestions;
         print("in api" + questionsList.toString());
       });
-      return allQuestions;
+      //return questionsList;
       // Return posts data
     } else {
+      print(response.statusCode);
       return null;
     }
+  }
+
+  Future<List<QuestionNode>> _futureQuestions;
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      print("FUTURE QUESTIONS"); //+ _futureQuestions.toString());
+      _futureQuestions = getQuestions();
+      print("FUTURE QUESTIONS" + _futureQuestions.toString());
+      print("init" + questionsList.toString());
+
+      FlutterSession()
+          .get('username')
+          .then((username) => {currentUser = username.toString()});
+    });
   }
 
   Widget build(BuildContext context) {
