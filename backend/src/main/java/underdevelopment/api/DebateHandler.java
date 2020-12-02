@@ -35,34 +35,26 @@ public class DebateHandler {
         return new JSONObject().put("questions", questionsJSON).toString();
     }
 
+    private static JsonHttpReponse makeQuestionResponse(ArrayList<Map<String, Object>> questions) {
+        try {
+            return new JsonHttpReponse(Status.OK, questionsToJson(questions));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new JsonHttpReponse(Status.SERVERERROR);
+        }
+    }
+
     // /api/debate/get-ongoing-questions 
     public static JsonRequestHandler getOngoingQuesions() {
         return (JSONObject jsonObj) -> {
-
-            // Get questions from the db
-            ArrayList<Map<String, Object>> questions = DBDebate.getOngoingQuesions();
-
-            try {
-                return new JsonHttpReponse(Status.OK, questionsToJson(questions));
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return new JsonHttpReponse(Status.SERVERERROR);
-            }
+            return makeQuestionResponse(DBDebate.getOngoingQuesions());
         };
     }
 
     // /api/debate/get-finished-questions
     public static JsonRequestHandler getFinishedQuesions() {
         return (JSONObject jsonObj) -> {
-            // Get questions from the db
-            ArrayList<Map<String, Object>> questions = DBDebate.getFinishedQuesions();
-            
-            try {
-                return new JsonHttpReponse(Status.OK, questionsToJson(questions));
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return new JsonHttpReponse(Status.SERVERERROR);
-            }
+            return makeQuestionResponse(DBDebate.getFinishedQuesions());
         };
     }
 
@@ -79,6 +71,9 @@ public class DebateHandler {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
+
+            ArrayList<Map<String, Object>> questions = DBDebate.getResponsesMyQuestion(username);
+            System.out.println(questions);
 
             return new JsonHttpReponse(Status.OK);
         };
