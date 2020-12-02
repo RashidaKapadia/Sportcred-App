@@ -93,9 +93,17 @@ public class DBDebate {
                                     parameters("d", LocalDate.now().toString(), "t", getTier(getACS(username))));
     }
 
-    // TODO: /api/debate/get-previous-topic-result
-    public static void getResultMyPreviousQuestion(String username) {
-
+    // /api/debate/get-previous-topic-result
+    public static Record getResultMyPreviousQuestion(String username) {
+        try (Session session = Connect.driver.session()) {
+            Result result = session.run("match (r:DebateResponse {username: $u, date: $d})-[:hasResponse]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) return ID(g) as groupId, r as yours, collect(o) as theirs",
+                                        parameters("d", LocalDate.now().minusDays(1).toString(), "u", username));
+            return (result.hasNext()) ? result.next() : null;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }  
 
     // /api/debate/get-group-responses
@@ -104,10 +112,9 @@ public class DBDebate {
                                     parameters("q", questionId));
     }
 
-    // TODO: /api/debate/get-debate-group-responses-n-results
-    public static void getResponsesFinished(int questionId) {
-        /*
-         match (n:DebateQuestion)-[:hasGroup]-(g:DebateGroup) where ID(n)=49 with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect(r) as responses
-         */
+    // /api/debate/get-debate-group-responses-n-results
+    public static ArrayList<Record> getResponsesFinished(int questionId) {
+        return getResponsesByQuery("match (q:DebateQuestion)-[:hasGroup]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) where ID(q)=$q return ID(g) as groupId, collect(o) as responses",
+                                    parameters("q", questionId));
     }
 }

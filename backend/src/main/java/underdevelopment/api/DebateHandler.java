@@ -101,7 +101,7 @@ public class DebateHandler {
         }
     }
 
-    // TODO: /api/debate/get-group-responses-my-question
+    // /api/debate/get-group-responses-my-question
     public static JsonRequestHandler getResponsesMyQuestion() {
 
         return (JSONObject jsonObj) -> {
@@ -115,11 +115,19 @@ public class DebateHandler {
             }
         };
     }
+
+    private static JSONObject responseToJSONObject (Map<String, Object> response) throws JSONException {
+        return new JSONObject()
+            .put("username", response.get("username"))
+            .put("response", response.get("debateAnalysis"))
+            .put("averageRating", (double) response.get("avgScore")
+        );
+    }
     
-    // TODO: /api/debate/get-previous-topic-result
+    // /api/debate/get-previous-topic-result
     public static JsonRequestHandler getResultMyPreviousQuestion() {
         return (JSONObject jsonObj) -> {
-            
+
             String username;
             // Get and validate input
             try {
@@ -129,7 +137,29 @@ public class DebateHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
-            return new JsonHttpReponse(Status.OK);
+            Record data = DBDebate.getResultMyPreviousQuestion(username);
+            try {
+                JSONObject json = new JSONObject()
+                    .put("groupId", data.get("groupId").asInt())
+                    .put("yours", responseToJSONObject(data.get("yours").asMap()))
+                    .put("theirs", new JSONArray(data.get("theirs").asList(
+                        (Function<Value, JSONObject>) (Value v) -> {
+                            try {
+                                return responseToJSONObject(v.asMap());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+                    )))
+                    // TODO:
+                    .put("yourScore", 0)
+                    .put("winner", "TODO:");
+                return new JsonHttpReponse(Status.OK, json.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
         };
     }
 
@@ -147,7 +177,7 @@ public class DebateHandler {
         };
     }
 
-    // TODO: /api/debate/get-debate-group-responses-n-results
+    // /api/debate/get-debate-group-responses-n-results
     public static JsonRequestHandler getResponsesFinished() {
         return (JSONObject jsonObj) -> {
             int questionId;
@@ -158,7 +188,36 @@ public class DebateHandler {
                 e.printStackTrace();
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
-            return new JsonHttpReponse(Status.OK);
+
+            ArrayList<Record> data = DBDebate.getResponsesFinished(questionId);
+            System.out.println(data);
+
+            try {
+                JSONArray groups = new JSONArray();
+                for (Record record : data) {
+                    groups.put(new JSONObject()
+                        .put("groupId", record.get("groupId").asInt())
+                        .put("responses", new JSONArray(
+                            record.get("responses").asList(
+                                (Function<Value, JSONObject>) (Value v) -> {
+                                    try {
+                                        return responseToJSONObject(v.asMap());
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                        return null;
+                                    }
+                                }
+                            )
+                        ))
+                        .put("winner", "TODO:")
+                    );    
+                }
+                JSONObject json = new JSONObject().put("groups", groups);
+                return new JsonHttpReponse(Status.OK, json.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
         };
     }
 
