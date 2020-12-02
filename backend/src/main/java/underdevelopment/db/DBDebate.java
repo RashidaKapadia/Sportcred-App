@@ -112,10 +112,9 @@ public class DBDebate {
                                     parameters("q", questionId));
     }
 
-    // TODO: /api/debate/get-debate-group-responses-n-results
-    public static void getResponsesFinished(int questionId) {
-        /*
-         match (n:DebateQuestion)-[:hasGroup]-(g:DebateGroup) where ID(n)=49 with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect(r) as responses
-         */
+    // /api/debate/get-debate-group-responses-n-results
+    public static ArrayList<Record> getResponsesFinished(int questionId) {
+        return getResponsesByQuery("match (q:DebateQuestion)-[:hasGroup]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) where ID(q)=$q return ID(g) as groupId, collect(o) as responses",
+                                    parameters("q", questionId));
     }
 }
