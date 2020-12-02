@@ -114,7 +114,7 @@ public class DBDebate {
 
     // /api/debate/get-debate-group-responses-n-results
     public static ArrayList<Record> getResponsesFinished(int questionId) {
-        return getResponsesByQuery("match (q:DebateQuestion)-[:hasGroup]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) where ID(q)=$q return ID(g) as groupId, collect(o) as responses",
+        return getResponsesByQuery("match (q:DebateQuestion)-[:hasGroup]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) where ID(q)=$q return ID(g) as groupId, g.winner as winner, collect(o) as responses", 
                                     parameters("q", questionId));
     }
 }

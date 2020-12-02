@@ -206,9 +206,9 @@ public class DebateHandler {
                                         return null;
                                     }
                                 }
-                            )
-                        ))
-                        .put("winner", "TODO:")
+                            ))
+                        )
+                        .put("winner", record.get("winner").asString())
                     );    
                 }
                 JSONObject json = new JSONObject().put("groups", groups);
