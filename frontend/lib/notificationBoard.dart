@@ -69,8 +69,8 @@ class _NotificationBoardState extends State<NotificationBoard> {
     } else if (type == "invite" && category == "debate") {
       return greyButtonFullWidth(
         () {
-          // markReadNotifications(username, [id]);
-          // Navigator.of(context).pushNamed("/debate/dailyQuestion");
+          markReadNotifications(username, [id]);
+          Navigator.of(context).pushNamed("/debate/dailyQuestion");
         },
         Text("Give Your Analysis!"),
       );
