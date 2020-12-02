@@ -85,12 +85,13 @@ public class DBUserInfo {
     // Run query to check if a user with given username already exists
     try (Session session = Connect.driver.session()) {
       try (Transaction tx = session.beginTransaction()) {
-        Result names = tx.run("MATCH (u:user {username: $x}) RETURN u.acs as acs", parameters("x", username));
+        Result names = tx.run("MATCH (u:user {username: $x}) RETURN u.acs as acs, u.participation as participation", parameters("x", username));
 
         // If any results have been returned, it means user exists already
         if (names.hasNext()) {
           Record data = names.single();
            acs = data.get("acs").asInt();
+           //acs += data.get("participation", 0);
 
         }
       }

@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpServer;
 import underdevelopment.api.ACSHandler;
 import underdevelopment.api.DailyCountHandler;
 import underdevelopment.api.DailyDebateQuestion;
+import underdevelopment.api.DailyServerHandler;
 import underdevelopment.api.DebateGroups;
 import underdevelopment.api.DebateHandler;
 import underdevelopment.api.LoginHandler;
@@ -168,12 +169,7 @@ public class App
                 new HttpRequestHandler("POST", PostHandler.handleGetPostsForSearchBar(), authorized));
         
         
-        // Participation (for testing) and voting
-        server.createContext("/api/debate/vote-response", 
-                new HttpRequestHandler("POST", VoteResponseHandler.voteResponse(), authorized));
-        //server.createContext("/api/participate", 
-               // new HttpRequestHandler("POST", ParticipationHandler.editParticipation(), authorized));
-
+        
         // Debate
         server.createContext("/api/debate/get-daily-question", 
         new HttpRequestHandler("POST", DailyDebateQuestion.handleGetDailyDebateQuestion(), authorized));
@@ -205,6 +201,14 @@ public class App
         server.createContext("/api/debate/get-debate-group-responses-n-results", 
         new HttpRequestHandler("POST", DebateHandler.getResponsesFinished(), authorized));
 
+        // voting for debate
+        server.createContext("/api/debate/vote-response", 
+                new HttpRequestHandler("POST", VoteResponseHandler.voteResponse(), authorized));
+        
+        // notification for new next day
+        server.createContext("/api/begin-day", 
+                new HttpRequestHandler("POST", DailyServerHandler.nextDay(), authorized));
+        
         // Start Server
         server.start();
     }
