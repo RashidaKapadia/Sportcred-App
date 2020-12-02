@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/fonts.dart';
 import 'package:frontend/widgets/layout.dart';
+import 'package:frontend/requests/debate.dart';
 import '../navbar.dart';
 
 class DebateVote extends StatefulWidget {
@@ -51,6 +52,10 @@ class _DebateVoteState extends State<DebateVote> {
               _value1 = 5;
               _value2 = 5;
               _value3 = 5;
+              // TEMP
+              // print("Testing Submiting votes");
+              // submitVotes(
+              //     "2020-12-01-FANALYST-0", "apple6", [103, 102, 91], [2, 5, 8]);
             });
           });
     }
