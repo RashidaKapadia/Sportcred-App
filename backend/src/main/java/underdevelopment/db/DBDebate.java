@@ -96,7 +96,7 @@ public class DBDebate {
     // /api/debate/get-previous-topic-result
     public static Record getResultMyPreviousQuestion(String username) {
         try (Session session = Connect.driver.session()) {
-            Result result = session.run("match (r:DebateResponse {username: $u, date: $d})-[:hasResponse]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) return ID(g) as groupId, r as yours, collect(o) as theirs",
+            Result result = session.run("match (r:DebateResponse {username: $u, date: $d})-[:hasResponse]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) return ID(g) as groupId, g.winner as winner, case when g.winner = $u then 5 else 0 end + toInteger(r.avgScore) + 1 as yourScore, r as yours, collect(o) as theirs",
                                         parameters("d", LocalDate.now().minusDays(1).toString(), "u", username));
             return (result.hasNext()) ? result.next() : null;
         }

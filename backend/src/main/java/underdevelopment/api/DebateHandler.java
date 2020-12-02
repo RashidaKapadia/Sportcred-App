@@ -152,9 +152,8 @@ public class DebateHandler {
                             }
                         }
                     )))
-                    // TODO:
-                    .put("yourScore", 0)
-                    .put("winner", "TODO:");
+                    .put("yourScore", data.get("yourScore").asInt())
+                    .put("winner", data.get("winner").asString());
                 return new JsonHttpReponse(Status.OK, json.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
