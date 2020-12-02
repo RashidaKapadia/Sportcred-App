@@ -101,7 +101,7 @@ public class DebateHandler {
         }
     }
 
-    // TODO: /api/debate/get-group-responses-my-question
+    // /api/debate/get-group-responses-my-question
     public static JsonRequestHandler getResponsesMyQuestion() {
 
         return (JSONObject jsonObj) -> {
@@ -115,11 +115,20 @@ public class DebateHandler {
             }
         };
     }
+
+    private static JSONObject responseToJSONObject (Map<String, Object> response) throws JSONException {
+        System.out.println(40);
+        return new JSONObject()
+            .put("username", response.get("username"))
+            .put("response", response.get("debateAnalysis"))
+            .put("averageRating", (double) response.get("avgScore")
+        );
+    }
     
-    // TODO: /api/debate/get-previous-topic-result
+    // /api/debate/get-previous-topic-result
     public static JsonRequestHandler getResultMyPreviousQuestion() {
         return (JSONObject jsonObj) -> {
-            
+
             String username;
             // Get and validate input
             try {
@@ -129,7 +138,30 @@ public class DebateHandler {
                 return new JsonHttpReponse(Status.BADREQUEST);
             }
 
-            return new JsonHttpReponse(Status.OK);
+            Record data = DBDebate.getResultMyPreviousQuestion(username);
+            try {
+                JSONObject json = new JSONObject()
+                    .put("groupId", data.get("groupId").asInt())
+                    .put("yours", responseToJSONObject(data.get("yours").asMap()))
+                    .put("theirs", new JSONArray(data.get("theirs").asList(
+                        (Function<Value, JSONObject>) (Value v) -> {
+                            try {
+                                return responseToJSONObject(v.asMap());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+                    ))
+                    // TODO:
+                    // .put("yourScore", 0)
+                    // .put("winner", "")
+                );
+                return new JsonHttpReponse(Status.OK, json.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
         };
     }
 
