@@ -152,9 +152,8 @@ public class DebateHandler {
                             }
                         }
                     )))
-                    // TODO:
-                    .put("yourScore", 0)
-                    .put("winner", "TODO:");
+                    .put("yourScore", data.get("yourScore").asInt())
+                    .put("winner", data.get("winner").asString());
                 return new JsonHttpReponse(Status.OK, json.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -207,9 +206,9 @@ public class DebateHandler {
                                         return null;
                                     }
                                 }
-                            )
-                        ))
-                        .put("winner", "TODO:")
+                            ))
+                        )
+                        .put("winner", record.get("winner").asString())
                     );    
                 }
                 JSONObject json = new JSONObject().put("groups", groups);

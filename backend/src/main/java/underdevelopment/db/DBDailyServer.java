@@ -60,8 +60,8 @@ public class DBDailyServer {
 						String ID = result.next().get("ID").asString();
 						// Get the winner of the group
 						Map<String, Object> winner = findWinner(ID, tx);
-						String message = "Voting for debate has ended. The winner is: " + winner.get("winner") + " with an average score of: " + winner.get("score"); 
-						System.out.println(message);
+						String message = "Voting for debate has ended and results are now out."; 
+						tx.run(String.format("MATCH (u:DebateGroup) WHERE u.id =~ \"%s\" SET u.winner = \"%s\"",  ID, winner.get("winner")));
 						// Loop through all the responses and send a notification to all of them
 						List<String> responseUsers = DBDebateGroups.getUserList(ID);
 						for(int i = 0; i < responseUsers.size(); i++) {
@@ -91,7 +91,7 @@ public class DBDailyServer {
 		// Find all responses in the group
 		Result responses = tx.run(String.format("MATCH (n:DebateResponse)<-[:hasResponse]-(u:DebateGroup) WHERE u.id = '%s' RETURN n.username as username, ID(n) as ID, n.avgScore as avgScore", groupID));
 		double max = 0;
-		String winner =null;
+		String winner = null;
 		Map<String, Object> retVal =  new HashMap();
 		// Loop through the responses in the group
 		while(responses.hasNext()) {
@@ -105,8 +105,8 @@ public class DBDailyServer {
 		}
 		retVal.put("winner", winner);
 		retVal.put("score", max);
-		System.out.println(winner);
-		System.out.println(max);
+		System.out.println("winner for the groups: " + groupID + " is:" +  winner);
+		//System.out.println(max);
 		return retVal;
 	}
 }
