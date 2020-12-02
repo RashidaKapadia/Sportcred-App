@@ -20,7 +20,7 @@ class DebateVote extends StatefulWidget {
 
 class GroupNode {
   final String groupId;
-  List<dynamic> responses;
+  List<Group_ResponsesNode> responses;
   final bool reqStatus;
 
   GroupNode({this.groupId, this.responses, @required this.reqStatus});
@@ -73,22 +73,24 @@ class _DebateVoteState extends State<DebateVote> {
   double _value2 = 5;
   double _value3 = 5;
   List sliderValues = [];
-  Future<GroupNode> _futureGroupResponses;
+
+  Future<List<GroupNode>> _futureGroupResponses;
 
   String currentUser = "";
 
-  Future getGroupResponses(String questionId) async {
-    final http.Response response =
-        await http.post('http://localhost:8080//api/debate/get-group-responses',
-            headers: defaultHeaders,
-            body: jsonEncode(<String, Object>{
-              "questionId": questionId,
-            }));
-
+  Future getGroupResponses(String username) async {
+    final http.Response response = await http.post(
+        'http://localhost:8080//api/debate/get-group-responses-my-question',
+        headers: defaultHeaders,
+        body: jsonEncode(<String, Object>{
+          "username": username,
+        }));
+    print("made the postman call");
     if (response.statusCode == 200) {
       // Store the session token
       //print("Post GET -> RESPONSE:" + response.body.toString());
       //print(jsonDecode(response.body)['questions']);
+      print("response status code = 200");
       List<GroupNode> allGroups = [];
       // Get the questions, options and correctAnswers and store them in the class variables
       for (Map<String, dynamic> groupNode
@@ -213,7 +215,8 @@ class _DebateVoteState extends State<DebateVote> {
   void initState() {
     super.initState();
     setState(() {
-      _futureGroupResponses = getGroupResponses(0.toString()); // TO BE CHANGED
+      print("Gonna call GetGroupResponses");
+      _futureGroupResponses = getGroupResponses(currentUser); // TO BE CHANGED
       print("FUTURE Group Responses" + _futureGroupResponses.toString());
       print("init" + allGroupResponses.toString());
 
