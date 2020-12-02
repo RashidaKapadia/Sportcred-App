@@ -10,13 +10,14 @@ import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
 import 'package:flutter_cursor/flutter_cursor.dart';
 import 'package:http/http.dart' as http;
+import 'package:frontend/requests/debate.dart';
 
 class CurrentDebateQuestions extends StatefulWidget {
   @override
   _CurrentDebateQuestionsState createState() => _CurrentDebateQuestionsState();
 }
 
-bool widgetVisible = true;
+/*bool widgetVisible = true;
 
 void showWidget() {
   setState(() {
@@ -30,162 +31,7 @@ void hideWidget() {
   setState(() {
     widgetVisible = false;
   });
-}
-
-final tiers = ["Expert", "Pro Analyst", "Analyst", "Fanalyst"];
-
-class QuestionNode {
-  final String questionId;
-  final String question;
-  final String tier;
-  final bool reqStatus;
-
-  QuestionNode(
-      {this.questionId, this.question, this.tier, @required this.reqStatus});
-
-  // converts json to UserInfo object
-  factory QuestionNode.fromJson(bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return QuestionNode(
-        reqStatus: status,
-      );
-    }
-
-    return QuestionNode(
-        reqStatus: status,
-        questionId: json['questionId'],
-        tier: json['tier'],
-        question: json['question']);
-  }
-}
-
-Widget displayTiers(int i, BuildContext context) {
-  if (questionsList.isEmpty) {
-    print("It is empty");
-  }
-  switch (i) {
-    case 0:
-      {
-        return Center(
-          child: Container(
-            margin: EdgeInsets.all(15),
-            child: ButtonTheme(
-              minWidth: double.infinity,
-              height: 10.0,
-              child: RaisedButton(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(
-                      "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
-                },
-                padding: EdgeInsets.all(10.0),
-                color: Colors.lightGreen,
-                textColor: Colors.white,
-                child: Column(children: [
-                  Text(tiers[i], style: TextStyle(fontSize: 15)),
-                  AutoSizeText("\n" + questionsList[i].question)
-                ]),
-              ),
-            ),
-          ),
-        );
-      }
-      break;
-    case 1:
-      {
-        return Center(
-          child: Container(
-            margin: EdgeInsets.all(15),
-            child: ButtonTheme(
-              minWidth: double.infinity,
-              height: 10.0,
-              child: RaisedButton(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(
-                      "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
-                },
-                padding: EdgeInsets.all(10.0),
-                color: Colors.yellow[600],
-                textColor: Colors.white,
-                child: Column(children: [
-                  Text(tiers[i], style: TextStyle(fontSize: 15)),
-                  AutoSizeText("\n" + questionsList[1].question)
-                ]),
-              ),
-            ),
-          ),
-        );
-      }
-    case 2:
-      {
-        return Center(
-            child: Container(
-                margin: EdgeInsets.all(15),
-                child: ButtonTheme(
-                    minWidth: double.infinity,
-                    height: 10.0,
-                    child: RaisedButton(
-                      elevation: 10,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(
-                            "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
-                      },
-                      padding: EdgeInsets.all(10.0),
-                      color: Colors.orange,
-                      textColor: Colors.white,
-                      child: Column(children: [
-                        Text(tiers[i], style: TextStyle(fontSize: 15)),
-                        AutoSizeText("\n" + questionsList[2].question)
-                      ]),
-                    ))));
-      }
-      break;
-    case 3:
-      {
-        return Center(
-            child: Container(
-          margin: EdgeInsets.all(15),
-          child: ButtonTheme(
-            minWidth: double.infinity,
-            height: 10.0,
-            child: RaisedButton(
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
-              ),
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                    "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
-              },
-              padding: EdgeInsets.all(10.0),
-              color: Colors.red[800],
-              textColor: Colors.white,
-              child: Column(children: [
-                Text(tiers[i], style: TextStyle(fontSize: 15)),
-                AutoSizeText("\n" + questionsList[3].question)
-              ]),
-            ),
-          ),
-        ));
-      }
-      break;
-    default:
-      {
-        //statements;
-      }
-      break;
-  }
-}
+}*/
 
 List<QuestionNode> questionsList = [];
 
@@ -194,65 +40,207 @@ class _CurrentDebateQuestionsState extends State<CurrentDebateQuestions> {
   String currentUser = '';
   //Future<QuestionNode> _futureQuestionNode;
 
-  Future<List<QuestionNode>> getQuestions() async {
-    // Make the request and store the response
-    final http.Response response = await http.post(
-      'http://localhost:8080/api/debate/get-ongoing-questions',
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Accept': 'text/plain; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: jsonEncode(<String, String>{}),
-    );
+  Future<List<QuestionNode>> _futureQuestions;
+  var _future;
 
-    if (response.statusCode == 200) {
-      print(response.statusCode);
-      List<QuestionNode> allQuestions = [];
-      // Get the questions, options and correctAnswers and store them in the class variables
-      for (Map<String, dynamic> questionNode
-          in jsonDecode(response.body)["questions"] as List) {
-        print("*********************");
-        // print(QuestionNode.fromJson(true, questionNode).tier);
-        print("*********************");
+  /*void loadfutures() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        print("Gonna call GetGroupResponses");
 
-        allQuestions += [QuestionNode.fromJson(true, questionNode)];
-        print(allQuestions[0].tier);
-      }
-      // DEBUGGING STATEMENTS
-      print('DEBUGGING: Post Node Get');
-      print("\n\nQuestionodes: " + allQuestions[0].question);
-      print(allQuestions.length);
-      setState(() {
-        questionsList = allQuestions;
-        print("in api" + questionsList.toString());
+        currentUser = value.toString();
+       _futureQuestions = getQuestions();
+        
+        print("FUTURE Group Responses" + _futureQuestions.toString());
+        print("init" + questionsList.toString());
       });
-      //return questionsList;
-      // Return posts data
-    } else {
-      print(response.statusCode);
-      return null;
+    });
+  }*/
+
+  @override
+  void initState() {
+    setState(() {
+      // Get game data depending on the mode
+      _future = getQuestions();
+    });
+    super.initState();
+    //loadfutures();
+  }
+
+  Widget loadDebateResponses() {
+    return FutureBuilder<dynamic>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<QuestionNode> debateQns;
+          debateQns = snapshot.data;
+          return DebatePage(
+            questions: debateQns,
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      (_future != null) ? loadDebateResponses() : Text("loading....");
+}
+
+class DebatePage extends StatefulWidget {
+  List<QuestionNode> questions;
+
+  DebatePage({
+    Key key,
+    @required this.questions,
+  }) : super(key: key);
+
+  @override
+  _DebatepageState createState() => _DebatepageState(
+        questions: questions,
+      );
+}
+
+class _DebatepageState extends State<DebatePage> {
+  List<QuestionNode> questions;
+
+  _DebatepageState({
+    @required this.questions,
+  });
+
+  final tiers = ["Expert", "Pro Analyst", "Analyst", "Fanalyst"];
+
+  Widget displayTiers(int i, BuildContext context) {
+    if (questionsList.isEmpty) {
+      print("It is empty");
+    }
+    switch (i) {
+      case 0:
+        {
+          return Center(
+            child: Container(
+              margin: EdgeInsets.all(15),
+              child: ButtonTheme(
+                minWidth: double.infinity,
+                height: 10.0,
+                child: RaisedButton(
+                  elevation: 10,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                        "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                  },
+                  padding: EdgeInsets.all(10.0),
+                  color: Colors.lightGreen,
+                  textColor: Colors.white,
+                  child: Column(children: [
+                    Text(tiers[i], style: TextStyle(fontSize: 15)),
+                    AutoSizeText("\n" + questions[i].question)
+                  ]),
+                ),
+              ),
+            ),
+          );
+        }
+        break;
+      case 1:
+        {
+          return Center(
+            child: Container(
+              margin: EdgeInsets.all(15),
+              child: ButtonTheme(
+                minWidth: double.infinity,
+                height: 10.0,
+                child: RaisedButton(
+                  elevation: 10,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                        "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                  },
+                  padding: EdgeInsets.all(10.0),
+                  color: Colors.yellow[600],
+                  textColor: Colors.white,
+                  child: Column(children: [
+                    Text(tiers[i], style: TextStyle(fontSize: 15)),
+                    AutoSizeText("\n" + questions[1].question)
+                  ]),
+                ),
+              ),
+            ),
+          );
+        }
+      case 2:
+        {
+          return Center(
+              child: Container(
+                  margin: EdgeInsets.all(15),
+                  child: ButtonTheme(
+                      minWidth: double.infinity,
+                      height: 10.0,
+                      child: RaisedButton(
+                        elevation: 10,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                              "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                        },
+                        padding: EdgeInsets.all(10.0),
+                        color: Colors.orange,
+                        textColor: Colors.white,
+                        child: Column(children: [
+                          Text(tiers[i], style: TextStyle(fontSize: 15)),
+                          AutoSizeText("\n" + questions[2].question)
+                        ]),
+                      ))));
+        }
+        break;
+      case 3:
+        {
+          return Center(
+              child: Container(
+            margin: EdgeInsets.all(15),
+            child: ButtonTheme(
+              minWidth: double.infinity,
+              height: 10.0,
+              child: RaisedButton(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                      "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                },
+                padding: EdgeInsets.all(10.0),
+                color: Colors.red[800],
+                textColor: Colors.white,
+                child: Column(children: [
+                  Text(tiers[i], style: TextStyle(fontSize: 15)),
+                  AutoSizeText("\n" + questions[3].question)
+                ]),
+              ),
+            ),
+          ));
+        }
+        break;
+      default:
+        {
+          //statements;
+        }
+        break;
     }
   }
 
-  Future<List<QuestionNode>> _futureQuestions;
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      print("FUTURE QUESTIONS"); //+ _futureQuestions.toString());
-      _futureQuestions = getQuestions();
-      print("FUTURE QUESTIONS" + _futureQuestions.toString());
-      print("init" + questionsList.toString());
-
-      FlutterSession()
-          .get('username')
-          .then((username) => {currentUser = username.toString()});
-    });
-  }
-
   Widget build(BuildContext context) {
-    //
     return Scaffold(
         appBar: AppBar(
             leading: BackButton(
