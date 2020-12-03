@@ -28,7 +28,7 @@ public class DBDailyServer {
 						// Get his daily question
 						String question = DBDebateDailyQuestion.getDailyDebateQuestion(tier);
 						//createNotification(String username, String type, String category, int ID, String title) 
-						DBNotifications.createNotification(username, "notification",  "debate",  0,  question);
+						DBNotifications.createNotification(username, "invite",  "debate",  0,  question);
 					}
 					tx.commit();
 					tx.close();
@@ -66,7 +66,8 @@ public class DBDailyServer {
 						List<String> responseUsers = DBDebateGroups.getUserList(ID);
 						for(int i = 0; i < responseUsers.size(); i++) {
 							System.out.println(responseUsers.get(i));
-							DBNotifications.createNotification(responseUsers.get(i).substring(1,responseUsers.get(i).length() - 1), "notification",  "debate results",  0,  message);
+							//	public static int createNotification(String username, String type, String category, int ID, String title) {
+							DBNotifications.createNotification(responseUsers.get(i).substring(1,responseUsers.get(i).length() - 1), "results",  "debate",  0,  message);
 						}
 					}
 					tx.commit();
