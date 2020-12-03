@@ -67,26 +67,24 @@ class _DebatepageState extends State<DebatePage> {
   List<GroupNode> groupResponses;
   String chosenCategory = '';
   List data = ['1', '2', '3'];
-  double _value1 = 5;
-  double _value2 = 5;
-  double _value3 = 5;
-  List sliderValues = [];
+  List sliderValues = [5, 5, 5];
   List<String> selectedAnswers = [];
   String question = "";
   String currentUser = "";
   Future<String> _futureQuestion;
   _DebatepageState({@required this.groupResponses, @required this.question});
 
-  initializeSlider() {
-    sliderValues.add(_value1);
-    sliderValues.add(_value2);
-    sliderValues.add(_value3);
+  void initSlider() {
+    setState(() {
+      sliderValues = [5, 5, 5];
+    });
   }
 
   @override
   void initState() {
     FlutterSession().get('username').then((value) {
       setState(() {
+        initSlider();
         currentUser = value.toString();
         _futureQuestion = getMyQuestion(currentUser);
       });
@@ -99,7 +97,9 @@ class _DebatepageState extends State<DebatePage> {
       future: _futureQuestion,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return h3("Question: " + snapshot.data, color: Colors.black);
+          return Container(
+              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+              child: Center(child: h3(snapshot.data, color: Colors.black)));
         } else {
           return CircularProgressIndicator();
         }
@@ -108,124 +108,111 @@ class _DebatepageState extends State<DebatePage> {
   }
 
   Widget createSlider(int i) {
-    //double val = 1;
     return Slider(
-        //value: ((i == 0) ? _value1 : ((i == 1) ? _value2 : _value3)),
         value: sliderValues[i],
         min: 0,
         max: 10,
-        //label: ((i == 0) ? _value1 : ((i == 1) ? _value2 : _value3))
-        //  .round()
-        //.toString(),
         label: (sliderValues[i]).toString(),
         divisions: 10,
         onChanged: (double newVal) {
           setState(() {
             sliderValues[i] = newVal;
-            //((i == 0)
-            //  ? _value1 = newVal
-            //: ((i == 1) ? _value2 = newVal : _value3 = newVal));
           });
         });
   }
 
   Widget displayResponses(int i, GroupNode group) {
-    //Group_ResponsesNode gr = group.responses[i];
-
-    var button = Container();
-    if (i == 2) {
-      button = plainButton(
-          text: "Submit",
-          fontColor: Colors.white,
-          backgroundColor: Colors.lightGreen[700],
-          onPressed: () {
-            setState(() {
-              print("Testing Submiting votes");
-              submitVotes(group.groupId, currentUser, [103, 102, 91],
-                  [sliderValues[0], sliderValues[1], sliderValues[2]]);
-            });
-          });
-    }
     return Container(
+        padding: EdgeInsets.symmetric(vertical: 5),
         child: Column(children: [
-      Row(children: [
-        Icon(Icons.assignment),
-        Expanded(
-            //padding: const EdgeInsets.all(7.0),
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: AutoSizeText(group.responses[i].response
-              //gr.response
-              // Group_responsesNode = group.responses[i].res
-              //"Dogs are the best hands down, they are super energetic and" +
-              //  "silly, they are great mood boosters when your downdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd!",
-              //overflow: TextOverflow.ellipsis,
-              ),
-        ))
-      ]),
-      createSlider(i),
-      button
-    ]));
+          Row(children: [
+            hmargin10(Icon(Icons.assignment)),
+            Expanded(
+                child: Padding(
+              padding: EdgeInsets.symmetric(),
+              child: AutoSizeText(group.responses[i].response),
+            ))
+          ]),
+          createSlider(i),
+        ]));
   }
 
   Widget displayGroup(GroupNode group) {
+    var voteButton = (group.responses.length > 0)
+        ? plainButton(
+            text: "Submit",
+            fontColor: Colors.white,
+            backgroundColor: Colors.lightGreen[700],
+            onPressed: () {
+              setState(() {
+                print("Testing Submiting votes");
+                // submitVotes(
+                //     group.groupId, currentUser, [103, 102, 91], sliderValues);
+              });
+            })
+        : Container();
+
     return Container(
-        decoration: new BoxDecoration(
-          borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
         ),
         child: SingleChildScrollView(
           child: Card(
-              color: Colors.white,
-              borderOnForeground: false,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0)),
-              elevation: 15.0,
-              child: Column(children: [
-                Padding(
-                    padding: const EdgeInsets.all(7.0),
-                    child: Column(
-                        children:
-                            List.generate(group.responses.length, (index) {
-                      return displayResponses(index, group);
-                    })))
-              ])),
+            color: Colors.white,
+            borderOnForeground: false,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18.0)),
+            elevation: 15.0,
+            child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+                child: Column(children: [
+                  Column(
+                    children: List.generate(
+                      group.responses.length,
+                      (index) => displayResponses(index, group),
+                    ),
+                  ),
+                  voteButton,
+                ])),
+          ),
         ));
   }
 
-  Widget build(BuildContext context) {
-    initializeSlider();
-    print("length: " + (groupResponses.length).toString());
-    Widget categoryCarousel = new Container(
+  Widget categoryCarousel() {
+    return Container(
       child: CarouselSlider(
         options: CarouselOptions(
-          scrollDirection: Axis.horizontal,
-          height: 450,
-          autoPlay: false,
-          enlargeCenterPage: true,
-        ),
+            scrollDirection: Axis.horizontal,
+            height: 430,
+            autoPlay: false,
+            enlargeCenterPage: true,
+            onPageChanged: (a, b) => initSlider()),
         // Items list will require to be updated here as well anytime new category is added
         items: groupResponses.map((item) {
           return displayGroup(item);
         }).toList(),
       ),
     );
+  }
 
+  Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            leading: BackButton(
-                color: Colors.white,
-                onPressed: () => Navigator.of(context).pushNamed("/debate")),
-            title:
-                Text("Voting is Open", style: TextStyle(color: Colors.white)),
-            centerTitle: true,
-            backgroundColor: Colors.blueGrey),
-        bottomNavigationBar: NavBar(0),
-        backgroundColor: Colors.grey[200],
-        body: Container(
-            padding: EdgeInsets.symmetric(vertical: 30),
-            child: Column(children: [
-              loadQuestion(),
-              categoryCarousel,
-            ])));
+      appBar: AppBar(
+          leading: BackButton(
+              color: Colors.white,
+              onPressed: () => Navigator.of(context).pushNamed("/debate")),
+          title:
+              Text("Voting is Opened", style: TextStyle(color: Colors.white)),
+          centerTitle: true,
+          backgroundColor: Colors.blueGrey),
+      bottomNavigationBar: NavBar(0),
+      backgroundColor: Colors.grey[200],
+      body: Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: Column(children: [
+            loadQuestion(),
+            categoryCarousel(),
+          ])),
+    );
   }
 }
