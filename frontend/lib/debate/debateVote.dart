@@ -2,45 +2,166 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/fonts.dart';
 import 'package:frontend/widgets/layout.dart';
 import 'package:frontend/requests/debate.dart';
 import '../navbar.dart';
 
+import 'dart:async';
+
 class DebateVote extends StatefulWidget {
+  String username;
+  DebateVote({@required this.username});
   @override
   _DebateVoteState createState() => _DebateVoteState();
 }
 
+//List<GroupNode> allGroupResponses = [];
+//String question = "";
+
 class _DebateVoteState extends State<DebateVote> {
-  // TODO: Temp hardcoding
+  //Future<List<GroupNode>> _futureGroupResponses;
+  Future<List<GroupNode>> _futureResponses;
+
+  String currentUser = "";
+
+  @override
+  void initState() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        print("Gonna call GetGroupResponses and question");
+
+        currentUser = value.toString();
+      });
+      setState(() {
+        _futureResponses = getVoteGroupResponses(currentUser);
+      });
+    });
+    super.initState();
+  }
+
+  Widget loadDebateGroupsAndQuestion() {
+    return FutureBuilder<List<GroupNode>>(
+      future: _futureResponses,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<GroupNode> groupResponses;
+          String question = "";
+          //debateQns = snapshot.data;
+          //List qnsNresponses = snapshot.data;
+          //groupResponses = snapshot.data[1];
+          //question = snapshot.data[0];
+          return DebatePage(
+            groupResponses: snapshot.data,
+            //question: question,
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => (_futureResponses != null)
+      ? loadDebateGroupsAndQuestion()
+      : Text("loading....");
+}
+
+class DebatePage extends StatefulWidget {
+  List<GroupNode> groupResponses;
+  String question = "";
+  DebatePage({
+    Key key,
+    @required this.groupResponses,
+    @required this.question,
+  }) : super(key: key);
+
+  @override
+  _DebatepageState createState() =>
+      _DebatepageState(groupResponses: groupResponses, question: question);
+}
+
+class _DebatepageState extends State<DebatePage> {
+  List<GroupNode> groupResponses;
   String chosenCategory = '';
   List data = ['1', '2', '3'];
   double _value1 = 5;
   double _value2 = 5;
   double _value3 = 5;
+  List sliderValues = [];
+  List<String> selectedAnswers = [];
+  String question = "";
+  String currentUser = "";
+  Future<String> _futureQuestion;
+  _DebatepageState({@required this.groupResponses, @required this.question});
+
+  initializeSlider() {
+    sliderValues.add(_value1);
+    sliderValues.add(_value2);
+    sliderValues.add(_value3);
+  }
+
+  @override
+  void initState() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        currentUser = value.toString();
+      });
+      setState(() {
+        _futureQuestion = getMyQuestion(currentUser);
+      });
+    });
+    super.initState();
+  }
+
+  Widget loadQuestion() {
+    return FutureBuilder<String>(
+      future: _futureQuestion,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<GroupNode> groupResponses;
+          String question = "";
+          question = snapshot.data;
+          //debateQns = snapshot.data;
+          //List qnsNresponses = snapshot.data;
+          //groupResponses = snapshot.data[1];
+          //question = snapshot.data[0];
+          return h3("Question: " + question, color: Colors.black);
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
 
   Widget createSlider(int i) {
     //double val = 1;
     return Slider(
-        value: ((i == 0) ? _value1 : ((i == 1) ? _value2 : _value3)),
+        //value: ((i == 0) ? _value1 : ((i == 1) ? _value2 : _value3)),
+        value: sliderValues[i],
         min: 0,
         max: 10,
-        label: ((i == 0) ? _value1 : ((i == 1) ? _value2 : _value3))
-            .round()
-            .toString(),
+        //label: ((i == 0) ? _value1 : ((i == 1) ? _value2 : _value3))
+        //  .round()
+        //.toString(),
+        label: (sliderValues[i]).toString(),
         divisions: 10,
         onChanged: (double newVal) {
           setState(() {
-            ((i == 0)
-                ? _value1 = newVal
-                : ((i == 1) ? _value2 = newVal : _value3 = newVal));
+            sliderValues[i] = newVal;
+            //((i == 0)
+            //  ? _value1 = newVal
+            //: ((i == 1) ? _value2 = newVal : _value3 = newVal));
           });
         });
   }
 
-  Widget displayResponses(int i) {
+  Widget displayResponses(int i, GroupNode group) {
+    //Group_ResponsesNode gr = group.responses[i];
+
     var button = Container();
     if (i == 2) {
       button = plainButton(
@@ -49,13 +170,9 @@ class _DebateVoteState extends State<DebateVote> {
           backgroundColor: Colors.lightGreen[700],
           onPressed: () {
             setState(() {
-              _value1 = 5;
-              _value2 = 5;
-              _value3 = 5;
-              // TEMP
-              // print("Testing Submiting votes");
-              // submitVotes(
-              //     "2020-12-01-FANALYST-0", "apple6", [103, 102, 91], [2, 5, 8]);
+              print("Testing Submiting votes");
+              submitVotes(group.groupId, currentUser, [103, 102, 91],
+                  [sliderValues[0], sliderValues[1], sliderValues[2]]);
             });
           });
     }
@@ -64,10 +181,16 @@ class _DebateVoteState extends State<DebateVote> {
       Row(children: [
         Icon(Icons.assignment),
         Expanded(
-            child: AutoSizeText(
-          "Dogs are the best hands down, they are super energetic and" +
-              "silly, they are great mood boosters when your downdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd!",
-          //overflow: TextOverflow.ellipsis,
+            //padding: const EdgeInsets.all(7.0),
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AutoSizeText(group.responses[i].response
+              //gr.response
+              // Group_responsesNode = group.responses[i].res
+              //"Dogs are the best hands down, they are super energetic and" +
+              //  "silly, they are great mood boosters when your downdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd!",
+              //overflow: TextOverflow.ellipsis,
+              ),
         ))
       ]),
       createSlider(i),
@@ -75,7 +198,7 @@ class _DebateVoteState extends State<DebateVote> {
     ]));
   }
 
-  Widget displayGroup(int i) {
+  Widget displayGroup(GroupNode group) {
     return Container(
         decoration: new BoxDecoration(
           borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
@@ -91,65 +214,17 @@ class _DebateVoteState extends State<DebateVote> {
                 Padding(
                     padding: const EdgeInsets.all(7.0),
                     child: Column(
-                        children: List.generate(3, (index) {
-                      return displayResponses(index);
+                        children:
+                            List.generate(group.responses.length, (index) {
+                      return displayResponses(index, group);
                     })))
               ])),
         ));
   }
 
-  /*Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          leading: BackButton(
-              color: Colors.white,
-              onPressed: () =>
-                  Navigator.of(context).pushNamed("/debatePreviousQuestions")),
-          title: Text("Voting is Open", style: TextStyle(color: Colors.white)),
-          centerTitle: true,
-          backgroundColor: Colors.blueGrey),
-      bottomNavigationBar: NavBar(0),
-      body: SingleChildScrollView(
-          child: resultPage(context)), //resultPage(context),
-    );
-  }*/
-
-  /*Widget resultPage(BuildContext context) {
-    return Container(
-      child: Column(children: [
-        pagebody(),
-      ]),
-    );
-  }*/
-
-  /*Widget pagebody() {
-    var mediaQuery = MediaQuery;
-    return Container(
-        alignment: Alignment.center,
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
-        child: Column(children: [
-          h3("Question : abcefghijklmn", color: Colors.black),
-          Container(
-              margin: EdgeInsets.symmetric(vertical: 20),
-              width: double.infinity,
-              child: //Column(mainAxisSize: MainAxisSize.min, children: [
-                  Container(
-                padding: EdgeInsets.all(10),
-                child: CarouselSlider(
-                  //children: List.generate(7, (index) {
-                  items: data.map((item) {
-                    return displayGroup(0);
-                  }).toList(),
-                  // HARDCODED FOR NOW; CHANGE TO data.length
-                  //return displayGroup(index);
-                ),
-              ))
-        ]));
-  }
-*/
   Widget build(BuildContext context) {
-    //final appState = AppStateProvider.of<AppState>(context);
+    initializeSlider();
+    print("length: " + (groupResponses.length).toString());
     Widget categoryCarousel = new Container(
       child: CarouselSlider(
         options: CarouselOptions(
@@ -159,8 +234,8 @@ class _DebateVoteState extends State<DebateVote> {
           enlargeCenterPage: true,
         ),
         // Items list will require to be updated here as well anytime new category is added
-        items: data.map((item) {
-          return displayGroup(0);
+        items: groupResponses.map((item) {
+          return displayGroup(item);
         }).toList(),
       ),
     );
@@ -179,7 +254,7 @@ class _DebateVoteState extends State<DebateVote> {
         body: Container(
             padding: EdgeInsets.symmetric(vertical: 30),
             child: Column(children: [
-              h3("Question : abcefghijklmn", color: Colors.black),
+              loadQuestion(),
               categoryCarousel,
             ])));
   }
