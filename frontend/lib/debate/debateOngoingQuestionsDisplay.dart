@@ -123,24 +123,24 @@ class _DebatepageState extends State<DebatePage> {
             child: Container(
               margin: EdgeInsets.all(15),
               child: ButtonTheme(
-                minWidth: double.infinity,
-                height: 10.0,
-                child: RaisedButton(
-                  elevation: 10,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(
-                        "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
-                  },
-                  padding: EdgeInsets.all(10.0),
-                  color: Colors.lightGreen,
-                  textColor: Colors.white,
-                  child: Column(children: [
-                    Text(tiers[i], style: TextStyle(fontSize: 15)),
-                    AutoSizeText("\n" + questions[i].question)
-                  ]),
+                minWidth: 10,
+                height: 20.0,
+                child: Tooltip(
+                  message: questions[0].question,
+                  showDuration: Duration(seconds: 5),
+                  child: RaisedButton(
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(
+                            "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                      },
+                      padding: EdgeInsets.all(10.0),
+                      color: Colors.lightGreen,
+                      textColor: Colors.white,
+                      child: Text(tiers[i], style: TextStyle(fontSize: 15))),
                 ),
               ),
             ),
@@ -153,24 +153,24 @@ class _DebatepageState extends State<DebatePage> {
             child: Container(
               margin: EdgeInsets.all(15),
               child: ButtonTheme(
-                minWidth: double.infinity,
-                height: 10.0,
-                child: RaisedButton(
-                  elevation: 10,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(
-                        "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
-                  },
-                  padding: EdgeInsets.all(10.0),
-                  color: Colors.yellow[600],
-                  textColor: Colors.white,
-                  child: Column(children: [
-                    Text(tiers[i], style: TextStyle(fontSize: 15)),
-                    AutoSizeText("\n" + questions[1].question)
-                  ]),
+                minWidth: 150,
+                height: 20,
+                child: Tooltip(
+                  message: questions[1].question,
+                  showDuration: Duration(seconds: 5),
+                  child: RaisedButton(
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(
+                            "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                      },
+                      padding: EdgeInsets.all(10.0),
+                      color: Colors.yellow[600],
+                      textColor: Colors.white,
+                      child: Text(tiers[i], style: TextStyle(fontSize: 15))),
                 ),
               ),
             ),
@@ -182,24 +182,25 @@ class _DebatepageState extends State<DebatePage> {
               child: Container(
                   margin: EdgeInsets.all(15),
                   child: ButtonTheme(
-                      minWidth: double.infinity,
-                      height: 10.0,
-                      child: RaisedButton(
-                        elevation: 10,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                              "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
-                        },
-                        padding: EdgeInsets.all(10.0),
-                        color: Colors.orange,
-                        textColor: Colors.white,
-                        child: Column(children: [
-                          Text(tiers[i], style: TextStyle(fontSize: 15)),
-                          AutoSizeText("\n" + questions[2].question)
-                        ]),
+                      minWidth: 250,
+                      height: 20.0,
+                      child: Tooltip(
+                        message: questions[2].question,
+                        showDuration: Duration(seconds: 5),
+                        child: RaisedButton(
+                            elevation: 10,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pushNamed(
+                                  "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                            },
+                            padding: EdgeInsets.all(10.0),
+                            color: Colors.orange,
+                            textColor: Colors.white,
+                            child:
+                                Text(tiers[i], style: TextStyle(fontSize: 15))),
                       ))));
         }
         break;
@@ -209,24 +210,24 @@ class _DebatepageState extends State<DebatePage> {
               child: Container(
             margin: EdgeInsets.all(15),
             child: ButtonTheme(
-              minWidth: double.infinity,
-              height: 10.0,
-              child: RaisedButton(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(
-                      "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
-                },
-                padding: EdgeInsets.all(10.0),
-                color: Colors.red[800],
-                textColor: Colors.white,
-                child: Column(children: [
-                  Text(tiers[i], style: TextStyle(fontSize: 15)),
-                  AutoSizeText("\n" + questions[3].question)
-                ]),
+              minWidth: 350,
+              height: 20.0,
+              child: Tooltip(
+                message: questions[1].question,
+                showDuration: Duration(seconds: 5),
+                child: RaisedButton(
+                    elevation: 10,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(
+                          "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                    },
+                    padding: EdgeInsets.all(10.0),
+                    color: Colors.red[800],
+                    textColor: Colors.white,
+                    child: Text(tiers[i], style: TextStyle(fontSize: 15))),
               ),
             ),
           ));
@@ -246,9 +247,9 @@ class _DebatepageState extends State<DebatePage> {
             leading: BackButton(
                 color: Colors.white,
                 onPressed: () => Navigator.of(context).pushNamed("/debate")),
-            title: Text("Debate", style: TextStyle(color: Colors.white)),
+            title: Text("Debate", style: TextStyle(color: Colors.black)),
             centerTitle: true,
-            backgroundColor: Colors.blueGrey),
+            backgroundColor: Colors.greenAccent),
         //backgroundColor: Colors.white,
         bottomNavigationBar: NavBar(0),
         body: SingleChildScrollView(
