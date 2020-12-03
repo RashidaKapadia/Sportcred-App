@@ -65,10 +65,9 @@ class DebatePage extends StatefulWidget {
 
 class _DebatepageState extends State<DebatePage> {
   List<GroupNode> groupResponses;
-  String chosenCategory = '';
-  List data = ['1', '2', '3'];
-  List sliderValues = [5, 5, 5];
-  List<String> selectedAnswers = [];
+  List<double> sliderValues = [5, 5, 5];
+  Map<String, bool> voted = {};
+  Map<String, List<double>> votes = {};
   String question = "";
   String currentUser = "";
   Future<String> _futureQuestion;
@@ -107,18 +106,23 @@ class _DebatepageState extends State<DebatePage> {
     );
   }
 
-  Widget createSlider(int i) {
+  Widget createSlider(GroupNode group, int i) {
+    bool disabled = voted[group.groupId] == true;
     return Slider(
-        value: sliderValues[i],
+        value: (disabled) ? votes[group.groupId][i] : sliderValues[i],
         min: 0,
         max: 10,
-        label: (sliderValues[i]).toString(),
+        label: (disabled)
+            ? votes[group.groupId][i].toString()
+            : (sliderValues[i]).toString(),
         divisions: 10,
-        onChanged: (double newVal) {
-          setState(() {
-            sliderValues[i] = newVal;
-          });
-        });
+        onChanged: (disabled)
+            ? (double d) {}
+            : (double newVal) {
+                setState(() {
+                  sliderValues[i] = newVal;
+                });
+              });
   }
 
   Widget displayResponses(int i, GroupNode group) {
@@ -133,24 +137,30 @@ class _DebatepageState extends State<DebatePage> {
               child: AutoSizeText(group.responses[i].response),
             ))
           ]),
-          createSlider(i),
+          createSlider(group, i),
         ]));
   }
 
   Widget displayGroup(GroupNode group) {
-    var voteButton = (group.responses.length > 0)
-        ? plainButton(
-            text: "Submit",
-            fontColor: Colors.white,
-            backgroundColor: Colors.lightGreen[700],
-            onPressed: () {
-              setState(() {
-                print("Testing Submiting votes");
-                // submitVotes(
-                //     group.groupId, currentUser, [103, 102, 91], sliderValues);
-              });
-            })
-        : Container();
+    var voteButton =
+        (group.responses.length > 0 && voted[group.groupId] != true)
+            ? plainButton(
+                text: "Submit",
+                fontColor: Colors.white,
+                backgroundColor: Colors.lightGreen[700],
+                onPressed: () {
+                  setState(() {
+                    print("Testing Submiting votes");
+                    voted[group.groupId] = true;
+                    votes[group.groupId] = sliderValues;
+                    // submitVotes(
+                    //     group.groupId, currentUser, [103, 102, 91], sliderValues);
+                  });
+                })
+            : plainButton(
+                text: "Submit",
+                fontColor: Colors.grey[200],
+                backgroundColor: Colors.grey);
 
     return Container(
         decoration: BoxDecoration(
