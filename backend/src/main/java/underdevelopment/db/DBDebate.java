@@ -1,6 +1,8 @@
 package underdevelopment.db;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Map;
 
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
@@ -9,14 +11,32 @@ import static org.neo4j.driver.Values.parameters;
 
 public class DBDebate {
 
-    // TODO: /api/debate/get-ongoing-questions 
-    public static void getOngoingQuesions() {
-        
+    private static ArrayList<Map<String, Object>> getQuestionByDate(String date) {
+        // match (n:DebateQuestion {date: "2020-12-01"}) return questions
+        try (Session session = Connect.driver.session()) {
+            Result result = session.run("match (n:DebateQuestion {date: $d}) return {id: ID(n), tier: n.tier, question: n.question} as question",
+                                        parameters("d", date));
+
+            ArrayList<Map<String, Object>> questions = new ArrayList<>();
+            while (result.hasNext()) {
+                questions.add(result.next().get("question").asMap());
+            }
+            return questions;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    // TODO: /api/debate/get-finished-questions
-    public static void getFinishedQuesions() {
-        
+    // /api/debate/get-ongoing-questions 
+    public static ArrayList<Map<String, Object>> getOngoingQuesions() {
+        return getQuestionByDate(LocalDate.now().toString());
+    }
+
+    // /api/debate/get-finished-questions
+    public static ArrayList<Map<String, Object>> getFinishedQuesions() {
+        return getQuestionByDate(LocalDate.now().minusDays(1).toString());
     }
 
 

@@ -1,5 +1,9 @@
 package underdevelopment.api;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,20 +11,58 @@ import org.json.JSONObject;
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.Status;
+import underdevelopment.db.DBDebate;
 
 public class DebateHandler {
 
-    // TODO: /api/debate/get-ongoing-questions 
+    private static String questionsToJson(ArrayList<Map<String, Object>> questions) throws JSONException {
+
+        JSONArray questionsJSON = new JSONArray();
+
+        // Build the json array of questions
+        Iterator<Map<String, Object>> it = questions.iterator();
+        while (it.hasNext()) {
+            Map<String, Object> question = it.next();
+            questionsJSON
+                .put(new JSONObject()
+                    .put("questionId", question.get("id"))
+                    .put("question", question.get("question"))
+                    .put("tier", question.get("tier"))
+                );
+        }
+
+        // Create the json response
+        return new JSONObject().put("questions", questionsJSON).toString();
+    }
+
+    // /api/debate/get-ongoing-questions 
     public static JsonRequestHandler getOngoingQuesions() {
         return (JSONObject jsonObj) -> {
-            return new JsonHttpReponse(Status.OK);
+
+            // Get questions from the db
+            ArrayList<Map<String, Object>> questions = DBDebate.getOngoingQuesions();
+
+            try {
+                return new JsonHttpReponse(Status.OK, questionsToJson(questions));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
         };
     }
 
-    // TODO: /api/debate/get-finished-questions
+    // /api/debate/get-finished-questions
     public static JsonRequestHandler getFinishedQuesions() {
         return (JSONObject jsonObj) -> {
-            return new JsonHttpReponse(Status.OK);
+            // Get questions from the db
+            ArrayList<Map<String, Object>> questions = DBDebate.getFinishedQuesions();
+            
+            try {
+                return new JsonHttpReponse(Status.OK, questionsToJson(questions));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JsonHttpReponse(Status.SERVERERROR);
+            }
         };
     }
 
