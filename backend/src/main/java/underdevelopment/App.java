@@ -17,6 +17,7 @@ import underdevelopment.api.ParticipationHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.TriviaHandler;
+import underdevelopment.api.VoteResponseHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
 
 
@@ -166,7 +167,9 @@ public class App
                 new HttpRequestHandler("POST", PostHandler.handleGetPostsForSearchBar(), authorized));
         
         
-        // Participation (for testing)
+        // Participation (for testing) and voting
+        server.createContext("/api/debate/vote-response", 
+                new HttpRequestHandler("POST", VoteResponseHandler.voteResponse(), authorized));
         server.createContext("/api/participate", 
                 new HttpRequestHandler("POST", ParticipationHandler.editParticipation(), authorized));
 
