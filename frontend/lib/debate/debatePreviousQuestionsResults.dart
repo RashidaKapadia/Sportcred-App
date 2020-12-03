@@ -9,7 +9,7 @@ import 'package:frontend/widgets/fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import '../navbar.dart';
 
 // variables storing info to display
@@ -79,10 +79,32 @@ class PlayerResultInfo {
 
 class _PreviousDebateResultState extends State<PreviousDebateResults> {
   bool _status = true;
-  List data;
   String currentUser;
+  List data = ['1', '2', '3'];
+  Widget displayGroup(int i) {
+    return Container(
+      decoration: new BoxDecoration(
+        borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+      ),
+      child: SingleChildScrollView(
+          /*child: Card(
+              color: Colors.white,
+              borderOnForeground: false,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0)),
+              elevation: 15.0,*/
+          child: Column(children: [
+        Padding(
+            padding: const EdgeInsets.all(7.0),
+            child: Column(
+                children: List.generate(3, (index) {
+              return displayResponses(index);
+            })))
+      ])),
+    );
+  }
 
-  Widget displayPlayerResult(int i) {
+  Widget displayResponses(int i) {
     return Container(
       child: Card(
         elevation: 10.0,
@@ -116,54 +138,36 @@ class _PreviousDebateResultState extends State<PreviousDebateResults> {
   }
 
   Widget build(BuildContext context) {
+    Widget categoryCarousel = new Container(
+      child: CarouselSlider(
+        options: CarouselOptions(
+          scrollDirection: Axis.horizontal,
+          height: 450,
+          autoPlay: false,
+          enlargeCenterPage: true,
+        ),
+        // Items list will require to be updated here as well anytime new category is added
+        items: data.map((item) {
+          return displayGroup(0);
+        }).toList(),
+      ),
+    );
     return Scaffold(
-      appBar: AppBar(
-          leading: BackButton(
-              color: Colors.white,
-              onPressed: () =>
-                  Navigator.of(context).pushNamed("/debatePreviousQuestions")),
-          title: Text("Debate", style: TextStyle(color: Colors.black)),
-          centerTitle: true,
-          backgroundColor: Colors.greenAccent),
-      backgroundColor: Colors.black12,
-      bottomNavigationBar: NavBar(0),
-      body: SingleChildScrollView(
-          child: resultPage(context)), //resultPage(context),
-    );
-  }
-
-  Widget resultPage(BuildContext context) {
-    return Container(
-      child: Column(children: [
-        pagebody(),
-      ]),
-    );
-  }
-
-  Widget pagebody() {
-    var mediaQuery = MediaQuery;
-    return Container(
-        alignment: Alignment.center,
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
-        child: Column(children: [
-          // Description
-          h3("Question : abcefghijklmn", color: Colors.black),
-          // Score breakdown
-          Container(
-              margin: EdgeInsets.symmetric(vertical: 20),
-              width: double.infinity,
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Container(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    children: List.generate(7, (index) {
-                      // HARDCODED FOR NOW; CHANGE TO data.length
-                      return displayPlayerResult(index);
-                    }),
-                  ),
-                )
-              ]))
-        ]));
+        appBar: AppBar(
+            leading: BackButton(
+                color: Colors.white,
+                onPressed: () => Navigator.of(context)
+                    .pushNamed("/debatePreviousQuestions")),
+            title: Text("Debate", style: TextStyle(color: Colors.black)),
+            centerTitle: true,
+            backgroundColor: Colors.greenAccent),
+        backgroundColor: Colors.black12,
+        bottomNavigationBar: NavBar(0),
+        body: Container(
+            padding: EdgeInsets.symmetric(vertical: 30),
+            child: Column(children: [
+              h3("Question : abcefghijklmn", color: Colors.black),
+              categoryCarousel,
+            ])));
   }
 }
