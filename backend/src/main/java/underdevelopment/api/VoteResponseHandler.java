@@ -11,6 +11,7 @@ import org.neo4j.driver.Record;
 import underdevelopment.api.utils.JsonHttpReponse;
 import underdevelopment.api.utils.JsonRequestHandler;
 import underdevelopment.api.utils.Status;
+import underdevelopment.db.DBDebateGroups;
 import underdevelopment.db.DBNotifications;
 import underdevelopment.db.DBParticipation;
 import underdevelopment.db.DBUserInfo;
@@ -51,8 +52,18 @@ public class VoteResponseHandler {
 
             // Run DB command            
             try {
+            	// First, we gotta check to make sure our usernames aren't in the list
+            	List<String> groupOwners = DBDebateGroups.getUserList(groupID);
+            	for(int j = 0; j < groupOwners.size(); j++) {
+            		System.out.println(groupOwners.get(j));
+            	}
+            	for(int i = 0; i < usernameList.size(); i++) {
+            		if(groupOwners.contains("\"" + usernameList.get(i).toString() + "\"")){
+                        return new JsonHttpReponse(Status.UNAUTHORIZED);
+            		}
+            	}
+            	// Insert the usernames in
             	double newScore = DBVoteResponse.voteResponse(groupID, usernameList, ratingsList); 
-            
             	response = new JSONObject()
 	                      .put("participation score", newScore)
 	                      .toString();

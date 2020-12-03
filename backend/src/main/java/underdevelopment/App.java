@@ -170,8 +170,8 @@ public class App
         // Participation (for testing) and voting
         server.createContext("/api/debate/vote-response", 
                 new HttpRequestHandler("POST", VoteResponseHandler.voteResponse(), authorized));
-        server.createContext("/api/participate", 
-                new HttpRequestHandler("POST", ParticipationHandler.editParticipation(), authorized));
+        //server.createContext("/api/participate", 
+               // new HttpRequestHandler("POST", ParticipationHandler.editParticipation(), authorized));
 
         // Debate daily question
         server.createContext("/api/debate/get-daily-question", 

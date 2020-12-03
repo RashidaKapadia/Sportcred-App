@@ -74,8 +74,14 @@ public class DBVoteResponse {
 				tx.run(String.format("MATCH(u:DebateGroup) WHERE (u.id = '%s')"
 						+ "SET u.userList = %s, u.avgScore = %f", group, jsonArr.toString(), totalScore/curUsernames.size()));
 				retVal = totalScore/curUsernames.size();
+				// Give everyone a participation mark
+				for(int i = 0; i < usernames.size(); i++) {
+					DBParticipation.editParticipation(usernames.get(i), 0.5, tx);
+				}
+				
 				tx.commit();
 				tx.close();
+				
 				session.close();
 			} catch (Exception e) {
 				e.printStackTrace();
