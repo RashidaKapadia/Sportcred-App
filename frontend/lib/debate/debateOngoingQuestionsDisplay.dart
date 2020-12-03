@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_session/flutter_session.dart';
+import 'package:frontend/debate/debateOngoingResponses.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
@@ -113,6 +114,9 @@ class _DebatepageState extends State<DebatePage> {
   final tiers = ["Expert", "Pro Analyst", "Analyst", "Fanalyst"];
 
   Widget displayTiers(int i, BuildContext context) {
+    String q;
+    int qId;
+
     if (questionsList.isEmpty) {
       print("It is empty");
     }
@@ -126,7 +130,7 @@ class _DebatepageState extends State<DebatePage> {
                 minWidth: 10,
                 height: 20.0,
                 child: Tooltip(
-                  message: questions[0].question,
+                  message: questions[3].question,
                   showDuration: Duration(seconds: 5),
                   child: RaisedButton(
                       elevation: 10,
@@ -134,8 +138,11 @@ class _DebatepageState extends State<DebatePage> {
                         borderRadius: BorderRadius.circular(18.0),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed(
-                            "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => CurrentDebateResponses(
+                                  question: questions[3].question,
+                                  questionId: questions[3].questionId,
+                                ))); //***PASS IN CATEGORY NAME  */
                       },
                       padding: EdgeInsets.all(10.0),
                       color: Colors.lightGreen,
@@ -156,7 +163,7 @@ class _DebatepageState extends State<DebatePage> {
                 minWidth: 150,
                 height: 20,
                 child: Tooltip(
-                  message: questions[1].question,
+                  message: questions[2].question,
                   showDuration: Duration(seconds: 5),
                   child: RaisedButton(
                       elevation: 10,
@@ -164,8 +171,11 @@ class _DebatepageState extends State<DebatePage> {
                         borderRadius: BorderRadius.circular(18.0),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed(
-                            "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => CurrentDebateResponses(
+                                  question: questions[2].question,
+                                  questionId: questions[2].questionId,
+                                ))); //***PASS IN CATEGORY NAME  */
                       },
                       padding: EdgeInsets.all(10.0),
                       color: Colors.yellow[600],
@@ -185,7 +195,7 @@ class _DebatepageState extends State<DebatePage> {
                       minWidth: 250,
                       height: 20.0,
                       child: Tooltip(
-                        message: questions[2].question,
+                        message: questions[1].question,
                         showDuration: Duration(seconds: 5),
                         child: RaisedButton(
                             elevation: 10,
@@ -193,8 +203,13 @@ class _DebatepageState extends State<DebatePage> {
                               borderRadius: BorderRadius.circular(18.0),
                             ),
                             onPressed: () {
-                              Navigator.of(context).pushNamed(
-                                  "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CurrentDebateResponses(
+                                            question: questions[1].question,
+                                            questionId: questions[1].questionId,
+                                          )));
                             },
                             padding: EdgeInsets.all(10.0),
                             color: Colors.orange,
@@ -213,7 +228,7 @@ class _DebatepageState extends State<DebatePage> {
               minWidth: 350,
               height: 20.0,
               child: Tooltip(
-                message: questions[1].question,
+                message: questions[0].question,
                 showDuration: Duration(seconds: 5),
                 child: RaisedButton(
                     elevation: 10,
@@ -221,8 +236,11 @@ class _DebatepageState extends State<DebatePage> {
                       borderRadius: BorderRadius.circular(18.0),
                     ),
                     onPressed: () {
-                      Navigator.of(context).pushNamed(
-                          "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => CurrentDebateResponses(
+                                question: questions[0].question,
+                                questionId: questions[0].questionId,
+                              ))); //***PASS IN CATEGORY NAME  */
                     },
                     padding: EdgeInsets.all(10.0),
                     color: Colors.red[800],
