@@ -15,7 +15,7 @@ class DailyDebateQuestion extends StatefulWidget {
 
 class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
   Timer _timer;
-  
+
   String question = "";
   String analysis = "";
   String currentUser = "";
@@ -143,7 +143,9 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xff66cc00),
-          leading: backButton(context),
+          leading: BackButton(
+              color: Colors.white,
+              onPressed: () => Navigator.of(context).pushNamed("/debate")),
           title: Text("Daily Debate Question",
               style: TextStyle(color: Colors.white)),
         ),
@@ -158,7 +160,7 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
                 decoration: InputDecoration(
                     hintText: "Response",
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5))),             
+                        borderRadius: BorderRadius.circular(5))),
                 keyboardType: TextInputType.multiline,
                 maxLines: null))),
             vmargin25(orangeButtonLarge(
