@@ -18,24 +18,16 @@ class DebateVote extends StatefulWidget {
   _DebateVoteState createState() => _DebateVoteState();
 }
 
-//List<GroupNode> allGroupResponses = [];
-//String question = "";
-
 class _DebateVoteState extends State<DebateVote> {
-  //Future<List<GroupNode>> _futureGroupResponses;
   Future<List<GroupNode>> _futureResponses;
-
   String currentUser = "";
 
   @override
   void initState() {
     FlutterSession().get('username').then((value) {
-      this.setState(() {
-        print("Gonna call GetGroupResponses and question");
-
-        currentUser = value.toString();
-      });
       setState(() {
+        print("Gonna call GetGroupResponses and question");
+        currentUser = value.toString();
         _futureResponses = getVoteGroupResponses(currentUser);
       });
     });
@@ -47,16 +39,7 @@ class _DebateVoteState extends State<DebateVote> {
       future: _futureResponses,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<GroupNode> groupResponses;
-          String question = "";
-          //debateQns = snapshot.data;
-          //List qnsNresponses = snapshot.data;
-          //groupResponses = snapshot.data[1];
-          //question = snapshot.data[0];
-          return DebatePage(
-            groupResponses: snapshot.data,
-            //question: question,
-          );
+          return DebatePage(groupResponses: snapshot.data);
         } else {
           return CircularProgressIndicator();
         }
@@ -73,11 +56,7 @@ class _DebateVoteState extends State<DebateVote> {
 class DebatePage extends StatefulWidget {
   List<GroupNode> groupResponses;
   String question = "";
-  DebatePage({
-    Key key,
-    @required this.groupResponses,
-    @required this.question,
-  }) : super(key: key);
+  DebatePage({Key key, @required this.groupResponses}) : super(key: key);
 
   @override
   _DebatepageState createState() =>
@@ -107,10 +86,8 @@ class _DebatepageState extends State<DebatePage> {
   @override
   void initState() {
     FlutterSession().get('username').then((value) {
-      this.setState(() {
-        currentUser = value.toString();
-      });
       setState(() {
+        currentUser = value.toString();
         _futureQuestion = getMyQuestion(currentUser);
       });
     });
@@ -122,14 +99,7 @@ class _DebatepageState extends State<DebatePage> {
       future: _futureQuestion,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<GroupNode> groupResponses;
-          String question = "";
-          question = snapshot.data;
-          //debateQns = snapshot.data;
-          //List qnsNresponses = snapshot.data;
-          //groupResponses = snapshot.data[1];
-          //question = snapshot.data[0];
-          return h3("Question: " + question, color: Colors.black);
+          return h3("Question: " + snapshot.data, color: Colors.black);
         } else {
           return CircularProgressIndicator();
         }
