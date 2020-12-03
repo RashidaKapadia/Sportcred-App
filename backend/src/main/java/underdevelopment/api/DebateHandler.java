@@ -119,9 +119,8 @@ public class DebateHandler {
     private static JSONObject responseToJSONObject (Map<String, Object> response) throws JSONException {
         return new JSONObject()
             .put("username", response.get("username"))
-            .put("response", response.get("debateAnalysis"))
-            .put("averageRating", (double) response.get("avgScore")
-        );
+            .put("response", response.get("debateAnalysis"))    
+            .put("averageRating", (response.get("avgScore") != null) ? response.get("avgScore") : 0);
     }
     
     // /api/debate/get-previous-topic-result
@@ -208,7 +207,7 @@ public class DebateHandler {
                                 }
                             ))
                         )
-                        .put("winner", record.get("winner", "Undetermined")
+                        .put("winner", record.get("winner", "Undetermined"))
                     );    
                 }
                 JSONObject json = new JSONObject().put("groups", groups);
