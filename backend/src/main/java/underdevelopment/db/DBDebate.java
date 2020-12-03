@@ -36,12 +36,12 @@ public class DBDebate {
 
     // /api/debate/get-ongoing-questions 
     public static ArrayList<Map<String, Object>> getOngoingQuesions() {
-        return getQuestionByDate(LocalDate.now().toString());
+        return getQuestionByDate(LocalDate.now().minusDays(1).toString());
     }
 
     // /api/debate/get-finished-questions
     public static ArrayList<Map<String, Object>> getFinishedQuesions() {
-        return getQuestionByDate(LocalDate.now().minusDays(1).toString());
+        return getQuestionByDate(LocalDate.now().minusDays(2).toString());
     }
 
     public static String getTier(double acs) {
@@ -97,7 +97,7 @@ public class DBDebate {
     public static Record getResultMyPreviousQuestion(String username) {
         try (Session session = Connect.driver.session()) {
             Result result = session.run("match (r:DebateResponse {username: $u, date: $d})-[:hasResponse]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) return ID(g) as groupId, g.winner as winner, case when g.winner = $u then 5 else 0 end + toInteger(r.avgScore) + 1 as yourScore, r as yours, collect(o) as theirs",
-                                        parameters("d", LocalDate.now().minusDays(1).toString(), "u", username));
+                                        parameters("d", LocalDate.now().minusDays(2).toString(), "u", username));
             return (result.hasNext()) ? result.next() : null;
         }
         catch (Exception e) {

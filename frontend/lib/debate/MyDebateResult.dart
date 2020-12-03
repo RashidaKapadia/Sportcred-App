@@ -9,6 +9,7 @@ import 'package:frontend/widgets/fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:frontend/requests/debate.dart';
 
 import '../navbar.dart';
 
@@ -18,71 +19,15 @@ class MyDebateResult extends StatefulWidget {
   _MyDebateResultState createState() => _MyDebateResultState();
 }
 
-class ResultNode {
-  final String groupNumber;
-  final PlayerResultInfo yourResult;
-  final List<dynamic> others;
-  final String winner;
-  final String yourScore;
-  final bool reqStatus;
-
-  ResultNode(
-      {this.groupNumber,
-      this.yourResult,
-      this.others,
-      this.winner,
-      this.yourScore,
-      @required this.reqStatus});
-
-  // converts json to UserInfo object
-  factory ResultNode.fromJson(bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return ResultNode(
-        reqStatus: status,
-      );
-    }
-
-    return ResultNode(
-        reqStatus: status,
-        groupNumber: json['groupNumber'],
-        yourResult: json['yours'],
-        others: json['theirs'],
-        yourScore: json['yourScore'],
-        winner: json['winner']);
-  }
-}
-
-class PlayerResultInfo {
-  final String username;
-  final String response;
-  final String rating;
-  final bool reqStatus;
-
-  PlayerResultInfo(
-      {this.username, this.response, this.rating, @required this.reqStatus});
-
-  // converts json to UserInfo object
-  factory PlayerResultInfo.fromJson(bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return PlayerResultInfo(
-        reqStatus: status,
-      );
-    }
-
-    return PlayerResultInfo(
-        reqStatus: status,
-        username: json['username'],
-        response: json['response'],
-        rating: json['averageRating']);
-  }
-}
-
 class _MyDebateResultState extends State<MyDebateResult> {
   bool _status = true;
   List data;
+  Future<YourResponseResultNode> _future;
   String currentUser;
   ConfettiController _controllerTopCenter;
   ConfettiController _controllerCenter;
+  YourResponseResultNode yourResult;
+
   @override
   void initState() {
     _controllerTopCenter = ConfettiController(
@@ -93,11 +38,71 @@ class _MyDebateResultState extends State<MyDebateResult> {
         ConfettiController(duration: const Duration(seconds: 10));
     _controllerCenter.play();
     super.initState();
-    setState(() {
-      FlutterSession()
-          .get('username')
-          .then((username) => {currentUser = username.toString()});
-    });
+    print(currentUser);
+
+    FlutterSession().get('username').then((username) => {
+          setState(() {
+            currentUser = username.toString();
+            _future = getPreviousTopicResult(username.toString());
+          })
+        });
+  }
+
+  Widget loadDebateResponses() {
+    return FutureBuilder<YourResponseResultNode>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          YourResponseResultNode result;
+          result = snapshot.data;
+          return DebateResultPage(
+            yourResult: snapshot.data,
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      (_future != null) ? loadDebateResponses() : Text("loading....");
+}
+
+class DebateResultPage extends StatefulWidget {
+  YourResponseResultNode yourResult;
+
+  DebateResultPage({
+    Key key,
+    @required this.yourResult,
+  }) : super(key: key);
+
+  @override
+  _DebateResultpageState createState() => _DebateResultpageState(
+        result: yourResult,
+      );
+}
+
+class _DebateResultpageState extends State<DebateResultPage> {
+  YourResponseResultNode result;
+  ConfettiController _controllerTopCenter;
+  ConfettiController _controllerCenter;
+
+  _DebateResultpageState({
+    @required this.result,
+  });
+
+  @override
+  void initState() {
+    _controllerTopCenter = ConfettiController(
+      duration: const Duration(seconds: 10),
+    );
+    _controllerTopCenter.play();
+    _controllerCenter =
+        ConfettiController(duration: const Duration(seconds: 10));
+    _controllerCenter.play();
+    super.initState();
   }
 
   @override
@@ -114,7 +119,10 @@ class _MyDebateResultState extends State<MyDebateResult> {
           children: [
             Padding(
               padding: const EdgeInsets.all(7.0),
-              child: Row(children: [Icon(Icons.person), Text("alice")]),
+              child: Row(children: [
+                Icon(Icons.person),
+                Text(result.theirs[i].username)
+              ]),
             ),
             Padding(
               padding: const EdgeInsets.all(7.0),
@@ -122,8 +130,7 @@ class _MyDebateResultState extends State<MyDebateResult> {
                 Icon(Icons.assignment),
                 Expanded(
                   child: AutoSizeText(
-                    "Dogs are the best hands down, they are super energetic and" +
-                        "silly, they are great mood boosters when your down!",
+                    result.theirs[i].response,
                     //overflow: TextOverflow.ellipsis,
                   ),
                 )
@@ -131,7 +138,10 @@ class _MyDebateResultState extends State<MyDebateResult> {
             ),
             Padding(
               padding: const EdgeInsets.all(7.0),
-              child: Row(children: [Icon(Icons.assessment), Text("35%")]),
+              child: Row(children: [
+                Icon(Icons.assessment),
+                Text(result.theirs[i].averageRating.toString())
+              ]),
             )
           ],
         ),
@@ -215,7 +225,7 @@ class _MyDebateResultState extends State<MyDebateResult> {
         padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
         child: Column(children: [
           // Description
-          h3("Group Number : x"),
+          h3("Group Number : " + result.groupId.toString()),
           // Score breakdown
           DelayedDisplay(
             delay: Duration(seconds: 1),
@@ -233,7 +243,7 @@ class _MyDebateResultState extends State<MyDebateResult> {
             delay: Duration(seconds: 3),
             fadingDuration: Duration(seconds: 2),
             child: Text(
-              "Alice",
+              result.winner.toString(),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 35.0,
@@ -254,21 +264,26 @@ class _MyDebateResultState extends State<MyDebateResult> {
                     elevation: 10.0,
                     child: Column(
                       children: [
-                        Row(children: [Icon(Icons.person), Text("test")]),
+                        Row(children: [
+                          Icon(Icons.person),
+                          Text(result.yours.username)
+                        ]),
                         Row(children: [
                           Icon(Icons.assignment),
                           Expanded(
-                            child: AutoSizeText(
-                                "I love cats more, because  they are more independent"),
+                            child: AutoSizeText(result.yours.response),
                           )
                         ]),
-                        Row(children: [Icon(Icons.assessment), Text("30%")]),
+                        Row(children: [
+                          Icon(Icons.assessment),
+                          Text(result.yours.averageRating.toString())
+                        ]),
                         Row(children: [
                           Text("Your Score: ",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               )),
-                          Text("3")
+                          Text(result.yourScore.toString())
                         ]), // *****TO BE CHANGED
                       ],
                     ),
@@ -279,7 +294,7 @@ class _MyDebateResultState extends State<MyDebateResult> {
                     color: Colors.grey,
                     width: double.infinity,
                     height: 40,
-                    child: Text("Your Group",
+                    child: Text("Other members",
                         style: TextStyle(
                           //fontSize: 60.0,
                           fontWeight: FontWeight.bold,
