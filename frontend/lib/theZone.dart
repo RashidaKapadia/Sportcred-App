@@ -20,6 +20,11 @@ class TheZone extends StatefulWidget {
   _TheZoneState createState() => _TheZoneState();
 }
 
+class ForComment {
+  static String postId;
+  static String post_username;
+}
+
 class PostInfo {
   final String username;
   final String content;
@@ -490,6 +495,8 @@ class _TheZoneState extends State<TheZone> {
                 IconButton(
                   icon: Icon(Icons.comment),
                   onPressed: () {
+                    ForComment.post_username = allZonePosts[index].username;
+                    ForComment.postId = allZonePosts[index].uniqueIdentifier;
                     Navigator.of(context).pushNamed("/comments");
                   },
                 ),
@@ -640,10 +647,12 @@ class _TheZoneState extends State<TheZone> {
                                 child: Text("Submit"),
                                 onPressed: () {
                                   // Check that the title and value are not empty
-                                  if (editTitleController
-                                          .value.text.trim().isNotEmpty &&
-                                      editContentController
-                                          .value.text.trim().isNotEmpty) {
+                                  if (editTitleController.value.text
+                                          .trim()
+                                          .isNotEmpty &&
+                                      editContentController.value.text
+                                          .trim()
+                                          .isNotEmpty) {
                                     // Call editPost API
                                     print("EDITING POST!");
 
