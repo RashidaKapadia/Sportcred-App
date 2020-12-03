@@ -6,6 +6,7 @@ import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
 import 'package:flutter_cursor/flutter_cursor.dart';
+import 'package:frontend/debate/debatePreviousQuestionsResults.dart';
 
 class PreviousDebateQuestions extends StatefulWidget {
   @override
@@ -165,7 +166,7 @@ class _DebatepageState extends State<DebatePage> {
                   minWidth: 10.0,
                   height: 10.0,
                   child: Tooltip(
-                    message: questions[0].question,
+                    message: questions[3].question,
                     showDuration: Duration(seconds: 5),
                     child: RaisedButton(
                         elevation: 10,
@@ -173,8 +174,12 @@ class _DebatepageState extends State<DebatePage> {
                           borderRadius: BorderRadius.circular(18.0),
                         ),
                         onPressed: () {
-                          Navigator.of(context).pushNamed(
-                              "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (context) => PreviousDebateResults(
+                                        question: questions[3].question,
+                                        questionId: questions[3].questionId,
+                                      ))); //***PASS IN CATEGORY NAME  */
                         },
                         padding: EdgeInsets.all(10.0),
                         color: Colors.lightGreen,
@@ -194,15 +199,18 @@ class _DebatepageState extends State<DebatePage> {
                 minWidth: 150.0,
                 height: 10.0,
                 child: Tooltip(
-                  message: questions[1].question,
+                  message: questions[2].question,
                   child: RaisedButton(
                     elevation: 10,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
                     ),
                     onPressed: () {
-                      Navigator.of(context).pushNamed(
-                          "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => PreviousDebateResults(
+                                question: questions[2].question,
+                                questionId: questions[2].questionId,
+                              ))); //***PASS IN CATEGORY NAME  */
                     },
                     padding: EdgeInsets.all(10.0),
                     color: Colors.yellow[600],
@@ -223,15 +231,19 @@ class _DebatepageState extends State<DebatePage> {
                       minWidth: 250,
                       height: 10.0,
                       child: Tooltip(
-                        message: questions[2].question,
+                        message: questions[1].question,
                         child: RaisedButton(
                           elevation: 10,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18.0),
                           ),
                           onPressed: () {
-                            Navigator.of(context).pushNamed(
-                                "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
+                            Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
+                                    builder: (context) => PreviousDebateResults(
+                                          question: questions[1].question,
+                                          questionId: questions[1].questionId,
+                                        ))); //***PASS IN CATEGORY NAME  */
                           },
                           padding: EdgeInsets.all(10.0),
                           color: Colors.orange,
@@ -250,15 +262,18 @@ class _DebatepageState extends State<DebatePage> {
               minWidth: 350,
               height: 10.0,
               child: Tooltip(
-                message: questions[3].question,
+                message: questions[0].question,
                 child: RaisedButton(
                   elevation: 10,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushNamed(
-                        "/debatePreviousResults"); //***PASS IN CATEGORY NAME  */
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => PreviousDebateResults(
+                              question: questions[0].question,
+                              questionId: questions[0].questionId,
+                            ))); //***PASS IN CATEGORY NAME  */
                   },
                   padding: EdgeInsets.all(10.0),
                   color: Colors.red[800],
