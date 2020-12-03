@@ -65,9 +65,9 @@ class DebatePage extends StatefulWidget {
 
 class _DebatepageState extends State<DebatePage> {
   List<GroupNode> groupResponses;
-  List<double> sliderValues = [5, 5, 5];
+  List<int> sliderValues = [5, 5, 5];
   Map<String, bool> voted = {};
-  Map<String, List<double>> votes = {};
+  Map<String, List<int>> votes = {};
   String question = "";
   String currentUser = "";
   Future<String> _futureQuestion;
@@ -109,7 +109,8 @@ class _DebatepageState extends State<DebatePage> {
   Widget createSlider(GroupNode group, int i) {
     bool disabled = voted[group.groupId] == true;
     return Slider(
-        value: (disabled) ? votes[group.groupId][i] : sliderValues[i],
+        value:
+            ((disabled) ? votes[group.groupId][i] : sliderValues[i]).toDouble(),
         min: 0,
         max: 10,
         label: (disabled)
@@ -120,7 +121,7 @@ class _DebatepageState extends State<DebatePage> {
             ? (double d) {}
             : (double newVal) {
                 setState(() {
-                  sliderValues[i] = newVal;
+                  sliderValues[i] = newVal.toInt();
                 });
               });
   }
@@ -153,8 +154,13 @@ class _DebatepageState extends State<DebatePage> {
                     print("Testing Submiting votes");
                     voted[group.groupId] = true;
                     votes[group.groupId] = sliderValues;
-                    // submitVotes(
-                    //     group.groupId, currentUser, [103, 102, 91], sliderValues);
+                    submitVotes(
+                        group.groupId,
+                        currentUser,
+                        group.responses.map((e) {
+                          return e.responseId;
+                        }).toList(),
+                        votes[group.groupId]);
                   });
                 })
             : plainButton(
