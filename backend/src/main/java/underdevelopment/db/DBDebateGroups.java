@@ -132,7 +132,6 @@ public class DBDebateGroups {
 	    	}
 		}
 		return retVal;
-		
     }
     
 }
