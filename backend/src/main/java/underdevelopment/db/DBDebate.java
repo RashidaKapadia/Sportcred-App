@@ -44,7 +44,7 @@ public class DBDebate {
         return getQuestionByDate(LocalDate.now().minusDays(1).toString());
     }
 
-    public static String getTier(int acs) {
+    public static String getTier(double acs) {
         if (acs <= 300) {
             return "FANALYST";
         } else if (acs <= 600) {
@@ -58,12 +58,12 @@ public class DBDebate {
         }
     }
 
-    private static int getACS(String username) {
-        int acs = -1;
+    private static double getACS(String username) {
+        double acs = -1;
         try (Session session = Connect.driver.session()) {
             Result result = session.run("match (u:user {username: $u}) return u.acs as acs", parameters("u", username));
             if (result.hasNext()) {
-                acs = result.next().get("acs").asInt();
+                acs = result.next().get("acs").asDouble();
             }
         }
         catch (Exception e) {
@@ -90,7 +90,7 @@ public class DBDebate {
     // /api/debate/get-group-responses-my-question
     public static ArrayList<Record> getResponsesMyQuestion(String username) {
         return getResponsesByQuery("match (n:DebateQuestion {tier: $t, date: $d})-[:hasGroup]-(g:DebateGroup) with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect({response: r.debateAnalysis, responseId: ID(r)}) as responses", 
-                                    parameters("d", LocalDate.now().toString(), "t", getTier(getACS(username))));
+                                    parameters("d", LocalDate.now().minusDays(1).toString(), "t", getTier(getACS(username))));
     }
 
     // /api/debate/get-previous-topic-result

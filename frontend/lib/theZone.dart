@@ -223,7 +223,7 @@ class _TheZoneState extends State<TheZone> {
         'Access-Control-Allow-Origin': '*',
       },
       body: jsonEncode(<String, String>{
-        'uniqueIdentifier': postId,
+        'postId': postId,
         'username': currentUsername,
         'content': content,
         'title': title
@@ -238,6 +238,31 @@ class _TheZoneState extends State<TheZone> {
     } else {
       print("ERROR - COULD NOT EDIT POST!");
       errorPopup(context, "Could not edit post!");
+      return null;
+    }
+  }
+
+  Future deletePost(String postId, String currentUsername) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/deletePost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(
+          <String, String>{'postId': postId, 'username': currentUsername}),
+    );
+
+    if (response.statusCode == 200) {
+      print("Post is deleted");
+      setState(() {
+        _futurePosts = getPosts();
+      });
+    } else {
+      print("ERROR - COULD NOT DELETE POST!");
+      errorPopup(context, "Could not delete post!");
       return null;
     }
   }
@@ -468,19 +493,6 @@ class _TheZoneState extends State<TheZone> {
                     Navigator.of(context).pushNamed("/comments");
                   },
                 ),
-                //  Text(allZonePosts[index].comments.toString()),
-
-                // TODO: Edit this to only be visible to user of that profile
-                // IconButton(
-                //     icon: new Icon(Icons.edit),
-                //     onPressed: () {
-                //       //editPost();
-                //     }),
-                // IconButton(
-                //     icon: new Icon(Icons.delete),
-                //     onPressed: () {
-                //       //editPost();
-                //     })
               ],
             ),
           ],
@@ -508,7 +520,48 @@ class _TheZoneState extends State<TheZone> {
             allZonePosts[index].content.toString());
         break;
       case 'Delete':
+        _deletePost(allZonePosts[index].username.toString(),
+            allZonePosts[index].uniqueIdentifier.toString());
         break;
+    }
+  }
+
+  void _deletePost(String creatorUsername, String postId) {
+    if (currentUser != creatorUsername) {
+      errorPopup(context, "You can only delete your post!!");
+    } else {
+      showDialog(
+          context: context,
+          builder: (alertContext) {
+            return AlertDialog(
+              title: Text("Confirmation"),
+              content: Text("Are you sure you want to delete this post?"),
+              actions: [
+                TextButton(
+                  child: Text("Yes"),
+                  onPressed: () {
+                    setState(() {
+                      print("DELETING POST");
+                      // Delete post
+                      deletePost(postId, currentUser);
+                      print("POST DELETED");
+
+                      Navigator.of(alertContext, rootNavigator: true)
+                          .pop('dialog');
+                    });
+                  },
+                ),
+                TextButton(
+                  child: Text("No"),
+                  onPressed: () {
+                    // Close the dialog
+                    Navigator.of(alertContext, rootNavigator: true)
+                        .pop('dialog');
+                  },
+                )
+              ],
+            );
+          });
     }
   }
 
@@ -523,10 +576,10 @@ class _TheZoneState extends State<TheZone> {
           context: context,
           builder: (BuildContext context) {
             // For storing the title and content in text boxes
-            TextEditingController editTitle = TextEditingController()
+            TextEditingController editTitleController = TextEditingController()
               ..text = currTitle;
-            TextEditingController editContent = TextEditingController()
-              ..text = currContent;
+            TextEditingController editContentController =
+                TextEditingController()..text = currContent;
 
             return SizedBox(
                 height: 10,
@@ -534,7 +587,8 @@ class _TheZoneState extends State<TheZone> {
                 child: Card(
                   margin: EdgeInsets.all(10),
                   elevation: 5,
-                  child: Column(
+                  child: SingleChildScrollView(
+                      child: Column(
                     children: [
                       Padding(
                           padding: const EdgeInsets.all(10),
@@ -549,8 +603,10 @@ class _TheZoneState extends State<TheZone> {
                           padding: const EdgeInsets.all(16.0),
                           child: ListTile(
                             title: TextField(
-                              controller: editTitle,
+                              cursorColor: Colors.orange,
+                              controller: editTitleController,
                               decoration: InputDecoration(
+                                  labelText: "Title",
                                   hintText: "Title",
                                   border: OutlineInputBorder(
                                       borderRadius:
@@ -560,9 +616,11 @@ class _TheZoneState extends State<TheZone> {
                       Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: TextField(
-                              controller: editContent,
+                              cursorColor: Colors.orange,
+                              controller: editContentController,
                               style: TextStyle(fontSize: 16),
                               decoration: InputDecoration(
+                                  labelText: "Content",
                                   hintText: "Content",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5))),
@@ -570,22 +628,44 @@ class _TheZoneState extends State<TheZone> {
                               maxLines: null)),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: RaisedButton(
-                          child: Text("Submit"),
-                          onPressed: () {
-                            // Call editPost API
-                            print("EDITING POST!");
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              RaisedButton(
+                                  child: Text("Cancel"),
+                                  onPressed: () =>
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop()),
+                              RaisedButton(
+                                child: Text("Submit"),
+                                onPressed: () {
+                                  // Check that the title and value are not empty
+                                  if (editTitleController
+                                          .value.text.trim().isNotEmpty &&
+                                      editContentController
+                                          .value.text.trim().isNotEmpty) {
+                                    // Call editPost API
+                                    print("EDITING POST!");
 
-                            editPost(postId, currentUser,
-                                editContent.value.text, editTitle.value.text);
+                                    editPost(
+                                        postId,
+                                        currentUser,
+                                        editContentController.value.text,
+                                        editTitleController.value.text);
 
-                            Navigator.of(context, rootNavigator: true).pop();
-                            print("FINISHED EDITING POST!");
-                          },
-                        ),
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                    print("FINISHED EDITING POST!");
+                                  } else {
+                                    errorPopup(context,
+                                        "Title and content cannot be empty!");
+                                  }
+                                },
+                              )
+                            ]),
                       )
                     ],
-                  ),
+                  )),
                 ));
           });
     }
@@ -596,8 +676,8 @@ class _TheZoneState extends State<TheZone> {
         context: context,
         builder: (BuildContext context) {
           // For storing the title and content in text boxes
-          String newTitle;
-          String newContent;
+          String newTitle = "";
+          String newContent = "";
 
           return SizedBox(
               height: 10,
@@ -605,7 +685,8 @@ class _TheZoneState extends State<TheZone> {
               child: Card(
                 margin: EdgeInsets.all(10),
                 elevation: 5,
-                child: Column(
+                child: SingleChildScrollView(
+                    child: Column(
                   children: [
                     Padding(
                         padding: const EdgeInsets.all(10),
@@ -620,7 +701,9 @@ class _TheZoneState extends State<TheZone> {
                         padding: const EdgeInsets.all(16.0),
                         child: ListTile(
                           title: TextField(
+                            cursorColor: Colors.orange,
                             decoration: InputDecoration(
+                                labelText: "Title",
                                 hintText: "Title",
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(32.0))),
@@ -634,8 +717,10 @@ class _TheZoneState extends State<TheZone> {
                     Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: TextField(
+                            cursorColor: Colors.orange,
                             style: TextStyle(fontSize: 16),
                             decoration: InputDecoration(
+                                labelText: "Content",
                                 hintText: "Content",
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5))),
@@ -648,23 +733,41 @@ class _TheZoneState extends State<TheZone> {
                             maxLines: null)),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: RaisedButton(
-                        child: Text("Submit"),
-                        onPressed: () {
-                          // Call editPost API
-                          print("CREATING POST!");
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            RaisedButton(
+                                child: Text("Cancel"),
+                                onPressed: () =>
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop()),
+                            RaisedButton(
+                              child: Text("Submit"),
+                              onPressed: () {
+                                // Check that the title and content are not empty
+                                if (newContent.trim().isNotEmpty &&
+                                    newTitle.trim().isNotEmpty) {
+                                  // Call editPost API
+                                  print("CREATING POST!");
 
-                          setState(() {
-                            createPost(currentUser, newContent, newTitle);
-                          });
+                                  setState(() {
+                                    createPost(
+                                        currentUser, newContent, newTitle);
+                                  });
 
-                          Navigator.of(context, rootNavigator: true).pop();
-                          print("FINISHED CREATING POST!");
-                        },
-                      ),
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  print("FINISHED CREATING POST!");
+                                } else {
+                                  errorPopup(context,
+                                      "Title and content cannot be empty!");
+                                }
+                              },
+                            )
+                          ]),
                     )
                   ],
-                ),
+                )),
               ));
         });
   }
