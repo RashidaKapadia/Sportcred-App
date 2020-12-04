@@ -1,9 +1,4 @@
 import 'dart:convert';
-import 'dart:async';
-import 'package:flutter_session/flutter_session.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:frontend/formHelper.dart';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -264,7 +259,7 @@ class _DebatepageState extends State<DebatePage> {
           Container(margin: EdgeInsets.all(20)),
           Container(
             child: Column(
-                children: List.generate(dailyQuestions.length, (index) {
+                children: List.generate(4, (index) {
               // HARDCODED FOR NOW; CHANGE TO data.length
               return displayTiers(index, context);
             })),
