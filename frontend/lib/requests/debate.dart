@@ -33,6 +33,67 @@ class QuestionNode {
   }
 }
 
+class GroupNode {
+  final String groupId;
+  List<dynamic> responses;
+
+  final bool reqStatus;
+
+  GroupNode({this.groupId, this.responses, this.reqStatus});
+
+  // converts json to UserInfo object
+  factory GroupNode.fromJson(bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return GroupNode(
+        reqStatus: status,
+      );
+    }
+
+    return GroupNode(
+        reqStatus: status,
+        groupId: json['groupId'],
+        responses: json['responses']);
+  }
+}
+
+class ResponseNode {
+  final int responseId;
+  final String response;
+  final bool reqStatus;
+
+  ResponseNode({this.responseId, this.response, this.reqStatus});
+
+  // converts json to UserInfo object
+  factory ResponseNode.fromJson(bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return ResponseNode(
+        reqStatus: status,
+      );
+    }
+
+    return ResponseNode(
+        reqStatus: status,
+        responseId: json['responseId'],
+        response: json['response']);
+  }
+}
+
+List<GroupNode> makeGroupResponseList(List<dynamic> list) {
+  List<GroupNode> gr = [];
+  for (Map<String, dynamic> group in list) {
+    gr.add(GroupNode.fromJson(true, group));
+  }
+  return gr;
+}
+
+List<ResponseNode> makeRepsonseList(List<dynamic> list) {
+  List<ResponseNode> qs = [];
+  for (Map<String, dynamic> response in list) {
+    qs.add(ResponseNode.fromJson(true, response));
+  }
+  return qs;
+}
+
 List<QuestionNode> makeQuestionsList(List<dynamic> list) {
   List<QuestionNode> qs = [];
   for (Map<String, dynamic> question in list) {
@@ -55,27 +116,36 @@ Future<List<QuestionNode>> getQuestions() async {
 
   if (response.statusCode == 200) {
     print(response.statusCode);
-    //List<QuestionNode> allQuestions = [];
-    // Get the questions, options and correctAnswers and store them in the class variables
-    //for (Map<String, dynamic> questionNode
-    //  in jsonDecode(response.body)["questions"] as List) {
     return makeQuestionsList(jsonDecode(response.body)["questions"]);
-    /*print("*********************");
-      print(QuestionNode.fromJson(true, questionNode).tier);
-      print("*********************");
+  } else {
+    print(response.statusCode);
+    return null;
+  }
+}
 
-      allQuestions += [QuestionNode.fromJson(true, questionNode)];
-      print(allQuestions[0].tier);
+Future<List<GroupNode>> getGroupResponses(int questionId) async {
+  // Make the request and store the response
+  final http.Response response = await http.post(
+      'http://localhost:8080/api/debate/get-group-responses',
+      headers: defaultHeaders,
+      body: jsonEncode(<String, Object>{"questionId": questionId}));
+
+  if (response.statusCode == 200) {
+    print(response.statusCode);
+    List<GroupNode> r =
+        makeGroupResponseList(jsonDecode(response.body)["groups"]);
+
+    for (int i = 0; i < r.length; i++) {
+      List<ResponseNode> res = makeRepsonseList(r[i].responses);
+      print("before" + r[i].responses.toString());
+      print(res[0].response);
+
+      r[i].responses = res;
+      print("after" + r[i].responses.toString());
+      print(r[i].responses[0].response);
     }
-    // DEBUGGING STATEMENTS
-    print('DEBUGGING: Post Node Get');
-    print("\n\nQuestionodes: " + allQuestions[0].question);
-    print(allQuestions.length);
-    return allQuestions;
-    //questionsList = allQuestions;
-    //print("in api" + questionsList.toString());
-    //return questionsList;
-    // Return posts data*/
+    print(r[0].responses);
+    return r;
   } else {
     print(response.statusCode);
     return null;
