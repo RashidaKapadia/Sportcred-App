@@ -23,7 +23,8 @@ class DebateVote extends StatefulWidget {
 
 class _DebateVoteState extends State<DebateVote> {
   //Future<List<GroupNode>> _futureGroupResponses;
-  var _future;
+  Future<List<GroupNode>> _futureResponses;
+
   String currentUser = "";
 
   @override
@@ -35,26 +36,26 @@ class _DebateVoteState extends State<DebateVote> {
         currentUser = value.toString();
       });
       setState(() {
-        _future = getDebateVoteData(currentUser);
+        _futureResponses = getVoteGroupResponses(currentUser);
       });
     });
     super.initState();
   }
 
   Widget loadDebateGroupsAndQuestion() {
-    return FutureBuilder<dynamic>(
-      future: _future,
+    return FutureBuilder<List<GroupNode>>(
+      future: _futureResponses,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<GroupNode> groupResponses;
           String question = "";
           //debateQns = snapshot.data;
-          List qnsNresponses = snapshot.data as List<dynamic>;
-          groupResponses = qnsNresponses[1];
-          question = qnsNresponses[0];
+          //List qnsNresponses = snapshot.data;
+          //groupResponses = snapshot.data[1];
+          //question = snapshot.data[0];
           return DebatePage(
-            groupResponses: groupResponses,
-            question: question,
+            groupResponses: snapshot.data,
+            //question: question,
           );
         } else {
           return CircularProgressIndicator();
@@ -64,8 +65,9 @@ class _DebateVoteState extends State<DebateVote> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      (_future != null) ? loadDebateGroupsAndQuestion() : Text("loading....");
+  Widget build(BuildContext context) => (_futureResponses != null)
+      ? loadDebateGroupsAndQuestion()
+      : Text("loading....");
 }
 
 class DebatePage extends StatefulWidget {
@@ -93,6 +95,7 @@ class _DebatepageState extends State<DebatePage> {
   List<String> selectedAnswers = [];
   String question = "";
   String currentUser = "";
+  Future<String> _futureQuestion;
   _DebatepageState({@required this.groupResponses, @required this.question});
 
   initializeSlider() {
@@ -107,8 +110,31 @@ class _DebatepageState extends State<DebatePage> {
       this.setState(() {
         currentUser = value.toString();
       });
+      setState(() {
+        _futureQuestion = getMyQuestion(currentUser);
+      });
     });
     super.initState();
+  }
+
+  Widget loadQuestion() {
+    return FutureBuilder<String>(
+      future: _futureQuestion,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<GroupNode> groupResponses;
+          String question = "";
+          question = snapshot.data;
+          //debateQns = snapshot.data;
+          //List qnsNresponses = snapshot.data;
+          //groupResponses = snapshot.data[1];
+          //question = snapshot.data[0];
+          return h3("Question: " + question, color: Colors.black);
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
   }
 
   Widget createSlider(int i) {
@@ -135,6 +161,7 @@ class _DebatepageState extends State<DebatePage> {
 
   Widget displayResponses(int i, GroupNode group) {
     //Group_ResponsesNode gr = group.responses[i];
+
     var button = Container();
     if (i == 2) {
       button = plainButton(
@@ -197,6 +224,7 @@ class _DebatepageState extends State<DebatePage> {
 
   Widget build(BuildContext context) {
     initializeSlider();
+    print("length: " + (groupResponses.length).toString());
     Widget categoryCarousel = new Container(
       child: CarouselSlider(
         options: CarouselOptions(
@@ -226,7 +254,7 @@ class _DebatepageState extends State<DebatePage> {
         body: Container(
             padding: EdgeInsets.symmetric(vertical: 30),
             child: Column(children: [
-              h3("Question:" + question, color: Colors.black),
+              loadQuestion(),
               categoryCarousel,
             ])));
   }
