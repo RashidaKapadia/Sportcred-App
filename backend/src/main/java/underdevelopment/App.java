@@ -205,9 +205,10 @@ public class App
         server.createContext("/api/debate/vote-response", 
                 new HttpRequestHandler("POST", VoteResponseHandler.voteResponse(), authorized));
         
-        // notification for new debate question (for testing)
-        server.createContext("/api/debate/send-daily-questions", 
-        		new HttpRequestHandler("POST", DailyServerHandler.sendDailyNotification(), authorized));        
+        // notification for new next day
+        server.createContext("/api/begin-day", 
+                new HttpRequestHandler("POST", DailyServerHandler.nextDay(), authorized));
+        
         // Start Server
         server.start();
     }
