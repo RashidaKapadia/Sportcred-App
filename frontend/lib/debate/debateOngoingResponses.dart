@@ -158,7 +158,8 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
                 Padding(
                     padding: const EdgeInsets.all(7.0),
                     child: Column(
-                        children: List.generate(3, (index) {
+                        children: List.generate(item.responses.length, (index) {
+                      // print("inner index: " + index.toString());
                       return displayResponses(index, item);
                     })))
               ])),
@@ -256,6 +257,7 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
                   child: Column(
                     children: List.generate(groupResponses.length, (index) {
                       // HARDCODED FOR NOW; CHANGE TO data.length
+                      // print("outter index: " + index.toString());
                       return displayGroup(groupResponses[index]);
                     }),
                   ),

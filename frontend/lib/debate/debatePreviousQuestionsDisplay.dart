@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:frontend/requests/debate.dart';
 import 'package:frontend/widgets/buttons.dart';
+import 'package:frontend/widgets/fonts.dart';
 import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
 import 'package:flutter_cursor/flutter_cursor.dart';
@@ -14,83 +15,18 @@ class PreviousDebateQuestions extends StatefulWidget {
       _PreviousDebateQuestionsState();
 }
 
-/*bool widgetVisible = true;
-
-void showWidget() {
-  setState(() {
-    widgetVisible = true;
-  });
-}
-
-void setState(Null Function() param0) {}
-
-void hideWidget() {
-  setState(() {
-    widgetVisible = false;
-  });
-}
-*/
 final tiers = ["Expert", "Pro Analyst", "Analyst", "Fanalyst"];
 List<QuestionNode> questionsList = [];
-/*class ResultNode {
-  final String groupNumber;
-  final PlayerResultInfo yourResult;
-  final List<dynamic> others;
-  final String winner;
-  final String yourScore;
-  final bool reqStatus;
 
-  ResultNode(
-      {this.groupNumber,
-      this.yourResult,
-      this.others,
-      this.winner,
-      this.yourScore,
-      @required this.reqStatus});
-
-  // converts json to UserInfo object
-  factory ResultNode.fromJson(bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return ResultNode(
-        reqStatus: status,
-      );
-    }
-
-    return ResultNode(
-        reqStatus: status,
-        groupNumber: json['groupNumber'],
-        yourResult: json['yours'],
-        others: json['theirs'],
-        yourScore: json['yourScore'],
-        winner: json['winner']);
-  }
+Widget backbar(BuildContext context) {
+  return AppBar(
+      leading: BackButton(
+          color: Colors.white,
+          onPressed: () => Navigator.of(context).pushNamed("/debate")),
+      title: Text("Debate", style: TextStyle(color: Colors.black)),
+      centerTitle: true,
+      backgroundColor: Colors.greenAccent);
 }
-*/
-/*class PlayerResultInfo {
-  final String username;
-  final String response;
-  final String rating;
-  final bool reqStatus;
-
-  PlayerResultInfo(
-      {this.username, this.response, this.rating, @required this.reqStatus});
-
-  // converts json to UserInfo object
-  factory PlayerResultInfo.fromJson(bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return PlayerResultInfo(
-        reqStatus: status,
-      );
-    }
-
-    return PlayerResultInfo(
-        reqStatus: status,
-        username: json['username'],
-        response: json['response'],
-        rating: json['averageRating']);
-  }
-}
-*/
 
 class _PreviousDebateQuestionsState extends State<PreviousDebateQuestions> {
   List data;
@@ -117,9 +53,17 @@ class _PreviousDebateQuestionsState extends State<PreviousDebateQuestions> {
         if (snapshot.hasData) {
           List<QuestionNode> debateQns;
           debateQns = snapshot.data;
-          return DebatePage(
-            questions: debateQns,
-          );
+          if (debateQns.length > 0) {
+            return DebatePage(
+              questions: debateQns,
+            );
+          } else {
+            return Scaffold(
+                appBar: backbar(context),
+                body: Container(
+                    padding: EdgeInsets.all(50),
+                    child: h2("No questions for Today :(")));
+          }
         } else {
           return CircularProgressIndicator();
         }
@@ -296,13 +240,7 @@ class _DebatepageState extends State<DebatePage> {
   Widget build(BuildContext context) {
     //final appState = AppStateProvider.of<AppState>(context);
     return Scaffold(
-        appBar: AppBar(
-            leading: BackButton(
-                color: Colors.white,
-                onPressed: () => Navigator.of(context).pushNamed("/debate")),
-            title: Text("Debate", style: TextStyle(color: Colors.black)),
-            centerTitle: true,
-            backgroundColor: Colors.greenAccent),
+        appBar: backbar(context),
         //backgroundColor: Colors.white,
         bottomNavigationBar: NavBar(0),
         body: vmargin25(Column(children: [
