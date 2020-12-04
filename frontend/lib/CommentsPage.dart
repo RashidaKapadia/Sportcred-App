@@ -136,7 +136,7 @@ class _CommentsPageState extends State<CommentsPage> {
 
   // Http post request to edit post's comments
   Future<bool> editComment(
-      String postId, String username, String newData) async {
+      String commentId, String username, String newData) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/editComment',
@@ -146,9 +146,9 @@ class _CommentsPageState extends State<CommentsPage> {
         'Access-Control-Allow-Origin': '*',
       },
       body: jsonEncode(<String, String>{
-        'postId': postId,
+        'commentId': commentId,
         'username': username,
-        'content': newData
+        'newData': newData
       }),
     );
 
@@ -212,6 +212,11 @@ class _CommentsPageState extends State<CommentsPage> {
                                     // Delete post
                                     deleteComment(
                                         this.storeUsername, allComments[i].id);
+                                    setState(() {
+                                      _futureComments =
+                                          getComments(ForComment.postId);
+                                    });
+
                                     print("COMMENT DELETED");
 
                                     Navigator.of(alertContext,
@@ -236,7 +241,7 @@ class _CommentsPageState extends State<CommentsPage> {
                   // _futureComments = getComments(ForComment.postId);
                   break;
                 case 'Edit':
-                  _editComment(ForComment.post_username, ForComment.postId,
+                  _editComment(allComments[i].username, allComments[i].id,
                       allComments[i].content);
                   break;
               }
@@ -259,6 +264,7 @@ class _CommentsPageState extends State<CommentsPage> {
     if (this.storeUsername != creatorUsername) {
       errorPopup(context, "You can only edit your comment!");
     } else {
+      print("id: " + postId);
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -315,10 +321,13 @@ class _CommentsPageState extends State<CommentsPage> {
                                   if (editCommentController.value.text
                                       .trim()
                                       .isNotEmpty) {
-                                    editComment(
-                                        ForComment.postId,
-                                        ForComment.post_username,
+                                    print(editCommentController.value.text);
+                                    editComment(postId, this.storeUsername,
                                         editCommentController.value.text);
+                                    setState(() {
+                                      _futureComments =
+                                          getComments(ForComment.postId);
+                                    });
 
                                     Navigator.of(context, rootNavigator: true)
                                         .pop();
@@ -338,18 +347,18 @@ class _CommentsPageState extends State<CommentsPage> {
     }
   }
 
-  void handleClick(String value) {
-    switch (value) {
-      case 'Edit':
-        break;
-      case 'Delete':
-        deleteSucess = deleteComment(
-            ForComment.post_username
-            //change to this.storeUsername
-            ,
-            this.newComment);
-    }
-  }
+  // void handleClick(String value) {
+  //   switch (value) {
+  //     case 'Edit':
+  //       break;
+  //     case 'Delete':
+  //       deleteSucess = deleteComment(
+  //           ForComment.post_username
+  //           //change to this.storeUsername
+  //           ,
+  //           this.newComment);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -396,7 +405,7 @@ class _CommentsPageState extends State<CommentsPage> {
                     print("Pressed" + ForComment.postId);
                     postSucess = postComment(
                         ForComment.postId,
-                        ForComment.post_username
+                        this.storeUsername
                         //change to this.storeUsername
                         ,
                         this.newComment);
