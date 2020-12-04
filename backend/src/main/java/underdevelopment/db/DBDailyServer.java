@@ -53,22 +53,34 @@ public class DBDailyServer {
 	        		
 	        		// Loop through all the group responses that start with ystd's date
 					Result result = tx.run(String.format("MATCH (u:DebateGroup) WHERE u.id =~ '%s' RETURN u.id as ID", ystd + ".*"));
-					System.out.println(String.format("MATCH (u:DebateResponse) WHERE u.id =~ '%s' RETURN u.id as ID", ystd + ".*"));
-					System.out.println(result.hasNext());
 					// Loop through the groups
 					while(result.hasNext()) {
+						// groupID
 						String ID = result.next().get("ID").asString();
 						// Get the winner of the group
 						Map<String, Object> winner = findWinner(ID, tx);
 						String message = "Voting for debate has ended and results are now out."; 
+						Map<String, Double> avgScores = (Map<String, Double>) winner.get("userScores");
 						tx.run(String.format("MATCH (u:DebateGroup) WHERE u.id =~ \"%s\" SET u.winner = \"%s\"",  ID, winner.get("winner")));
 						// Loop through all the responses and send a notification to all of them
 						List<String> responseUsers = DBDebateGroups.getUserList(ID);
 						for(int i = 0; i < responseUsers.size(); i++) {
 							System.out.println(responseUsers.get(i));
-							//	public static int createNotification(String username, String type, String category, int ID, String title) {
-							DBNotifications.createNotification(responseUsers.get(i).substring(1,responseUsers.get(i).length() - 1), "results",  "debate",  0,  message);
+							String currentUser = responseUsers.get(i).substring(1,responseUsers.get(i).length() - 1);
+							//	createNotification(String username, String type, String category, int ID, String title) {
+							DBNotifications.createNotification(currentUser, "results",  "debate",  0,  message);
+							// how do i get the IDs?
+							
+							// We need to change their ACS too
+							
+							int bonus = avgScores.get(currentUser).intValue() + 1;
+							if(currentUser == winner.get("winner")) {
+								bonus += 5;
+							}
+							DBAcs.editACS(currentUser,  bonus, null, "debate", LocalDate.now().toString());
+							
 						}
+						
 					}
 					tx.commit();
 					tx.close();
@@ -86,13 +98,15 @@ public class DBDailyServer {
         return retVal;
 	}
 
-	
+	// Finds the winners. Also stores a map of users -> average score
+	// If there is a draw?????
 	private static Map<String, Object> findWinner(String groupID, Transaction tx) {
 		// Find all responses in the group
 		Result responses = tx.run(String.format("MATCH (n:DebateResponse)<-[:hasResponse]-(u:DebateGroup) WHERE u.id = '%s' RETURN n.username as username, ID(n) as ID, n.avgScore as avgScore", groupID));
 		double max = 0;
 		String winner = null;
 		Map<String, Object> retVal =  new HashMap();
+		Map<String, Double> scores = new HashMap();
 		// Loop through the responses in the group
 		while(responses.hasNext()) {
 			Record response = responses.next();
@@ -101,10 +115,15 @@ public class DBDailyServer {
 			if(max < cur) {
 				max = cur;
 				winner = username;
+			}else if(max == cur) {
+				// No winne
+				winner = "draw";
 			}
+			scores.put(username, cur);
 		}
 		retVal.put("winner", winner);
 		retVal.put("score", max);
+		retVal.put("userScores", scores);
 		System.out.println("winner for the groups: " + groupID + " is:" +  winner);
 		//System.out.println(max);
 		return retVal;
