@@ -46,7 +46,7 @@ public class DBDailyServer {
 	public static boolean sendDebateResultNotification() {
 		boolean retVal = false;
 		// Find ystd's date
-		String ystd =  LocalDate.now().minus(Period.ofDays(1)).toString();
+		String ystd =  LocalDate.now().minus(Period.ofDays(2)).toString();
 		System.out.println(ystd);
 		 try (Session session = Connect.driver.session()){
 	        	try (Transaction tx = session.beginTransaction()) {

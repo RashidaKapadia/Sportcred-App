@@ -219,33 +219,36 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
       child: CarouselSlider(
         options: CarouselOptions(
           scrollDirection: Axis.horizontal,
-          height: 450,
+          height: 440,
           autoPlay: false,
           enlargeCenterPage: true,
         ),
         // Items list will require to be updated here as well anytime new category is added
         items: groupResponses.map((item) {
-          return displayGroup(item);
+          return SingleChildScrollView(
+            child: displayGroup(item),
+          );
         }).toList(),
       ),
     );
     return Scaffold(
-        appBar: AppBar(
-            leading: BackButton(
-                color: Colors.white,
-                onPressed: () => Navigator.of(context)
-                    .pushNamed("/debatePreviousQuestions")),
-            title: Text("Debate", style: TextStyle(color: Colors.black)),
-            centerTitle: true,
-            backgroundColor: Colors.greenAccent),
-        backgroundColor: Colors.black12,
-        bottomNavigationBar: NavBar(0),
-        body: SingleChildScrollView(
-            child: Container(
-                padding: EdgeInsets.symmetric(vertical: 30),
-                child: Column(children: [
-                  h3(question, color: Colors.black),
-                  categoryCarousel,
-                ]))));
+      appBar: AppBar(
+          leading: BackButton(
+              color: Colors.white,
+              onPressed: () =>
+                  Navigator.of(context).pushNamed("/debatePreviousQuestions")),
+          title: Text("Debate", style: TextStyle(color: Colors.black)),
+          centerTitle: true,
+          backgroundColor: Colors.greenAccent),
+      backgroundColor: Colors.black12,
+      bottomNavigationBar: NavBar(0),
+      body: Container(
+        padding: EdgeInsets.symmetric(vertical: 30),
+        child: Column(children: [
+          h3(question, color: Colors.black),
+          categoryCarousel,
+        ]),
+      ),
+    );
   }
 }
