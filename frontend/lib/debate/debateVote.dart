@@ -12,47 +12,103 @@ import '../navbar.dart';
 import 'dart:async';
 
 class DebateVote extends StatefulWidget {
+  String username;
+  DebateVote({@required this.username});
   @override
   _DebateVoteState createState() => _DebateVoteState();
 }
 
-List<GroupNode> allGroupResponses = [];
+//List<GroupNode> allGroupResponses = [];
+//String question = "";
 
 class _DebateVoteState extends State<DebateVote> {
-  // TODO: Temp hardcoding
+  //Future<List<GroupNode>> _futureGroupResponses;
+  var _future;
+  String currentUser = "";
+
+  @override
+  void initState() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        print("Gonna call GetGroupResponses and question");
+
+        currentUser = value.toString();
+      });
+      setState(() {
+        _future = getDebateVoteData(currentUser);
+      });
+    });
+    super.initState();
+  }
+
+  Widget loadDebateGroupsAndQuestion() {
+    return FutureBuilder<dynamic>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<GroupNode> groupResponses;
+          String question = "";
+          //debateQns = snapshot.data;
+          List qnsNresponses = snapshot.data as List<dynamic>;
+          groupResponses = qnsNresponses[1];
+          question = qnsNresponses[0];
+          return DebatePage(
+            groupResponses: groupResponses,
+            question: question,
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      (_future != null) ? loadDebateGroupsAndQuestion() : Text("loading....");
+}
+
+class DebatePage extends StatefulWidget {
+  List<GroupNode> groupResponses;
+  String question = "";
+  DebatePage({
+    Key key,
+    @required this.groupResponses,
+    @required this.question,
+  }) : super(key: key);
+
+  @override
+  _DebatepageState createState() =>
+      _DebatepageState(groupResponses: groupResponses, question: question);
+}
+
+class _DebatepageState extends State<DebatePage> {
+  List<GroupNode> groupResponses;
   String chosenCategory = '';
   List data = ['1', '2', '3'];
   double _value1 = 5;
   double _value2 = 5;
   double _value3 = 5;
   List sliderValues = [];
-
-  Future<List<GroupNode>> _futureGroupResponses;
+  List<String> selectedAnswers = [];
+  String question = "";
   String currentUser = "";
-
-  void loadfutures() {
-    FlutterSession().get('username').then((value) {
-      this.setState(() {
-        print("Gonna call GetGroupResponses");
-
-        currentUser = value.toString();
-        _futureGroupResponses = getGroupResponses(currentUser);
-
-        print("FUTURE Group Responses" + _futureGroupResponses.toString());
-        print("init" + allGroupResponses.toString());
-      });
-    });
-  }
-
-  void initState() {
-    super.initState();
-    loadfutures();
-  }
+  _DebatepageState({@required this.groupResponses, @required this.question});
 
   initializeSlider() {
     sliderValues.add(_value1);
     sliderValues.add(_value2);
     sliderValues.add(_value3);
+  }
+
+  @override
+  void initState() {
+    FlutterSession().get('username').then((value) {
+      this.setState(() {
+        currentUser = value.toString();
+      });
+    });
+    super.initState();
   }
 
   Widget createSlider(int i) {
@@ -78,7 +134,7 @@ class _DebateVoteState extends State<DebateVote> {
   }
 
   Widget displayResponses(int i, GroupNode group) {
-    Group_ResponsesNode gr = group.responses[i];
+    //Group_ResponsesNode gr = group.responses[i];
     var button = Container();
     if (i == 2) {
       button = plainButton(
@@ -87,12 +143,8 @@ class _DebateVoteState extends State<DebateVote> {
           backgroundColor: Colors.lightGreen[700],
           onPressed: () {
             setState(() {
-              //_value1 = 5;
-              //_value2 = 5;
-              //_value3 = 5;
-              // TEMP
               print("Testing Submiting votes");
-              submitVotes("2020-12-01-FANALYST-0", "apple6", [103, 102, 91],
+              submitVotes(group.groupId, currentUser, [103, 102, 91],
                   [sliderValues[0], sliderValues[1], sliderValues[2]]);
             });
           });
@@ -105,7 +157,8 @@ class _DebateVoteState extends State<DebateVote> {
             //padding: const EdgeInsets.all(7.0),
             child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: AutoSizeText(gr.response
+          child: AutoSizeText(group.responses[i].response
+              //gr.response
               // Group_responsesNode = group.responses[i].res
               //"Dogs are the best hands down, they are super energetic and" +
               //  "silly, they are great mood boosters when your downdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd!",
@@ -153,7 +206,7 @@ class _DebateVoteState extends State<DebateVote> {
           enlargeCenterPage: true,
         ),
         // Items list will require to be updated here as well anytime new category is added
-        items: allGroupResponses.map((item) {
+        items: groupResponses.map((item) {
           return displayGroup(item);
         }).toList(),
       ),
@@ -173,7 +226,7 @@ class _DebateVoteState extends State<DebateVote> {
         body: Container(
             padding: EdgeInsets.symmetric(vertical: 30),
             child: Column(children: [
-              h3("Question : abcefghijklmn", color: Colors.black),
+              h3("Question:" + question, color: Colors.black),
               categoryCarousel,
             ])));
   }
