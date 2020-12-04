@@ -44,7 +44,7 @@ public class DBDebate {
         return getQuestionByDate(LocalDate.now().minusDays(1).toString());
     }
 
-    public static String getTier(int acs) {
+    public static String getTier(double acs) {
         if (acs <= 300) {
             return "FANALYST";
         } else if (acs <= 600) {
@@ -58,12 +58,12 @@ public class DBDebate {
         }
     }
 
-    private static int getACS(String username) {
-        int acs = -1;
+    private static double getACS(String username) {
+        double acs = -1;
         try (Session session = Connect.driver.session()) {
             Result result = session.run("match (u:user {username: $u}) return u.acs as acs", parameters("u", username));
             if (result.hasNext()) {
-                acs = result.next().get("acs").asInt();
+                acs = result.next().get("acs").asDouble();
             }
         }
         catch (Exception e) {
@@ -90,13 +90,13 @@ public class DBDebate {
     // /api/debate/get-group-responses-my-question
     public static ArrayList<Record> getResponsesMyQuestion(String username) {
         return getResponsesByQuery("match (n:DebateQuestion {tier: $t, date: $d})-[:hasGroup]-(g:DebateGroup) with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect({response: r.debateAnalysis, responseId: ID(r)}) as responses", 
-                                    parameters("d", LocalDate.now().toString(), "t", getTier(getACS(username))));
+                                    parameters("d", LocalDate.now().minusDays(1).toString(), "t", getTier(getACS(username))));
     }
 
     // /api/debate/get-previous-topic-result
     public static Record getResultMyPreviousQuestion(String username) {
         try (Session session = Connect.driver.session()) {
-            Result result = session.run("match (r:DebateResponse {username: $u, date: $d})-[:hasResponse]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) return ID(g) as groupId, r as yours, collect(o) as theirs",
+            Result result = session.run("match (r:DebateResponse {username: $u, date: $d})-[:hasResponse]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) return ID(g) as groupId, g.winner as winner, case when g.winner = $u then 5 else 0 end + toInteger(r.avgScore) + 1 as yourScore, r as yours, collect(o) as theirs",
                                         parameters("d", LocalDate.now().minusDays(1).toString(), "u", username));
             return (result.hasNext()) ? result.next() : null;
         }
@@ -112,10 +112,9 @@ public class DBDebate {
                                     parameters("q", questionId));
     }
 
-    // TODO: /api/debate/get-debate-group-responses-n-results
-    public static void getResponsesFinished(int questionId) {
-        /*
-         match (n:DebateQuestion)-[:hasGroup]-(g:DebateGroup) where ID(n)=49 with g match (g:DebateGroup)-[:hasResponse]-(r:DebateResponse) return g.id as groupId, collect(r) as responses
-         */
+    // /api/debate/get-debate-group-responses-n-results
+    public static ArrayList<Record> getResponsesFinished(int questionId) {
+        return getResponsesByQuery("match (q:DebateQuestion)-[:hasGroup]-(g:DebateGroup)-[:hasResponse]-(o:DebateResponse) where ID(q)=$q return ID(g) as groupId, g.winner as winner, collect(o) as responses", 
+                                    parameters("q", questionId));
     }
 }
