@@ -510,7 +510,7 @@ class _TheZoneState extends State<TheZone> {
 
   void _agreePost(int index, bool agree) {
     if (currentUser == allZonePosts[index].username.toString()) {
-      errorPopup(context, "You can only like or dislike your own post!");
+      errorPopup(context, "You cannnot like or dislike your own post!");
     } else {
       agreeOrDisagreeToPost(
           currentUser, allZonePosts[index].uniqueIdentifier.toString(), agree);
