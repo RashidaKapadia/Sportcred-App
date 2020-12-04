@@ -161,21 +161,21 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
       decoration: new BoxDecoration(
         borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
       ),
-      child: SingleChildScrollView(
-          /*child: Card(
+      //child: SingleChildScrollView(
+      /*child: Card(
               color: Colors.white,
               borderOnForeground: false,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0)),
               elevation: 15.0,*/
-          child: Column(children: [
+      child: Column(children: [
         Padding(
             padding: const EdgeInsets.all(7.0),
             child: Column(
                 children: List.generate(item.responses.length, (index) {
               return displayResponses(index, item.responses[index]);
             })))
-      ])),
+      ]),
     );
   }
 
@@ -240,11 +240,12 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
             backgroundColor: Colors.greenAccent),
         backgroundColor: Colors.black12,
         bottomNavigationBar: NavBar(0),
-        body: Container(
-            padding: EdgeInsets.symmetric(vertical: 30),
-            child: Column(children: [
-              h3(question, color: Colors.black),
-              categoryCarousel,
-            ])));
+        body: SingleChildScrollView(
+            child: Container(
+                padding: EdgeInsets.symmetric(vertical: 30),
+                child: Column(children: [
+                  h3(question, color: Colors.black),
+                  categoryCarousel,
+                ]))));
   }
 }
