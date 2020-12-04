@@ -168,32 +168,32 @@ class _ACSHistoryPageState extends State<ACSHistoryPage> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 2,
-              child: Container(
-                child: new Text(
-                  this.oppUserane[i],
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                alignment: Alignment.center,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(0)),
-                  shape: BoxShape.rectangle,
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 4,
-                  ),
-                  color: int.parse(this.amount[i]) >= 0
-                      ? Colors.green
-                      : int.parse(this.amount[i]) <= 0
-                          ? Colors.red
-                          : Colors.orange,
-                ),
-              ),
-            ),
+            // Expanded(
+            //   flex: 2,
+            //   child: Container(
+            //     child: new Text(
+            //       this.oppUserane[i],
+            //       textAlign: TextAlign.center,
+            //       overflow: TextOverflow.ellipsis,
+            //       style: TextStyle(fontWeight: FontWeight.bold),
+            //     ),
+            //     alignment: Alignment.center,
+            //     height: 50,
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.all(Radius.circular(0)),
+            //       shape: BoxShape.rectangle,
+            //       border: Border.all(
+            //         color: Colors.black,
+            //         width: 4,
+            //       ),
+            //       color: int.parse(this.amount[i]) >= 0
+            //           ? Colors.green
+            //           : int.parse(this.amount[i]) <= 0
+            //               ? Colors.red
+            //               : Colors.orange,
+            //     ),
+            //   ),
+            // ),
             Expanded(
               flex: 2,
               child: Container(
@@ -293,28 +293,28 @@ class _ACSHistoryPageState extends State<ACSHistoryPage> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 2,
-              child: Container(
-                child: new Text(
-                  "Opponent",
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                alignment: Alignment.center,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(0)),
-                  shape: BoxShape.rectangle,
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 4,
-                  ),
-                  color: Colors.orange,
-                ),
-              ),
-            ),
+            // Expanded(
+            //   flex: 2,
+            //   child: Container(
+            //     child: new Text(
+            //       "Opponent",
+            //       textAlign: TextAlign.center,
+            //       overflow: TextOverflow.ellipsis,
+            //       style: TextStyle(fontWeight: FontWeight.bold),
+            //     ),
+            //     alignment: Alignment.center,
+            //     height: 50,
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.all(Radius.circular(0)),
+            //       shape: BoxShape.rectangle,
+            //       border: Border.all(
+            //         color: Colors.black,
+            //         width: 4,
+            //       ),
+            //       color: Colors.orange,
+            //     ),
+            //   ),
+            // ),
             Expanded(
               flex: 2,
               child: Container(
