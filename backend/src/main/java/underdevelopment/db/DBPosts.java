@@ -118,7 +118,7 @@ public class DBPosts {
     public static boolean deletePost(String postId){
         try (Session session = Connect.driver.session()){
 			session.writeTransaction(tx -> tx.run(
-                "MATCH (p:post {uniqueIdentifier: $x}) DELETE p", parameters("x", postId)));
+                "MATCH (p:post {uniqueIdentifier: $x}) DETACH DELETE p", parameters("x", postId)));
 			session.close();
 			return true;
 		}catch (Exception e) {
