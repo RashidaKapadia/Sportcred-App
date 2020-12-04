@@ -19,7 +19,8 @@ public class DailyServerHandler {
             String username, activity;
             // Get and validate input
            
-
+            // Create groups for ystd
+            DebateGroups.createDebateGroups();
             // Get questions from the db
             Boolean dailyQuestions = DBDailyServer.sendDailyQuestionNotification();
             Boolean debateResults = DBDailyServer.sendDebateResultNotification();
