@@ -416,6 +416,7 @@ class _TheZoneState extends State<TheZone> {
   }
 
   Widget makeFeed(int index) {
+    int match = allZonePosts[index].timestamp.indexOf('T');
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
@@ -443,7 +444,11 @@ class _TheZoneState extends State<TheZone> {
                 'Posted by ' +
                     allZonePosts[index].username +
                     ': ' +
-                    allZonePosts[index].timestamp,
+                    allZonePosts[index].timestamp.substring(0, match) +
+                    "  " +
+                    allZonePosts[index]
+                        .timestamp
+                        .substring(match + 1, match + 6),
                 style: TextStyle(color: Colors.black.withOpacity(0.6)),
               ),
             ),
