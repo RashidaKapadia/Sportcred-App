@@ -36,12 +36,12 @@ public class DBDebate {
 
     // /api/debate/get-ongoing-questions 
     public static ArrayList<Map<String, Object>> getOngoingQuesions() {
-        return getQuestionByDate(LocalDate.now().toString());
+        return getQuestionByDate(LocalDate.now().minusDays(1).toString());
     }
 
     // /api/debate/get-finished-questions
     public static ArrayList<Map<String, Object>> getFinishedQuesions() {
-        return getQuestionByDate(LocalDate.now().minusDays(1).toString());
+        return getQuestionByDate(LocalDate.now().minusDays(2).toString());
     }
 
     public static String getTier(double acs) {
