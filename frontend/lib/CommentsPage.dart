@@ -212,10 +212,10 @@ class _CommentsPageState extends State<CommentsPage> {
                                     // Delete post
                                     deleteComment(
                                         this.storeUsername, allComments[i].id);
-                                    setState(() {
-                                      _futureComments =
-                                          getComments(ForComment.postId);
-                                    });
+                                    // setState(() {
+                                    _futureComments =
+                                        getComments(ForComment.postId);
+                                    // });
 
                                     print("COMMENT DELETED");
 
