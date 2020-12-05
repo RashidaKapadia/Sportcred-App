@@ -78,9 +78,8 @@ public class DBDailyServer {
 								bonus += 5;
 							}
 							DBAcs.editACS(currentUser,  bonus, null, "debate", LocalDate.now().toString());
-							
 						}
-						
+
 					}
 					tx.commit();
 					tx.close();
@@ -99,7 +98,6 @@ public class DBDailyServer {
 	}
 
 	// Finds the winners. Also stores a map of users -> average score
-	// If there is a draw?????
 	private static Map<String, Object> findWinner(String groupID, Transaction tx) {
 		// Find all responses in the group
 		Result responses = tx.run(String.format("MATCH (n:DebateResponse)<-[:hasResponse]-(u:DebateGroup) WHERE u.id = '%s' RETURN n.username as username, ID(n) as ID, n.avgScore as avgScore", groupID));
