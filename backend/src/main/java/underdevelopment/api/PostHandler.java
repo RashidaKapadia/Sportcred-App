@@ -302,15 +302,14 @@ public class PostHandler {
           
             System.out.println(subString.equals(username));
 
-            if (subString.equals(username)) {
+           /*  if (subString.equals(username)) {
                 try {
-                    System.out.println("The post does not belong to the current user");
                     response = new JSONObject().put("You canot agree/disagree to  your own own post", false).toString();
                     return new JsonHttpReponse(Status.CONFLICT, response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
+            } */
 
             boolean isUpdated = DBPosts.likedOrDislikedPost(username, postId, agreed);
             if (!isUpdated) {

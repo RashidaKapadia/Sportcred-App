@@ -144,13 +144,13 @@ class _TheZoneState extends State<TheZone> {
         print("in api" + allZonePosts.toString());
       });
       // Return posts data
+      return allPosts;
     } else {
       return null;
     }
   }
 
-  Future<dynamic> createPost(
-      String creatorUsername, String content, String title) async {
+  Future<dynamic> createPost(String content, String title) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/addPost',
@@ -160,7 +160,7 @@ class _TheZoneState extends State<TheZone> {
         'Access-Control-Allow-Origin': '*',
       },
       body: jsonEncode(<String, String>{
-        'username': creatorUsername,
+        'username': currentUser,
         'content': content,
         'title': title,
       }),
@@ -179,8 +179,7 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
-  Future<dynamic> agreeOrDisagreeToPost(
-      String username, String postId, bool agree) async {
+  Future<dynamic> agreeOrDisagreeToPost(String postId, bool agree) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/agreedOrDisagreedPost',
@@ -191,7 +190,7 @@ class _TheZoneState extends State<TheZone> {
       },
       body: jsonEncode(<String, Object>{
         'postId': postId,
-        'username': username,
+        'username': currentUser,
         'agreed': agree
       }),
     );
@@ -217,8 +216,7 @@ class _TheZoneState extends State<TheZone> {
 
   Future<List<PostNode>> _futurePosts;
 
-  Future editPost(String postId, String currentUsername, String content,
-      String title) async {
+  Future editPost(String postId, String content, String title) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/editPost',
@@ -229,7 +227,7 @@ class _TheZoneState extends State<TheZone> {
       },
       body: jsonEncode(<String, String>{
         'postId': postId,
-        'username': currentUsername,
+        'username': currentUser,
         'content': content,
         'title': title
       }),
@@ -247,7 +245,7 @@ class _TheZoneState extends State<TheZone> {
     }
   }
 
-  Future deletePost(String postId, String currentUsername) async {
+  Future deletePost(String postId) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/deletePost',
@@ -257,7 +255,7 @@ class _TheZoneState extends State<TheZone> {
         'Access-Control-Allow-Origin': '*',
       },
       body: jsonEncode(
-          <String, String>{'postId': postId, 'username': currentUsername}),
+          <String, String>{'postId': postId, 'username': currentUser}),
     );
 
     if (response.statusCode == 200) {
@@ -425,17 +423,19 @@ class _TheZoneState extends State<TheZone> {
           children: [
             Align(
               alignment: Alignment.topRight,
-              child: PopupMenuButton<String>(
-                onSelected: (value) => handleClick(value, index),
-                itemBuilder: (BuildContext context) {
-                  return {'Edit', 'Delete'}.map((String choice) {
-                    return PopupMenuItem<String>(
-                      value: choice,
-                      child: Text(choice),
-                    );
-                  }).toList();
-                },
-              ),
+              child: (currentUser == allZonePosts[index].username)
+                  ? PopupMenuButton<String>(
+                      onSelected: (value) => handleClick(value, index),
+                      itemBuilder: (BuildContext context) {
+                        return {'Edit', 'Delete'}.map((String choice) {
+                          return PopupMenuItem<String>(
+                            value: choice,
+                            child: Text(choice),
+                          );
+                        }).toList();
+                      },
+                    )
+                  : Text(" "),
             ),
             ListTile(
               leading: Icon(Icons.sentiment_satisfied_alt),
@@ -473,9 +473,9 @@ class _TheZoneState extends State<TheZone> {
                                   ? Colors.orange
                                   : Colors.black),
                           onPressed: () {
-                            print("CURRENT USER: " + currentUser);
-                            print("LIKE THE POST");
-                            _agreePost(index, true);
+                            agreeOrDisagreeToPost(
+                                allZonePosts[index].uniqueIdentifier.toString(),
+                                true);
                             print("LIKED THE POST");
                           }),
                       Text(allZonePosts[index].peopleAgree.length.toString())
@@ -491,9 +491,10 @@ class _TheZoneState extends State<TheZone> {
                                   ? Colors.orange
                                   : Colors.black),
                           onPressed: () {
-                            print("DISLIKE THE POST");
-
-                            _agreePost(index, false);
+                            agreeOrDisagreeToPost(
+                                allZonePosts[index].uniqueIdentifier.toString(),
+                                false);
+                            print("DISLIKED THE POST");
                           }),
                       Text(allZonePosts[index].peopleDisagree.length.toString())
                     ]),
@@ -513,15 +514,6 @@ class _TheZoneState extends State<TheZone> {
     );
   }
 
-  void _agreePost(int index, bool agree) {
-    if (currentUser == allZonePosts[index].username.toString()) {
-      errorPopup(context, "You cannnot like or dislike your own post!");
-    } else {
-      agreeOrDisagreeToPost(
-          currentUser, allZonePosts[index].uniqueIdentifier.toString(), agree);
-    }
-  }
-
   void handleClick(String value, int index) {
     switch (value) {
       case 'Edit':
@@ -539,42 +531,37 @@ class _TheZoneState extends State<TheZone> {
   }
 
   void _deletePost(String creatorUsername, String postId) {
-    if (currentUser != creatorUsername) {
-      errorPopup(context, "You can only delete your post!!");
-    } else {
-      showDialog(
-          context: context,
-          builder: (alertContext) {
-            return AlertDialog(
-              title: Text("Confirmation"),
-              content: Text("Are you sure you want to delete this post?"),
-              actions: [
-                TextButton(
-                  child: Text("Yes"),
-                  onPressed: () {
-                    setState(() {
-                      print("DELETING POST");
-                      // Delete post
-                      deletePost(postId, currentUser);
-                      print("POST DELETED");
+    showDialog(
+        context: context,
+        builder: (alertContext) {
+          return AlertDialog(
+            title: Text("Confirmation"),
+            content: Text("Are you sure you want to delete this post?"),
+            actions: [
+              TextButton(
+                child: Text("Yes"),
+                onPressed: () {
+                  setState(() {
+                    print("DELETING POST");
+                    // Delete post
+                    deletePost(postId);
+                    print("POST DELETED");
 
-                      Navigator.of(alertContext, rootNavigator: true)
-                          .pop('dialog');
-                    });
-                  },
-                ),
-                TextButton(
-                  child: Text("No"),
-                  onPressed: () {
-                    // Close the dialog
                     Navigator.of(alertContext, rootNavigator: true)
                         .pop('dialog');
-                  },
-                )
-              ],
-            );
-          });
-    }
+                  });
+                },
+              ),
+              TextButton(
+                child: Text("No"),
+                onPressed: () {
+                  // Close the dialog
+                  Navigator.of(alertContext, rootNavigator: true).pop('dialog');
+                },
+              )
+            ],
+          );
+        });
   }
 
   void _editPost(String creatorUsername, String postId, String currTitle,
@@ -663,7 +650,6 @@ class _TheZoneState extends State<TheZone> {
 
                                     editPost(
                                         postId,
-                                        currentUser,
                                         editContentController.value.text,
                                         editTitleController.value.text);
 
@@ -765,8 +751,7 @@ class _TheZoneState extends State<TheZone> {
                                   print("CREATING POST!");
 
                                   setState(() {
-                                    createPost(
-                                        currentUser, newContent, newTitle);
+                                    createPost(newContent, newTitle);
                                   });
 
                                   Navigator.of(context, rootNavigator: true)

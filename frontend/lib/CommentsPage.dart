@@ -42,10 +42,9 @@ class _CommentsPageState extends State<CommentsPage> {
   Future<List<Comment>> _futureComments;
   int totalComments = 0;
   String newComment;
-  String storeUsername;
+  String currentUser;
   Future<bool> postSucess;
   Future<bool> deleteSucess;
-  bool _postSucess;
   bool _deleteSucess = true;
 
   // Http post request to get post's comments
@@ -81,8 +80,7 @@ class _CommentsPageState extends State<CommentsPage> {
   }
 
   // Http post request to get post's comments
-  Future<bool> postComment(
-      String postId, String username, String content) async {
+  Future<bool> postComment(String postId, String content) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/addComment',
@@ -93,12 +91,15 @@ class _CommentsPageState extends State<CommentsPage> {
       },
       body: jsonEncode(<String, String>{
         'postId': postId,
-        'username': username,
+        'username': currentUser,
         'content': content
       }),
     );
 
     if (response.statusCode == 200) {
+      setState(() {
+        getComments(postId);
+      });
       print("added comment!");
       return true;
     } else {
@@ -107,7 +108,7 @@ class _CommentsPageState extends State<CommentsPage> {
   }
 
   // Http post request to delete post's comments
-  Future<bool> deleteComment(String username, String commentId) async {
+  Future<bool> deleteComment(String postId, String commentId) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/deleteComment',
@@ -117,12 +118,17 @@ class _CommentsPageState extends State<CommentsPage> {
         'Access-Control-Allow-Origin': '*',
       },
       body: jsonEncode(
-          <String, String>{'username': username, 'commentId': commentId}),
+          <String, String>{'username': currentUser, 'commentId': commentId}),
     );
 
     if (response.statusCode == 200) {
       print("delete comment!");
       _deleteSucess = true;
+
+      setState(() {
+        getComments(postId);
+      });
+
       return true;
     } else if (response.statusCode == 409) {
       _deleteSucess = false;
@@ -135,8 +141,7 @@ class _CommentsPageState extends State<CommentsPage> {
   }
 
   // Http post request to edit post's comments
-  Future<bool> editComment(
-      String commentId, String username, String newData) async {
+  Future<bool> editComment(String commentId, String newData) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/editComment',
@@ -147,7 +152,7 @@ class _CommentsPageState extends State<CommentsPage> {
       },
       body: jsonEncode(<String, String>{
         'commentId': commentId,
-        'username': username,
+        'username': currentUser,
         'newData': newData
       }),
     );
@@ -166,8 +171,7 @@ class _CommentsPageState extends State<CommentsPage> {
     FlutterSession().get('token').then((token) {
       FlutterSession().get('username').then((username) => {
             setState(() {
-              String storeToken = token.toString();
-              this.storeUsername = username.toString();
+              this.currentUser = username.toString();
               _futureComments = getComments(ForComment.postId);
               print("init" + allComments.toString());
             })
@@ -186,165 +190,145 @@ class _CommentsPageState extends State<CommentsPage> {
         child: ListTile(
           title:
               Text(allComments[i].username + " :   " + allComments[i].content),
-          trailing: PopupMenuButton<String>(
-            onSelected: (value) {
-              switch (value) {
-                case 'Delete':
-                  //             if (currentUser != creatorUsername) {
-                  //   errorPopup(context, "You can only delete your post!!");
-                  // }
-                  if (this.storeUsername != allComments[i].username) {
-                    errorPopup(context, "You can only delete your comment!!");
-                  } else {
-                    showDialog(
-                        context: context,
-                        builder: (alertContext) {
-                          return AlertDialog(
-                            title: Text("Confirmation"),
-                            content: Text(
-                                "Are you sure you want to delete this comment?"),
-                            actions: [
-                              TextButton(
-                                child: Text("Yes"),
-                                onPressed: () {
-                                  setState(() {
-                                    print("DELETING POST");
-                                    // Delete post
-                                    deleteComment(
-                                        this.storeUsername, allComments[i].id);
-                                    // setState(() {
-                                    _futureComments =
-                                        getComments(ForComment.postId);
-                                    // });
+          trailing: (this.currentUser == allComments[i].username)
+              ? PopupMenuButton<String>(
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'Delete':
+                        showDialog(
+                            context: context,
+                            builder: (alertContext) {
+                              return AlertDialog(
+                                title: Text("Confirmation"),
+                                content: Text(
+                                    "Are you sure you want to delete this comment?"),
+                                actions: [
+                                  TextButton(
+                                    child: Text("Yes"),
+                                    onPressed: () {
+                                      setState(() {
+                                        // Delete post
+                                        deleteComment(ForComment.postId,
+                                            allComments[i].id);
 
-                                    print("COMMENT DELETED");
+                                        print("COMMENT DELETED");
 
-                                    Navigator.of(alertContext,
-                                            rootNavigator: true)
-                                        .pop('dialog');
-                                  });
-                                },
-                              ),
-                              TextButton(
-                                child: Text("No"),
-                                onPressed: () {
-                                  // Close the dialog
-                                  Navigator.of(alertContext,
-                                          rootNavigator: true)
-                                      .pop('dialog');
-                                },
-                              )
-                            ],
-                          );
-                        });
-                  }
-                  // _futureComments = getComments(ForComment.postId);
-                  break;
-                case 'Edit':
-                  _editComment(allComments[i].username, allComments[i].id,
-                      allComments[i].content);
-                  break;
-              }
-            },
-            itemBuilder: (BuildContext context) {
-              return {'Edit', 'Delete'}.map((String choice) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-          ),
+                                        Navigator.of(alertContext,
+                                                rootNavigator: true)
+                                            .pop('dialog');
+                                      });
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("No"),
+                                    onPressed: () {
+                                      // Close the dialog
+                                      Navigator.of(alertContext,
+                                              rootNavigator: true)
+                                          .pop('dialog');
+                                    },
+                                  )
+                                ],
+                              );
+                            });
+                        break;
+                      case 'Edit':
+                        _editComment(allComments[i].username, allComments[i].id,
+                            allComments[i].content);
+                        break;
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return {'Edit', 'Delete'}.map((String choice) {
+                      return PopupMenuItem<String>(
+                        value: choice,
+                        child: Text(choice),
+                      );
+                    }).toList();
+                  },
+                )
+              : Text(" "),
         ),
         decoration: new BoxDecoration(
             border: new Border(bottom: new BorderSide(color: Colors.grey))));
   }
 
   void _editComment(String creatorUsername, String postId, String currComment) {
-    if (this.storeUsername != creatorUsername) {
-      errorPopup(context, "You can only edit your comment!");
-    } else {
-      print("id: " + postId);
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            // For storing the title and content in text boxes
-            TextEditingController editCommentController =
-                TextEditingController()..text = currComment;
+    print("id: " + postId);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // For storing the title and content in text boxes
+          TextEditingController editCommentController = TextEditingController()
+            ..text = currComment;
 
-            return SizedBox(
-                height: 10,
-                width: 100,
-                child: Card(
-                  margin: EdgeInsets.all(10),
-                  elevation: 5,
-                  child: SingleChildScrollView(
-                      child: Column(
-                    children: [
-                      Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Text(
-                            "Edit Comment",
-                            style: new TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )),
-                      Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: ListTile(
-                            title: TextField(
-                              cursorColor: Colors.orange,
-                              controller: editCommentController,
-                              decoration: InputDecoration(
-                                  labelText: "Comment",
-                                  hintText: "Comment",
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(32.0))),
-                            ),
-                          )),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              RaisedButton(
-                                  child: Text("Cancel"),
-                                  onPressed: () =>
-                                      Navigator.of(context, rootNavigator: true)
-                                          .pop()),
-                              RaisedButton(
-                                child: Text("Submit"),
-                                onPressed: () {
-                                  // Check that comment content is not empty
-                                  if (editCommentController.value.text
-                                      .trim()
-                                      .isNotEmpty) {
-                                    print(editCommentController.value.text);
-                                    editComment(postId, this.storeUsername,
-                                        editCommentController.value.text);
-                                    setState(() {
-                                      _futureComments =
-                                          getComments(ForComment.postId);
-                                    });
-
+          return SizedBox(
+              height: 10,
+              width: 100,
+              child: Card(
+                margin: EdgeInsets.all(10),
+                elevation: 5,
+                child: SingleChildScrollView(
+                    child: Column(
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          "Edit Comment",
+                          style: new TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ListTile(
+                          title: TextField(
+                            cursorColor: Colors.orange,
+                            controller: editCommentController,
+                            decoration: InputDecoration(
+                                labelText: "Comment",
+                                hintText: "Comment",
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(32.0))),
+                          ),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            RaisedButton(
+                                child: Text("Cancel"),
+                                onPressed: () =>
                                     Navigator.of(context, rootNavigator: true)
-                                        .pop();
-                                    print("FINISHED EDITING COMMENT!");
-                                  } else {
-                                    errorPopup(
-                                        context, "Comment cannot be empty!");
-                                  }
-                                },
-                              )
-                            ]),
-                      )
-                    ],
-                  )),
-                ));
-          });
-    }
+                                        .pop()),
+                            RaisedButton(
+                              child: Text("Submit"),
+                              onPressed: () {
+                                // Check that comment content is not empty
+                                if (editCommentController.value.text
+                                    .trim()
+                                    .isNotEmpty) {
+                                  print(editCommentController.value.text);
+                                  editComment(
+                                      postId, editCommentController.value.text);
+
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  print("FINISHED EDITING COMMENT!");
+                                } else {
+                                  errorPopup(
+                                      context, "Comment cannot be empty!");
+                                }
+                              },
+                            )
+                          ]),
+                    )
+                  ],
+                )),
+              ));
+        });
   }
 
   // void handleClick(String value) {
@@ -388,6 +372,7 @@ class _CommentsPageState extends State<CommentsPage> {
           ListTile(
             title: TextFormField(
               controller: commentController,
+              cursorColor: Colors.orange,
               decoration: InputDecoration(
                 labelText: "Write comment ...",
               ),
@@ -398,17 +383,13 @@ class _CommentsPageState extends State<CommentsPage> {
               },
             ),
             trailing: OutlineButton(
-                borderSide: BorderSide.none,
+                borderSide: BorderSide(color: Colors.black87),
                 child: Text("Post"),
                 onPressed: () {
                   setState(() {
                     print("Pressed" + ForComment.postId);
-                    postSucess = postComment(
-                        ForComment.postId,
-                        this.storeUsername
-                        //change to this.storeUsername
-                        ,
-                        this.newComment);
+                    postSucess =
+                        postComment(ForComment.postId, this.newComment);
                     commentController.clear();
                     _futureComments = getComments(ForComment.postId);
                   });
