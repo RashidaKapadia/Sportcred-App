@@ -7,13 +7,19 @@ import com.sun.net.httpserver.HttpServer;
 
 import underdevelopment.api.ACSHandler;
 import underdevelopment.api.DailyCountHandler;
+import underdevelopment.api.DailyDebateQuestion;
+import underdevelopment.api.DailyServerHandler;
+import underdevelopment.api.DebateGroups;
+import underdevelopment.api.DebateHandler;
 import underdevelopment.api.LoginHandler;
 import underdevelopment.api.PostCommentsHandler;
 import underdevelopment.api.PostHandler;
 import underdevelopment.api.NotificationHandler;
+import underdevelopment.api.ParticipationHandler;
 import underdevelopment.api.ProfileHandler;
 import underdevelopment.api.SignUpHandler;
 import underdevelopment.api.TriviaHandler;
+import underdevelopment.api.VoteResponseHandler;
 import underdevelopment.api.utils.HttpRequestHandler;
 
 
@@ -134,7 +140,7 @@ public class App
                 new HttpRequestHandler("POST", PostHandler.handlePostCreation(), false));
         // Delete Post API test
         server.createContext("/api/deletePost", 
-                new HttpRequestHandler("DELETE", PostHandler.handleDeletePost(), authorized));
+                new HttpRequestHandler("POST", PostHandler.handleDeletePost(), authorized));
         
         server.createContext("/api/editPost", 
                 new HttpRequestHandler("POST", PostHandler.updatePost(), authorized));
@@ -157,12 +163,52 @@ public class App
 
         server.createContext("/api/getComments", 
                 new HttpRequestHandler("POST", PostCommentsHandler.handleGetComments(), authorized));
-        
-        
+                
         // Search Bar API to get posts given title
         server.createContext("/api/getPostsForSearch", 
                 new HttpRequestHandler("POST", PostHandler.handleGetPostsForSearchBar(), authorized));
+        
+        
+        
+        // Debate
+        server.createContext("/api/debate/get-daily-question", 
+        new HttpRequestHandler("POST", DailyDebateQuestion.handleGetDailyDebateQuestion(), authorized));
 
+        server.createContext("/api/debate/add-response", 
+        new HttpRequestHandler("POST", DailyDebateQuestion.handleAddResponseToDailyDebateQuestion(), authorized));
+
+        server.createContext("/api/debate/get-daily-question-response", 
+        new HttpRequestHandler("POST", DailyDebateQuestion.handleGetResponseToDailyDebateQuestion(), authorized));
+
+        server.createContext("/api/debate/create-groups", 
+        new HttpRequestHandler("POST", DebateGroups.createDebateGroups(), authorized));
+
+        server.createContext("/api/debate/get-ongoing-questions", 
+        new HttpRequestHandler("POST", DebateHandler.getOngoingQuesions(), authorized));
+
+        server.createContext("/api/debate/get-finished-questions", 
+        new HttpRequestHandler("POST", DebateHandler.getFinishedQuesions(), authorized));
+
+        server.createContext("/api/debate/get-group-responses-my-question", 
+        new HttpRequestHandler("POST", DebateHandler.getResponsesMyQuestion(), authorized));
+
+        server.createContext("/api/debate/get-previous-topic-result", 
+        new HttpRequestHandler("POST", DebateHandler.getResultMyPreviousQuestion(), authorized));
+
+        server.createContext("/api/debate/get-group-responses", 
+        new HttpRequestHandler("POST", DebateHandler.getResponsesOngoing(), authorized));
+
+        server.createContext("/api/debate/get-debate-group-responses-n-results", 
+        new HttpRequestHandler("POST", DebateHandler.getResponsesFinished(), authorized));
+
+        // voting for debate
+        server.createContext("/api/debate/vote-response", 
+                new HttpRequestHandler("POST", VoteResponseHandler.voteResponse(), authorized));
+        
+        // notification for new next day
+        server.createContext("/api/begin-day", 
+                new HttpRequestHandler("POST", DailyServerHandler.nextDay(), authorized));
+        
         // Start Server
         server.start();
     }

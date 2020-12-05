@@ -118,7 +118,7 @@ public class DBPosts {
     public static boolean deletePost(String postId){
         try (Session session = Connect.driver.session()){
 			session.writeTransaction(tx -> tx.run(
-                "MATCH (p:post {uniqueIdentifier: $x}) DELETE p", parameters("x", postId)));
+                "MATCH (p:post {uniqueIdentifier: $x}) DETACH DELETE p", parameters("x", postId)));
 			session.close();
 			return true;
 		}catch (Exception e) {
@@ -166,8 +166,20 @@ public class DBPosts {
                 Result disagreeSetResult = tx.run("Match (p:post {uniqueIdentifier: $x}) RETURN p.peopleDisagree as disagreeSet", parameters("x", postId));
                 List<Object> disagreeList = disagreeSetResult.next().get("disagreeSet").asList();
                 Set<Object> disagreeSet = new HashSet<Object>(disagreeList);
-                // if the user agreed to the post, perform the following logic
-                if(agreed == true ){
+
+               // if the user agreed to the post, perform the following logic
+                if(agreed){
+                    // Check if this user already agreed to this post, if so remove them from agree list
+                    if (agreeSet.contains(username)){
+                        agreeSet.remove(username);
+                    }else{
+                        // If user did not agree already, add their name to the agreed list
+                        agreeSet.add(username);
+                    }
+                     //  and update through query
+                     tx.run("MERGE (p: post {uniqueIdentifier: $x}) SET p.peopleAgree = $y",
+                     parameters("x", postId, "y", agreeSet));
+                     
                     // user can either agree or diagree,
                     //so if user has disagreed to the post before, remove his name from the disagreed list
                     if(disagreeSet.contains(username)){
@@ -177,15 +189,24 @@ public class DBPosts {
                         parameters("x", postId, "y", disagreeSet));
 
                     }
-                    // add his name to the agreed list and update through query
-                    agreeSet.add(username);
-                    tx.run("MERGE (p: post {uniqueIdentifier: $x}) SET p.peopleAgree = $y",
-                    parameters("x", postId, "y", agreeSet));
+                   
                     tx.commit();
                     tx.close();
                 }
                 //if the user disagreed to the post, perform the following logic
                 else{
+                    // If the user disagreed already, remove them from disagree list
+                    if (disagreeSet.contains(username)){
+                        disagreeSet.remove(username);
+                    }else{
+                        // If user did not disagree already, add them to the disagreed list
+                        disagreeSet.add(username);
+                    }
+
+                     // update through query
+                     tx.run("MERGE (p: post {uniqueIdentifier: $x}) SET p.peopleDisagree = $y",
+                     parameters("x", postId, "y", disagreeSet));
+
                     // user can either agree or diagree,
                     //so if user has agreed to the post before, remove his name from the agreed list
                     if(agreeSet.contains(username)){
@@ -195,10 +216,7 @@ public class DBPosts {
                         tx.run("MERGE (p: post {uniqueIdentifier: $x}) SET p.peopleAgree = $y",
                         parameters("x", postId, "y", agreeSet));
                     }
-                    // add his name to the disagreed list and update through query
-                    disagreeSet.add(username);
-                    tx.run("MERGE (p: post {uniqueIdentifier: $x}) SET p.peopleDisagree = $y",
-                    parameters("x", postId, "y", disagreeSet));
+
                     tx.commit();
                     tx.close();
                 }

@@ -2,6 +2,7 @@ package underdevelopment.db;
 
 import static org.neo4j.driver.Values.parameters;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.neo4j.driver.Record;
@@ -9,6 +10,8 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
 import org.neo4j.driver.Value;
+
+import underdevelopment.api.ProfileHandler;
 
 public class DBUserInfo {
 
@@ -30,15 +33,15 @@ public class DBUserInfo {
       String phoneNumber, String favSport, String sportLevel, String sportToLearn, String favTeam, String dob) {
     // set the values for the instance variables
     System.out.println("adding the user: " + username);
-
+    String curDate =  LocalDate.now().toString();
     // Create a user node in DB for the user with the provided data
     try (Session session = Connect.driver.session()) {
       session.writeTransaction(tx -> tx.run(String.format(
         "MERGE (a:user {firstname: \"%s\", lastname: \"%s\", email: \"%s\", username: \"%s\", password: \"%s\", "
         + "phoneNumber: \"%s\", favSport: \"%s\", sportLevel: \"%s\", sportToLearn: \"%s\","
-        + "favTeam: \"%s\", dob: \"%s\", acs: %d, about: \"%s\", status: \"%s\", numberOfPosts: %d, triviaMultiPlays: 5})",
+        + "favTeam: \"%s\", dob: \"%s\", acs: %d, about: \"%s\", status: \"%s\", numberOfPosts: %d, triviaMultiPlays: 5, prevTriviaDate: %s})",
     firstname, lastname, email, username, password, phoneNumber, favSport, sportLevel, sportToLearn, favTeam, dob,
-    100, "N/A","Hungry for basketball", 0)));
+    100, "N/A","Hungry for basketball", 0, curDate)));
       // System.out.println("finished adding the user");
       session.close();
       return true;
@@ -48,6 +51,11 @@ public class DBUserInfo {
 
   }
 
+  /**
+   * Get the user's full name given their username.
+   * @param username
+   * @return
+   */
   public static String getUserFullName(String username){
     String fullName = "";
     // Run query to check if a user with given username already exists
@@ -64,8 +72,46 @@ public class DBUserInfo {
       }
     }
 
-    // Return false if user with given username does not exist
+    // Return "" if user with given username does not exist
     return fullName;
+  }
+
+  /**
+   * Get's user's ACS given username
+   */
+  public static int getUserACS(String username){
+    int acs = -1;
+
+    // Run query to check if a user with given username already exists
+    try (Session session = Connect.driver.session()) {
+      try (Transaction tx = session.beginTransaction()) {
+        Result names = tx.run("MATCH (u:user {username: $x}) RETURN u.acs as acs, u.participation as participation", parameters("x", username));
+
+        // If any results have been returned, it means user exists already
+        if (names.hasNext()) {
+          Record data = names.single();
+           acs = data.get("acs").asInt();
+           //acs += data.get("participation", 0);
+
+        }
+      }
+    }
+
+    // Return -1 if user with given username does not exist
+    return acs;
+  }
+
+  public static String getUserTier(String username){
+    String tier = "";
+
+    int acs = getUserACS(username);
+
+
+    if (acs != -1){
+      tier = ProfileHandler.getTier(acs);
+    }
+
+    return tier;
   }
   /**
    * Return true if and only if a user with the given username already exists
@@ -185,7 +231,7 @@ public class DBUserInfo {
    */
   public static boolean updatePostCount(String username, int num) {
     System.out.println(num);
-    try(Session session = Connect.driver.session()){
+    /*try(Session session = Connect.driver.session()){
       session.writeTransaction(tx->tx.run("MATCH (u: user{username: $x}) SET u.numberOfPosts = $y + toInteger(u.numberOfPosts) ",
       parameters("x", username, "y", num)));
       session.close();
@@ -196,6 +242,22 @@ public class DBUserInfo {
       return false;
     }
 
+  }*/
+  try (Session session = Connect.driver.session()){
+    try (Transaction tx = session.beginTransaction()){
+      tx.run("MERGE (u: user{username: $x}) SET u.numberOfPosts = $y + toInteger(u.numberOfPosts)",
+                    parameters("x", username, "y", num));
+                    tx.commit();
+                    tx.close();
+
+    }
+    session.close();
+    return true;
+  }catch (Exception e) {
+    e.printStackTrace();
+    return false;
+  
   }
+}
 
 }

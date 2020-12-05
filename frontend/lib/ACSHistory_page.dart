@@ -63,12 +63,15 @@ class _ACSHistoryPageState extends State<ACSHistoryPage> {
     if (response.statusCode == 200) {
       // Store the session token
       ACS acsHistory = ACS.fromJson(true, jsonDecode(response.body));
-      print(acsHistory.amount);
       setState(() {
-        this.amount = acsHistory.amount;
-        this.date = acsHistory.date;
-        this.oppUserane = acsHistory.oppUserane;
-        this.gameType = acsHistory.gameType;
+        if (acsHistory != null) {
+          this.amount = acsHistory.amount;
+          this.date = acsHistory.date;
+          this.oppUserane = acsHistory.oppUserane;
+          this.gameType = acsHistory.gameType;
+          print(this.gameType);
+          print(acsHistory.gameType);
+        }
       });
       int count = 0;
       for (dynamic i in acsHistory.amount) {
@@ -86,23 +89,26 @@ class _ACSHistoryPageState extends State<ACSHistoryPage> {
 
   @override
   void initState() {
-    FlutterSession().get('token').then((token) {
-      FlutterSession().get('username').then((username) => {
-            setState(() {
-              String store_token = token.toString();
-              _futureACS = getACSHistory(username.toString(), store_token, 10);
-            })
-          });
-    });
-
-    if (_futureACS != null) {
-      print(_futureACS);
+    if (FlutterSession() != null) {
+      FlutterSession().get('token').then((token) {
+        FlutterSession().get('username').then((username) => {
+              setState(() {
+                historyAmount = 0;
+                String store_token = token.toString();
+                _futureACS =
+                    getACSHistory(username.toString(), store_token, 10);
+              })
+            });
+      });
     }
+
+    if (_futureACS != null) {}
 
     super.initState();
   }
 
   Column printHistory(int i) {
+    int match = this.date[i].indexOf(':');
     return Column(
       children: <Widget>[
         Row(
@@ -111,7 +117,7 @@ class _ACSHistoryPageState extends State<ACSHistoryPage> {
               flex: 3,
               child: Container(
                 child: new Text(
-                  this.date[i],
+                  this.date[i].substring(0, match + 3),
                   textAlign: TextAlign.center,
                   // overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -149,32 +155,6 @@ class _ACSHistoryPageState extends State<ACSHistoryPage> {
                 alignment: Alignment.center,
                 height: 50,
                 decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 4,
-                  ),
-                  color: int.parse(this.amount[i]) >= 0
-                      ? Colors.green
-                      : int.parse(this.amount[i]) <= 0
-                          ? Colors.red
-                          : Colors.orange,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(
-                child: new Text(
-                  this.oppUserane[i],
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                alignment: Alignment.center,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(0)),
                   shape: BoxShape.rectangle,
                   border: Border.all(
                     color: Colors.black,
@@ -270,28 +250,6 @@ class _ACSHistoryPageState extends State<ACSHistoryPage> {
               child: Container(
                 child: new Text(
                   "Game Type",
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                alignment: Alignment.center,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(0)),
-                  shape: BoxShape.rectangle,
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 4,
-                  ),
-                  color: Colors.orange,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(
-                child: new Text(
-                  "Opponet",
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontWeight: FontWeight.bold),

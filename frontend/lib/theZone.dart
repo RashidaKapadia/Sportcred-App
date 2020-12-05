@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_session/flutter_session.dart';
+import 'package:frontend/formHelper.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -9,14 +10,19 @@ void main() => runApp(MaterialApp(
       home: TheZone(),
     ));
 
-String currentUsername;
-String old_content, old_title;
+String oldContent, oldTitle, searchTitle;
 TextEditingController _contentController = TextEditingController()..text = '';
 TextEditingController _titleController = TextEditingController()..text = '';
+TextEditingController _searchController = TextEditingController();
 
 class TheZone extends StatefulWidget {
   @override
   _TheZoneState createState() => _TheZoneState();
+}
+
+class ForComment {
+  static String postId;
+  static String post_username;
 }
 
 class PostInfo {
@@ -91,8 +97,8 @@ class PostNode {
 }
 
 void storePrevValues() {
-  old_content = _contentController.text;
-  old_title = _titleController.text;
+  oldContent = _contentController.text;
+  oldTitle = _titleController.text;
 }
 
 List<PostNode> allZonePosts = [];
@@ -101,6 +107,9 @@ class _TheZoneState extends State<TheZone> {
   bool _status = true;
   List data;
   Future<PostNode> _futurePostNode;
+  Color agreeBtnColor = Colors.black;
+  Color disagreeBtnColor = Colors.black;
+  String currentUser;
 
   Future<List<PostNode>> getPosts() async {
     // Make the request and store the response
@@ -116,9 +125,6 @@ class _TheZoneState extends State<TheZone> {
 
     if (response.statusCode == 200) {
       List<PostNode> allPosts = [];
-      // Store the session token
-      //print("Post GET -> RESPONSE:" + response.body.toString());
-      //print(jsonDecode(response.body)['questions']);
       // Get the questions, options and correctAnswers and store them in the class variables
       for (Map<String, dynamic> postNode
           in jsonDecode(response.body)["posts"] as List) {
@@ -167,6 +173,8 @@ class _TheZoneState extends State<TheZone> {
 
       return true;
     } else {
+      print("ERROR - COULD NOT CREATE POST!");
+      errorPopup(context, "Could not create post!");
       return null;
     }
   }
@@ -191,6 +199,14 @@ class _TheZoneState extends State<TheZone> {
     if (response.statusCode == 200) {
       setState(() {
         _futurePosts = getPosts();
+
+        if (agree) {
+          agreeBtnColor = Colors.orange;
+          disagreeBtnColor = Colors.black;
+        } else {
+          agreeBtnColor = Colors.black;
+          disagreeBtnColor = Colors.orange;
+        }
       });
 
       return true;
@@ -212,7 +228,7 @@ class _TheZoneState extends State<TheZone> {
         'Access-Control-Allow-Origin': '*',
       },
       body: jsonEncode(<String, String>{
-        'uniqueIdentifier': postId,
+        'postId': postId,
         'username': currentUsername,
         'content': content,
         'title': title
@@ -222,15 +238,69 @@ class _TheZoneState extends State<TheZone> {
     if (response.statusCode == 200) {
       print("Post is edited");
       setState(() {
-        //this.username = userData.username;
-        //this.acs = userData.acs;
-        //this.tier = userData.tier;
-
-        //_usernameController..text = this.username;
-        //_firstnameController..text = userData.firstname;
         _futurePosts = getPosts();
-        // Return posts data
       });
+    } else {
+      print("ERROR - COULD NOT EDIT POST!");
+      errorPopup(context, "Could not edit post!");
+      return null;
+    }
+  }
+
+  Future deletePost(String postId, String currentUsername) async {
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/deletePost',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(
+          <String, String>{'postId': postId, 'username': currentUsername}),
+    );
+
+    if (response.statusCode == 200) {
+      print("Post is deleted");
+      setState(() {
+        _futurePosts = getPosts();
+      });
+    } else {
+      print("ERROR - COULD NOT DELETE POST!");
+      errorPopup(context, "Could not delete post!");
+      return null;
+    }
+  }
+
+  void getPostsForSearch(String title) async {
+    print(title);
+    // Make the request and store the response
+    final http.Response response = await http.post(
+      'http://localhost:8080/api/getPostsForSearch"',
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Accept': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, String>{'title': title}),
+    );
+
+    if (response.statusCode == 200) {
+      List<PostNode> allPosts = [];
+      int count = (jsonDecode(response.body)["posts"]).length;
+      if (count > 0) {
+        for (Map<String, dynamic> postNode
+            in jsonDecode(response.body)["posts"] as List) {
+          allPosts += [PostNode.fromJson(true, postNode)];
+        }
+        setState(() {
+          allZonePosts = allPosts;
+        });
+      } else {
+        setState(() {
+          allZonePosts = allPosts;
+        });
+      }
     } else {
       return null;
     }
@@ -240,18 +310,13 @@ class _TheZoneState extends State<TheZone> {
   void initState() {
     super.initState();
     setState(() {
-      loadUsername();
       _futurePosts = getPosts();
       print("FUTURE POSTS" + _futurePosts.toString());
       print("init" + allZonePosts.toString());
-    });
-  }
 
-  void loadUsername() {
-    FlutterSession().get('username').then((value) {
-      this.setState(() {
-        currentUsername = value.toString();
-      });
+      FlutterSession()
+          .get('username')
+          .then((username) => {currentUser = username.toString()});
     });
   }
 
@@ -274,23 +339,33 @@ class _TheZoneState extends State<TheZone> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: Colors.grey[200]),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.grey,
-                        ),
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(color: Colors.grey),
-                        hintText: "Search",
-                      ),
+                    child: ListTile(
+                  title: TextFormField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
+                      hintText: "Search",
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchTitle = value;
+                      });
+                    },
                   ),
-                ),
+                  leading: OutlineButton(
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                      ),
+                      borderSide: BorderSide.none,
+                      onPressed: () {
+                        setState(() {
+                          getPostsForSearch(searchTitle);
+                          _searchController.clear();
+                        });
+                      }),
+                )),
                 SizedBox(
                   width: 20,
                 )
@@ -312,33 +387,6 @@ class _TheZoneState extends State<TheZone> {
                         children: List.generate(allZonePosts.length, (index) {
                       return makeFeed(index);
                     })),
-                    // makeFeed(
-                    //     userName: 'Aiony Haust',
-                    //     userImage: 'profile_icon.png',
-                    //     feedTime: '1 hr ago',
-                    //     feedText:
-                    //         'All the Lorem Ipsum generators on the Internet tend to repeat predefined.',
-                    //     feedImage: 'assets/images/SportsCred_logo.png',
-                    //     postRank: '3000',
-                    //     comments: '322'),
-                    // makeFeed(
-                    //     userName: 'Azamat Zhanisov',
-                    //     userImage: 'profile_icon.png',
-                    //     feedTime: '3 mins ago',
-                    //     feedText:
-                    //         "All the Lorem Ipsum generators on the Internet tend to repeat predefined.All the Lorem Ipsum generators on the Internet tend to repeat predefined.All the Lorem Ipsum generators on the Internet tend to repeat predefined.",
-                    //     feedImage: 'assets/images/SportsCred_logo.png',
-                    //     postRank: '309',
-                    //     comments: '22'),
-                    // makeFeed(
-                    //     userName: 'Azamat Zhanisov',
-                    //     userImage: 'profile_icon.png',
-                    //     feedTime: '3 mins ago',
-                    //     feedText:
-                    //         "All the Lorem Ipsum generators on the Internet tend to repeat predefined.",
-                    //     feedImage: 'assets/images/SportsCred_logo.png',
-                    //     postRank: '3',
-                    //     comments: '0'),
                     Center(
                         child: Text(
                       "All Caught Up!",
@@ -354,8 +402,10 @@ class _TheZoneState extends State<TheZone> {
             backgroundColor: Colors.blueGrey,
             foregroundColor: Colors.white,
             onPressed: () {
-              // Respond to button press
-              _createPost();
+              setState(() {
+                // Respond to button press
+                _createPost();
+              });
             },
             tooltip: 'Create Post',
             child: Icon(Icons.add),
@@ -365,11 +415,8 @@ class _TheZoneState extends State<TheZone> {
     );
   }
 
-  static const List<String> choices = ["Edit", "Delete"];
-
   Widget makeFeed(int index) {
-    int rank = (allZonePosts[index].peopleAgree.length -
-        allZonePosts[index].peopleDisagree.length);
+    int match = allZonePosts[index].timestamp.indexOf('T');
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
@@ -379,8 +426,7 @@ class _TheZoneState extends State<TheZone> {
             Align(
               alignment: Alignment.topRight,
               child: PopupMenuButton<String>(
-                onSelected: (context) =>
-                    handleClick(context, index, currentUsername),
+                onSelected: (value) => handleClick(value, index),
                 itemBuilder: (BuildContext context) {
                   return {'Edit', 'Delete'}.map((String choice) {
                     return PopupMenuItem<String>(
@@ -398,7 +444,11 @@ class _TheZoneState extends State<TheZone> {
                 'Posted by ' +
                     allZonePosts[index].username +
                     ': ' +
-                    allZonePosts[index].timestamp,
+                    allZonePosts[index].timestamp.substring(0, match) +
+                    "  " +
+                    allZonePosts[index]
+                        .timestamp
+                        .substring(match + 1, match + 6),
                 style: TextStyle(color: Colors.black.withOpacity(0.6)),
               ),
             ),
@@ -412,67 +462,49 @@ class _TheZoneState extends State<TheZone> {
             ButtonBar(
               alignment: MainAxisAlignment.center,
               children: [
-                // FlatButton(
-                //   textColor: const Color(0xFF6200EE),
-                //   onPressed: () {
-                //     // Perform some action
-                //   },
-                //   child: const Text('AGREE'),
-                // ),
-                // FlatButton(
-                //   textColor: const Color(0xFF6200EE),
-                //   onPressed: () {
-                //     // Perform some action
-                //   },
-                //   child: const Text('DISAGREE'),
-                // ),
-                IconButton(
-                    alignment: Alignment.bottomLeft,
-                    icon: new Icon(Icons.arrow_upward_sharp),
-                    onPressed: () {
-                      print("LIKE THE POST");
-                      FlutterSession().get('username').then((username) => {
-                            agreeOrDisagreeToPost(
-                                username.toString(),
-                                allZonePosts[index].uniqueIdentifier.toString(),
-                                true)
-                          });
-                      //editPost();
-                      print("LIKED THE POST");
-                    }),
-                Text(rank.toString()),
-                IconButton(
-                    icon: new Icon(Icons.arrow_downward_sharp),
-                    onPressed: () {
-                      print("DISLIKE THE POST");
-                      FlutterSession().get('username').then((username) => {
-                            agreeOrDisagreeToPost(
-                                username.toString(),
-                                allZonePosts[index].uniqueIdentifier.toString(),
-                                false)
-                          });
-                      print("DISLIKED THE POST!");
-                      //editPost();
-                    }),
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                          icon: new Icon(Icons.thumb_up_alt_rounded,
+                              color: allZonePosts[index]
+                                      .peopleAgree
+                                      .contains(currentUser)
+                                  ? Colors.orange
+                                  : Colors.black),
+                          onPressed: () {
+                            print("CURRENT USER: " + currentUser);
+                            print("LIKE THE POST");
+                            _agreePost(index, true);
+                            print("LIKED THE POST");
+                          }),
+                      Text(allZonePosts[index].peopleAgree.length.toString())
+                    ]),
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                          icon: new Icon(Icons.thumb_down_alt_rounded,
+                              color: allZonePosts[index]
+                                      .peopleDisagree
+                                      .contains(currentUser)
+                                  ? Colors.orange
+                                  : Colors.black),
+                          onPressed: () {
+                            print("DISLIKE THE POST");
+
+                            _agreePost(index, false);
+                          }),
+                      Text(allZonePosts[index].peopleDisagree.length.toString())
+                    ]),
                 IconButton(
                   icon: Icon(Icons.comment),
                   onPressed: () {
+                    ForComment.post_username = allZonePosts[index].username;
+                    ForComment.postId = allZonePosts[index].uniqueIdentifier;
                     Navigator.of(context).pushNamed("/comments");
                   },
                 ),
-                // Text(allZonePosts[index].comments.toString()),
-
-                // TODO: Edit this to only be visible to user of that profile
-                // IconButton(
-                //     icon: new Icon(Icons.edit),
-                //     onPressed: () {
-                //       //editPost();
-                //     }),
-                // IconButton(
-                //     icon: new Icon(Icons.delete),
-                //     onPressed: () {
-                //       //editPost();
-                //     })
               ],
             ),
           ],
@@ -481,28 +513,194 @@ class _TheZoneState extends State<TheZone> {
     );
   }
 
-  void handleClick(String value, int index, String creatorUsername) {
-    switch (value) {
-      case 'Edit':
-        break;
-      case 'Delete':
-      //deletePost(allZonePosts[index].uniqueIdentifier, currentUsername);
+  void _agreePost(int index, bool agree) {
+    if (currentUser == allZonePosts[index].username.toString()) {
+      errorPopup(context, "You cannnot like or dislike your own post!");
+    } else {
+      agreeOrDisagreeToPost(
+          currentUser, allZonePosts[index].uniqueIdentifier.toString(), agree);
     }
   }
 
-  Widget _createPost() {
+  void handleClick(String value, int index) {
+    switch (value) {
+      case 'Edit':
+        _editPost(
+            allZonePosts[index].username.toString(),
+            allZonePosts[index].uniqueIdentifier.toString(),
+            allZonePosts[index].title.toString(),
+            allZonePosts[index].content.toString());
+        break;
+      case 'Delete':
+        _deletePost(allZonePosts[index].username.toString(),
+            allZonePosts[index].uniqueIdentifier.toString());
+        break;
+    }
+  }
+
+  void _deletePost(String creatorUsername, String postId) {
+    if (currentUser != creatorUsername) {
+      errorPopup(context, "You can only delete your post!!");
+    } else {
+      showDialog(
+          context: context,
+          builder: (alertContext) {
+            return AlertDialog(
+              title: Text("Confirmation"),
+              content: Text("Are you sure you want to delete this post?"),
+              actions: [
+                TextButton(
+                  child: Text("Yes"),
+                  onPressed: () {
+                    setState(() {
+                      print("DELETING POST");
+                      // Delete post
+                      deletePost(postId, currentUser);
+                      print("POST DELETED");
+
+                      Navigator.of(alertContext, rootNavigator: true)
+                          .pop('dialog');
+                    });
+                  },
+                ),
+                TextButton(
+                  child: Text("No"),
+                  onPressed: () {
+                    // Close the dialog
+                    Navigator.of(alertContext, rootNavigator: true)
+                        .pop('dialog');
+                  },
+                )
+              ],
+            );
+          });
+    }
+  }
+
+  void _editPost(String creatorUsername, String postId, String currTitle,
+      String currContent) {
+    print("CURRENT USER: " + currentUser);
+    print("CREATOR: " + creatorUsername);
+    if (currentUser != creatorUsername) {
+      errorPopup(context, "You can only edit your post!!");
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            // For storing the title and content in text boxes
+            TextEditingController editTitleController = TextEditingController()
+              ..text = currTitle;
+            TextEditingController editContentController =
+                TextEditingController()..text = currContent;
+
+            return SizedBox(
+                height: 10,
+                width: 100,
+                child: Card(
+                  margin: EdgeInsets.all(10),
+                  elevation: 5,
+                  child: SingleChildScrollView(
+                      child: Column(
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Text(
+                            "Edit Post",
+                            style: new TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )),
+                      Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ListTile(
+                            title: TextField(
+                              cursorColor: Colors.orange,
+                              controller: editTitleController,
+                              decoration: InputDecoration(
+                                  labelText: "Title",
+                                  hintText: "Title",
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(32.0))),
+                            ),
+                          )),
+                      Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: TextField(
+                              cursorColor: Colors.orange,
+                              controller: editContentController,
+                              style: TextStyle(fontSize: 16),
+                              decoration: InputDecoration(
+                                  labelText: "Content",
+                                  hintText: "Content",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5))),
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null)),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              RaisedButton(
+                                  child: Text("Cancel"),
+                                  onPressed: () =>
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop()),
+                              RaisedButton(
+                                child: Text("Submit"),
+                                onPressed: () {
+                                  // Check that the title and value are not empty
+                                  if (editTitleController.value.text
+                                          .trim()
+                                          .isNotEmpty &&
+                                      editContentController.value.text
+                                          .trim()
+                                          .isNotEmpty) {
+                                    // Call editPost API
+                                    print("EDITING POST!");
+
+                                    editPost(
+                                        postId,
+                                        currentUser,
+                                        editContentController.value.text,
+                                        editTitleController.value.text);
+
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                    print("FINISHED EDITING POST!");
+                                  } else {
+                                    errorPopup(context,
+                                        "Title and content cannot be empty!");
+                                  }
+                                },
+                              )
+                            ]),
+                      )
+                    ],
+                  )),
+                ));
+          });
+    }
+  }
+
+  void _createPost() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          String newTitle = '';
-          String newContent = '';
+          // For storing the title and content in text boxes
+          String newTitle = "";
+          String newContent = "";
+
           return SizedBox(
               height: 10,
               width: 100,
               child: Card(
                 margin: EdgeInsets.all(10),
                 elevation: 5,
-                child: Column(
+                child: SingleChildScrollView(
+                    child: Column(
                   children: [
                     Padding(
                         padding: const EdgeInsets.all(10),
@@ -517,22 +715,26 @@ class _TheZoneState extends State<TheZone> {
                         padding: const EdgeInsets.all(16.0),
                         child: ListTile(
                           title: TextField(
-                              decoration: InputDecoration(
-                                  hintText: "Title",
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(32.0))),
-                              onChanged: (value) {
-                                setState(() {
-                                  newTitle = value;
-                                });
-                              }),
+                            cursorColor: Colors.orange,
+                            decoration: InputDecoration(
+                                labelText: "Title",
+                                hintText: "Title",
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(32.0))),
+                            onChanged: (value) {
+                              setState(() {
+                                newTitle = value;
+                              });
+                            },
+                          ),
                         )),
                     Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: TextField(
+                            cursorColor: Colors.orange,
                             style: TextStyle(fontSize: 16),
                             decoration: InputDecoration(
+                                labelText: "Content",
                                 hintText: "Content",
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5))),
@@ -545,22 +747,41 @@ class _TheZoneState extends State<TheZone> {
                             maxLines: null)),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: RaisedButton(
-                        child: Text("Submit"),
-                        onPressed: () {
-                          // Call createPost API
-                          print("CREATING POST!");
-                          FlutterSession().get('username').then((username) => {
-                                createPost(
-                                    username.toString(), newContent, newTitle)
-                              });
-                          Navigator.of(context, rootNavigator: true).pop();
-                          print("FINISHED CREATING POST!");
-                        },
-                      ),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            RaisedButton(
+                                child: Text("Cancel"),
+                                onPressed: () =>
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop()),
+                            RaisedButton(
+                              child: Text("Submit"),
+                              onPressed: () {
+                                // Check that the title and content are not empty
+                                if (newContent.trim().isNotEmpty &&
+                                    newTitle.trim().isNotEmpty) {
+                                  // Call editPost API
+                                  print("CREATING POST!");
+
+                                  setState(() {
+                                    createPost(
+                                        currentUser, newContent, newTitle);
+                                  });
+
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  print("FINISHED CREATING POST!");
+                                } else {
+                                  errorPopup(context,
+                                      "Title and content cannot be empty!");
+                                }
+                              },
+                            )
+                          ]),
                     )
                   ],
-                ),
+                )),
               ));
         });
   }
@@ -615,6 +836,85 @@ class _TheZoneState extends State<TheZone> {
             Text(
               "Agree",
               style: TextStyle(color: isActive ? Colors.blue : Colors.grey),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget makeDisagreeButton({isActive}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[200]),
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.thumb_down,
+              color: isActive ? Colors.red : Colors.grey,
+              size: 18,
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "Disagree",
+              style: TextStyle(color: isActive ? Colors.red : Colors.grey),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget makeCommentButton() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[200]),
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(Icons.chat, color: Colors.grey, size: 18),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "Comment",
+              style: TextStyle(color: Colors.black),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget makeShareButton() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[200]),
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(Icons.share, color: Colors.grey, size: 18),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "Share",
+              style: TextStyle(color: Colors.black),
             )
           ],
         ),
