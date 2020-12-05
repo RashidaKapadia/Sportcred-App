@@ -4,6 +4,8 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/formHelper.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/layout.dart';
+
 
 void main() => runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -325,9 +327,9 @@ class _TheZoneState extends State<TheZone> {
           leading: BackButton(
               color: Colors.white,
               onPressed: () => Navigator.of(context).pushNamed("/homepage")),
-          title: Text("The Zone", style: TextStyle(color: Colors.white)),
+          title: Text("The Zone"),
           centerTitle: true,
-          backgroundColor: Colors.blueGrey),
+          backgroundColor: orange),
       backgroundColor: Colors.white,
       body: Column(
         children: <Widget>[
@@ -340,8 +342,9 @@ class _TheZoneState extends State<TheZone> {
                     child: ListTile(
                   title: TextFormField(
                     controller: _searchController,
+                    cursorColor: orange,
                     decoration: InputDecoration(
-                      border: InputBorder.none,
+                     // border: InputBorder(color: orange),
                       hintStyle: TextStyle(color: Colors.grey),
                       hintText: "Search",
                     ),
