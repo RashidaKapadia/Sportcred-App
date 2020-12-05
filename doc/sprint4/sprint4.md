@@ -61,7 +61,7 @@ Team capacity = 6*4*10*0.7 = 252 hours
    - Backend - Jacob
 
 7. Other issues
-   - Import list of daily questions - Jenny
+   - [UN-157] Import list of daily questions - Jenny
    - [UN-158] As a user, I want to navigate to the main page of debate to view different options such as answering, responding and viewing my results - Rashida
    - [UN-161] As a user, I want to submit my response to the daily debate topic - Maunica
    - [UN-173] As a user, I want to earn participation marks by responding to other submissions - Zhi Hua
