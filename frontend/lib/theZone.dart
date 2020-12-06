@@ -54,6 +54,7 @@ class PostNode {
   final String timestamp;
   final String uniqueIdentifier;
   final String username;
+  final String acs;
   final String content;
   final String title;
   final String profileName;
@@ -66,6 +67,7 @@ class PostNode {
       {this.timestamp,
       this.uniqueIdentifier,
       this.username,
+      this.acs,
       this.content,
       this.title,
       this.profileName,
@@ -87,6 +89,7 @@ class PostNode {
       timestamp: json["timestamp"],
       uniqueIdentifier: json['uniqueIdentifier'],
       username: json['username'],
+      acs: json['acs'].toString(),
       content: json['content'],
       title: json['title'],
       profileName: json['profileName'],
@@ -360,7 +363,7 @@ class _TheZoneState extends State<TheZone> {
                                 });
                               },
                             )),
-                        leading: Container(
+                        trailing: Container(
                           decoration: BoxDecoration(
                             border: Border.all(color: green, width: 4),
                             color: Colors.transparent,
@@ -458,7 +461,8 @@ class _TheZoneState extends State<TheZone> {
               subtitle: Text(
                 'Posted by ' +
                     allZonePosts[index].username +
-                    ': ' +
+                    ' (ACS: ' + allZonePosts[index].acs + 
+                    '): ' +
                     allZonePosts[index].timestamp.substring(0, match) +
                     "  " +
                     allZonePosts[index]

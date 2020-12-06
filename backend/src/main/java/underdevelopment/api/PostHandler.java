@@ -85,6 +85,7 @@ public class PostHandler {
                 while (it.hasNext()) {
                     Map<String, Object> postNode = it.next();
                     postsJSON.put(new JSONObject().put("username", postNode.get("username").toString())
+                            .put("acs", DBUserInfo.getUserACS(postNode.get("username").toString()))
                             .put("content", postNode.get("content").toString())
                             .put("title", postNode.get("title").toString())
                             .put("profileName", postNode.get("profileName").toString())
@@ -228,7 +229,7 @@ public class PostHandler {
             System.out.println("Removed the relation");
             if (!isRelationRemoved) {
                 try {
-                    System.out.println("Somwthing happened with the relation.");
+                    System.out.println("Something happened with the relation.");
                     response = new JSONObject().put("Couldn't delete the relation", isRelationRemoved).toString();
                     return new JsonHttpReponse(Status.SERVERERROR, response);
                 } catch (JSONException e) {

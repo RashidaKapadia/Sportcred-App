@@ -21,11 +21,11 @@ List<QuestionNode> questionsList = [];
 Widget backbar(BuildContext context) {
   return AppBar(
       leading: BackButton(
-          color: Colors.white,
+          color: darkGreen,
           onPressed: () => Navigator.of(context).pushNamed("/debate")),
-      title: Text("Debate", style: TextStyle(color: Colors.black)),
+      title: Text("Debate", style: TextStyle(color: darkGreen)),
       centerTitle: true,
-      backgroundColor: Colors.greenAccent);
+      backgroundColor: grey);
 }
 
 class _PreviousDebateQuestionsState extends State<PreviousDebateQuestions> {

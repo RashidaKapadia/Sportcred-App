@@ -1,16 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:confetti/confetti.dart';
-import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter_session/flutter_session.dart';
-import 'package:frontend/formHelper.dart';
 import 'package:frontend/widgets/fonts.dart';
 //import 'package:frontend/widgets/layout.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:frontend/requests/debate.dart';
+import 'package:frontend/widgets/layout.dart';
 
 import '../navbar.dart';
 
@@ -166,63 +161,18 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
         ));
   }
 
-  /*Widget build(BuildContext context) {
-    Widget categoryCarousel = new Container(
-      child: CarouselSlider(
-        options: CarouselOptions(
-          scrollDirection: Axis.vertical,
-          height: 450,
-          autoPlay: false,
-          enlargeCenterPage: true,
-        ),
-        // Items list will require to be updated here as well anytime new category is added
-        items: groupResponses.map((item) {
-          return displayGroup(item);
-        }).toList(),
-      ),
-    )
-    return Scaffold(
-        appBar: AppBar(
-            leading: BackButton(
-                color: Colors.white,
-                onPressed: () =>
-                    Navigator.of(context).pushNamed("/debate/currentDQ")),
-            title: Text("Responses",
-                style: TextStyle(
-                    color: Colors
-                        .black)), // ***TO BE CHANGED INTO "category response'
-            centerTitle: true,
-            backgroundColor: Colors.greenAccent),
-        bottomNavigationBar: NavBar(0),
-        body: Container(
-          padding: EdgeInsets.symmetric(vertical: 30),
-          child: Column(children: [
-            h3(question, color: Colors.black),
-            SingleChildScrollView(
-              child: Column(
-                children: List.generate(groupResponses.length, (index) {
-                  // HARDCODED FOR NOW; CHANGE TO data.length
-                  return displayGroup(groupResponses[index]);
-                }),
-              ),
-            ),
-          ]),
-        ));
-  }*/
-
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: Colors.white,
+              color: darkGreen,
               onPressed: () =>
                   Navigator.of(context).pushNamed("/debate/currentDQ")),
           title: Text("Responses",
               style: TextStyle(
-                  color: Colors
-                      .black)), // ***TO BE CHANGED INTO "category response'
+                  color: darkGreen)), // ***TO BE CHANGED INTO "category response'
           centerTitle: true,
-          backgroundColor: Colors.greenAccent),
+          backgroundColor: grey),
       bottomNavigationBar: NavBar(0),
       body: SingleChildScrollView(
           child: resultPage(context)), //resultPage(context),

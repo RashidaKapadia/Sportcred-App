@@ -3,6 +3,7 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/requests/user.dart';
 import '../navbar.dart';
 import 'triviaOngoing.dart';
+import 'package:frontend/widgets/layout.dart';
 
 class TriviaModePage extends StatefulWidget {
   String category;
@@ -114,12 +115,12 @@ class _TriviaHomePageState extends State<TriviaModePage> {
     return Scaffold(
         appBar: AppBar(
             leading: BackButton(
-                color: Colors.white,
+                color: orange,
                 onPressed: () =>
                     Navigator.of(context).pushNamed("/trivia/category")),
-            title: Text("Trivia", style: TextStyle(color: Colors.white)),
+            title: Text("Trivia", style: TextStyle(color: orange)),
             centerTitle: true,
-            backgroundColor: Colors.deepOrange),
+            backgroundColor: grey),
         bottomNavigationBar: NavBar(0),
         body: (Center(
           child: Column(

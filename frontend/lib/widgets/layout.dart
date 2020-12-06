@@ -21,11 +21,11 @@ Widget logoBanner() {
       child: Image.asset('assets/Logo.png'));
 }
 
-Widget headerBanner(Widget title) {
+Widget headerBanner(Widget title, {int ht = 0}) {
   return Container(
       width: double.infinity,
       color: Colors.blueGrey[900],
-      height: 150,
+      height: (ht == 0) ? 150 : ht,
       padding: EdgeInsets.all(20.0),
       child: title);
 }

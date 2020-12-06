@@ -172,6 +172,7 @@ public class DBPostComments {
                 commentJson.put("id", comment.get("id").asString());
                 commentJson.put("timestamp", comment.get("timestamp").asObject().toString());
                 commentJson.put("username", comment.get("username").asString());
+                commentJson.put("acs", DBUserInfo.getUserACS(comment.get("username").asString()));
                 commentJson.put("content", comment.get("content").asString());
                 commentJson.put("profileName", comment.get("profileName").asString());
 

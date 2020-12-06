@@ -215,12 +215,12 @@ class _DebatepageState extends State<DebatePage> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: Colors.white,
+              color: darkGreen,
               onPressed: () => Navigator.of(context).pushNamed("/debate")),
           title:
-              Text("Voting is Opened", style: TextStyle(color: Colors.white)),
+              Text("Voting is Opened", style: TextStyle(color: darkGreen)),
           centerTitle: true,
-          backgroundColor: Colors.blueGrey),
+          backgroundColor: grey),
       bottomNavigationBar: NavBar(0),
       backgroundColor: Colors.grey[200],
       body: Container(

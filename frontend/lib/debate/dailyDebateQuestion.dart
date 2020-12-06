@@ -142,12 +142,12 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xff66cc00),
+          backgroundColor: grey,
           leading: BackButton(
-              color: Colors.white,
+              color: darkGreen,
               onPressed: () => Navigator.of(context).pushNamed("/debate")),
           title: Text("Daily Debate Question",
-              style: TextStyle(color: Colors.white)),
+              style: TextStyle(color: darkGreen)),
         ),
         body: SingleChildScrollView(
             child: margin20(Column(
