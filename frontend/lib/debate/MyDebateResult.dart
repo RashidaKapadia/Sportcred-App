@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:frontend/requests/debate.dart';
+import 'package:frontend/widgets/layout.dart';
 
 import '../navbar.dart';
 
@@ -153,11 +154,11 @@ class _DebateResultpageState extends State<DebateResultPage> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: Colors.white,
+              color: darkGreen,
               onPressed: () => Navigator.of(context).pushNamed("/debate")),
-          title: Text("Results Are In!", style: TextStyle(color: Colors.white)),
+          title: Text("Results Are In!", style: TextStyle(color: darkGreen)),
           centerTitle: true,
-          backgroundColor: Colors.blueGrey),
+          backgroundColor: grey),
       bottomNavigationBar: NavBar(0),
       body: SingleChildScrollView(
           child: resultPage(context)), //resultPage(context),

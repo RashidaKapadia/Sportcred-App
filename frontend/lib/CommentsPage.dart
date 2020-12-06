@@ -335,6 +335,7 @@ class _CommentsPageState extends State<CommentsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        bottomNavigationBar: NavBar(0),
         appBar: AppBar(
             leading: BackButton(
                 color: green,

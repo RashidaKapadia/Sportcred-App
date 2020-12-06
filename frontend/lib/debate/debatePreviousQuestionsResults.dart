@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:frontend/requests/debate.dart';
+import 'package:frontend/widgets/layout.dart';
 
 import '../navbar.dart';
 
@@ -234,12 +235,12 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: Colors.white,
+              color: darkGreen,
               onPressed: () =>
                   Navigator.of(context).pushNamed("/debatePreviousQuestions")),
-          title: Text("Debate", style: TextStyle(color: Colors.black)),
+          title: Text("Debate", style: TextStyle(color: darkGreen)),
           centerTitle: true,
-          backgroundColor: Colors.greenAccent),
+          backgroundColor: grey),
       backgroundColor: Colors.black12,
       bottomNavigationBar: NavBar(0),
       body: Container(

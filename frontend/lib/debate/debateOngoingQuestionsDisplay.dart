@@ -263,11 +263,11 @@ class _DebatepageState extends State<DebatePage> {
     return Scaffold(
         appBar: AppBar(
             leading: BackButton(
-                color: Colors.white,
+                color: darkGreen,
                 onPressed: () => Navigator.of(context).pushNamed("/debate")),
-            title: Text("Debate", style: TextStyle(color: Colors.black)),
+            title: Text("Debate", style: TextStyle(color: darkGreen)),
             centerTitle: true,
-            backgroundColor: Colors.greenAccent),
+            backgroundColor: grey),
         //backgroundColor: Colors.white,
         bottomNavigationBar: NavBar(0),
         body: SingleChildScrollView(

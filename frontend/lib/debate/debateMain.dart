@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/layout.dart';
 import '../navbar.dart';
 
 class Debate extends StatefulWidget {
@@ -12,10 +13,10 @@ class _Debate extends State<Debate> {
     return new Scaffold(
       appBar: AppBar(
         leading: BackButton(
-            color: Colors.white,
+            color: darkGreen,
             onPressed: () => Navigator.of(context).pushNamed("/homepage")),
-        title: Text('Debate'),
-        backgroundColor: Colors.greenAccent,
+        title: Text('Debate', style: TextStyle(color: darkGreen)),
+        backgroundColor: grey,
       ),
       bottomNavigationBar: NavBar(0),
       body: Column(children: <Widget>[

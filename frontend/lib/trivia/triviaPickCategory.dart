@@ -71,18 +71,22 @@ class _TriviaState extends State<TriviaPickCategoryPage> {
     );
 
     return Scaffold(
+      appBar: AppBar(
+            leading: BackButton(
+                color: orange,
+                onPressed: () => Navigator.of(context).pushNamed("/homepage")),
+            title: Text("Trivia", style: TextStyle(color: orange)),
+            centerTitle: true,
+            backgroundColor: grey),
         bottomNavigationBar: NavBar(0),
         body: Container(
             padding: EdgeInsets.symmetric(vertical: 30),
             child: Column(children: [
-              vmargin25(Column(children: [
-                Text('Trivia',
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center),
+              vmargin25(
                 Text('Time to build that ACS!',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 17, color: Colors.black45))
-              ])),
+                    style: TextStyle(fontSize: 20, color: Colors.black45))
+              ),
               categoryCarousel,
             ])));
   }
