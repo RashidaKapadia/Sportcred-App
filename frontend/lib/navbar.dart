@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/layout.dart';
 
 class NavBar extends StatefulWidget {
   int defaultIndex = 0;
@@ -23,29 +24,29 @@ class NavBarState extends State<NavBar> {
       type: BottomNavigationBarType.shifting,
       iconSize: 20,
       //selectedFontSize: 25,
-      backgroundColor: Colors.blue,
+      // backgroundColor: Colors.blue,
       currentIndex: widget.defaultIndex,
       selectedItemColor: Colors.white,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
           title: Text('Home'),
-          backgroundColor: Colors.red,
+          backgroundColor: greyNav,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.notifications),
           title: Text('Notifications'),
-          backgroundColor: Colors.red,
+          backgroundColor: greyNav,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
           title: Text('Profile'),
-          backgroundColor: Colors.red,
+          backgroundColor: greyNav,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
           title: Text('Settings'),
-          backgroundColor: Colors.red,
+          backgroundColor: greyNav,
         ),
       ],
       onTap: (index) {

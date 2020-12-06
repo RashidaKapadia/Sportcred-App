@@ -29,12 +29,18 @@ class _HomePageState extends State<HomePage> {
 
   Widget homepageTile(toRoute, title, colour) {
     return ButtonTheme(
-      shape: RoundedRectangleBorder(side: BorderSide(color: colour, width: 5), borderRadius: BorderRadius.circular(20.0)),
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: colour, width: 5),
+          borderRadius: BorderRadius.circular(20.0)),
       minWidth: 50.0,
       height: 25.0,
       child: RaisedButton(
         onPressed: () => Navigator.of(context).pushNamed(toRoute),
-        child: Text(title, style: TextStyle(fontSize: 25, color: colour), textAlign: TextAlign.center,),
+        child: Text(
+          title,
+          style: TextStyle(fontSize: 25, color: colour),
+          textAlign: TextAlign.center,
+        ),
         color: grey,
       ),
     );
@@ -46,30 +52,44 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         bottomNavigationBar: NavBar(0),
         body: Container(
-          child: new Column(
-          mainAxisSize: MainAxisSize.min, children: <Widget>[
-          logoBanner(),
-          Text("Welcome " + username + "!", style: TextStyle(fontWeight: FontWeight.bold)),
-          Expanded(
-            child: OrientationBuilder(
-              builder: (context, orientation) {
-                return GridView.count(
-                  padding: EdgeInsets.all(30),
-                  crossAxisCount: 2,
-                  primary: false,
-                  children: <Widget>[
-                    margin10(homepageTile("/theZone", "The Zone", green)),
-                    margin10(homepageTile("/picksAndPredictions", "Picks & Predictions",
-                        darkOrange)),
-                    margin10(homepageTile(
-                        "/trivia/category", "Trivia", orange)),
-                    margin10(homepageTile(
-                        "/debate", "Analyze & Debate", darkGreen)),
-                  ],
-                );
-              },
-            ),
-          ),
-        ])));
+            color: lightGrey,
+            child:
+                new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+              logoBanner(),
+              Row(children: [
+                Expanded(
+                    child: Container(
+                        padding: EdgeInsets.all(20),
+                        color: Color.fromRGBO(31, 38, 5, 0.9),
+                        child: Text(
+                          "Welcome " + username + "!",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(255, 255, 255, 0.9)),
+                          textAlign: TextAlign.center,
+                        )))
+              ]),
+              Expanded(
+                child: OrientationBuilder(
+                  builder: (context, orientation) {
+                    return GridView.count(
+                      padding: EdgeInsets.all(16),
+                      crossAxisCount: 2,
+                      primary: false,
+                      children: <Widget>[
+                        margin10(
+                            homepageTile("/theZone", "The Zone", lightGreen)),
+                        margin10(homepageTile("/picksAndPredictions",
+                            "Picks & Predictions", brightPeachOrange)),
+                        margin10(
+                            homepageTile("/trivia/category", "Trivia", orange)),
+                        margin10(
+                            homepageTile("/debate", "Analyze & Debate", green)),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ])));
   }
 }

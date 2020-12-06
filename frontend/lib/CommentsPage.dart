@@ -194,6 +194,7 @@ class _CommentsPageState extends State<CommentsPage> {
 
   Container displayComments(int i) {
     return Container(
+        padding: EdgeInsets.symmetric(vertical: 5),
         child: ListTile(
           title:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -209,6 +210,7 @@ class _CommentsPageState extends State<CommentsPage> {
           ]),
           trailing: (this.currentUser == allComments[i].username)
               ? PopupMenuButton<String>(
+                  color: Color.fromRGBO(200, 200, 200, 1),
                   onSelected: (value) {
                     switch (value) {
                       case 'Delete':
@@ -265,7 +267,8 @@ class _CommentsPageState extends State<CommentsPage> {
               : Text(" "),
         ),
         decoration: new BoxDecoration(
-            border: new Border(bottom: new BorderSide(color: Colors.grey))));
+            color: Colors.white12,
+            border: new Border(bottom: new BorderSide(color: Colors.white24))));
   }
 
   void _editComment(String commentId, String currComment) {
@@ -281,6 +284,7 @@ class _CommentsPageState extends State<CommentsPage> {
               height: 10,
               width: 100,
               child: Card(
+                color: Color.fromRGBO(250, 250, 250, 1),
                 margin: EdgeInsets.all(10),
                 elevation: 5,
                 child: SingleChildScrollView(
@@ -299,7 +303,7 @@ class _CommentsPageState extends State<CommentsPage> {
                         padding: const EdgeInsets.all(16.0),
                         child: ListTile(
                           title: TextField(
-                            cursorColor: Colors.orange,
+                            cursorColor: lightGrey,
                             controller: editCommentController,
                             decoration: InputDecoration(
                                 labelText: "Comment",
@@ -351,61 +355,70 @@ class _CommentsPageState extends State<CommentsPage> {
     return Scaffold(
         bottomNavigationBar: NavBar(0),
         appBar: AppBar(
-            leading: BackButton(
-                color: green,
-                onPressed: () => Navigator.of(context).pushNamed("/theZone")),
-            title: Text("Comments", style: TextStyle(color: green)),
-            centerTitle: true,
-            actions: <Widget>[
-              IconButton(
-                  icon: Icon(Icons.search),
-                  color: Colors.white,
-                  onPressed: () {}),
-            ],
-            backgroundColor: grey),
+          leading: BackButton(
+              color: lightGreen,
+              onPressed: () => Navigator.of(context).pushNamed("/theZone")),
+          title: Text("Comments", style: TextStyle(color: lightGreen)),
+          centerTitle: true,
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.search),
+                color: Colors.white,
+                onPressed: () {}),
+          ],
+          backgroundColor: darkGrey,
+        ),
         // bottomNavigationBar: NavBar(1, route: "/comments"),
-        body: Column(children: <Widget>[
-          Expanded(
-              child: ListView(
-            children: List.generate(totalComments, (index) {
-              return displayComments(index);
-            }),
-          )),
-          Divider(),
-          ListTile(
-            title: new Theme(
-                data: ThemeData(primaryColor: green),
-                child: TextFormField(
-                  controller: commentController,
-                  cursorColor: green,
-                  decoration: InputDecoration(
-                    labelText: "Write comment ...",
-                    labelStyle: TextStyle(color: green),
-                  ),
-                  onChanged: (value) {
+        body: Container(
+          color: lightGrey,
+          child: Column(children: <Widget>[
+            Expanded(
+                child: ListView(
+              children: List.generate(totalComments, (index) {
+                return displayComments(index);
+              }),
+            )),
+            Divider(),
+            vmargin10(
+              ListTile(
+                title: new Theme(
+                    data: ThemeData(primaryColor: lightGreen),
+                    child: TextFormField(
+                      controller: commentController,
+                      cursorColor: lightGreen,
+                      decoration: InputDecoration(
+                        labelText: "Write comment ...",
+                        labelStyle: TextStyle(color: lightGreen),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          this.newComment = value;
+                        });
+                      },
+                    )),
+                trailing: FlatButton(
+                  //borderSide: BorderSide(color: lightGreen, width: 3),
+                  color: grey,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                          color: lightGreen,
+                          width: 2,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Text("Post", style: TextStyle(color: lightGreen)),
+                  onPressed: () {
                     setState(() {
-                      this.newComment = value;
+                      print("Pressed" + ForComment.postId);
+                      if (this.newComment != null) {
+                        postSucess = postComment(this.newComment);
+                        commentController.clear();
+                      }
                     });
                   },
-                )),
-            trailing: FlatButton(
-                //borderSide: BorderSide(color: green, width: 3),
-                color: grey,
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                        color: green, width: 2, style: BorderStyle.solid),
-                    borderRadius: BorderRadius.circular(10)),
-                child: Text("Post", style: TextStyle(color: green)),
-                onPressed: () {
-                  setState(() {
-                    print("Pressed" + ForComment.postId);
-                    if (this.newComment != null) {
-                      postSucess = postComment(this.newComment);
-                      commentController.clear();
-                    }
-                  });
-                }),
-          )
-        ]));
+                ),
+              ),
+            )
+          ]),
+        ));
   }
 }

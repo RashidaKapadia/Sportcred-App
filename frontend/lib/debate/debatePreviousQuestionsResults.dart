@@ -235,10 +235,10 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: darkGreen,
+              color: green,
               onPressed: () =>
                   Navigator.of(context).pushNamed("/debatePreviousQuestions")),
-          title: Text("Debate", style: TextStyle(color: darkGreen)),
+          title: Text("Debate", style: TextStyle(color: green)),
           centerTitle: true,
           backgroundColor: grey),
       backgroundColor: Colors.black12,

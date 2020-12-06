@@ -155,10 +155,10 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
   TimerController _timerController;
 
   // Styling
-  Color colorToDisplay = Colors.indigoAccent; // current colour
-  Color colorDefault = Colors.indigoAccent;
-  Color correctAnsColor = Colors.green;
-  Color incorrectAnsColor = Colors.red;
+  Color colorToDisplay = Colors.orange; // current colour
+  Color colorDefault = Colors.orange;
+  Color correctAnsColor = lightGreen;
+  Color incorrectAnsColor = red;
 
   int correctlyAnswered; // number of questions answered
   int notAnswered; // number of questions not answered
@@ -331,6 +331,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
             child: SimpleTimer(
               controller: _timerController,
               duration: Duration(seconds: maxTime),
+              progressIndicatorColor: lightGreen,
               timerStyle: TimerStyle.expanding_sector,
             )));
 
@@ -341,7 +342,8 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
         padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
         margin: EdgeInsets.symmetric(vertical: 15.0),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.indigoAccent, width: 3.0),
+          color: Colors.white24,
+          border: Border.all(color: colorToDisplay, width: 3.0),
           borderRadius: BorderRadius.all(Radius.circular(30)),
         ),
         child: Text(
@@ -358,6 +360,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
         child: Container(
           child: Wrap(
               direction: Axis.horizontal,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: List.generate(questions[i].options.length, (index) {
                 return animatedChoiceButton(index);
               })),
@@ -368,12 +371,13 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
     Widget currentScore = Text(
       'Score: ' +
           calculateDisplayScore(numQuestions, correctlyAnswered).toString(),
-      style: TextStyle(fontSize: 20),
+      style: TextStyle(fontSize: 20, color: Colors.grey[200]),
       textAlign: TextAlign.center,
     );
 
     // TODO: material theme missing
     return Scaffold(
+        backgroundColor: lightGrey,
         body: WillPopScope(
             onWillPop: () => confirmLeave(context),
             child: Container(
@@ -382,7 +386,7 @@ class _QuizpageState extends State<QuizPage> with TickerProviderStateMixin {
                 children: <Widget>[
                   (triviaMode == TriviaMode.SOLO)
                       ? Row(children: [
-                          h3("Good luck "),
+                          h3("Good luck ", color: Colors.grey[300]),
                           h3(username, color: Colors.deepOrange),
                           h3("!")
                         ])

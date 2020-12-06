@@ -85,7 +85,7 @@ class _TriviaResultState extends State<TriviaResult> {
   Widget page(BuildContext context) {
     return Container(
       child: Column(children: [
-        headerBanner(superLargeHeading("Result", color: orange), ht: 100),
+        headerBanner(superLargeHeading("Result", color: Colors.white), ht: 150),
         pagebody(),
       ]),
     );
