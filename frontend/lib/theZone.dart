@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/layout.dart';
 
-
 void main() => runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       home: TheZone(),
@@ -325,48 +324,61 @@ class _TheZoneState extends State<TheZone> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: Colors.white,
+              color: green,
               onPressed: () => Navigator.of(context).pushNamed("/homepage")),
-          title: Text("The Zone"),
+          title: Text("The Zone", style: TextStyle(color: green)),
           centerTitle: true,
-          backgroundColor: orange),
-      backgroundColor: Colors.white,
+          backgroundColor: grey),
+      backgroundColor: darkGrey,
       body: Column(
         children: <Widget>[
           Container(
             height: 120,
             padding: EdgeInsets.only(top: 50, right: 20, left: 20, bottom: 10),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(
                     child: ListTile(
-                  title: TextFormField(
-                    controller: _searchController,
-                    cursorColor: orange,
-                    decoration: InputDecoration(
-                     // border: InputBorder(color: orange),
-                      hintStyle: TextStyle(color: Colors.grey),
-                      hintText: "Search",
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        searchTitle = value;
-                      });
-                    },
-                  ),
-                  leading: OutlineButton(
-                      child: Icon(
-                        Icons.search,
-                        color: Colors.grey,
-                      ),
-                      borderSide: BorderSide.none,
-                      onPressed: () {
-                        setState(() {
-                          getPostsForSearch(searchTitle);
-                          _searchController.clear();
-                        });
-                      }),
-                )),
+                        title: new Theme(
+                            data: ThemeData(primaryColor: green),
+                            child: TextFormField(
+                              controller: _searchController,
+                              cursorColor: green,
+                              decoration: InputDecoration(
+                                filled: true,
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: green),
+                                    borderRadius: BorderRadius.circular(20)),
+                                fillColor: Colors.white70,
+                                hintStyle: TextStyle(color: grey),
+                                hintText: "Search",
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  searchTitle = value;
+                                });
+                              },
+                            )),
+                        leading: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: green, width: 4),
+                            color: Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                              color: green,
+                              icon: Icon(
+                                Icons.search,
+                                color: green,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  getPostsForSearch(searchTitle);
+                                  _searchController.clear();
+                                });
+                              }),
+                        ))),
                 SizedBox(
                   width: 20,
                 )
@@ -473,7 +485,7 @@ class _TheZoneState extends State<TheZone> {
                               color: allZonePosts[index]
                                       .peopleAgree
                                       .contains(currentUser)
-                                  ? Colors.orange
+                                  ? green
                                   : Colors.black),
                           onPressed: () {
                             agreeOrDisagreeToPost(
@@ -491,7 +503,7 @@ class _TheZoneState extends State<TheZone> {
                               color: allZonePosts[index]
                                       .peopleDisagree
                                       .contains(currentUser)
-                                  ? Colors.orange
+                                  ? darkOrange
                                   : Colors.black),
                           onPressed: () {
                             agreeOrDisagreeToPost(
@@ -618,6 +630,7 @@ class _TheZoneState extends State<TheZone> {
                       Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: TextField(
+                              maxLength: 250,
                               cursorColor: Colors.orange,
                               controller: editContentController,
                               style: TextStyle(fontSize: 16),
@@ -721,6 +734,7 @@ class _TheZoneState extends State<TheZone> {
                         padding: const EdgeInsets.all(16.0),
                         child: TextField(
                             cursorColor: Colors.orange,
+                            maxLength: 250,
                             style: TextStyle(fontSize: 16),
                             decoration: InputDecoration(
                                 labelText: "Content",

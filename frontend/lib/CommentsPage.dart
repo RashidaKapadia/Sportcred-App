@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter_session/flutter_session.dart';
 import 'formHelper.dart';
 import 'theZone.dart';
+import 'package:frontend/widgets/layout.dart';
 
 class CommentsPage extends StatefulWidget {
   @override
@@ -331,27 +332,14 @@ class _CommentsPageState extends State<CommentsPage> {
         });
   }
 
-  // void handleClick(String value) {
-  //   switch (value) {
-  //     case 'Edit':
-  //       break;
-  //     case 'Delete':
-  //       deleteSucess = deleteComment(
-  //           ForComment.post_username
-  //           //change to this.storeUsername
-  //           ,
-  //           this.newComment);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
             leading: BackButton(
-                color: Colors.white,
+                color: green,
                 onPressed: () => Navigator.of(context).pushNamed("/theZone")),
-            title: Text("Comments", style: TextStyle(color: Colors.white)),
+            title: Text("Comments", style: TextStyle(color: green)),
             centerTitle: true,
             actions: <Widget>[
               IconButton(
@@ -359,8 +347,8 @@ class _CommentsPageState extends State<CommentsPage> {
                   color: Colors.white,
                   onPressed: () {}),
             ],
-            backgroundColor: Colors.black),
-        bottomNavigationBar: NavBar(1),
+            backgroundColor: grey),
+       // bottomNavigationBar: NavBar(1, route: "/comments"),
         body: Column(children: <Widget>[
           Expanded(
               child: ListView(
