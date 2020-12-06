@@ -114,6 +114,7 @@ class _DebateResultpageState extends State<DebateResultPage> {
       // _controllerTopCenter.stop();
       //_controllerCenter.stop();
     }
+
     super.initState();
   }
 
@@ -122,6 +123,15 @@ class _DebateResultpageState extends State<DebateResultPage> {
     _controllerTopCenter.dispose();
     _controllerCenter.dispose();
     super.dispose();
+  }
+
+  String returnDisplayText() {
+    String displayText = "";
+    if (result.winner.toString().compareTo("draw") == 0) {
+      return "It is a...";
+    } else {
+      return "And The Winner Is...";
+    }
   }
 
   Widget displayPlayerResult(int i) {
@@ -244,7 +254,7 @@ class _DebateResultpageState extends State<DebateResultPage> {
             delay: Duration(seconds: 1),
             fadingDuration: Duration(seconds: 2),
             child: Text(
-              "And the winner is... ",
+              returnDisplayText(),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 30.0,
@@ -324,7 +334,7 @@ class _DebateResultpageState extends State<DebateResultPage> {
                 Container(
                   padding: EdgeInsets.all(10),
                   child: Column(
-                    children: List.generate(2, (index) {
+                    children: List.generate(result.theirs.length, (index) {
                       // HARDCODED FOR NOW; CHANGE TO data.length
                       return displayPlayerResult(index);
                     }),
