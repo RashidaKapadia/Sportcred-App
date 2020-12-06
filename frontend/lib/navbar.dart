@@ -35,17 +35,17 @@ class NavBarState extends State<NavBar> {
         BottomNavigationBarItem(
           icon: Icon(Icons.notifications),
           title: Text('Notifications'),
-          backgroundColor: Colors.brown[300],
+          backgroundColor: Colors.red,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
           title: Text('Profile'),
-          backgroundColor: Colors.blueGrey,
+          backgroundColor: Colors.red,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
           title: Text('Settings'),
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.red,
         ),
       ],
       onTap: (index) {

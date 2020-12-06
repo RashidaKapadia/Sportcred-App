@@ -29,13 +29,13 @@ class _HomePageState extends State<HomePage> {
 
   Widget homepageTile(toRoute, title, colour) {
     return ButtonTheme(
-      shape: RoundedRectangleBorder(side: BorderSide.none, borderRadius: BorderRadius.circular(20.0)),
+      shape: RoundedRectangleBorder(side: BorderSide(color: colour, width: 5), borderRadius: BorderRadius.circular(20.0)),
       minWidth: 50.0,
       height: 25.0,
       child: RaisedButton(
         onPressed: () => Navigator.of(context).pushNamed(toRoute),
-        child: Text(title, style: TextStyle(fontSize: 15)),
-        color: colour,
+        child: Text(title, style: TextStyle(fontSize: 25, color: colour), textAlign: TextAlign.center,),
+        color: grey,
       ),
     );
   }
@@ -58,13 +58,13 @@ class _HomePageState extends State<HomePage> {
                   crossAxisCount: 2,
                   primary: false,
                   children: <Widget>[
-                    margin10(homepageTile("/theZone", "The Zone", darkGreen)),
+                    margin10(homepageTile("/theZone", "The Zone", green)),
                     margin10(homepageTile("/picksAndPredictions", "Picks & Predictions",
                         darkOrange)),
                     margin10(homepageTile(
                         "/trivia/category", "Trivia", orange)),
                     margin10(homepageTile(
-                        "/debate", "Analyze & Debate", teal)),
+                        "/debate", "Analyze & Debate", darkGreen)),
                   ],
                 );
               },
