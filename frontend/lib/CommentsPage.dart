@@ -17,10 +17,11 @@ class CommentsPage extends StatefulWidget {
 class Comment {
   final String profileName;
   final String username;
+  final String acs;
   final String content;
   final String id;
 
-  Comment({this.profileName, this.username, this.content, this.id});
+  Comment({this.profileName, this.acs, this.username, this.content, this.id});
 
   // converts json to ACS object
   factory Comment.fromJson(Map<String, dynamic> json) {
@@ -32,6 +33,7 @@ class Comment {
         profileName: json['profileName'],
         username: json['username'],
         content: json['content'],
+        acs: json['acs'].toString(),
         id: json['id']);
   }
 }
@@ -49,7 +51,7 @@ class _CommentsPageState extends State<CommentsPage> {
   bool _deleteSucess = true;
 
   // Http post request to get post's comments
-  Future<List<Comment>> getComments(String postId) async {
+  Future<List<Comment>> getComments() async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/getComments',
@@ -58,7 +60,7 @@ class _CommentsPageState extends State<CommentsPage> {
         'Accept': 'text/plain; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
-      body: jsonEncode(<String, String>{'postId': postId}),
+      body: jsonEncode(<String, String>{'postId': ForComment.postId}),
     );
 
     if (response.statusCode == 200) {
@@ -81,7 +83,7 @@ class _CommentsPageState extends State<CommentsPage> {
   }
 
   // Http post request to get post's comments
-  Future<bool> postComment(String postId, String content) async {
+  Future<bool> postComment(String content) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/addComment',
@@ -91,7 +93,7 @@ class _CommentsPageState extends State<CommentsPage> {
         'Access-Control-Allow-Origin': '*',
       },
       body: jsonEncode(<String, String>{
-        'postId': postId,
+        'postId': ForComment.postId,
         'username': currentUser,
         'content': content
       }),
@@ -99,7 +101,7 @@ class _CommentsPageState extends State<CommentsPage> {
 
     if (response.statusCode == 200) {
       setState(() {
-        getComments(postId);
+        getComments();
       });
       print("added comment!");
       return true;
@@ -109,7 +111,7 @@ class _CommentsPageState extends State<CommentsPage> {
   }
 
   // Http post request to delete post's comments
-  Future<bool> deleteComment(String postId, String commentId) async {
+  Future<bool> deleteComment(String commentId) async {
     // Make the request and store the response
     final http.Response response = await http.post(
       'http://localhost:8080/api/deleteComment',
@@ -127,7 +129,7 @@ class _CommentsPageState extends State<CommentsPage> {
       _deleteSucess = true;
 
       setState(() {
-        getComments(postId);
+        getComments();
       });
 
       return true;
@@ -160,6 +162,10 @@ class _CommentsPageState extends State<CommentsPage> {
 
     if (response.statusCode == 200) {
       print("edited comment!");
+      setState(() {
+        getComments();
+      });
+
       return true;
     } else {
       return false;
@@ -173,7 +179,7 @@ class _CommentsPageState extends State<CommentsPage> {
       FlutterSession().get('username').then((username) => {
             setState(() {
               this.currentUser = username.toString();
-              _futureComments = getComments(ForComment.postId);
+              _futureComments = getComments();
               print("init" + allComments.toString());
             })
           });
@@ -190,7 +196,17 @@ class _CommentsPageState extends State<CommentsPage> {
     return Container(
         child: ListTile(
           title:
-              Text(allComments[i].username + " :   " + allComments[i].content),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+                allComments[i].username +
+                    " (ACS: " +
+                    allComments[i].acs +
+                    "): ",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black.withOpacity(0.6))),
+            Text(allComments[i].content)
+          ]),
           trailing: (this.currentUser == allComments[i].username)
               ? PopupMenuButton<String>(
                   onSelected: (value) {
@@ -209,8 +225,7 @@ class _CommentsPageState extends State<CommentsPage> {
                                     onPressed: () {
                                       setState(() {
                                         // Delete post
-                                        deleteComment(ForComment.postId,
-                                            allComments[i].id);
+                                        deleteComment(allComments[i].id);
 
                                         print("COMMENT DELETED");
 
@@ -234,8 +249,7 @@ class _CommentsPageState extends State<CommentsPage> {
                             });
                         break;
                       case 'Edit':
-                        _editComment(allComments[i].username, allComments[i].id,
-                            allComments[i].content);
+                        _editComment(allComments[i].id, allComments[i].content);
                         break;
                     }
                   },
@@ -254,8 +268,8 @@ class _CommentsPageState extends State<CommentsPage> {
             border: new Border(bottom: new BorderSide(color: Colors.grey))));
   }
 
-  void _editComment(String creatorUsername, String postId, String currComment) {
-    print("id: " + postId);
+  void _editComment(String commentId, String currComment) {
+    print("id: " + commentId);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -312,8 +326,8 @@ class _CommentsPageState extends State<CommentsPage> {
                                     .trim()
                                     .isNotEmpty) {
                                   print(editCommentController.value.text);
-                                  editComment(
-                                      postId, editCommentController.value.text);
+                                  editComment(commentId,
+                                      editCommentController.value.text);
 
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
@@ -349,7 +363,7 @@ class _CommentsPageState extends State<CommentsPage> {
                   onPressed: () {}),
             ],
             backgroundColor: grey),
-       // bottomNavigationBar: NavBar(1, route: "/comments"),
+        // bottomNavigationBar: NavBar(1, route: "/comments"),
         body: Column(children: <Widget>[
           Expanded(
               child: ListView(
@@ -359,28 +373,36 @@ class _CommentsPageState extends State<CommentsPage> {
           )),
           Divider(),
           ListTile(
-            title: TextFormField(
-              controller: commentController,
-              cursorColor: Colors.orange,
-              decoration: InputDecoration(
-                labelText: "Write comment ...",
-              ),
-              onChanged: (value) {
-                setState(() {
-                  this.newComment = value;
-                });
-              },
-            ),
-            trailing: OutlineButton(
-                borderSide: BorderSide(color: Colors.black87),
-                child: Text("Post"),
+            title: new Theme(
+                data: ThemeData(primaryColor: green),
+                child: TextFormField(
+                  controller: commentController,
+                  cursorColor: green,
+                  decoration: InputDecoration(
+                    labelText: "Write comment ...",
+                    labelStyle: TextStyle(color: green),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      this.newComment = value;
+                    });
+                  },
+                )),
+            trailing: FlatButton(
+                //borderSide: BorderSide(color: green, width: 3),
+                color: grey,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                        color: green, width: 2, style: BorderStyle.solid),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Text("Post", style: TextStyle(color: green)),
                 onPressed: () {
                   setState(() {
                     print("Pressed" + ForComment.postId);
-                    postSucess =
-                        postComment(ForComment.postId, this.newComment);
-                    commentController.clear();
-                    _futureComments = getComments(ForComment.postId);
+                    if (this.newComment != null) {
+                      postSucess = postComment(this.newComment);
+                      commentController.clear();
+                    }
                   });
                 }),
           )

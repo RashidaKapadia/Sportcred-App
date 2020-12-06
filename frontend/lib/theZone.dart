@@ -363,7 +363,7 @@ class _TheZoneState extends State<TheZone> {
                                 });
                               },
                             )),
-                        leading: Container(
+                        trailing: Container(
                           decoration: BoxDecoration(
                             border: Border.all(color: green, width: 4),
                             color: Colors.transparent,
