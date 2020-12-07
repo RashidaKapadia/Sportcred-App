@@ -1,4 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
+
+// Colors
+Color darkGrey = HexColor('#222629');
+Color grey = HexColor('#474B4F');
+Color lightGrey = HexColor('#6B6E70');
+Color darkOrange = HexColor('#ff652f');
+Color orange = HexColor('#ffa200');
+Color yellow = HexColor('#ffea00');
+Color darkGreen = HexColor('#00b06d');
+Color green = HexColor('#17c800');
+Color lightGreen = HexColor('#90f000');
+Color teal = HexColor('#008967');
+
+
 
 Widget logoBanner() {
   return Container(

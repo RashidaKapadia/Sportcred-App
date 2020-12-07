@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/widgets/layout.dart';
 import './navbar.dart';
-import 'package:hexcolor/hexcolor.dart';
+import 'package:frontend/widgets/fonts.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -29,11 +29,12 @@ class _HomePageState extends State<HomePage> {
 
   Widget homepageTile(toRoute, title, colour) {
     return ButtonTheme(
+      shape: RoundedRectangleBorder(side: BorderSide.none, borderRadius: BorderRadius.circular(20.0)),
       minWidth: 50.0,
       height: 25.0,
       child: RaisedButton(
         onPressed: () => Navigator.of(context).pushNamed(toRoute),
-        child: Text(title),
+        child: Text(title, style: TextStyle(fontSize: 15)),
         color: colour,
       ),
     );
@@ -44,9 +45,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: NavBar(0),
-        body: new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        body: Container(
+          child: new Column(
+          mainAxisSize: MainAxisSize.min, children: <Widget>[
           logoBanner(),
-          Text("Welcome " + username + "!"),
+          Text("Welcome " + username + "!", style: TextStyle(fontWeight: FontWeight.bold)),
           Expanded(
             child: OrientationBuilder(
               builder: (context, orientation) {
@@ -55,18 +58,18 @@ class _HomePageState extends State<HomePage> {
                   crossAxisCount: 2,
                   primary: false,
                   children: <Widget>[
-                    homepageTile("/theZone", "The Zone", Colors.orangeAccent),
-                    homepageTile("/picksAndPredictions", "Picks & Predictions",
-                        HexColor('#ff652f')),
-                    homepageTile(
-                        "/trivia/category", "Trivia", Colors.yellowAccent[100]),
-                    homepageTile(
-                        "/debate", "Analyze & Debate", Colors.greenAccent),
+                    margin10(homepageTile("/theZone", "The Zone", darkGreen)),
+                    margin10(homepageTile("/picksAndPredictions", "Picks & Predictions",
+                        darkOrange)),
+                    margin10(homepageTile(
+                        "/trivia/category", "Trivia", orange)),
+                    margin10(homepageTile(
+                        "/debate", "Analyze & Debate", teal)),
                   ],
                 );
               },
             ),
           ),
-        ]));
+        ])));
   }
 }
