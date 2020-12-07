@@ -185,6 +185,7 @@ class _TriviaSearchOpponentPageState extends State<TriviaSearchOpponentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
           leading: BackButton(
               color: Colors.white,

@@ -45,9 +45,10 @@ class _PicksAndPredictions extends State<PicksAndPredictions> {
     return new Scaffold(
         appBar: AppBar(
           leading: BackButton(
-              color: darkOrange,
+              color: brightPeachOrange,
               onPressed: () => Navigator.of(context).pushNamed("/homepage")),
-          title: Text('Past Season Picks', style: TextStyle(color: darkOrange)),
+          title: Text('Past Season Picks',
+              style: TextStyle(color: brightPeachOrange)),
           backgroundColor: grey,
         ),
         bottomNavigationBar: NavBar(0),

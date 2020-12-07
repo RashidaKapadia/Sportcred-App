@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:frontend/widgets/layout.dart';
+
 import './formHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
@@ -212,16 +214,16 @@ class _ProfilePageState extends State<ProfilePage>
                 onPressed: () => Navigator.of(context).pushNamed("/homepage")),
             title: Text("Profile", style: TextStyle(color: Colors.white)),
             centerTitle: true,
-            backgroundColor: Colors.blueGrey),
+            backgroundColor: neutralRed),
         bottomNavigationBar: NavBar(2),
         body: Container(
-          color: Colors.white,
+          padding: EdgeInsets.symmetric(horizontal: 25),
+          // color: Color.fromRGBO(0, 0, 0, 0.05),
           child: new ListView(
             children: <Widget>[
               Column(
                 children: <Widget>[
                   new Container(
-                    color: Colors.white,
                     child: new Column(
                       children: <Widget>[
                         SizedBox(
@@ -272,19 +274,20 @@ class _ProfilePageState extends State<ProfilePage>
                         ),
                         // Container(
                         // SizedBox(height: 30),
-                        RaisedButton(
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed("/profile/ACSHistory");
-                          },
-                          child: const Text('ACS History',
-                              style: TextStyle(fontSize: 20)),
-                        ),
+                        margin15(
+                          RaisedButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed("/profile/ACSHistory");
+                            },
+                            child: const Text('ACS History',
+                                style: TextStyle(fontSize: 20)),
+                          ),
+                        )
                       ],
                     ),
                   ),
                   new Container(
-                    color: Color(0xffFFFFFF),
                     child: Padding(
                       padding: EdgeInsets.only(bottom: 15.0),
                       child: new Column(
@@ -292,8 +295,8 @@ class _ProfilePageState extends State<ProfilePage>
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Padding(
-                              padding: EdgeInsets.only(
-                                  left: 50.0, right: 50, top: 15.0),
+                              padding:
+                                  EdgeInsets.only(left: 0, right: 0, top: 15.0),
                               child: new Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -323,9 +326,10 @@ class _ProfilePageState extends State<ProfilePage>
                                 ],
                               )),
                           Padding(
-                            padding: EdgeInsets.only(
-                                left: 50.0, right: 25.0, top: 30.0),
+                            padding:
+                                EdgeInsets.only(left: 0, right: 0, top: 30.0),
                             child: Container(
+                              color: Colors.white10,
                               child: new TextField(
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
@@ -341,7 +345,7 @@ class _ProfilePageState extends State<ProfilePage>
                             ),
                           ),
                           Padding(
-                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                              padding: EdgeInsets.only(left: 0, top: 15.0),
                               child: new Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -369,7 +373,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 ],
                               )),
                           Padding(
-                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                              padding: EdgeInsets.only(left: 0, top: 15.0),
                               child: new Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -397,7 +401,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 ],
                               )),
                           Padding(
-                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                              padding: EdgeInsets.only(left: 0, top: 15.0),
                               child: new Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -425,7 +429,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 ],
                               )),
                           Padding(
-                              padding: EdgeInsets.only(left: 50.0, top: 15.0),
+                              padding: EdgeInsets.only(left: 0, top: 15.0),
                               child: new Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.start,

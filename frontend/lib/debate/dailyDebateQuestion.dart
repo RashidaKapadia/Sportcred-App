@@ -144,10 +144,9 @@ class _DailyDebateQuestionState extends State<DailyDebateQuestion> {
         appBar: AppBar(
           backgroundColor: grey,
           leading: BackButton(
-              color: darkGreen,
+              color: green,
               onPressed: () => Navigator.of(context).pushNamed("/debate")),
-          title: Text("Daily Debate Question",
-              style: TextStyle(color: darkGreen)),
+          title: Text("Daily Debate Question", style: TextStyle(color: green)),
         ),
         body: SingleChildScrollView(
             child: margin20(Column(

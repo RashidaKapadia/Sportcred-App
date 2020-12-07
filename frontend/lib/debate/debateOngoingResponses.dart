@@ -165,12 +165,12 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: darkGreen,
+              color: green,
               onPressed: () =>
                   Navigator.of(context).pushNamed("/debate/currentDQ")),
           title: Text("Responses",
               style: TextStyle(
-                  color: darkGreen)), // ***TO BE CHANGED INTO "category response'
+                  color: green)), // ***TO BE CHANGED INTO "category response'
           centerTitle: true,
           backgroundColor: grey),
       bottomNavigationBar: NavBar(0),

@@ -177,9 +177,9 @@ class _DebateResultpageState extends State<DebateResultPage> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: darkGreen,
+              color: green,
               onPressed: () => Navigator.of(context).pushNamed("/debate")),
-          title: Text("Results Are In!", style: TextStyle(color: darkGreen)),
+          title: Text("Results Are In!", style: TextStyle(color: green)),
           centerTitle: true,
           backgroundColor: grey),
       bottomNavigationBar: NavBar(0),

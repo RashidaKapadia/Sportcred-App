@@ -13,9 +13,9 @@ class _Debate extends State<Debate> {
     return new Scaffold(
       appBar: AppBar(
         leading: BackButton(
-            color: darkGreen,
+            color: green,
             onPressed: () => Navigator.of(context).pushNamed("/homepage")),
-        title: Text('Debate', style: TextStyle(color: darkGreen)),
+        title: Text('Debate', style: TextStyle(color: green)),
         backgroundColor: grey,
       ),
       bottomNavigationBar: NavBar(0),

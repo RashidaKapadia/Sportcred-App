@@ -75,9 +75,9 @@ class _TriviaHomePageState extends State<TriviaModePage> {
     //
     Function _onPRessed = onPressed;
     Color fontColor = Colors.black;
-    Color bgcolor = Color.fromRGBO(220, 180, 100, 0.35);
+    Color bgcolor = Color.fromRGBO(255, 215, 170, 1);
 
-    Color grey = Colors.black38;
+    Color grey = Colors.black26;
 
     if (avaliable == false) {
       _onPRessed = () {};
@@ -122,18 +122,21 @@ class _TriviaHomePageState extends State<TriviaModePage> {
             centerTitle: true,
             backgroundColor: grey),
         bottomNavigationBar: NavBar(0),
-        body: (Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              loadTrivia(onPressed: () => goToTrivia(), text: "Solo Trivia"),
-              loadTrivia(
-                  onPressed: () => selectUser(),
-                  text: "1 - 1 Trivia",
-                  activityID: "triviaMulti"),
-            ],
-          ),
-        )));
+        body: Container(
+            color: Colors.grey,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  loadTrivia(
+                      onPressed: () => goToTrivia(), text: "Solo Trivia"),
+                  loadTrivia(
+                      onPressed: () => selectUser(),
+                      text: "1 - 1 Trivia",
+                      activityID: "triviaMulti"),
+                ],
+              ),
+            )));
   }
 }

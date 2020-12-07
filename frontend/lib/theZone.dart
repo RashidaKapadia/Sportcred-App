@@ -327,12 +327,12 @@ class _TheZoneState extends State<TheZone> {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
-              color: green,
+              color: lightGreen,
               onPressed: () => Navigator.of(context).pushNamed("/homepage")),
-          title: Text("The Zone", style: TextStyle(color: green)),
+          title: Text("The Zone", style: TextStyle(color: lightGreen)),
           centerTitle: true,
-          backgroundColor: grey),
-      backgroundColor: darkGrey,
+          backgroundColor: darkGrey),
+      backgroundColor: grey,
       body: Column(
         children: <Widget>[
           Container(
@@ -344,14 +344,14 @@ class _TheZoneState extends State<TheZone> {
                 Expanded(
                     child: ListTile(
                         title: new Theme(
-                            data: ThemeData(primaryColor: green),
+                            data: ThemeData(primaryColor: lightGreen),
                             child: TextFormField(
                               controller: _searchController,
-                              cursorColor: green,
+                              cursorColor: lightGreen,
                               decoration: InputDecoration(
                                 filled: true,
                                 border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: green),
+                                    borderSide: BorderSide(color: lightGreen),
                                     borderRadius: BorderRadius.circular(20)),
                                 fillColor: Colors.white70,
                                 hintStyle: TextStyle(color: grey),
@@ -365,15 +365,15 @@ class _TheZoneState extends State<TheZone> {
                             )),
                         trailing: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(color: green, width: 4),
+                            border: Border.all(color: lightGreen, width: 4),
                             color: Colors.transparent,
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
-                              color: green,
+                              color: lightGreen,
                               icon: Icon(
                                 Icons.search,
-                                color: green,
+                                color: lightGreen,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -414,17 +414,24 @@ class _TheZoneState extends State<TheZone> {
               ),
             ),
           ),
-          FloatingActionButton(
-            backgroundColor: Colors.blueGrey,
-            foregroundColor: Colors.white,
-            onPressed: () {
-              setState(() {
-                // Respond to button press
-                _createPost();
-              });
-            },
-            tooltip: 'Create Post',
-            child: Icon(Icons.add),
+          margin10(
+            Container(
+              color: Colors.transparent,
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                FloatingActionButton(
+                  backgroundColor: Colors.blueGrey,
+                  foregroundColor: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      // Respond to button press
+                      _createPost();
+                    });
+                  },
+                  tooltip: 'Create Post',
+                  child: Icon(Icons.add),
+                ),
+              ]),
+            ),
           )
         ],
       ),
@@ -436,6 +443,7 @@ class _TheZoneState extends State<TheZone> {
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
+        color: Color.fromRGBO(248, 250, 247, 0.92),
         clipBehavior: Clip.antiAlias,
         child: Column(
           children: [
@@ -461,7 +469,8 @@ class _TheZoneState extends State<TheZone> {
               subtitle: Text(
                 'Posted by ' +
                     allZonePosts[index].username +
-                    ' (ACS: ' + allZonePosts[index].acs + 
+                    ' (ACS: ' +
+                    allZonePosts[index].acs +
                     '): ' +
                     allZonePosts[index].timestamp.substring(0, match) +
                     "  " +
@@ -489,7 +498,7 @@ class _TheZoneState extends State<TheZone> {
                               color: allZonePosts[index]
                                       .peopleAgree
                                       .contains(currentUser)
-                                  ? green
+                                  ? lightGreen
                                   : Colors.black),
                           onPressed: () {
                             agreeOrDisagreeToPost(
@@ -507,7 +516,7 @@ class _TheZoneState extends State<TheZone> {
                               color: allZonePosts[index]
                                       .peopleDisagree
                                       .contains(currentUser)
-                                  ? darkOrange
+                                  ? brightPeachOrange
                                   : Colors.black),
                           onPressed: () {
                             agreeOrDisagreeToPost(

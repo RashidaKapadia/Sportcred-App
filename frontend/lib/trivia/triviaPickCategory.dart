@@ -39,8 +39,7 @@ class _TriviaState extends State<TriviaPickCategoryPage> {
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.symmetric(horizontal: 3.0),
               decoration: BoxDecoration(
-                  color: Colors.lightGreen[900],
-                  borderRadius: BorderRadius.circular(25)),
+                  color: darkOrange, borderRadius: BorderRadius.circular(25)),
               child: GestureDetector(
                 child: Container(
                     padding: EdgeInsets.fromLTRB(0, 145, 0, 0),
@@ -56,8 +55,8 @@ class _TriviaState extends State<TriviaPickCategoryPage> {
                         // Play button
                         margin10(plainButton(
                             text: "Play!",
-                            fontColor: Colors.white,
-                            backgroundColor: Colors.lightGreen[700],
+                            fontColor: Colors.black87,
+                            backgroundColor: orange,
                             onPressed: () => Navigator.of(context).pushNamed(
                                 "/trivia/mode",
                                 arguments: {category: chosenCategory}))),
@@ -71,7 +70,7 @@ class _TriviaState extends State<TriviaPickCategoryPage> {
     );
 
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
             leading: BackButton(
                 color: orange,
                 onPressed: () => Navigator.of(context).pushNamed("/homepage")),
@@ -80,13 +79,12 @@ class _TriviaState extends State<TriviaPickCategoryPage> {
             backgroundColor: grey),
         bottomNavigationBar: NavBar(0),
         body: Container(
+            color: lightGrey,
             padding: EdgeInsets.symmetric(vertical: 30),
             child: Column(children: [
-              vmargin25(
-                Text('Time to build that ACS!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, color: Colors.black45))
-              ),
+              vmargin25(Text('Time to build that ACS!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, color: Colors.grey[300]))),
               categoryCarousel,
             ])));
   }
