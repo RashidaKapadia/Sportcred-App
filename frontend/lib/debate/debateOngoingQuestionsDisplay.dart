@@ -113,6 +113,9 @@ class _DebatepageState extends State<DebatePage> {
   final tiers = ["Expert", "Pro Analyst", "Analyst", "Fanalyst"];
 
   Widget displayTiers(int i, BuildContext context) {
+    String q;
+    int qId;
+
     if (questionsList.isEmpty) {
       print("It is empty");
     }
@@ -134,8 +137,11 @@ class _DebatepageState extends State<DebatePage> {
                         borderRadius: BorderRadius.circular(18.0),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed(
-                            "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                        Navigator.of(context)
+                            .pushNamed("/debateCurrentResponses", arguments: {
+                          qId: questions[0].questionId,
+                          q: questions[0].question
+                        }); //***PASS IN CATEGORY NAME  */
                       },
                       padding: EdgeInsets.all(10.0),
                       color: Colors.lightGreen,
@@ -164,8 +170,11 @@ class _DebatepageState extends State<DebatePage> {
                         borderRadius: BorderRadius.circular(18.0),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed(
-                            "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                        Navigator.of(context)
+                            .pushNamed("/debateCurrentResponses", arguments: {
+                          qId: questions[1].questionId,
+                          q: questions[1].question
+                        }); //***PASS IN CATEGORY NAME  */
                       },
                       padding: EdgeInsets.all(10.0),
                       color: Colors.yellow[600],
@@ -194,7 +203,11 @@ class _DebatepageState extends State<DebatePage> {
                             ),
                             onPressed: () {
                               Navigator.of(context).pushNamed(
-                                  "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                                  "/debateCurrentResponses",
+                                  arguments: {
+                                    qId: questions[2].questionId,
+                                    q: questions[2].question
+                                  }); //***PASS IN CATEGORY NAME  */
                             },
                             padding: EdgeInsets.all(10.0),
                             color: Colors.orange,
@@ -213,7 +226,7 @@ class _DebatepageState extends State<DebatePage> {
               minWidth: 350,
               height: 20.0,
               child: Tooltip(
-                message: questions[1].question,
+                message: questions[3].question,
                 showDuration: Duration(seconds: 5),
                 child: RaisedButton(
                     elevation: 10,
@@ -221,8 +234,11 @@ class _DebatepageState extends State<DebatePage> {
                       borderRadius: BorderRadius.circular(18.0),
                     ),
                     onPressed: () {
-                      Navigator.of(context).pushNamed(
-                          "/debateCurrentResponses"); //***PASS IN CATEGORY NAME  */
+                      Navigator.of(context).pushNamed("/debateCurrentResponses",
+                          arguments: {
+                            qId: questions[3].questionId,
+                            q: questions[3].question
+                          }); //***PASS IN CATEGORY NAME  */
                     },
                     padding: EdgeInsets.all(10.0),
                     color: Colors.red[800],

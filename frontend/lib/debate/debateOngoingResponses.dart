@@ -10,13 +10,19 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:frontend/requests/debate.dart';
 
 import '../navbar.dart';
 
 // variables storing info to display
 class CurrentDebateResponses extends StatefulWidget {
+  int questionId;
+  String question;
+  CurrentDebateResponses({this.questionId, this.question});
+
   @override
-  _CurrentDebateResponseState createState() => _CurrentDebateResponseState();
+  _CurrentDebateResponseState createState() =>
+      _CurrentDebateResponseState(question, questionId);
 }
 
 class ResponseNode {
@@ -41,14 +47,34 @@ class _CurrentDebateResponseState extends State<CurrentDebateResponses> {
   bool _status = true;
   String currentUser;
   List data = ['1', '2', '3'];
+  Future<List<GroupNode>> _future;
+
+  String question;
+  int questionId;
+  _CurrentDebateResponseState(this.question, this.questionId);
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   setState(() {
+  //     FlutterSession()
+  //         .get('username')
+  //         .then((username) => {currentUser = username.toString()});
+  //   });
+  // }
+
   @override
   void initState() {
-    super.initState();
-    setState(() {
-      FlutterSession()
-          .get('username')
-          .then((username) => {currentUser = username.toString()});
+    FlutterSession().get('username').then((value) {
+      setState(() {
+        print("Gonna call GetGroupResponses and question");
+        currentUser = value.toString();
+        _future = getGroupResponses(137);
+        print(_future.toString());
+        print("question: " + question);
+      });
     });
+    super.initState();
+    //loadfutures();
   }
 
   Widget displayResponses(int i) {
