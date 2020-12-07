@@ -278,22 +278,27 @@ class _DebateResultpageState extends State<DebateResultPage> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(7.0),
                           child: Row(children: [
                             Icon(Icons.person),
                             Text(result.yours.username)
                           ]),
                         ),
-                        Row(children: [
-                          Icon(Icons.assignment),
-                          Expanded(
-                            child: AutoSizeText(result.yours.response),
-                          )
-                        ]),
-                        Row(children: [
-                          Icon(Icons.assessment),
-                          Text(result.yours.averageRating.toString())
-                        ]),
+                        Padding(
+                          padding: const EdgeInsets.all(7.0),
+                          child: Row(children: [
+                            Icon(Icons.assignment),
+                            Expanded(
+                              child: AutoSizeText(result.yours.response),
+                            )
+                          ]),
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.all(7.0),
+                            child: Row(children: [
+                              Icon(Icons.assessment),
+                              Text(result.yours.averageRating.toString())
+                            ])),
                         Row(children: [
                           Text("Your Score: ",
                               style: TextStyle(
