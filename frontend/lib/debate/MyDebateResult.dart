@@ -24,19 +24,20 @@ class _MyDebateResultState extends State<MyDebateResult> {
   List data;
   Future<YourResponseResultNode> _future;
   String currentUser;
-  ConfettiController _controllerTopCenter;
-  ConfettiController _controllerCenter;
-  YourResponseResultNode yourResult;
+  //ConfettiController _controllerTopCenter;
+  //ConfettiController _controllerCenter;
+  //YourResponseResultNode yourResult;
 
   @override
   void initState() {
-    _controllerTopCenter = ConfettiController(
+    /*_controllerTopCenter = ConfettiController(
       duration: const Duration(seconds: 10),
     );
     _controllerTopCenter.play();
     _controllerCenter =
         ConfettiController(duration: const Duration(seconds: 10));
     _controllerCenter.play();
+*/
     super.initState();
     print(currentUser);
 
@@ -57,6 +58,7 @@ class _MyDebateResultState extends State<MyDebateResult> {
           result = snapshot.data;
           return DebateResultPage(
             yourResult: snapshot.data,
+            currentUser: currentUser,
           );
         } else {
           return CircularProgressIndicator();
@@ -72,42 +74,53 @@ class _MyDebateResultState extends State<MyDebateResult> {
 
 class DebateResultPage extends StatefulWidget {
   YourResponseResultNode yourResult;
+  String currentUser = "";
 
-  DebateResultPage({
-    Key key,
-    @required this.yourResult,
-  }) : super(key: key);
+  DebateResultPage(
+      {Key key, @required this.yourResult, @required this.currentUser})
+      : super(key: key);
 
   @override
-  _DebateResultpageState createState() => _DebateResultpageState(
-        result: yourResult,
-      );
+  _DebateResultpageState createState() =>
+      _DebateResultpageState(result: yourResult, currentUser: currentUser);
 }
 
 class _DebateResultpageState extends State<DebateResultPage> {
   YourResponseResultNode result;
   ConfettiController _controllerTopCenter;
   ConfettiController _controllerCenter;
-
-  _DebateResultpageState({
-    @required this.result,
-  });
+  String currentUser = "";
+  _DebateResultpageState({@required this.result, @required this.currentUser});
 
   @override
   void initState() {
     _controllerTopCenter = ConfettiController(
       duration: const Duration(seconds: 10),
     );
-    _controllerTopCenter.play();
     _controllerCenter =
         ConfettiController(duration: const Duration(seconds: 10));
-    _controllerCenter.play();
+    if (result.winner.toString().compareTo(currentUser) == 0) {
+      _controllerTopCenter.play();
+      _controllerCenter.play();
+    } else {
+      //_controllerTopCenter = ConfettiController(
+      //duration: const Duration(seconds: 1),
+      //);
+      _controllerTopCenter.stop();
+      //_controllerCenter =
+      //  ConfettiController(duration: const Duration(seconds: 1));
+      _controllerCenter.stop();
+      //dispose();
+      // _controllerTopCenter.stop();
+      //_controllerCenter.stop();
+    }
     super.initState();
   }
 
   @override
   void dispose() {
     _controllerTopCenter.dispose();
+    _controllerCenter.dispose();
     super.dispose();
   }
 
@@ -264,10 +277,13 @@ class _DebateResultpageState extends State<DebateResultPage> {
                     elevation: 10.0,
                     child: Column(
                       children: [
-                        Row(children: [
-                          Icon(Icons.person),
-                          Text(result.yours.username)
-                        ]),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(children: [
+                            Icon(Icons.person),
+                            Text(result.yours.username)
+                          ]),
+                        ),
                         Row(children: [
                           Icon(Icons.assignment),
                           Expanded(
