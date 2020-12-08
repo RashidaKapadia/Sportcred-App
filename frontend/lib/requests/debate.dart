@@ -233,7 +233,7 @@ Future<List<GroupNode>> getVoteGroupResponses(String username) async {
 /**
  * Submits the votes for the debate group
  */
-Future submitVotes(String groupId, String username, List<int> responseIds,
+Future submitVotes(String groupId, String username, List<dynamic> responseIds,
     List<int> ratings) async {
   final http.Response response =
       await http.post('http://localhost:8080/api/debate/vote-response',
