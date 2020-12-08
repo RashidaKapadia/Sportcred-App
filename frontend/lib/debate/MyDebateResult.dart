@@ -19,103 +19,10 @@ class MyDebateResult extends StatefulWidget {
   _MyDebateResultState createState() => _MyDebateResultState();
 }
 
-// class ResultNode {
-//   final String groupNumber;
-//   final PlayerResultInfo yourResult;
-//   final List<dynamic> others;
-//   final String winner;
-//   final String yourScore;
-//   final bool reqStatus;
-
-//   ResultNode(
-//       {this.groupNumber,
-//       this.yourResult,
-//       this.others,
-//       this.winner,
-//       this.yourScore,
-//       @required this.reqStatus});
-
-//   // converts json to UserInfo object
-//   factory ResultNode.fromJson(bool status, Map<String, dynamic> json) {
-//     if (json == null) {
-//       return ResultNode(
-//         reqStatus: status,
-//       );
-//     }
-
-//     return ResultNode(
-//         reqStatus: status,
-//         groupNumber: json['groupNumber'],
-//         yourResult: json['yours'],
-//         others: json['theirs'],
-//         yourScore: json['yourScore'],
-//         winner: json['winner']);
-//   }
-// }
-
-// class PlayerResultInfo {
-//   final String username;
-//   final String response;
-//   final String rating;
-//   final bool reqStatus;
-
-//   PlayerResultInfo(
-//       {this.username, this.response, this.rating, @required this.reqStatus});
-
-//   // converts json to UserInfo object
-//   factory PlayerResultInfo.fromJson(bool status, Map<String, dynamic> json) {
-//     if (json == null) {
-//       return PlayerResultInfo(
-//         reqStatus: status,
-//       );
-//     }
-
-//     return PlayerResultInfo(
-//         reqStatus: status,
-//         username: json['username'],
-//         response: json['response'],
-//         rating: json['averageRating']);
-//   }
-// }
-
-class YourResponseResultNode {
-  List<dynamic> theirs;
-  final int yourScore;
-  final String winner;
-  final int groupId;
-  ResponseResultNode yours;
-  final bool reqStatus;
-
-  YourResponseResultNode(
-      {this.theirs,
-      this.yourScore,
-      this.winner,
-      this.groupId,
-      this.yours,
-      this.reqStatus});
-
-  // converts json to UserInfo object
-  factory YourResponseResultNode.fromJson(
-      bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return YourResponseResultNode(
-        reqStatus: status,
-      );
-    }
-
-    return YourResponseResultNode(
-        reqStatus: status,
-        theirs: json['theirs'],
-        yourScore: json['yourScore'],
-        winner: json['winner'],
-        groupId: json['groupId']);
-  }
-}
-
 class _MyDebateResultState extends State<MyDebateResult> {
   bool _status = true;
   List data;
-  var _future;
+  Future<YourResponseResultNode> _future;
   String currentUser;
   ConfettiController _controllerTopCenter;
   ConfettiController _controllerCenter;
@@ -185,6 +92,19 @@ class _DebateResultpageState extends State<DebateResultPage> {
   _DebateResultpageState({
     @required this.result,
   });
+
+  @override
+  void initState() {
+    _controllerTopCenter = ConfettiController(
+      duration: const Duration(seconds: 10),
+    );
+    _controllerTopCenter.play();
+    _controllerCenter =
+        ConfettiController(duration: const Duration(seconds: 10));
+    _controllerCenter.play();
+    super.initState();
+  }
+
   @override
   void dispose() {
     _controllerTopCenter.dispose();
@@ -199,7 +119,10 @@ class _DebateResultpageState extends State<DebateResultPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(7.0),
-              child: Row(children: [Icon(Icons.person), Text("alice")]),
+              child: Row(children: [
+                Icon(Icons.person),
+                Text(result.theirs[i].username)
+              ]),
             ),
             Padding(
               padding: const EdgeInsets.all(7.0),
@@ -207,8 +130,7 @@ class _DebateResultpageState extends State<DebateResultPage> {
                 Icon(Icons.assignment),
                 Expanded(
                   child: AutoSizeText(
-                    "Dogs are the best hands down, they are super energetic and" +
-                        "silly, they are great mood boosters when your down!",
+                    result.theirs[i].response,
                     //overflow: TextOverflow.ellipsis,
                   ),
                 )
@@ -216,7 +138,10 @@ class _DebateResultpageState extends State<DebateResultPage> {
             ),
             Padding(
               padding: const EdgeInsets.all(7.0),
-              child: Row(children: [Icon(Icons.assessment), Text("35%")]),
+              child: Row(children: [
+                Icon(Icons.assessment),
+                Text(result.theirs[i].averageRating.toString())
+              ]),
             )
           ],
         ),
@@ -300,7 +225,7 @@ class _DebateResultpageState extends State<DebateResultPage> {
         padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
         child: Column(children: [
           // Description
-          h3("Group Number : x"),
+          h3("Group Number : " + result.groupId.toString()),
           // Score breakdown
           DelayedDisplay(
             delay: Duration(seconds: 1),
@@ -318,7 +243,7 @@ class _DebateResultpageState extends State<DebateResultPage> {
             delay: Duration(seconds: 3),
             fadingDuration: Duration(seconds: 2),
             child: Text(
-              "Alice",
+              result.winner.toString(),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 35.0,
@@ -339,21 +264,26 @@ class _DebateResultpageState extends State<DebateResultPage> {
                     elevation: 10.0,
                     child: Column(
                       children: [
-                        Row(children: [Icon(Icons.person), Text("test")]),
+                        Row(children: [
+                          Icon(Icons.person),
+                          Text(result.yours.username)
+                        ]),
                         Row(children: [
                           Icon(Icons.assignment),
                           Expanded(
-                            child: AutoSizeText(
-                                "I love cats more, because  they are more independent"),
+                            child: AutoSizeText(result.yours.response),
                           )
                         ]),
-                        Row(children: [Icon(Icons.assessment), Text("30%")]),
+                        Row(children: [
+                          Icon(Icons.assessment),
+                          Text(result.yours.averageRating.toString())
+                        ]),
                         Row(children: [
                           Text("Your Score: ",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               )),
-                          Text("3")
+                          Text(result.yourScore.toString())
                         ]), // *****TO BE CHANGED
                       ],
                     ),
@@ -364,7 +294,7 @@ class _DebateResultpageState extends State<DebateResultPage> {
                     color: Colors.grey,
                     width: double.infinity,
                     height: 40,
-                    child: Text("Your Group",
+                    child: Text("Other members",
                         style: TextStyle(
                           //fontSize: 60.0,
                           fontWeight: FontWeight.bold,
