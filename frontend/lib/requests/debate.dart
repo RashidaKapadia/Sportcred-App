@@ -71,6 +71,30 @@ class GroupNode {
 }
 */
 
+class GroupResultNode {
+  final int groupId;
+  final String winner;
+  List<dynamic> responses;
+
+  final bool reqStatus;
+
+  GroupResultNode({this.groupId, this.responses, this.winner, this.reqStatus});
+
+  // converts json to UserInfo object
+  factory GroupResultNode.fromJson(bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return GroupResultNode(
+        reqStatus: status,
+      );
+    }
+    return GroupResultNode(
+        reqStatus: status,
+        groupId: json['groupId'],
+        winner: json['winner'],
+        responses: json['responses']);
+  }
+}
+
 class ResponseNode {
   final int responseId;
   final String response;
@@ -93,6 +117,65 @@ class ResponseNode {
   }
 }
 
+class ResponseResultNode {
+  final String username;
+  final String response;
+  final int averageRating;
+  final bool reqStatus;
+
+  ResponseResultNode(
+      {this.username, this.response, this.averageRating, this.reqStatus});
+
+  // converts json to UserInfo object
+  factory ResponseResultNode.fromJson(bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return ResponseResultNode(
+        reqStatus: status,
+      );
+    }
+
+    return ResponseResultNode(
+        reqStatus: status,
+        username: json['username'],
+        response: json['response'],
+        averageRating: json['averageRating']);
+  }
+}
+
+class YourResponseResultNode {
+  List<dynamic> theirs;
+  final int yourScore;
+  final String winner;
+  final int groupId;
+  ResponseResultNode yours;
+  final bool reqStatus;
+
+  YourResponseResultNode(
+      {this.theirs,
+      this.yourScore,
+      this.winner,
+      this.groupId,
+      this.yours,
+      this.reqStatus});
+
+  // converts json to UserInfo object
+  factory YourResponseResultNode.fromJson(
+      bool status, Map<String, dynamic> json) {
+    if (json == null) {
+      return YourResponseResultNode(
+        reqStatus: status,
+      );
+    }
+
+    return YourResponseResultNode(
+        reqStatus: status,
+        theirs: json['theirs'],
+        yourScore: json['yourScore'],
+        winner: json['winner'],
+        groupId: json['groupId']);
+  }
+}
+
 List<GroupNode> makeGroupResponseList(List<dynamic> list) {
   List<GroupNode> gr = [];
   for (Map<String, dynamic> group in list) {
@@ -101,10 +184,26 @@ List<GroupNode> makeGroupResponseList(List<dynamic> list) {
   return gr;
 }
 
+List<GroupResultNode> makeGroupResultResponseList(List<dynamic> list) {
+  List<GroupResultNode> gr = [];
+  for (Map<String, dynamic> group in list) {
+    gr.add(GroupResultNode.fromJson(true, group));
+  }
+  return gr;
+}
+
 List<ResponseNode> makeRepsonseList(List<dynamic> list) {
   List<ResponseNode> qs = [];
   for (Map<String, dynamic> response in list) {
     qs.add(ResponseNode.fromJson(true, response));
+  }
+  return qs;
+}
+
+List<ResponseResultNode> makeRepsonsenResultList(List<dynamic> list) {
+  List<ResponseResultNode> qs = [];
+  for (Map<String, dynamic> response in list) {
+    qs.add(ResponseResultNode.fromJson(true, response));
   }
   return qs;
 }
@@ -346,6 +445,61 @@ Future<List<QuestionNode>> getFinishedQuestions() async {
   if (response.statusCode == 200) {
     print(response.statusCode);
     return makeQuestionsList(jsonDecode(response.body)["questions"]);
+  } else {
+    print(response.statusCode);
+    return null;
+  }
+}
+
+Future<List<GroupResultNode>> getGroupResponsesnResults(int questionId) async {
+  // Make the request and store the response
+  final http.Response response = await http.post(
+      'http://localhost:8080/api/debate/get-debate-group-responses-n-results',
+      headers: defaultHeaders,
+      body: jsonEncode(<String, Object>{"questionId": questionId}));
+
+  if (response.statusCode == 200) {
+    print(response.statusCode);
+    List<GroupResultNode> r =
+        makeGroupResultResponseList(jsonDecode(response.body)["groups"]);
+
+    for (int i = 0; i < r.length; i++) {
+      List<ResponseResultNode> res = makeRepsonsenResultList(r[i].responses);
+      print("before" + r[i].responses.toString());
+      print(res[0].response);
+
+      r[i].responses = res;
+      print("after" + r[i].responses.toString());
+      print(r[i].responses[0].response);
+    }
+    print(r[0].responses);
+    return r;
+  } else {
+    print(response.statusCode);
+    return null;
+  }
+}
+
+Future<YourResponseResultNode> getPreviousTopicResult(String username) async {
+  // Make the request and store the response
+  final http.Response response = await http.post(
+      'http://localhost:8080/api/debate/get-previous-topic-result',
+      headers: defaultHeaders,
+      body: jsonEncode(<String, Object>{"username": username}));
+
+  if (response.statusCode == 200) {
+    print(response.statusCode);
+    YourResponseResultNode r =
+        YourResponseResultNode.fromJson(true, jsonDecode(response.body));
+
+    List<ResponseResultNode> theirs = makeRepsonsenResultList(r.theirs);
+    ResponseResultNode yours =
+        ResponseResultNode.fromJson(true, jsonDecode(response.body)["yours"]);
+
+    r.theirs = theirs;
+    r.yours = yours;
+    print(r.groupId.toString());
+    return r;
   } else {
     print(response.statusCode);
     return null;

@@ -9,6 +9,7 @@ import 'package:frontend/widgets/fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:frontend/requests/debate.dart';
 
 import '../navbar.dart';
 
@@ -18,71 +19,108 @@ class MyDebateResult extends StatefulWidget {
   _MyDebateResultState createState() => _MyDebateResultState();
 }
 
-class ResultNode {
-  final String groupNumber;
-  final PlayerResultInfo yourResult;
-  final List<dynamic> others;
+// class ResultNode {
+//   final String groupNumber;
+//   final PlayerResultInfo yourResult;
+//   final List<dynamic> others;
+//   final String winner;
+//   final String yourScore;
+//   final bool reqStatus;
+
+//   ResultNode(
+//       {this.groupNumber,
+//       this.yourResult,
+//       this.others,
+//       this.winner,
+//       this.yourScore,
+//       @required this.reqStatus});
+
+//   // converts json to UserInfo object
+//   factory ResultNode.fromJson(bool status, Map<String, dynamic> json) {
+//     if (json == null) {
+//       return ResultNode(
+//         reqStatus: status,
+//       );
+//     }
+
+//     return ResultNode(
+//         reqStatus: status,
+//         groupNumber: json['groupNumber'],
+//         yourResult: json['yours'],
+//         others: json['theirs'],
+//         yourScore: json['yourScore'],
+//         winner: json['winner']);
+//   }
+// }
+
+// class PlayerResultInfo {
+//   final String username;
+//   final String response;
+//   final String rating;
+//   final bool reqStatus;
+
+//   PlayerResultInfo(
+//       {this.username, this.response, this.rating, @required this.reqStatus});
+
+//   // converts json to UserInfo object
+//   factory PlayerResultInfo.fromJson(bool status, Map<String, dynamic> json) {
+//     if (json == null) {
+//       return PlayerResultInfo(
+//         reqStatus: status,
+//       );
+//     }
+
+//     return PlayerResultInfo(
+//         reqStatus: status,
+//         username: json['username'],
+//         response: json['response'],
+//         rating: json['averageRating']);
+//   }
+// }
+
+class YourResponseResultNode {
+  List<dynamic> theirs;
+  final int yourScore;
   final String winner;
-  final String yourScore;
+  final int groupId;
+  ResponseResultNode yours;
   final bool reqStatus;
 
-  ResultNode(
-      {this.groupNumber,
-      this.yourResult,
-      this.others,
-      this.winner,
+  YourResponseResultNode(
+      {this.theirs,
       this.yourScore,
-      @required this.reqStatus});
+      this.winner,
+      this.groupId,
+      this.yours,
+      this.reqStatus});
 
   // converts json to UserInfo object
-  factory ResultNode.fromJson(bool status, Map<String, dynamic> json) {
+  factory YourResponseResultNode.fromJson(
+      bool status, Map<String, dynamic> json) {
     if (json == null) {
-      return ResultNode(
+      return YourResponseResultNode(
         reqStatus: status,
       );
     }
 
-    return ResultNode(
+    return YourResponseResultNode(
         reqStatus: status,
-        groupNumber: json['groupNumber'],
-        yourResult: json['yours'],
-        others: json['theirs'],
+        theirs: json['theirs'],
         yourScore: json['yourScore'],
-        winner: json['winner']);
-  }
-}
-
-class PlayerResultInfo {
-  final String username;
-  final String response;
-  final String rating;
-  final bool reqStatus;
-
-  PlayerResultInfo(
-      {this.username, this.response, this.rating, @required this.reqStatus});
-
-  // converts json to UserInfo object
-  factory PlayerResultInfo.fromJson(bool status, Map<String, dynamic> json) {
-    if (json == null) {
-      return PlayerResultInfo(
-        reqStatus: status,
-      );
-    }
-
-    return PlayerResultInfo(
-        reqStatus: status,
-        username: json['username'],
-        response: json['response'],
-        rating: json['averageRating']);
+        winner: json['winner'],
+        groupId: json['groupId']);
   }
 }
 
 class _MyDebateResultState extends State<MyDebateResult> {
   bool _status = true;
   List data;
+  var _future;
   String currentUser;
   ConfettiController _controllerTopCenter;
   ConfettiController _controllerCenter;
+  YourResponseResultNode yourResult;
+
   @override
   void initState() {
     _controllerTopCenter = ConfettiController(
@@ -93,13 +131,60 @@ class _MyDebateResultState extends State<MyDebateResult> {
         ConfettiController(duration: const Duration(seconds: 10));
     _controllerCenter.play();
     super.initState();
-    setState(() {
-      FlutterSession()
-          .get('username')
-          .then((username) => {currentUser = username.toString()});
-    });
+    print(currentUser);
+
+    FlutterSession().get('username').then((username) => {
+          setState(() {
+            currentUser = username.toString();
+            _future = getPreviousTopicResult(username.toString());
+          })
+        });
   }
 
+  Widget loadDebateResponses() {
+    return FutureBuilder<YourResponseResultNode>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          YourResponseResultNode result;
+          result = snapshot.data;
+          return DebateResultPage(
+            yourResult: snapshot.data,
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      (_future != null) ? loadDebateResponses() : Text("loading....");
+}
+
+class DebateResultPage extends StatefulWidget {
+  YourResponseResultNode yourResult;
+
+  DebateResultPage({
+    Key key,
+    @required this.yourResult,
+  }) : super(key: key);
+
+  @override
+  _DebateResultpageState createState() => _DebateResultpageState(
+        result: yourResult,
+      );
+}
+
+class _DebateResultpageState extends State<DebateResultPage> {
+  YourResponseResultNode result;
+  ConfettiController _controllerTopCenter;
+  ConfettiController _controllerCenter;
+
+  _DebateResultpageState({
+    @required this.result,
+  });
   @override
   void dispose() {
     _controllerTopCenter.dispose();
