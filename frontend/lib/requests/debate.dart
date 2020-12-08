@@ -330,3 +330,24 @@ Future<List<GroupNode>> getGroupResponses(int questionId) async {
     return null;
   }
 }
+
+Future<List<QuestionNode>> getFinishedQuestions() async {
+  // Make the request and store the response
+  final http.Response response = await http.post(
+    'http://localhost:8080/api/debate/get-finished-questions',
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Accept': 'text/plain; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: jsonEncode(<String, String>{}),
+  );
+
+  if (response.statusCode == 200) {
+    print(response.statusCode);
+    return makeQuestionsList(jsonDecode(response.body)["questions"]);
+  } else {
+    print(response.statusCode);
+    return null;
+  }
+}
