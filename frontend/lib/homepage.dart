@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:frontend/widgets/layout.dart';
 import './navbar.dart';
-import 'debate/debateMain.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -55,9 +55,9 @@ class _HomePageState extends State<HomePage> {
                   crossAxisCount: 2,
                   primary: false,
                   children: <Widget>[
-                    homepageTile("/theZone", "The Zone", Colors.redAccent),
-                    homepageTile("/homepage", "Picks & Predictions",
-                        Colors.orangeAccent),
+                    homepageTile("/theZone", "The Zone", Colors.orangeAccent),
+                    homepageTile("/picksAndPredictions", "Picks & Predictions",
+                        HexColor('#ff652f')),
                     homepageTile(
                         "/trivia/category", "Trivia", Colors.yellowAccent[100]),
                     homepageTile(

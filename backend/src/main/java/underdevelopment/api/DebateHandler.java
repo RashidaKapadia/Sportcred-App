@@ -152,8 +152,8 @@ public class DebateHandler {
                             }
                         }
                     )))
-                    .put("yourScore", data.get("yourScore").asInt())
-                    .put("winner", data.get("winner").asString());
+                    .put("yourScore", data.get("yourScore", (int) 0))
+                    .put("winner", data.get("winner", "n/a"));
                 return new JsonHttpReponse(Status.OK, json.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -208,7 +208,7 @@ public class DebateHandler {
                                 }
                             ))
                         )
-                        .put("winner", record.get("winner").asString())
+                        .put("winner", record.get("winner", "Undetermined")
                     );    
                 }
                 JSONObject json = new JSONObject().put("groups", groups);
