@@ -10,12 +10,18 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:frontend/requests/debate.dart';
+
 import '../navbar.dart';
 
 // variables storing info to display
 class PreviousDebateResults extends StatefulWidget {
+  int questionId;
+  String question;
+  PreviousDebateResults({this.questionId, this.question});
   @override
-  _PreviousDebateResultState createState() => _PreviousDebateResultState();
+  State<StatefulWidget> createState() =>
+      _PreviousDebateResultState(question: question, questionId: questionId);
 }
 
 class ResultNode {
@@ -81,7 +87,76 @@ class _PreviousDebateResultState extends State<PreviousDebateResults> {
   bool _status = true;
   String currentUser;
   List data = ['1', '2', '3'];
-  Widget displayGroup(int i) {
+  Future<List<GroupResultNode>> _future;
+
+  String question;
+  int questionId;
+  _PreviousDebateResultState({this.question, this.questionId});
+
+  @override
+  void initState() {
+    FlutterSession().get('username').then((value) {
+      setState(() {
+        print("Gonna call GetGroupResponses and question");
+        currentUser = value.toString();
+        _future = getGroupResponsesnResults(questionId);
+        print(_future.toString());
+        print("question: " + question);
+        print("questionId: " + questionId.toString());
+      });
+    });
+    super.initState();
+    //loadfutures();
+  }
+
+  Widget loadDebateResponses() {
+    return FutureBuilder<List<GroupResultNode>>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<GroupResultNode> result;
+          result = snapshot.data;
+          return DebateResponsePage(
+              groupResponses: snapshot.data, question: question);
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      (_future != null) ? loadDebateResponses() : Text("loading....");
+}
+
+class DebateResponsePage extends StatefulWidget {
+  List<GroupResultNode> groupResponses;
+  String question = "";
+  DebateResponsePage(
+      {Key key, @required this.groupResponses, @required this.question})
+      : super(key: key);
+
+  @override
+  _DebateResponsepageState createState() => _DebateResponsepageState(
+      groupResponses: groupResponses, question: question);
+}
+
+class _DebateResponsepageState extends State<DebateResponsePage> {
+  bool _status = true;
+  String currentUser = "";
+  List data = ['1', '2', '3'];
+  Future<List<GroupResultNode>> _future;
+
+  List<GroupResultNode> groupResponses;
+
+  String question = "";
+
+  _DebateResponsepageState(
+      {@required this.groupResponses, @required this.question});
+
+  Widget displayGroup(GroupResultNode item) {
+    print("item :" + item.toString());
     return Container(
       decoration: new BoxDecoration(
         borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
@@ -97,14 +172,14 @@ class _PreviousDebateResultState extends State<PreviousDebateResults> {
         Padding(
             padding: const EdgeInsets.all(7.0),
             child: Column(
-                children: List.generate(3, (index) {
-              return displayResponses(index);
+                children: List.generate(item.responses.length, (index) {
+              return displayResponses(index, item.responses[index]);
             })))
       ])),
     );
   }
 
-  Widget displayResponses(int i) {
+  Widget displayResponses(int i, ResponseResultNode item) {
     return Container(
       child: Card(
         elevation: 10.0,
@@ -112,24 +187,25 @@ class _PreviousDebateResultState extends State<PreviousDebateResults> {
           children: [
             Padding(
               padding: const EdgeInsets.all(7.0),
-              child: Row(children: [Icon(Icons.person), Text("alice")]),
+              child: Row(children: [Icon(Icons.person), Text(item.username)]),
             ),
             Padding(
               padding: const EdgeInsets.all(7.0),
               child: Row(children: [
                 Icon(Icons.assignment),
                 Expanded(
-                  child: AutoSizeText(
-                    "Dogs are the best hands down, they are super energetic and" +
-                        "silly, they are great mood boosters when your down!",
-                    //overflow: TextOverflow.ellipsis,
-                  ),
+                  child: AutoSizeText(item.response
+                      //overflow: TextOverflow.ellipsis,
+                      ),
                 )
               ]),
             ),
             Padding(
               padding: const EdgeInsets.all(7.0),
-              child: Row(children: [Icon(Icons.assessment), Text("35%")]),
+              child: Row(children: [
+                Icon(Icons.assessment),
+                Text(item.averageRating.toString())
+              ]),
             )
           ],
         ),
@@ -138,6 +214,7 @@ class _PreviousDebateResultState extends State<PreviousDebateResults> {
   }
 
   Widget build(BuildContext context) {
+    print("question " + question);
     Widget categoryCarousel = new Container(
       child: CarouselSlider(
         options: CarouselOptions(
@@ -147,8 +224,8 @@ class _PreviousDebateResultState extends State<PreviousDebateResults> {
           enlargeCenterPage: true,
         ),
         // Items list will require to be updated here as well anytime new category is added
-        items: data.map((item) {
-          return displayGroup(0);
+        items: groupResponses.map((item) {
+          return displayGroup(item);
         }).toList(),
       ),
     );
@@ -166,7 +243,7 @@ class _PreviousDebateResultState extends State<PreviousDebateResults> {
         body: Container(
             padding: EdgeInsets.symmetric(vertical: 30),
             child: Column(children: [
-              h3("Question : abcefghijklmn", color: Colors.black),
+              h3(question, color: Colors.black),
               categoryCarousel,
             ])));
   }
