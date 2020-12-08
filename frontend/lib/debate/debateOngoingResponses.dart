@@ -87,6 +87,7 @@ class _CurrentDebateResponseState extends State<CurrentDebateResponses> {
           result = snapshot.data;
           return DebateResponsePage(
             groupResponses: snapshot.data,
+            question: question,
           );
         } else {
           return CircularProgressIndicator();
@@ -103,7 +104,8 @@ class _CurrentDebateResponseState extends State<CurrentDebateResponses> {
 class DebateResponsePage extends StatefulWidget {
   List<GroupNode> groupResponses;
   String question = "";
-  DebateResponsePage({Key key, @required this.groupResponses})
+  DebateResponsePage(
+      {Key key, @required this.groupResponses, @required this.question})
       : super(key: key);
 
   @override
@@ -163,7 +165,7 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
         ));
   }
 
-  Widget build(BuildContext context) {
+  /*Widget build(BuildContext context) {
     Widget categoryCarousel = new Container(
       child: CarouselSlider(
         options: CarouselOptions(
@@ -177,7 +179,7 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
           return displayGroup(item);
         }).toList(),
       ),
-    );
+    )
     return Scaffold(
         appBar: AppBar(
             leading: BackButton(
@@ -195,8 +197,70 @@ class _DebateResponsepageState extends State<DebateResponsePage> {
           padding: EdgeInsets.symmetric(vertical: 30),
           child: Column(children: [
             h3(question, color: Colors.black),
-            categoryCarousel,
+            SingleChildScrollView(
+              child: Column(
+                children: List.generate(groupResponses.length, (index) {
+                  // HARDCODED FOR NOW; CHANGE TO data.length
+                  return displayGroup(groupResponses[index]);
+                }),
+              ),
+            ),
           ]),
         ));
+  }*/
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+          leading: BackButton(
+              color: Colors.white,
+              onPressed: () =>
+                  Navigator.of(context).pushNamed("/debate/currentDQ")),
+          title: Text("Responses",
+              style: TextStyle(
+                  color: Colors
+                      .black)), // ***TO BE CHANGED INTO "category response'
+          centerTitle: true,
+          backgroundColor: Colors.greenAccent),
+      bottomNavigationBar: NavBar(0),
+      body: SingleChildScrollView(
+          child: resultPage(context)), //resultPage(context),
+    );
+  }
+
+  Widget resultPage(BuildContext context) {
+    return Container(
+      child: Column(children: [
+        pagebody(),
+      ]),
+    );
+  }
+
+  Widget pagebody() {
+    var mediaQuery = MediaQuery;
+    print("Question:" + question);
+    return Container(
+        alignment: Alignment.center,
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+        child: Column(children: [
+          // Description
+          Align(alignment: Alignment.topCenter, child: h3(question)),
+          // Score breakdown
+          Container(
+              margin: EdgeInsets.symmetric(vertical: 20),
+              width: double.infinity,
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    children: List.generate(groupResponses.length, (index) {
+                      // HARDCODED FOR NOW; CHANGE TO data.length
+                      return displayGroup(groupResponses[index]);
+                    }),
+                  ),
+                )
+              ]))
+        ]));
   }
 }
