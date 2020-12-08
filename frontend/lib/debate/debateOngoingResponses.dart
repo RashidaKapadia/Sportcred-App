@@ -65,11 +65,14 @@ class _CurrentDebateResponseState extends State<CurrentDebateResponses> {
                   color: Colors.black,
                 ),
                 Expanded(
-                  child: AutoSizeText(
-                    "Dogs are the best hands down, they are super energetic and" +
-                        "silly, they are great mood boosters when your down!",
-                    style: TextStyle(color: Colors.black),
-                    //overflow: TextOverflow.ellipsis,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: AutoSizeText(
+                      "Dogs are the best hands down, they are super energetic and" +
+                          "silly, they are great mood boosters when your down!",
+                      style: TextStyle(color: Colors.black),
+                      //overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 )
               ]),
@@ -87,12 +90,12 @@ class _CurrentDebateResponseState extends State<CurrentDebateResponses> {
               color: Colors.white,
               onPressed: () =>
                   Navigator.of(context).pushNamed("/debate/currentDQ")),
-          title: Text("Response",
+          title: Text("Responses",
               style: TextStyle(
                   color: Colors
-                      .white)), // ***TO BE CHANGED INTO "category response'
+                      .black)), // ***TO BE CHANGED INTO "category response'
           centerTitle: true,
-          backgroundColor: Colors.blueGrey),
+          backgroundColor: Colors.greenAccent),
       bottomNavigationBar: NavBar(0),
       body: SingleChildScrollView(
           child: resultPage(context)), //resultPage(context),

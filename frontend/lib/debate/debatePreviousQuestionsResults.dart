@@ -122,9 +122,9 @@ class _PreviousDebateResultState extends State<PreviousDebateResults> {
               color: Colors.white,
               onPressed: () =>
                   Navigator.of(context).pushNamed("/debatePreviousQuestions")),
-          title: Text("Debate", style: TextStyle(color: Colors.white)),
+          title: Text("Debate", style: TextStyle(color: Colors.black)),
           centerTitle: true,
-          backgroundColor: Colors.blueGrey),
+          backgroundColor: Colors.greenAccent),
       backgroundColor: Colors.black12,
       bottomNavigationBar: NavBar(0),
       body: SingleChildScrollView(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/fonts.dart';
 import './navbar.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -45,8 +46,8 @@ class _PicksAndPredictions extends State<PicksAndPredictions> {
           leading: BackButton(
               color: Colors.white,
               onPressed: () => Navigator.of(context).pushNamed("/homepage")),
-          title: Text('Picks and Predictions'),
-          backgroundColor: Colors.red,
+          title: Text('Past Season Picks'),
+          backgroundColor: HexColor('#ff652f'),
         ),
         bottomNavigationBar: NavBar(0),
         body: Container(
