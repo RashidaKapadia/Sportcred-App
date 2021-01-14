@@ -1,6 +1,15 @@
 
 # Sportcred App by Underdevelopment
 
+
+### Team Members
+* Anmole Bajwa
+* Devanshi Parekh
+* Hui Yi Quach (Jenny)
+*  Maunica Toletti
+* Rashida Kapadia
+* Zhi Hua Lim (Jacob)
+
 ### Project Components
 
 Frontend
@@ -59,9 +68,6 @@ username    | neo4j     |
 password    | 1234      |
 
 ## 3. Neo4j Drivers
-
-Get
-* ???
 
 From
 
