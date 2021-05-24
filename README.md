@@ -5,8 +5,8 @@
 ### Team Members
 * Anmole Bajwa
 * Devanshi Parekh
-* Hui Yi Quach (Jenny)
-*  Maunica Toletti
+* Jenny Quach
+* Maunica Toletti
 * Rashida Kapadia
 * Zhi Hua Lim (Jacob)
 
